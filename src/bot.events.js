@@ -20,8 +20,8 @@ bot.on('text', onText);
 /***
  * Получить все что я делал в эту дату:
  * /get 26.11.2016
- * @param msg
- * @param match
+ * @param msg {Object}
+ * @param match {Array}
  */
 function getDataFromDate(msg, match) {
   const chatId = msg.chat.id;
@@ -47,8 +47,8 @@ function getDataFromDate(msg, match) {
 /***
  * Установить что я делал в какой-то день:
  * /set 26.11.2016 something text
- * @param msg
- * @param match
+ * @param msg {Object}
+ * @param match {Array}
  */
 function setDataFromDate(msg, match) {
   const chatId = msg.chat.id;
@@ -69,7 +69,7 @@ function setDataFromDate(msg, match) {
 }
 /***
  * Скачивание файла БД на устройство
- * @param msg
+ * @param msg {Object}
  */
 function onDownload(msg) {
   const chatId = msg.chat.id;
@@ -93,7 +93,7 @@ function onDownload(msg) {
 }
 /***
  * Очистить базу данных с подтверждением
- * @param msg
+ * @param msg {Object}
  */
 function onDBCLEAR(msg) {
   const chatId = msg.chat.id;
@@ -103,8 +103,6 @@ function onDBCLEAR(msg) {
       'force_reply': true
     }
   };
-  // TODO: может ли блокировать ввод для других пользователей?
-  bot.removeAllListeners(['text']);
   const currentUser = sessions.getSession(fromId);
   bot.sendMessage(chatId, 'Очистить ваши записи? (Y/N)', options).then(sended => {
     const chatId = sended.chat.id;
@@ -116,19 +114,16 @@ function onDBCLEAR(msg) {
         }).catch(error => {
           console.error(error);
           bot.sendMessage(chatId, 'Ошибка в операции');
-        }).then(() => {
-          bot.on('text', onText);
         });
       } else {
         bot.sendMessage(chatId, 'Операция не выполнена');
-        bot.on('text', onText);
       }
     });
   });
 }
 /***
  * При первом включении создаем в БД специальную колонку для работы
- * @param msg
+ * @param msg {Object}
  */
 function onStart(msg) {
   const chatId = msg.chat.id;
@@ -149,20 +144,20 @@ function onStart(msg) {
 }
 /***
  *
- * @param msg
+ * @param msg {Object}
  */
 function onHelp(msg) {
   const data = {
     '/download': 'Загрузка файла с данными',
     '/dbclear': 'Удаление БД',
-    '/get DATE': 'Получение данных за этот срок',
-    '/set DATE': 'Добавление данных за этот срок',
+    '/get 1.12.2016': 'Получение данных за этот срок',
+    '/set 31.01.2016': 'Добавление данных за этот срок',
   };
   bot.sendMessage(msg.chat.id, JSON.stringify(data, null, 2));
 }
 /***
  * текст редактируется он обновляет свое значение в БД.
- * @param msg
+ * @param msg {Object}
  */
 function onEditedMessageText(msg) {
   const chatId = msg.chat.id;
@@ -178,13 +173,17 @@ function onEditedMessageText(msg) {
   });
 }
 /***
- * Все что пишешь просто в формате текста - записывается в сегодняшний день
- * @param msg
+ * Все что пишешь - записывается в сегодняшний день
+ * @param msg {Object}
  */
 function onText(msg) {
   const chatId = msg.chat.id;
   const fromId = msg.from.id;
   const input = msg.text.trim();
+  // Пропускаем Reply сообщений
+  if (msg.reply_to_message instanceof Object) {
+    return;
+  }
   // Пропускаем зарезервированные команды
   for (const command of Object.keys(commands)) {
     if (input.search(commands[command]) >= 0) {
@@ -205,9 +204,9 @@ function onText(msg) {
 }
 /***
  *
- * @param input
+ * @param input {String}
  * @returns {string}
  */
 function prevInput(input) {
-  return '✓' + input.substring(0, 6) + '…'
+  return '✓' + input.replace(/\n/g, ' ').substring(0, 6) + '…'
 }
