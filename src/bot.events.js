@@ -195,7 +195,7 @@ function onText(msg) {
     return;
   }
   const currentUser = sessions.getSession(fromId);
-  dbEntries.post(currentUser.id, crypt.encode(input), msg.message_id, new Date()).then(() => {
+  dbEntries.post(currentUser.id, crypt.encode(input), msg.message_id, new Date(msg.date * 1000)).then(() => {
     const text = prevInput(input);
     bot.sendMessage(chatId, text);
   }).catch(error => {
