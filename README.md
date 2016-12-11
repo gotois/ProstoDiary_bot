@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/tewst/ProstoDiary_bot.svg?branch=master)](https://travis-ci.org/tewst/ProstoDiary_bot)
+[![Build Status](https://travis-ci.org/tewst/ProstoDiary_bot.svg?branch=master)](https://travis-ci.org/tewst/ProstoDiary_bot) 
+[![dependencies Status](https://david-dm.org/tewst/ProstoDiary_bot/status.svg)](https://david-dm.org/tewst/ProstoDiary_bot) 
+[![devDependencies Status](https://david-dm.org/tewst/ProstoDiary_bot/dev-status.svg)](https://david-dm.org/tewst/ProstoDiary_bot?type=dev) 
 
 Установка
 ---
