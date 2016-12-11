@@ -105,18 +105,18 @@ function onDBCLEAR(msg) {
   };
   const currentUser = sessions.getSession(fromId);
   bot.sendMessage(chatId, 'Очистить ваши записи? (Y/N)', options).then(sended => {
-    const chatId = sended.chat.id;
+    const senderId = sended.chat.id;
     const messageId = sended.message_id;
-    bot.onReplyToMessage(chatId, messageId, message => {
+    bot.onReplyToMessage(senderId, messageId, message => {
       if (message.text.toUpperCase() === 'Y') {
         dbEntries.clear(currentUser.id).then(() => {
-          bot.sendMessage(chatId, 'Данные очищены');
+          bot.sendMessage(senderId, 'Данные очищены');
         }).catch(error => {
           console.error(error);
-          bot.sendMessage(chatId, 'Ошибка в операции');
+          bot.sendMessage(senderId, 'Ошибка в операции');
         });
       } else {
-        bot.sendMessage(chatId, 'Операция не выполнена');
+        bot.sendMessage(senderId, 'Операция не выполнена');
       }
     });
   });
@@ -129,7 +129,7 @@ function onStart(msg) {
   const chatId = msg.chat.id;
   const fromId = msg.from.id;
   const currentUser = sessions.getSession(fromId);
-  dbUsers.check(currentUser.id).then((value) => {
+  dbUsers.check(currentUser.id).then(value => {
     if (value.rowCount === 0) {
       return dbUsers.post(currentUser.id).then(() => {
         bot.sendMessage(chatId, 'Ты вошел в систему');
@@ -153,7 +153,8 @@ function onHelp(msg) {
     '/get 1.12.2016': 'Получение данных за этот срок',
     '/set 31.01.2016': 'Добавление данных за этот срок',
   };
-  bot.sendMessage(msg.chat.id, JSON.stringify(data, null, 2));
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, JSON.stringify(data, null, 2));
 }
 /***
  * текст редактируется он обновляет свое значение в БД.
@@ -161,12 +162,14 @@ function onHelp(msg) {
  */
 function onEditedMessageText(msg) {
   const chatId = msg.chat.id;
+  const fromId = msg.from.id;
   const input = msg.text.trim();
   if (input.startsWith('/')) {
     bot.sendMessage(chatId, 'Редактирование этой записи невозможно');
     return;
   }
-  dbEntries.put(crypt.encode(input), new Date(), msg.message_id).then(() => {
+  const currentUser = sessions.getSession(fromId);
+  dbEntries.put(currentUser.id, crypt.encode(input), new Date(), msg.message_id).then(() => {
     bot.sendMessage(chatId, 'Запись обновлена');
   }).catch(error => {
     bot.sendMessage(chatId, error);
@@ -203,7 +206,7 @@ function onText(msg) {
   });
 }
 /***
- *
+ * Message updated
  * @param input {String}
  * @returns {string}
  */

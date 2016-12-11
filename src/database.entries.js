@@ -30,12 +30,12 @@ function post(user_id, entry, telegram_entry_id, date_modified, date_added = new
   );
 }
 
-function put(entry, date_modified, telegram_entry_id) {
+function put(user_id, entry, date_modified, telegram_entry_id) {
   return $$(
-    `UPDATE entries SET (entry = $1, date_modified = $2)
+    `UPDATE entries SET (entry = $2, date_modified = $3)
     WHERE
-    (telegram_entry_id = $3)`,
-    [entry, date_modified, telegram_entry_id]
+    (user_id = $1 AND telegram_entry_id = $4)`,
+    [user_id, entry, date_modified, telegram_entry_id]
   );
 }
 
