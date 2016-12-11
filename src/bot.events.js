@@ -170,9 +170,10 @@ function onEditedMessageText(msg) {
   }
   const currentUser = sessions.getSession(fromId);
   dbEntries.put(currentUser.id, crypt.encode(input), new Date(), msg.message_id).then(() => {
-    bot.sendMessage(chatId, 'Запись обновлена');
+    bot.sendMessage(chatId, prevInput(input) + 'Запись обновлена');
   }).catch(error => {
-    bot.sendMessage(chatId, error);
+    console.error(error);
+    bot.sendMessage(chatId, error.toLocaleString());
   });
 }
 /***
