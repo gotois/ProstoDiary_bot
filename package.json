@@ -16,9 +16,8 @@
     "url": "https://github.com/tewst/ProstoDiary_bot.git"
   },
   "keywords": [
-    "telegram",
-    "bot",
-    "prostodiary"
+    "prostodiary",
+    "telegram bot"
   ],
   "author": "goto Interactive",
   "license": "GPLv3",
@@ -28,10 +27,10 @@
   "homepage": "https://gotointeractive.com/#Prosto Diary",
   "dependencies": {
     "node-native-zip": "^1.1.0",
-    "node-telegram-bot-api": "^0.24.0",
+    "node-telegram-bot-api": "^0.27.0",
     "pg": "^6.1.0"
   },
   "devDependencies": {
-    "ava": "^0.17.0"
+    "ava": "^0.18.1"
   }
 }
