@@ -18,10 +18,11 @@ bot.onText(commands.SETDATE, setDataFromDate);
 bot.on('edited_message_text', onEditedMessageText);
 bot.on('text', onText);
 /***
- * Получить все что я делал в эту дату:
- * /get 26.11.2016
+ * Получить все что я делал в эту дату
+ * @example /get 26.11.2016
  * @param msg {Object}
  * @param match {Array}
+ * @return {void}
  */
 function getDataFromDate(msg, match) {
   const chatId = msg.chat.id;
@@ -49,6 +50,7 @@ function getDataFromDate(msg, match) {
  * /set 26.11.2016 something text
  * @param msg {Object}
  * @param match {Array}
+ * @return {void}
  */
 function setDataFromDate(msg, match) {
   const chatId = msg.chat.id;
@@ -70,6 +72,7 @@ function setDataFromDate(msg, match) {
 /***
  * Скачивание файла БД на устройство
  * @param msg {Object}
+ * @return {void}
  */
 function onDownload(msg) {
   const chatId = msg.chat.id;
@@ -94,6 +97,7 @@ function onDownload(msg) {
 /***
  * Очистить базу данных с подтверждением
  * @param msg {Object}
+ * @return {void}
  */
 function onDBCLEAR(msg) {
   const chatId = msg.chat.id;
@@ -124,6 +128,7 @@ function onDBCLEAR(msg) {
 /***
  * При первом включении создаем в БД специальную колонку для работы
  * @param msg {Object}
+ * @return {void}
  */
 function onStart(msg) {
   const chatId = msg.chat.id;
@@ -132,7 +137,7 @@ function onStart(msg) {
   dbUsers.check(currentUser.id).then(value => {
     if (value.rowCount === 0) {
       return dbUsers.post(currentUser.id).then(() => {
-        bot.sendMessage(chatId, 'Ты вошел в систему');
+        bot.sendMessage(chatId, 'Вы вошли в систему');
       });
     } else {
       bot.sendMessage(chatId, 'Повторный вход не требуется');
@@ -145,6 +150,7 @@ function onStart(msg) {
 /***
  *
  * @param msg {Object}
+ * @return {void}
  */
 function onHelp(msg) {
   const data = {
@@ -159,6 +165,7 @@ function onHelp(msg) {
 /***
  * текст редактируется он обновляет свое значение в БД.
  * @param msg {Object}
+ * @return {void}
  */
 function onEditedMessageText(msg) {
   const chatId = msg.chat.id;
@@ -169,6 +176,16 @@ function onEditedMessageText(msg) {
     return;
   }
   const currentUser = sessions.getSession(fromId);
+  if (input === 'del') {
+    dbEntries.delete(currentUser.id, msg.message_id).then(() => {
+      bot.sendMessage(chatId, 'Запись удалена');
+    }).catch(error => {
+      console.error(error);
+      bot.sendMessage(chatId, error.toLocaleString());
+    });
+
+    return;
+  }
   dbEntries.put(currentUser.id, crypt.encode(input), new Date(), msg.message_id).then(() => {
     bot.sendMessage(chatId, prevInput(input) + 'Запись обновлена');
   }).catch(error => {
@@ -179,6 +196,7 @@ function onEditedMessageText(msg) {
 /***
  * Все что пишешь - записывается в сегодняшний день
  * @param msg {Object}
+ * @return {void}
  */
 function onText(msg) {
   const chatId = msg.chat.id;

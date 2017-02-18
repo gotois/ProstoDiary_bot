@@ -1,7 +1,8 @@
 const $$ = require('./database.promise');
 /***
  *
- * @param user_id
+ * @param user_id {Number}
+ * @return {Promise}
  */
 function getAll(user_id) {
   return $$(
@@ -13,8 +14,9 @@ function getAll(user_id) {
 }
 /***
  *
- * @param user_id
+ * @param user_id {Number}
  * @param date {String} like 2016-12-01
+ * @return {Promise}
  */
 function get(user_id, date) {
   const from = `${date} 0:0:0`;
@@ -28,11 +30,12 @@ function get(user_id, date) {
 }
 /***
  *
- * @param user_id
- * @param entry
- * @param telegram_entry_id
- * @param date_modified
- * @param date_added
+ * @param user_id {Number}
+ * @param entry {String}
+ * @param telegram_entry_id {Number}
+ * @param date_modified {Date}
+ * @param date_added {Date|null}
+ * @return {Promise}
  */
 function post(user_id, entry, telegram_entry_id, date_modified, date_added = new Date()) {
   return $$(
@@ -43,10 +46,11 @@ function post(user_id, entry, telegram_entry_id, date_modified, date_added = new
 }
 /***
  *
- * @param user_id
- * @param entry
- * @param date_modified
- * @param telegram_entry_id
+ * @param user_id {Number}
+ * @param entry {String}
+ * @param date_modified {Date}
+ * @param telegram_entry_id {Number}
+ * @return {Promise}
  */
 function put(user_id, entry, date_modified, telegram_entry_id) {
   return $$(
@@ -56,9 +60,22 @@ function put(user_id, entry, date_modified, telegram_entry_id) {
     [user_id, entry, date_modified, telegram_entry_id]
   );
 }
+/**
+ * @param user_id {Number}
+ * @param telegram_entry_id {Number}
+ * @return {Promise}
+ */
+function del(user_id, telegram_entry_id) {
+  return $$(
+    `DELETE from entries
+    WHERE (user_id = $1 AND telegram_entry_id = $2)`,
+    [user_id, telegram_entry_id]
+  );
+}
 /***
  * Удаление данных из БД
- * @param user_id
+ * @param user_id {Number}
+ * @return {Promise}
  */
 function clear(user_id) {
   return $$(
@@ -70,8 +87,9 @@ function clear(user_id) {
 
 module.exports = {
   post,
-  put,
   get,
+  put,
+  delete: del,
   getAll,
   clear
 };

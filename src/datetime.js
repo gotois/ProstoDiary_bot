@@ -15,14 +15,18 @@ function isNormalDate(date) {
   }
   return true;
 }
-
-// 01.02.2016 => Второе января
+/**
+ *
+ * @param date {String} 01.02.2016
+ * @returns {Date}
+ */
 function convertToNormalDate(date) {
   date = date.replace(/\./g, '-');
   const newDate = new Date();
   newDate.setDate(+date.match(/(\d+)-/)[1]);
   newDate.setMonth(+date.match(/-(\d+)/)[1] - 1);
   newDate.setYear(+date.match(/-\d+-(\d+)/)[1]);
+
   return newDate;
 }
 

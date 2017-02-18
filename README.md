@@ -2,14 +2,14 @@
 [![dependencies Status](https://david-dm.org/tewst/ProstoDiary_bot/status.svg)](https://david-dm.org/tewst/ProstoDiary_bot) 
 [![devDependencies Status](https://david-dm.org/tewst/ProstoDiary_bot/dev-status.svg)](https://david-dm.org/tewst/ProstoDiary_bot?type=dev) 
 
-Установка
+Installing:
 ---
 ```bash
 npm install
 ```
 Выполните SQL запросы на создание таблицы  (запросы содержатся в директории /SQL)
 
-Разработка:
+Usage:
 ---
 Постоянная проверка тест-юнитов:
 ```bash
@@ -35,7 +35,7 @@ Name: ProstoDiary
 
 Username: @ProstoDiary_bot
 
-Комманды:
+Commands:
 ---
 ```
 Скачать txt описание на устройство:
@@ -50,3 +50,8 @@ Username: @ProstoDiary_bot
 Установить что я делал в эту дату:
 /set 26.11.2016 something text
 ```
+
+License:
+---
+goto Interactive Software.
+Licensed under the GPLv3 License.

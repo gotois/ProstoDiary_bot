@@ -1,3 +1,4 @@
+// TODO: https://github.com/tewst/ProstoDiary_bot/issues/1
 let sessions = [{
   userId: 777,
   password: 'test'

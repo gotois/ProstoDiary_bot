@@ -1,4 +1,5 @@
 const client = require('./database.client');
+
 client.connect(error => {
   if (error) {
     console.error(error);
