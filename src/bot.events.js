@@ -1,5 +1,6 @@
 const crypt = require('./crypt');
 const fs = require('fs');
+const stream = require('stream');
 const zip = require("node-native-zip");
 const commands = require('./bot.commands');
 const bot = require('./bot.config');
@@ -8,6 +9,7 @@ const dbEntries = require('./database.entries');
 const format = require('./format');
 const sessions = require('./sessions');
 const datetime = require('./datetime');
+const plot = require('./plotly.wrapper');
 
 bot.onText(commands.DOWNLOAD, onDownload);
 bot.onText(commands.DBCLEAR, onDBCLEAR);
@@ -15,6 +17,7 @@ bot.onText(commands.START, onStart);
 bot.onText(commands.HELP, onHelp);
 bot.onText(commands.GETDATE, getDataFromDate);
 bot.onText(commands.SETDATE, setDataFromDate);
+bot.onText(commands.GRAPH, getGraph);
 bot.on('edited_message_text', onEditedMessageText);
 bot.on('text', onText);
 /***
@@ -223,6 +226,58 @@ function onText(msg) {
   }).catch(error => {
     bot.sendMessage(chatId, error);
   });
+}
+/**
+ *
+ * @param msg
+ */
+function getGraph(msg) {
+  const chatId = msg.chat.id;
+
+  // TODO:
+  const trace1 = {
+    x: [1, 2, 3, 4],
+    y: [10, 15, 13, 17],
+    type: 'scatter'
+  };
+
+  const figure = {'data': [trace1]};
+  const imgOpts = {
+    format: 'png',
+    width: 512,
+    height: 384
+  };
+
+  // Удаляем старый график (на всякий случай)
+  plot.deletePlot('0')
+    .then(() => {
+      return plot.getImage(figure, imgOpts)
+    })
+    .then(imageStream => {
+      const Writable = stream.Writable;
+      const ws = Writable();
+      const buffers = [];
+      ws._write = (chunk, enc, next) => {
+        buffers.push(chunk);
+        next();
+      };
+      imageStream.pipe(ws);
+      imageStream.on('end', () => {
+        const photoBuffer = Buffer.concat(buffers);
+
+        return bot.sendPhoto(chatId, photoBuffer, {
+          caption: 'Photo'
+        });
+      });
+    })
+    .then(() => {
+      return plot.deletePlot('0');
+    })
+    .catch((error) => {
+      console.error(error);
+
+      bot.sendMessage(chatId, 'Произошла ошибка');
+    });
 }
 /***
  * Message updated

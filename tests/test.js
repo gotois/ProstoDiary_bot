@@ -20,7 +20,13 @@ test('crypto', t => {
 
 test('commands', t => {
   const commands = require('../src/bot.commands');
+  t.true(commands.DOWNLOAD instanceof RegExp);
+  t.true(commands.DBCLEAR instanceof RegExp);
+  t.true(commands.DBCLEAR instanceof RegExp);
   t.true(commands.START instanceof RegExp);
+  t.true(commands.HELP instanceof RegExp);
+  t.true(commands.GETDATE instanceof RegExp);
+  t.true(commands.SETDATE instanceof RegExp);
 });
 
 test('datetime', t => {

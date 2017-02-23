@@ -28,6 +28,11 @@ USER={ database username }
 DBPORT={ database port }
 PASSWORD={ database password }
 ```
+Необязательные:
+```
+PLOTLY_LOGIN={ plotly login }
+PLOTLY_TOKEN={ plotly token }
+```
 
 Bot Environments:
 ---
@@ -49,9 +54,13 @@ Commands:
 
 Установить что я делал в эту дату:
 /set 26.11.2016 something text
+
+Получить график:
+/graph something text
 ```
 
 License:
 ---
 goto Interactive Software.
+
 Licensed under the GPLv3 License.

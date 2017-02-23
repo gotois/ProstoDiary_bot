@@ -28,7 +28,8 @@
   "dependencies": {
     "node-native-zip": "^1.1.0",
     "node-telegram-bot-api": "^0.27.0",
-    "pg": "^6.1.0"
+    "pg": "^6.1.0",
+    "plotly": "~1.0.6"
   },
   "devDependencies": {
     "ava": "^0.18.1"
