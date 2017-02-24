@@ -1,7 +1,6 @@
 const crypt = require('./crypt');
 const fs = require('fs');
-const stream = require('stream');
-const zip = require("node-native-zip");
+const zip = require('node-native-zip');
 const commands = require('./bot.commands');
 const bot = require('./bot.config');
 const dbUsers = require('./database.users');
@@ -229,7 +228,7 @@ function onText(msg) {
 }
 /**
  *
- * @param msg
+ * @param msg {Object}
  */
 function getGraph(msg) {
   const chatId = msg.chat.id;
@@ -249,25 +248,18 @@ function getGraph(msg) {
   };
 
   // Удаляем старый график (на всякий случай)
-  plot.deletePlot('0')
+  // plot.deletePlot('0')
+  Promise.resolve()
     .then(() => {
-      return plot.getImage(figure, imgOpts)
+      return plot.getImageBuffer(figure, imgOpts);
     })
-    .then(imageStream => {
-      const Writable = stream.Writable;
-      const ws = Writable();
-      const buffers = [];
-      ws._write = (chunk, enc, next) => {
-        buffers.push(chunk);
-        next();
-      };
-      imageStream.pipe(ws);
-      imageStream.on('end', () => {
-        const photoBuffer = Buffer.concat(buffers);
-
-        return bot.sendPhoto(chatId, photoBuffer, {
-          caption: 'Photo'
-        });
+    .catch((error) => {
+      console.error(error);
+      bot.sendMessage(chatId, 'Произошла ошибка в получении буфера');
+    })
+    .then((photoBuffer) => {
+      return bot.sendPhoto(chatId, photoBuffer, {
+        caption: 'Photo'
       });
     })
     .then(() => {
@@ -275,8 +267,7 @@ function getGraph(msg) {
     })
     .catch((error) => {
       console.error(error);
-
-      bot.sendMessage(chatId, 'Произошла ошибка');
+      bot.sendMessage(chatId, 'Произошла ошибка при удалении');
     });
 }
 /***

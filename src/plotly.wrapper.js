@@ -1,6 +1,7 @@
 const login = process.env.PLOTLY_LOGIN;
 const token = process.env.PLOTLY_TOKEN;
 const plotly = require('plotly')(login, token);
+const stream = require('stream');
 /**
  *
  * @param figure {Object}
@@ -18,6 +19,35 @@ function getImage(figure, options = {}) {
       resolve(imageStream);
     });
   });
+}
+/**
+ *
+ * @param figure {Object}
+ * @param options {Object}
+ * @returns {Promise}
+ */
+function getImageBuffer(figure, options = {}) {
+  return getImage(figure, options)
+    .then(imageStream => {
+      return new Promise((resolve, reject) => {
+        const Writable = stream.Writable;
+        const ws = Writable();
+        const buffers = [];
+        ws._write = (chunk, enc, next) => {
+          buffers.push(chunk);
+          next();
+        };
+        imageStream.pipe(ws);
+        imageStream.on('end', () => {
+          const photoBuffer = Buffer.concat(buffers);
+          resolve(photoBuffer);
+        });
+        imageStream.on('error', (error) => {
+          console.error(error);
+          reject(error);
+        });
+      });
+    });
 }
 /**
  *
@@ -39,5 +69,6 @@ function deletePlot(plotId) {
 
 module.exports = {
   getImage,
+  getImageBuffer,
   deletePlot
 };
