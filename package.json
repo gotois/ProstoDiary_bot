@@ -1,11 +1,12 @@
 {
   "name": "ProstoDiary_bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "ProstoDiary Telegram Bot",
   "main": "index.js",
   "scripts": {
     "test": "node_modules/.bin/ava tests/test.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint": "node_modules/.bin/eslint src/**/*.js"
   },
   "engines": {
     "node": "6.9.1",
@@ -17,6 +18,7 @@
   },
   "keywords": [
     "prostodiary",
+    "prosto diary",
     "telegram bot"
   ],
   "author": "goto Interactive",
@@ -32,6 +34,7 @@
     "plotly": "~1.0.6"
   },
   "devDependencies": {
-    "ava": "^0.18.1"
+    "ava": "^0.18.1",
+    "eslint": "~3.16.1"
   }
 }

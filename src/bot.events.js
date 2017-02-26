@@ -1,5 +1,4 @@
 const crypt = require('./crypt');
-const fs = require('fs');
 const zip = require('node-native-zip');
 const commands = require('./bot.commands');
 const bot = require('./bot.config');
@@ -160,7 +159,7 @@ function onHelp(msg) {
     '/dbclear': 'Удаление БД',
     '/graph': 'Построение графиков',
     '/get 1.12.2016': 'Получение данных за этот срок',
-    '/set 31.01.2016': 'Добавление данных за этот срок',
+    '/set 31.01.2016': 'Добавление данных за этот срок'
   };
   const chatId = msg.chat.id;
   bot.sendMessage(chatId, JSON.stringify(data, null, 2));
@@ -236,25 +235,27 @@ function getGraph(msg) {
   const fromId = msg.from.id;
   const currentUser = sessions.getSession(fromId);
   const input = msg.text.replace(commands.GRAPH, '').trim();
+  // временная шкала х {String} и частота y {Number}
+  const trace = {
+    x: [],
+    y: [],
+    type: 'bar'
+  };
   dbEntries.getAll(currentUser.id).then(data => {
     if (data.rows.length <= 0) {
       throw 'Null rows exception';
     }
-    // временная шкала х {String} и частота y {Number}
-    const trace = {
-      x: [],
-      y: []
-    };
     data.rows.map(row => {
       const entry = crypt.decode(row.entry);
+      const date = row.date_added;
       return {
-        date_added: row.date_added,
+        date,
         entry
       };
     }).filter(text => {
       return text.entry.includes(input);
     }).forEach(row => {
-      const x = row.date_added.toLocaleDateString();
+      const x = row.date.toLocaleDateString();
       const y = 1;
       const xIndex = trace.x.findIndex(_x => _x === x);
       if (xIndex < 0) {
@@ -264,12 +265,10 @@ function getGraph(msg) {
         ++trace.y[xIndex];
       }
     });
+  }).then(() => {
     if (!trace.x.length) {
       throw 'Нет данных для построения графика';
     }
-    return trace;
-  }).then(trace => {
-    trace.type = 'bar';
     const figure = {'data': [trace]};
     const imgOpts = {
       format: 'png',
@@ -284,21 +283,22 @@ function getGraph(msg) {
   })/*.then(() => {
    // TODO: использовать если потребуется удаление графиков
    return plot.deletePlot('0');
-   })*/.catch((error) => {
-    console.error(error);
-    switch (typeof error) {
-      case 'string': {
-        bot.sendMessage(chatId, error);
-        break;
-      }
-      case 'object': {
-        if (error.statusMessage !== 'NOT FOUND') {
-          bot.sendMessage(chatId, 'Произошла ошибка при удалении графика с сервера');
+   })*/
+    .catch((error) => {
+      console.error(error);
+      switch (typeof error) {
+        case 'string': {
+          bot.sendMessage(chatId, error);
+          break;
         }
-        break;
+        case 'object': {
+          if (error.statusMessage !== 'NOT FOUND') {
+            bot.sendMessage(chatId, 'Произошла ошибка при удалении графика с сервера');
+          }
+          break;
+        }
       }
-    }
-  });
+    });
 }
 /***
  * Message updated

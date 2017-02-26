@@ -3,7 +3,7 @@ function checkDateLaterThanNow(date) {
 }
 
 function dateIsIncorrect(date) {
-  return isNaN(Date.parse(date))
+  return isNaN(Date.parse(date));
 }
 
 function isNormalDate(date) {
