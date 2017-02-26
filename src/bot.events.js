@@ -158,6 +158,7 @@ function onHelp(msg) {
   const data = {
     '/download': 'Загрузка файла с данными',
     '/dbclear': 'Удаление БД',
+    '/graph': 'Построение графиков',
     '/get 1.12.2016': 'Получение данных за этот срок',
     '/set 31.01.2016': 'Добавление данных за этот срок',
   };
@@ -185,7 +186,6 @@ function onEditedMessageText(msg) {
       console.error(error);
       bot.sendMessage(chatId, error.toLocaleString());
     });
-
     return;
   }
   dbEntries.put(currentUser.id, crypt.encode(input), new Date(), msg.message_id).then(() => {
@@ -229,46 +229,76 @@ function onText(msg) {
 /**
  *
  * @param msg {Object}
+ * @return {void}
  */
 function getGraph(msg) {
   const chatId = msg.chat.id;
-
-  // TODO:
-  const trace1 = {
-    x: [1, 2, 3, 4],
-    y: [10, 15, 13, 17],
-    type: 'scatter'
-  };
-
-  const figure = {'data': [trace1]};
-  const imgOpts = {
-    format: 'png',
-    width: 512,
-    height: 384
-  };
-
-  // Удаляем старый график (на всякий случай)
-  // plot.deletePlot('0')
-  Promise.resolve()
-    .then(() => {
-      return plot.getImageBuffer(figure, imgOpts);
-    })
-    .catch((error) => {
-      console.error(error);
-      bot.sendMessage(chatId, 'Произошла ошибка в получении буфера');
-    })
-    .then((photoBuffer) => {
-      return bot.sendPhoto(chatId, photoBuffer, {
-        caption: 'Photo'
-      });
-    })
-    .then(() => {
-      return plot.deletePlot('0');
-    })
-    .catch((error) => {
-      console.error(error);
-      bot.sendMessage(chatId, 'Произошла ошибка при удалении');
+  const fromId = msg.from.id;
+  const currentUser = sessions.getSession(fromId);
+  const input = msg.text.replace(commands.GRAPH, '').trim();
+  dbEntries.getAll(currentUser.id).then(data => {
+    if (data.rows.length <= 0) {
+      throw 'Null rows exception';
+    }
+    // временная шкала х {String} и частота y {Number}
+    const trace = {
+      x: [],
+      y: []
+    };
+    data.rows.map(row => {
+      const entry = crypt.decode(row.entry);
+      return {
+        date_added: row.date_added,
+        entry
+      };
+    }).filter(text => {
+      return text.entry.includes(input);
+    }).forEach(row => {
+      const x = row.date_added.toLocaleDateString();
+      const y = 1;
+      const xIndex = trace.x.findIndex(_x => _x === x);
+      if (xIndex < 0) {
+        trace.x.push(x);
+        trace.y.push(y);
+      } else {
+        ++trace.y[xIndex];
+      }
     });
+    if (!trace.x.length) {
+      throw 'Нет данных для построения графика';
+    }
+    return trace;
+  }).then(trace => {
+    trace.type = 'bar';
+    const figure = {'data': [trace]};
+    const imgOpts = {
+      format: 'png',
+      width: 512,
+      height: 384
+    };
+    return plot.getImageBuffer(figure, imgOpts);
+  }).then(photoBuffer => {
+    return bot.sendPhoto(chatId, photoBuffer, {
+      caption: `График для /${input}/`
+    });
+  })/*.then(() => {
+   // TODO: использовать если потребуется удаление графиков
+   return plot.deletePlot('0');
+   })*/.catch((error) => {
+    console.error(error);
+    switch (typeof error) {
+      case 'string': {
+        bot.sendMessage(chatId, error);
+        break;
+      }
+      case 'object': {
+        if (error.statusMessage !== 'NOT FOUND') {
+          bot.sendMessage(chatId, 'Произошла ошибка при удалении графика с сервера');
+        }
+        break;
+      }
+    }
+  });
 }
 /***
  * Message updated
@@ -276,5 +306,5 @@ function getGraph(msg) {
  * @returns {string}
  */
 function prevInput(input) {
-  return '✓' + input.replace(/\n/g, ' ').substring(0, 6) + '…'
+  return '✓' + input.replace(/\n/g, ' ').substring(0, 6) + '…';
 }

@@ -29,8 +29,17 @@ function convertToNormalDate(date) {
 
   return newDate;
 }
+/**
+ *
+ * @param text {Number|String}
+ * @returns {string}
+ */
+function convertIn2DigitFormat(text) {
+  return ('0' + text).slice(-2);
+}
 
 module.exports = {
   isNormalDate,
-  convertToNormalDate
+  convertToNormalDate,
+  convertIn2DigitFormat
 };
