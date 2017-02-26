@@ -4,8 +4,9 @@ const bot = require('./../bot.config.js');
 const plot = require('./../plotly.wrapper.js');
 const commands = require('./../bot.commands.js');
 const crypt = require('./../crypt');
+const datetime = require('./../datetime');
 /***
- *
+ * Построить график
  * @param msg {Object}
  * @return {void}
  */
@@ -24,7 +25,7 @@ function getGraph(msg) {
     if (data.rows.length <= 0) {
       throw 'Null rows exception';
     }
-    data.rows.map(row => {
+    const entryRows = data.rows.map(row => {
       const entry = crypt.decode(row.entry);
       const date = row.date_added;
       return {
@@ -33,9 +34,19 @@ function getGraph(msg) {
       };
     }).filter(text => {
       return text.entry.toUpperCase().includes(input.toUpperCase());
-    }).forEach(row => {
-      const x = row.date.toLocaleDateString();
-      const y = 1;
+    });
+    if (!entryRows.length) {
+      throw 'Нет данных для построения графика';
+    }
+    const firstDate = data.rows[0].date_added;
+    const latestDate = data.rows[data.rows.length - 1].date_added;
+    const rangeTimes = datetime.fillRangeTimes(firstDate, latestDate);
+    rangeTimes.forEach(_date => {
+      const findedCount = entryRows.filter(_ => {
+        return _.date.toLocaleDateString() === _date.toLocaleDateString();
+      });
+      const x = _date.toLocaleDateString();
+      const y = findedCount.length;
       const xIndex = trace.x.findIndex(_x => _x === x);
       if (xIndex < 0) {
         trace.x.push(x);
@@ -45,9 +56,6 @@ function getGraph(msg) {
       }
     });
   }).then(() => {
-    if (!trace.x.length) {
-      throw 'Нет данных для построения графика';
-    }
     const figure = {'data': [trace]};
     const imgOpts = {
       format: 'png',
