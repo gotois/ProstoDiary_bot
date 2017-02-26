@@ -5,9 +5,9 @@
 Installing:
 ---
 ```bash
-npm install
+npm i
 ```
-Выполните SQL запросы на создание таблицы  (запросы содержатся в директории /SQL)
+Execute SQL queries (it hosted in directory /SQL)
 
 Usage:
 ---
@@ -28,7 +28,7 @@ USER={ database username }
 DBPORT={ database port }
 PASSWORD={ database password }
 ```
-Необязательные:
+Optional:
 ```
 PLOTLY_LOGIN={ plotly login }
 PLOTLY_TOKEN={ plotly token }

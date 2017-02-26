@@ -4,9 +4,9 @@
   "description": "ProstoDiary Telegram Bot",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/ava tests/test.js",
-    "start": "node index.js",
-    "lint": "node_modules/.bin/eslint src/**/*.js"
+    "lint": "./node_modules/.bin/eslint src/**/*.js",
+    "test": "./node_modules/.bin/ava tests/test.js",
+    "start": "node index.js"
   },
   "engines": {
     "node": "6.9.1",
