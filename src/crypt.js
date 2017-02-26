@@ -1,6 +1,9 @@
 const crypto = require('crypto');
 const algorithm = 'aes-256-ctr';
-
+/**
+ *
+ * @return {string}
+ */
 function getPassword() {
   return process.env.SALT_PASSWORD;
 }

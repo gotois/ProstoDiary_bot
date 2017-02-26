@@ -1,3 +1,4 @@
+//noinspection Eslint
 import test from 'ava';
 
 test('bot config', t => {

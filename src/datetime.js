@@ -16,7 +16,7 @@ function dateIsIncorrect(date) {
 }
 /**
  *
- * @param date {Date}
+ * @param date {String|Date}
  * @return {boolean}
  */
 function isNormalDate(date) {
