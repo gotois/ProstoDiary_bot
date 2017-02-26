@@ -28,7 +28,16 @@ function formatRows(entries) {
 
   return out.trim();
 }
+/***
+ * Message updated
+ * @param input {String}
+ * @returns {string}
+ */
+function prevInput(input) {
+  return '✓' + input.replace(/\n/g, ' ').substring(0, 6) + '…';
+}
 
 module.exports = {
-  formatRows
+  formatRows,
+  prevInput
 };

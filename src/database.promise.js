@@ -8,7 +8,6 @@ const client = require('./database.client');
 module.exports = (query, params = []) => {
   return new Promise((resolve, reject) => {
     client.query(query, params, (err, result) => {
-
       if (err) {
         return reject(err);
       }
@@ -21,7 +20,6 @@ module.exports = (query, params = []) => {
           break;
         }
       }
-
       resolve(result);
     });
   });

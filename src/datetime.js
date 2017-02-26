@@ -1,11 +1,24 @@
+/**
+ *
+ * @param date {Date}
+ * @return {boolean}
+ */
 function checkDateLaterThanNow(date) {
   return new Date() <= date;
 }
-
+/**
+ *
+ * @param date {Date}
+ * @return {boolean}
+ */
 function dateIsIncorrect(date) {
   return isNaN(Date.parse(date));
 }
-
+/**
+ *
+ * @param date {Date}
+ * @return {boolean}
+ */
 function isNormalDate(date) {
   if (checkDateLaterThanNow(new Date(date))) {
     return false;

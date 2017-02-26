@@ -8,6 +8,6 @@ client.connect(error => {
   const bot = require('./bot.config');
   bot.getMe().then(() => {
     console.log('Bot started');
-    require('./bot.events');
+    require('./events/bot.events.js');
   });
 });
