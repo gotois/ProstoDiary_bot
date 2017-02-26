@@ -11,7 +11,7 @@ Execute SQL queries (it hosted in directory /SQL)
 
 Usage:
 ---
-Постоянная проверка тест-юнитов:
+Checking Unit tests:
 ```bash
 npm test -- --watch
 ```
@@ -40,23 +40,14 @@ Name: ProstoDiary
 
 Username: @ProstoDiary_bot
 
-Commands:
+Telegram commands:
 ---
 ```
-Скачать txt описание на устройство:
-/download
-
-Очистить базу данных пользователя с подтверждением:
-/dbclear
-
-Получить все что я делал за эту дату:
-/get 26.11.2016
-
-Установить что я делал в эту дату:
-/set 26.11.2016 something text
-
-Получить график:
-/graph something text
+download - Скачать txt описание на устройство
+dbclear - Очистить базу данных пользователя
+get - Получить все что я делал за эту дату
+set - Что я делал в эту дату
+graph - Построить график
 ```
 
 License:

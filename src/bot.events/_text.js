@@ -30,9 +30,9 @@ function onText(msg) {
   const currentUser = sessions.getSession(fromId);
   dbEntries.post(currentUser.id, crypt.encode(input), msg.message_id, new Date(msg.date * 1000)).then(() => {
     const text = format.prevInput(input);
-    bot.sendMessage(chatId, text);
+    return bot.sendMessage(chatId, text);
   }).catch(error => {
-    bot.sendMessage(chatId, error);
+    return bot.sendMessage(chatId, error);
   });
 }
 

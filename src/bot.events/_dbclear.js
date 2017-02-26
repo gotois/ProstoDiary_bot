@@ -18,16 +18,17 @@ function onDBCLEAR(msg) {
   bot.sendMessage(chatId, 'Очистить ваши записи? (Y/N)', options).then(sended => {
     const senderId = sended.chat.id;
     const messageId = sended.message_id;
-    bot.onReplyToMessage(senderId, messageId, message => {
+
+    return bot.onReplyToMessage(senderId, messageId, message => {
       if (message.text.toUpperCase() === 'Y') {
-        dbEntries.clear(currentUser.id).then(() => {
-          bot.sendMessage(senderId, 'Данные очищены');
+        return dbEntries.clear(currentUser.id).then(() => {
+          return bot.sendMessage(senderId, 'Данные очищены');
         }).catch(error => {
           console.error(error);
-          bot.sendMessage(senderId, 'Ошибка в операции');
+          return bot.sendMessage(senderId, 'Ошибка в операции');
         });
       } else {
-        bot.sendMessage(senderId, 'Операция не выполнена');
+        return bot.sendMessage(senderId, 'Операция не выполнена');
       }
     });
   });

@@ -3,13 +3,16 @@
   userId: 777,
   password: 'test'
 }];*/
-
+/**
+ * @todo return sessions.find(session => session.userId === userId);
+ * @param userId {String}
+ * @return {{id: String, password: string}}
+ */
 function getSession(userId) {
   return {
     id: userId,
     password: '123456'
   };
-  // TODO: return sessions.find(session => session.userId === userId);
 }
 
 module.exports = {

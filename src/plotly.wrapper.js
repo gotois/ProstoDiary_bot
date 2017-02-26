@@ -11,11 +11,9 @@ const stream = require('stream');
 function getImage(figure, options = {}) {
   return new Promise((resolve, reject) => {
     plotly.getImage(figure, options, (error, imageStream) => {
-
       if (error) {
         return reject(error);
       }
-
       resolve(imageStream);
     });
   });
@@ -27,27 +25,26 @@ function getImage(figure, options = {}) {
  * @returns {Promise}
  */
 function getImageBuffer(figure, options = {}) {
-  return getImage(figure, options)
-    .then(imageStream => {
-      return new Promise((resolve, reject) => {
-        const Writable = stream.Writable;
-        const ws = Writable();
-        const buffers = [];
-        ws._write = (chunk, enc, next) => {
-          buffers.push(chunk);
-          next();
-        };
-        imageStream.pipe(ws);
-        imageStream.on('end', () => {
-          const photoBuffer = Buffer.concat(buffers);
-          resolve(photoBuffer);
-        });
-        imageStream.on('error', (error) => {
-          console.error(error);
-          reject(error);
-        });
+  return getImage(figure, options).then(imageStream => {
+    return new Promise((resolve, reject) => {
+      const Writable = stream.Writable;
+      const ws = Writable();
+      const buffers = [];
+      ws._write = (chunk, enc, next) => {
+        buffers.push(chunk);
+        next();
+      };
+      imageStream.pipe(ws);
+      imageStream.on('end', () => {
+        const photoBuffer = Buffer.concat(buffers);
+        resolve(photoBuffer);
+      });
+      imageStream.on('error', (error) => {
+        console.error(error);
+        reject(error);
       });
     });
+  });
 }
 /**
  *
@@ -57,11 +54,9 @@ function getImageBuffer(figure, options = {}) {
 function deletePlot(plotId) {
   return new Promise((resolve, reject) => {
     plotly.deletePlot(plotId, (error, plot) => {
-
       if (error) {
         return reject(error);
       }
-
       resolve(plot);
     });
   });

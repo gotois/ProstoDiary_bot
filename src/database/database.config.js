@@ -1,3 +1,7 @@
+/**
+ *
+ * @type {{host: *, database: *, user: *, port: *, password: *}}
+ */
 module.exports = {
   host: process.env.HOST,
   database: process.env.DATABASE,

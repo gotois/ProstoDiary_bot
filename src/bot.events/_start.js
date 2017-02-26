@@ -13,14 +13,14 @@ function onStart(msg) {
   dbUsers.check(currentUser.id).then(value => {
     if (value.rowCount === 0) {
       return dbUsers.post(currentUser.id).then(() => {
-        bot.sendMessage(chatId, 'Вы вошли в систему');
+        return bot.sendMessage(chatId, 'Вы вошли в систему');
       });
     } else {
-      bot.sendMessage(chatId, 'Повторный вход не требуется');
+      return bot.sendMessage(chatId, 'Повторный вход не требуется');
     }
   }).catch(error => {
     console.error(error);
-    bot.sendMessage(chatId, 'Операция не выполнена');
+    return bot.sendMessage(chatId, 'Операция не выполнена');
   });
 }
 

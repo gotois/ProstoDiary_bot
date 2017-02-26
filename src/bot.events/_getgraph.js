@@ -64,12 +64,11 @@ function getGraph(msg) {
     console.error(error);
     switch (typeof error) {
       case 'string': {
-        bot.sendMessage(chatId, error);
-        break;
+        return bot.sendMessage(chatId, error);
       }
       case 'object': {
         if (error.statusMessage !== 'NOT FOUND') {
-          bot.sendMessage(chatId, 'Произошла ошибка при удалении графика с сервера');
+          return bot.sendMessage(chatId, 'Произошла ошибка при удалении графика с сервера');
         }
         break;
       }

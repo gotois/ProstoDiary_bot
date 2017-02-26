@@ -26,6 +26,7 @@ function isNormalDate(date) {
   if (dateIsIncorrect(date)) {
     return false;
   }
+
   return true;
 }
 /**

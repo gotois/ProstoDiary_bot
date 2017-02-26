@@ -19,18 +19,18 @@ function onEditedMessageText(msg) {
   const currentUser = sessions.getSession(fromId);
   if (input === 'del') {
     dbEntries.delete(currentUser.id, msg.message_id).then(() => {
-      bot.sendMessage(chatId, 'Запись удалена');
+      return bot.sendMessage(chatId, 'Запись удалена');
     }).catch(error => {
       console.error(error);
-      bot.sendMessage(chatId, error.toLocaleString());
+      return bot.sendMessage(chatId, error.toLocaleString());
     });
     return;
   }
   dbEntries.put(currentUser.id, crypt.encode(input), new Date(), msg.message_id).then(() => {
-    bot.sendMessage(chatId, format.prevInput(input) + 'Запись обновлена');
+    return bot.sendMessage(chatId, format.prevInput(input) + 'Запись обновлена');
   }).catch(error => {
     console.error(error);
-    bot.sendMessage(chatId, error.toLocaleString());
+    return bot.sendMessage(chatId, error.toLocaleString());
   });
 }
 

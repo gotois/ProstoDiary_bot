@@ -9,5 +9,7 @@ client.connect(error => {
   bot.getMe().then(() => {
     console.log('Bot started');
     require('./bot.events/bot.events.js');
+  }).catch(error => {
+    console.error(error);
   });
 });

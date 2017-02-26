@@ -23,10 +23,10 @@ function setDataFromDate(msg, match) {
   const currentUser = sessions.getSession(msg.from.id);
   dbEntries.post(currentUser.id, crypt.encode(input), msg.message_id, new Date(), match[1]).then(() => {
     const text = format.prevInput(input);
-    bot.sendMessage(chatId, text);
+    return bot.sendMessage(chatId, text);
   }).catch(error => {
     console.error(error);
-    bot.sendMessage(chatId, 'Произошла ошибка');
+    return bot.sendMessage(chatId, 'Произошла ошибка');
   });
 }
 

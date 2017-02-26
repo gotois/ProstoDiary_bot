@@ -22,13 +22,13 @@ function getDataFromDate(msg, match) {
   dbEntries.get(currentUser.id, match[1]).then(data => {
     const rows = data.rows.map(row => crypt.decode(row.entry));
     if (rows.length) {
-      bot.sendMessage(chatId, JSON.stringify(rows, null, 2));
+      return bot.sendMessage(chatId, JSON.stringify(rows, null, 2));
     } else {
-      bot.sendMessage(chatId, 'Записей нет');
+      return bot.sendMessage(chatId, 'Записей нет');
     }
   }).catch(error => {
     console.error(error);
-    bot.sendMessage(chatId, 'Произошла ошибка');
+    return bot.sendMessage(chatId, 'Произошла ошибка');
   });
 }
 

@@ -19,13 +19,13 @@ function onDownload(msg) {
       const formatData = format.formatRows(data.rows);
       archive.add(fileName, new Buffer(formatData, 'utf8'));
       const buffer = archive.toBuffer();
-      bot.sendDocument(chatId, buffer);
+      return bot.sendDocument(chatId, buffer);
     } else {
-      bot.sendMessage(chatId, 'Нет данных');
+      return bot.sendMessage(chatId, 'Нет данных');
     }
   }).catch(error => {
     console.error(error);
-    bot.sendMessage(chatId, 'Операция не выполнена');
+    return bot.sendMessage(chatId, 'Операция не выполнена');
   });
 }
 
