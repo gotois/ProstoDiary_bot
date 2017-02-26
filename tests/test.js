@@ -6,7 +6,7 @@ test('bot config', t => {
 });
 
 test('database config', t => {
-  const dbConfig = require('../src/database.config');
+  const dbConfig = require('../src/database/database.config.js');
   t.is(typeof dbConfig, 'object');
 });
 

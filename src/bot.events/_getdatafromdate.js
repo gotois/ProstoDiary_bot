@@ -1,7 +1,7 @@
 const sessions = require('./../sessions');
 const bot = require('./../bot.config.js');
 const datetime = require('./../datetime');
-const dbEntries = require('./../database.entries.js');
+const dbEntries = require('./../database/database.entries.js');
 const crypt = require('./../crypt');
 /***
  * Получить все что я делал в эту дату

@@ -1,4 +1,4 @@
-const client = require('./database.client');
+const client = require('./database/database.client.js');
 
 client.connect(error => {
   if (error) {
@@ -8,6 +8,6 @@ client.connect(error => {
   const bot = require('./bot.config');
   bot.getMe().then(() => {
     console.log('Bot started');
-    require('./events/bot.events.js');
+    require('./bot.events/bot.events.js');
   });
 });

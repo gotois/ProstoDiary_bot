@@ -1,4 +1,4 @@
-const client = require('./database.client');
+const client = require('./database.client.js');
 /**
  *
  * @param query {String}

@@ -3,7 +3,7 @@ const bot = require('./../bot.config.js');
 const crypt = require('./../crypt');
 const format = require('./../format');
 const commands = require('./../bot.commands.js');
-const dbEntries = require('./../database.entries.js');
+const dbEntries = require('./../database/database.entries.js');
 /***
  * Все что пишешь - записывается в сегодняшний день
  * @param msg {Object}

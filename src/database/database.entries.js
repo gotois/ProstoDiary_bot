@@ -1,4 +1,4 @@
-const $$ = require('./database.promise');
+const $$ = require('./database.promise.js');
 /***
  *
  * @param user_id {Number}

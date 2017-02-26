@@ -1,6 +1,6 @@
 const zip = require('node-native-zip');
 const format = require('./../format');
-const dbEntries = require('./../database.entries.js');
+const dbEntries = require('./../database/database.entries.js');
 const sessions = require('./../sessions');
 const bot = require('./../bot.config.js');
 /***
