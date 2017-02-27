@@ -15,6 +15,7 @@ function getGraph(msg) {
   const fromId = msg.from.id;
   const currentUser = sessions.getSession(fromId);
   const input = msg.text.replace(commands.GRAPH, '').trim();
+  const regExp = isRegexString(input) ? convertStringToRegexp(input) : createRegExp(input);
   // временная шкала х {String} и частота y {Number}
   const trace = {
     x: [],
@@ -33,7 +34,7 @@ function getGraph(msg) {
         entry
       };
     }).filter(text => {
-      return text.entry.toUpperCase().includes(input.toUpperCase());
+      return regExp.test(text.entry);
     });
     if (!entryRows.length) {
       throw 'Нет данных для построения графика';
@@ -66,7 +67,7 @@ function getGraph(msg) {
     // TODO: если потребуется удаление графиков использовать `return plot.deletePlot('0');`
   }).then(photoBuffer => {
     return bot.sendPhoto(chatId, photoBuffer, {
-      caption: `График для /${input}/`
+      caption: `График для "${regExp.toString()}"`
     });
   }).catch((error) => {
     console.error(error);
@@ -82,6 +83,33 @@ function getGraph(msg) {
       }
     }
   });
+}
+/**
+ *
+ * @param word {String}
+ * @return {RegExp}
+ */
+function createRegExp(word) {
+  return new RegExp(`( ${word} )|( ${word}$)|(^${word} )|(^${word}$)`, 'i');
+}
+/**
+ *
+ * @param string {String}
+ * @return {boolean}
+ */
+function isRegexString(string) {
+  if (string[0] === '/' && string[string.length - 1] === '/') {
+    return true;
+  }
+  return false;
+}
+/**
+ *
+ * @param string {String}
+ * @return {RegExp}
+ */
+function convertStringToRegexp(string) {
+  return new RegExp(string.slice(1, string.length - 1));
 }
 
 module.exports = getGraph;
