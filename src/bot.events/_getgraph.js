@@ -69,7 +69,7 @@ function getGraph(msg) {
     return bot.sendPhoto(chatId, photoBuffer, {
       caption: `График для "${regExp.toString()}"`
     });
-  }).catch((error) => {
+  }).catch(error => {
     console.error(error);
     switch (typeof error) {
       case 'string': {
@@ -80,6 +80,9 @@ function getGraph(msg) {
           return bot.sendMessage(chatId, 'Произошла ошибка при удалении графика с сервера');
         }
         break;
+      }
+      default: {
+        return bot.sendMessage(chatId, 'Произошла неизвестная ошибка');
       }
     }
   });
