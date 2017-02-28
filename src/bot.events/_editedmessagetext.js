@@ -1,5 +1,5 @@
 const sessions = require('./../sessions');
-const bot = require('./../bot.config.js');
+const bot = require('./../config/bot.config.js');
 const dbEntries = require('./../database/database.entries.js');
 const crypt = require('./../crypt');
 const format = require('./../format');

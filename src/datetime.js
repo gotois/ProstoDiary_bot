@@ -8,7 +8,7 @@ function checkDateLaterThanNow(date) {
 }
 /**
  *
- * @param date {Date}
+ * @param date {Date|String}
  * @return {boolean}
  */
 function dateIsIncorrect(date) {
@@ -23,6 +23,7 @@ function isNormalDate(date) {
   if (checkDateLaterThanNow(new Date(date))) {
     return false;
   }
+  //noinspection RedundantIfStatementJS
   if (dateIsIncorrect(date)) {
     return false;
   }

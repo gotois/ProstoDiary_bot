@@ -1,5 +1,5 @@
 const pg = require('pg');
-const config = require('./database.config.js');
+const config = require('./../config/database.config.js');
 const mode = process.env.NODE_ENV;
 let DATABASE_URL;
 // отличается одним символом @

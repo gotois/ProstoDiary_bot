@@ -2,12 +2,12 @@
 import test from 'ava';
 
 test('bot config', t => {
-  const botConfig = require('../src/bot.config');
+  const botConfig = require('../src/config/bot.config.js');
   t.true(botConfig instanceof Object);
 });
 
 test('database config', t => {
-  const dbConfig = require('../src/database/database.config.js');
+  const dbConfig = require('../src/config/database.config.js');
   t.is(typeof dbConfig, 'object');
 });
 

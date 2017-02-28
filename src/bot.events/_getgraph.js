@@ -1,6 +1,6 @@
 const dbEntries = require('./../database/database.entries.js');
 const sessions = require('./../sessions');
-const bot = require('./../bot.config.js');
+const bot = require('./../config/bot.config.js');
 const plot = require('./../plotly.wrapper.js');
 const commands = require('./../bot.commands.js');
 const crypt = require('./../crypt');

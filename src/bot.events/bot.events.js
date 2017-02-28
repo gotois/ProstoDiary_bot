@@ -1,4 +1,4 @@
-const bot = require('./../bot.config.js');
+const bot = require('./../config/bot.config.js');
 const commands = require('./../bot.commands.js');
 /***
  * Events

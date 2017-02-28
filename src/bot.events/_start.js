@@ -1,5 +1,5 @@
 const sessions = require('./../sessions');
-const bot = require('./../bot.config.js');
+const bot = require('./../config/bot.config.js');
 const dbUsers = require('./../database/database.users.js');
 /***
  * При первом включении создаем в БД специальную колонку для работы
