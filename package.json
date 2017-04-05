@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "./node_modules/.bin/eslint src/**/*.js",
     "test": "./node_modules/.bin/ava tests/test.js",
-    "start": "./index.js"
+    "start": "./bin/index"
   },
   "engines": {
     "node": "6.9.1",
@@ -35,7 +35,7 @@
     "plotly": "~1.0.6"
   },
   "devDependencies": {
-    "ava": "^0.18.1",
-    "eslint": "~3.16.1"
+    "ava": "^0.18.2",
+    "eslint": "^3.19.0"
   }
 }
