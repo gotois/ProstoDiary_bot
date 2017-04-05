@@ -90,10 +90,38 @@ function getGraph(msg) {
 /**
  *
  * @param word {String}
+ * @returns {String}
+ */
+function formatWord(word) {
+  switch (word.toLowerCase()) {
+    case '\d':
+    case '\s':
+    case '\b':
+    case '\w':
+    case '[':
+    case '/':
+    case '.':
+    case '^':
+    case '$':
+    case '|':
+    case '?':
+    case '*':
+    case '+':
+    case '(':
+    case ')':
+      return '\\' + word;
+  }
+  return word;
+}
+/**
+ *
+ * @param word {String}
  * @return {RegExp}
  */
 function createRegExp(word) {
-  return new RegExp(`( ${word} )|( ${word}$)|(^${word} )|(^${word}$)`, 'i');
+  const fWord = formatWord(word);
+
+  return new RegExp(`( ${fWord} )|( ${fWord}$)|(^${fWord} )|(^${fWord}$)`, 'i');
 }
 /**
  *

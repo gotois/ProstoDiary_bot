@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "./node_modules/.bin/eslint src/**/*.js",
     "test": "./node_modules/.bin/ava tests/test.js",
-    "start": "node index.js"
+    "start": "./index.js"
   },
   "engines": {
     "node": "6.9.1",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tewst/ProstoDiary_bot.git"
+    "url": "https://github.com/gotois/ProstoDiary_bot.git"
   },
   "keywords": [
     "prostodiary",
@@ -24,13 +24,14 @@
   "author": "goto Interactive",
   "license": "GPLv3",
   "bugs": {
-    "url": "https://github.com/tewst/ProstoDiary_bot/issues"
+    "url": "https://github.com/gotois/ProstoDiary_bot/issues"
   },
   "homepage": "https://gotointeractive.com/#Prosto Diary",
   "dependencies": {
-    "node-native-zip": "^1.1.0",
+    "jawbone-up": "~0.1.2",
+    "node-native-zip": "~1.1.0",
     "node-telegram-bot-api": "^0.27.0",
-    "pg": "^6.1.0",
+    "pg": "~6.1.0",
     "plotly": "~1.0.6"
   },
   "devDependencies": {

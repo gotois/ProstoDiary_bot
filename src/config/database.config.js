@@ -1,6 +1,8 @@
+//TODO: Добавить сюда значение из database.client.js
+
 /**
  *
- * @type {{host: *, database: *, user: *, port: *, password: *}}
+ * @type {{host: String, database: String, user: String, port: String, password: String}}
  */
 module.exports = {
   host: process.env.HOST,

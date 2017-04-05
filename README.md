@@ -1,22 +1,22 @@
-[![Build Status](https://travis-ci.org/tewst/ProstoDiary_bot.svg?branch=master)](https://travis-ci.org/tewst/ProstoDiary_bot) 
-[![dependencies Status](https://david-dm.org/tewst/ProstoDiary_bot/status.svg)](https://david-dm.org/tewst/ProstoDiary_bot) 
-[![devDependencies Status](https://david-dm.org/tewst/ProstoDiary_bot/dev-status.svg)](https://david-dm.org/tewst/ProstoDiary_bot?type=dev) 
+[![Build Status](https://travis-ci.org/gotois/ProstoDiary_bot.svg?branch=master)](https://travis-ci.org/gotois/ProstoDiary_bot)
+[![dependencies Status](https://david-dm.org/gotois/ProstoDiary_bot/status.svg)](https://david-dm.org/gotois/ProstoDiary_bot)
+[![devDependencies Status](https://david-dm.org/gotois/ProstoDiary_bot/dev-status.svg)](https://david-dm.org/gotois/ProstoDiary_bot?type=dev)
 
-Installing:
+Install
 ---
 ```bash
 npm i
 ```
 Execute SQL queries (it hosted in directory /SQL)
 
-Usage:
+Usage
 ---
 Checking Unit tests:
 ```bash
 npm test -- --watch
 ```
 
-Server Environments: 
+Server Environments
 ---
 ```
 TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
@@ -28,19 +28,19 @@ USER={ database username }
 DBPORT={ database port }
 PASSWORD={ database password }
 ```
-Optional:
+Optional variables
 ```
 PLOTLY_LOGIN={ plotly login }
 PLOTLY_TOKEN={ plotly token }
 ```
 
-Bot Environments:
+Global Bot Environments
 ---
 Name: ProstoDiary
 
 Username: @ProstoDiary_bot
 
-Telegram commands:
+Telegram commands
 ---
 ```
 download - Скачать txt описание на устройство
@@ -52,6 +52,6 @@ graph - Построить график
 
 License:
 ---
-goto Interactive Software.
+goto Interactive Software
 
 Licensed under the GPLv3 License.
