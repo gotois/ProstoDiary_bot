@@ -120,7 +120,6 @@ function formatWord(word) {
  */
 function createRegExp(word) {
   const fWord = formatWord(word);
-
   return new RegExp(`( ${fWord} )|( ${fWord}$)|(^${fWord} )|(^${fWord}$)`, 'i');
 }
 /**

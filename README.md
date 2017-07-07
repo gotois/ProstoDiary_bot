@@ -1,3 +1,4 @@
+# ProstoDiary
 [![Build Status](https://travis-ci.org/gotois/ProstoDiary_bot.svg?branch=master)](https://travis-ci.org/gotois/ProstoDiary_bot)
 [![dependencies Status](https://david-dm.org/gotois/ProstoDiary_bot/status.svg)](https://david-dm.org/gotois/ProstoDiary_bot)
 [![devDependencies Status](https://david-dm.org/gotois/ProstoDiary_bot/dev-status.svg)](https://david-dm.org/gotois/ProstoDiary_bot?type=dev)
@@ -13,7 +14,7 @@ Usage
 ---
 Checking Unit tests:
 ```bash
-npm test -- --watch
+npm run test:watch
 ```
 
 Server Environments

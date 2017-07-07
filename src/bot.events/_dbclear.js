@@ -4,11 +4,13 @@ const bot = require('./../config/bot.config.js');
 /***
  * Очистить базу данных с подтверждением
  * @param msg {Object}
+ * @param msg.chat {Object}
+ * @param msg.from {Object}
  * @return {void}
  */
-function onDBCLEAR(msg) {
-  const chatId = msg.chat.id;
-  const fromId = msg.from.id;
+function onDBCLEAR({chat, from}) {
+  const chatId = chat.id;
+  const fromId = from.id;
   const options = {
     reply_markup: {
       'force_reply': true

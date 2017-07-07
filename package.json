@@ -2,15 +2,16 @@
   "name": "ProstoDiary_bot",
   "version": "1.0.0",
   "description": "ProstoDiary Telegram Bot",
-  "main": "index.js",
+  "main": "./bin/index",
   "scripts": {
     "lint": "./node_modules/.bin/eslint src/**/*.js",
     "test": "./node_modules/.bin/ava tests/test.js",
+    "test:watch": "npm test -- --watch",
     "start": "./bin/index"
   },
   "engines": {
-    "node": "6.9.1",
-    "npm": "3.10.8"
+    "node": "6.10.2",
+    "npm": "3.10.9"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,6 @@
   },
   "homepage": "https://gotointeractive.com/#Prosto Diary",
   "dependencies": {
-    "jawbone-up": "~0.1.2",
     "node-native-zip": "~1.1.0",
     "node-telegram-bot-api": "^0.27.0",
     "pg": "~6.1.0",

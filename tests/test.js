@@ -45,3 +45,11 @@ test('session', t => {
   t.is(typeof session.getSession(123), 'object');
   t.is(typeof session.getSession(123).id, 'number');
 });
+
+test('money', t => {
+  const spentMoney = require('../src/services/spent_money');
+  t.is(spentMoney(['Поел 300']), 300);
+  t.is(spentMoney(['Поел 100р', 'Магаз 100₽', 'Магаз 100р.']), 300);
+  t.is(spentMoney(['Поел 300', 'Магазин 100']), 400);
+  t.is(spentMoney(['ЗП 300']), 0);
+});

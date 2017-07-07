@@ -11,6 +11,7 @@ const commands = require('./../bot.commands.js');
   bot.onText(commands.GETDATE, require('./_getdatafromdate.js'));
   bot.onText(commands.SETDATE, require('./_setdatafromdate.js'));
   bot.onText(commands.GRAPH, require('./_getgraph.js'));
+  bot.onText(commands.COUNT, require('./_count.js'));
   bot.on('edited_message_text', require('./_editedmessagetext.js'));
   bot.on('text', require('./_text.js'));
 }
