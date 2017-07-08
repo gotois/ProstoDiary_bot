@@ -7,7 +7,8 @@
     "lint": "./node_modules/.bin/eslint src/**/*.js",
     "test": "./node_modules/.bin/ava tests/test.js",
     "test:watch": "npm test -- --watch",
-    "start": "./bin/index"
+    "start": "./bin/index",
+    "codecov": "./node_modules/.bin/codecov"
   },
   "engines": {
     "node": "6.10.2",
@@ -23,19 +24,20 @@
     "telegram bot"
   ],
   "author": "goto Interactive",
-  "license": "GPLv3",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/gotois/ProstoDiary_bot/issues"
   },
   "homepage": "https://gotointeractive.com/#Prosto Diary",
   "dependencies": {
     "node-native-zip": "~1.1.0",
-    "node-telegram-bot-api": "^0.27.0",
-    "pg": "~6.1.0",
+    "node-telegram-bot-api": "^0.27.1",
+    "pg": "~6.4.0",
     "plotly": "~1.0.6"
   },
   "devDependencies": {
-    "ava": "^0.18.2",
-    "eslint": "^3.19.0"
+    "ava": "~0.20.0",
+    "codecov": "^2.2.0",
+    "eslint": "~4.1.1"
   }
 }

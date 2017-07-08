@@ -47,7 +47,7 @@ function onCount({chat, from}, match) {
         break;
       }
       default: {
-        bot.sendMessage(chatId, 'Проверьте правильность запроса. \n Например \count ЗП');
+        bot.sendMessage(chatId, 'Проверьте правильность запроса. \nНапример: "count ЗП"');
         break;
       }
     }

@@ -5,35 +5,45 @@ const plot = require('../services/plotly.wrapper');
 const commands = require('../commands/bot.commands');
 const crypt = require('../services/crypt');
 const datetime = require('../services/datetime');
+const {createRegexInput} = require('./graph.controller');
+/**
+ *
+ * @type {string}
+ */
+const BAR_TYPE = 'bar';
+/**
+ *
+ * @type {string}
+ */
+const NOT_FOUND = 'NOT FOUND';
 /***
  * Построить график
  * @param msg {Object}
+ * @param msg.chat {Object}
+ * @param msg.from {Object}
+ * @param msg.text {String}
  * @return {void}
  */
-function getGraph(msg) {
-  const chatId = msg.chat.id;
-  const fromId = msg.from.id;
+function getGraph({chat, from, text}) {
+  const chatId = chat.id;
+  const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
-  const input = (msg.text.replace(commands.GRAPH, '')).trim();
-  const regExp = isRegexString(input) ? convertStringToRegexp(input) : createRegExp(input);
+  const input = text.replace(commands.GRAPH, '').trim();
+  const regExp = createRegexInput(input);
   // временная шкала х {String} и частота y {Number}
   const trace = {
     x: [],
     y: [],
-    type: 'bar'
+    type: BAR_TYPE
   };
   dbEntries.getAll(currentUser.id).then(data => {
     if (data.rows.length <= 0) {
       throw 'Null rows exception';
     }
-    const entryRows = data.rows.map(row => {
-      const entry = crypt.decode(row.entry);
-      const date = row.date_added;
-      return {
-        date,
-        entry
-      };
-    }).filter(text => regExp.test(text.entry));
+    const entryRows = data.rows.map(({date_added, entry}) => ({
+      date: date_added,
+      entry: crypt.decode(entry)
+    })).filter(text => regExp.test(text.entry));
     if (!entryRows.length) {
       throw 'Нет данных для построения графика';
     }
@@ -41,9 +51,9 @@ function getGraph(msg) {
     const latestDate = data.rows[data.rows.length - 1].date_added;
     const rangeTimes = datetime.fillRangeTimes(firstDate, latestDate);
     rangeTimes.forEach(_date => {
-      const findedCount = entryRows.filter(_ => {
-        return _.date.toLocaleDateString() === _date.toLocaleDateString();
-      });
+      const findedCount = entryRows.filter(({date}) => (
+        date.toLocaleDateString() === _date.toLocaleDateString())
+      );
       const x = _date.toLocaleDateString();
       const y = findedCount.length;
       const xIndex = trace.x.findIndex(_x => _x === x);
@@ -74,7 +84,7 @@ function getGraph(msg) {
         return bot.sendMessage(chatId, error);
       }
       case 'object': {
-        if (error.statusMessage !== 'NOT FOUND') {
+        if (error.statusMessage !== NOT_FOUND) {
           return bot.sendMessage(chatId, 'Произошла ошибка при удалении графика с сервера');
         }
         break;
@@ -84,62 +94,6 @@ function getGraph(msg) {
       }
     }
   });
-}
-/**
- *
- * @param word {String}
- * @returns {String}
- */
-function formatWord(word) {
-  switch (word.toLowerCase()) {
-    case '\d':
-    case '\s':
-    case '\b':
-    case '\w':
-    case '[':
-    case '/':
-    case '.':
-    case '^':
-    case '$':
-    case '|':
-    case '?':
-    case '*':
-    case '+':
-    case '(':
-    case ')':
-      return `\\${word}`;
-    default: {
-      return word;
-    }
-  }
-}
-/**
- *
- * @param word {String}
- * @return {RegExp}
- */
-function createRegExp(word) {
-  const fWord = formatWord(word);
-  return new RegExp(`( ${fWord} )|( ${fWord}$)|(^${fWord} )|(^${fWord}$)`, 'i');
-}
-/**
- *
- * @param string {String}
- * @return {boolean}
- */
-function isRegexString(string) {
-  if (string[0] === '/' && string[string.length - 1] === '/') {
-    return true;
-  }
-  return false;
-}
-/**
- *
- * @param string {String}
- * @return {RegExp}
- */
-function convertStringToRegexp(string) {
-  return new RegExp(string.slice(1, string.length - 1));
 }
 
 module.exports = getGraph;

@@ -73,3 +73,26 @@ test('money', t => {
   t.is(spentMoney(['Поел 300', 'Магазин 100']), 400);
   t.is(spentMoney(['ЗП 300']), 0);
 });
+
+test('graph controller', t => {
+  const {formatWord, createRegExp, isRegexString, createRegexInput, convertStringToRegexp} = require('../src/events/graph.controller');
+  // formatWord
+  {
+    t.true(typeof formatWord('lksdjf') === 'string');
+    t.is(formatWord('/'), '\\/');
+    t.is(formatWord('|'), '\\|');
+  }
+  // createRegExp
+  {
+    t.true(createRegExp('something') instanceof RegExp);
+    t.true(createRegexInput('читал').test('Работал читал \nБухал'));
+    t.true(createRegexInput('Работал').test('Работал читал \nБухал'));
+    t.true(createRegexInput('бухал').test('Работал читал \nБухал'));
+  }
+  // isRegexString
+  {
+    t.true(isRegexString('/something/'));
+    t.false(isRegexString('/something'));
+    t.false(isRegexString('something/'));
+  }
+});
