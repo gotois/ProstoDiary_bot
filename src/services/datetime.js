@@ -4,7 +4,7 @@
  * @return {boolean}
  */
 function checkDateLaterThanNow(date) {
-  return new Date() <= date;
+  return ((new Date()).getTime() < (date).getTime());
 }
 /**
  *
@@ -12,7 +12,7 @@ function checkDateLaterThanNow(date) {
  * @return {boolean}
  */
 function dateIsIncorrect(date) {
-  return isNaN(Date.parse(date));
+  return (isNaN((Date).parse(date)));
 }
 /**
  *
@@ -31,18 +31,22 @@ function isNormalDate(date) {
   return true;
 }
 /**
- *
- * @param date {String} 01.02.2016
+ * @example convertToNormalDate('01.02.2016')
+ * @param date {String|Date}
  * @returns {Date}
  */
 function convertToNormalDate(date) {
-  date = date.replace(/\./g, '-');
-  const newDate = new Date();
-  newDate.setDate(+date.match(/(\d+)-/)[1]);
-  newDate.setMonth(+date.match(/-(\d+)/)[1] - 1);
-  newDate.setYear(+date.match(/-\d+-(\d+)/)[1]);
+  if (date instanceof Date) {
+    return date;
+  } else {
+    date = date.replace(/\./g, '-');
+    const newDate = new Date();
+    newDate.setDate(+(date.match(/(\d+)-/)[1]));
+    newDate.setMonth(+(date.match(/-(\d+)/)[1]) - 1);
+    newDate.setYear(+(date.match(/-\d+-(\d+)/)[1]));
 
-  return newDate;
+    return newDate;
+  }
 }
 /**
  *
@@ -50,7 +54,30 @@ function convertToNormalDate(date) {
  * @returns {string}
  */
 function convertIn2DigitFormat(text) {
-  return ('0' + text).slice(-2);
+  return (`0${text}`).slice(-2);
+}
+
+/**
+ * @param {Date|String} date
+ * @return {boolean}
+ */
+function isDate(date) {
+  return (date instanceof Date || typeof date === 'string');
+}
+/**
+ *
+ * @param fromDate
+ * @param untilDate
+ * @return {number}
+ */
+function getDifferenceDays(fromDate, untilDate) {
+  const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+  const differenceDays = Math.floor((untilDate - fromDate) / (_MS_PER_DAY));
+  if (differenceDays < 0) {
+    throw new Error('until less from');
+  }
+
+  return differenceDays;
 }
 /**
  * Например если есть "2016-05-01" и "2016-05-03" то автоматически создаются
@@ -64,7 +91,7 @@ function convertIn2DigitFormat(text) {
  * @example fillRangeTimes('2015-01-01', "2016-03-02");
  */
 function fillRangeTimes(from, until) {
-  if (!isDate()) {
+  if (!(isDate(from) && isDate(until))) {
     throw new Error('unknown param type');
   }
   const result = [];
@@ -80,29 +107,6 @@ function fillRangeTimes(from, until) {
     result.push(date);
   }
   result.push(untilDate);
-  /**
-   *
-   * @return {boolean}
-   */
-  function isDate() {
-    return (from instanceof Date || typeof from === 'string') &&
-      (until instanceof Date || typeof until === 'string');
-  }
-  /**
-   *
-   * @param fromDate
-   * @param untilDate
-   * @return {number}
-   */
-  function getDifferenceDays(fromDate, untilDate) {
-    const _MS_PER_DAY = 1000 * 60 * 60 * 24;
-    const differenceDays = Math.floor((untilDate - fromDate) / (_MS_PER_DAY));
-    if (differenceDays < 0) {
-      throw new Error('until less from');
-    }
-
-    return differenceDays;
-  }
 
   return result;
 }
@@ -111,5 +115,6 @@ module.exports = {
   isNormalDate,
   fillRangeTimes,
   convertToNormalDate,
-  convertIn2DigitFormat
+  convertIn2DigitFormat,
+  checkDateLaterThanNow,
 };

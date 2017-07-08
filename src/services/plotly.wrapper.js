@@ -39,7 +39,7 @@ function getImageBuffer(figure, options = {}) {
         const photoBuffer = Buffer.concat(buffers);
         resolve(photoBuffer);
       });
-      imageStream.on('error', (error) => {
+      imageStream.on('error', error => {
         console.error(error);
         reject(error);
       });
@@ -65,5 +65,5 @@ function deletePlot(plotId) {
 module.exports = {
   getImage,
   getImageBuffer,
-  deletePlot
+  deletePlot,
 };

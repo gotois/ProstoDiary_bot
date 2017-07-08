@@ -1,18 +1,20 @@
-const sessions = require('./../sessions');
-const bot = require('./../config/bot.config.js');
-const datetime = require('./../datetime');
-const dbEntries = require('./../database/database.entries.js');
-const crypt = require('./../crypt');
+const sessions = require('../services/sessions');
+const bot = require('./../config/bot.config');
+const datetime = require('../services/datetime');
+const dbEntries = require('../database/bot.database');
+const crypt = require('../services/crypt');
 /***
  * Получить все что я делал в эту дату
  * @example /get 26.11.2016
  * @param msg {Object}
+ * @param msg.chat {Object}
+ * @param msg.from {Object}
  * @param match {Array}
  * @return {void}
  */
-function getDataFromDate(msg, match) {
-  const chatId = msg.chat.id;
-  const userId = msg.from.id;
+function getDataFromDate({chat,from}, match) {
+  const chatId = chat.id;
+  const userId = from.id;
   const date = datetime.convertToNormalDate(match[1]);
   if (!datetime.isNormalDate(date)) {
     bot.sendMessage(chatId, 'Установленное время не валидно');
@@ -20,7 +22,7 @@ function getDataFromDate(msg, match) {
   }
   const currentUser = sessions.getSession(userId);
   dbEntries.get(currentUser.id, match[1]).then(data => {
-    const rows = data.rows.map(row => crypt.decode(row.entry));
+    const rows = data.rows.map(({entry}) => crypt.decode(entry));
     if (rows.length) {
       return bot.sendMessage(chatId, JSON.stringify(rows, null, 2));
     } else {

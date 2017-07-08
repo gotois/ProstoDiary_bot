@@ -39,5 +39,5 @@ function prevInput(input) {
 
 module.exports = {
   formatRows,
-  prevInput
+  prevInput,
 };

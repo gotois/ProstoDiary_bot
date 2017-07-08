@@ -1,10 +1,9 @@
-const dbEntries = require('./../database/database.entries.js');
-const sessions = require('./../sessions');
-const crypt = require('./../crypt');
-const bot = require('./../config/bot.config.js');
+const dbEntries = require('../database/bot.database');
+const sessions = require('../services/sessions');
+const crypt = require('../services/crypt');
+const bot = require('./../config/bot.config');
 const spentMoney = require('./../services/spent_money');
 /***
- * TODO: https://github.com/tewst/ProstoDiary_bot/issues/15
  * @example /count зп -> выведет всю полученную зарплату
  * @example /count RegExp -> выведет потраченного по RegExp
  * @example /count - -> выведет сколько всего потрачено

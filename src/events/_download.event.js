@@ -1,17 +1,20 @@
 const zip = require('node-native-zip');
-const format = require('./../format');
-const dbEntries = require('./../database/database.entries.js');
-const sessions = require('./../sessions');
-const bot = require('./../config/bot.config.js');
+const format = require('../services/format');
+const dbEntries = require('../database/bot.database');
+const sessions = require('../services/sessions');
+const bot = require('./../config/bot.config');
 /***
  * Скачивание файла БД на устройство
  * @param msg {Object}
+ * @param msg.chat {Object}
+ * @param msg.from {Object}
+ * @param msg.date {String}
  * @return {void}
  */
-function onDownload(msg) {
-  const chatId = msg.chat.id;
-  const fromId = msg.from.id;
-  const fileName = `prosto-diary-backup-${msg.date}.txt`;
+function onDownload({chat, from, date}) {
+  const chatId = chat.id;
+  const fromId = from.id;
+  const fileName = `prosto-diary-backup-${date}.txt`;
   const archive = new zip();
   const currentUser = sessions.getSession(fromId);
   dbEntries.getAll(currentUser.id).then(data => {

@@ -1,20 +1,21 @@
-const client = require('./database/database.client.js');
+const client = require('./database/database.client');
 
-client.connect(connect);
 /**
  *
  * @param error {Object|undefined}
  */
-function connect(error) {
+const connect = (error) => {
   if (error) {
     console.error(error);
     throw error;
   }
-  const bot = require('./config/bot.config.js');
+  const bot = require('./config/bot.config');
   bot.getMe().then(() => {
     console.log('Bot started');
-    require('./bot.events/bot.events.js');
+    require('./events/bot.events');
   }).catch(error => {
     console.error(error);
   });
-}
+};
+
+client.connect(connect);

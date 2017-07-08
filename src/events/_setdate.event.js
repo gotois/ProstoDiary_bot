@@ -1,10 +1,10 @@
-const sessions = require('./../sessions');
-const bot = require('./../config/bot.config.js');
-const datetime = require('./../datetime');
-const dbEntries = require('./../database/database.entries.js');
-const crypt = require('./../crypt');
-const commands = require('./../bot.commands.js');
-const format = require('./../format');
+const sessions = require('../services/sessions');
+const bot = require('./../config/bot.config');
+const datetime = require('../services/datetime');
+const dbEntries = require('../database/bot.database');
+const crypt = require('../services/crypt');
+const commands = require('../commands/bot.commands');
+const format = require('../services/format');
 /***
  * Установить что я делал в какой-то день:
  * /set 26.11.2016 something text

@@ -1,6 +1,6 @@
-const dbEntries = require('./../database/database.entries.js');
-const sessions = require('./../sessions');
-const bot = require('./../config/bot.config.js');
+const dbEntries = require('../database/bot.database');
+const sessions = require('../services/sessions');
+const bot = require('./../config/bot.config');
 /***
  * Очистить базу данных с подтверждением
  * @param msg {Object}

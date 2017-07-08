@@ -16,5 +16,5 @@ function getSession(userId) {
 }
 
 module.exports = {
-  getSession
+  getSession,
 };

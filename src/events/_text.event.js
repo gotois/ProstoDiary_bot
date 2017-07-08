@@ -1,9 +1,9 @@
-const sessions = require('./../sessions');
-const bot = require('./../config/bot.config.js');
-const crypt = require('./../crypt');
-const format = require('./../format');
-const commands = require('./../bot.commands.js');
-const dbEntries = require('./../database/database.entries.js');
+const sessions = require('../services/sessions');
+const bot = require('./../config/bot.config');
+const crypt = require('../services/crypt');
+const format = require('../services/format');
+const commands = require('../commands/bot.commands');
+const dbEntries = require('../database/bot.database');
 /***
  * Все что пишешь - записывается в сегодняшний день
  * @param msg {Object}

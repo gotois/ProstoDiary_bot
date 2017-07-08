@@ -1,10 +1,10 @@
-const dbEntries = require('./../database/database.entries.js');
-const sessions = require('./../sessions');
-const bot = require('./../config/bot.config.js');
-const plot = require('./../plotly.wrapper.js');
-const commands = require('./../bot.commands.js');
-const crypt = require('./../crypt');
-const datetime = require('./../datetime');
+const dbEntries = require('../database/bot.database');
+const sessions = require('../services/sessions');
+const bot = require('./../config/bot.config');
+const plot = require('../services/plotly.wrapper');
+const commands = require('../commands/bot.commands');
+const crypt = require('../services/crypt');
+const datetime = require('../services/datetime');
 /***
  * Построить график
  * @param msg {Object}
@@ -14,7 +14,7 @@ function getGraph(msg) {
   const chatId = msg.chat.id;
   const fromId = msg.from.id;
   const currentUser = sessions.getSession(fromId);
-  const input = msg.text.replace(commands.GRAPH, '').trim();
+  const input = (msg.text.replace(commands.GRAPH, '')).trim();
   const regExp = isRegexString(input) ? convertStringToRegexp(input) : createRegExp(input);
   // временная шкала х {String} и частота y {Number}
   const trace = {
@@ -33,9 +33,7 @@ function getGraph(msg) {
         date,
         entry
       };
-    }).filter(text => {
-      return regExp.test(text.entry);
-    });
+    }).filter(text => regExp.test(text.entry));
     if (!entryRows.length) {
       throw 'Нет данных для построения графика';
     }
@@ -109,9 +107,11 @@ function formatWord(word) {
     case '+':
     case '(':
     case ')':
-      return '\\' + word;
+      return `\\${word}`;
+    default: {
+      return word;
+    }
   }
-  return word;
 }
 /**
  *

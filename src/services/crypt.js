@@ -1,5 +1,8 @@
 const crypto = require('crypto');
-const algorithm = 'aes-256-ctr';
+const options = {
+  algorithm: 'aes-256-ctr',
+};
+
 /**
  *
  * @return {string}
@@ -14,7 +17,7 @@ function getPassword() {
  * @returns {String}
  */
 function encrypt(text, password) {
-  const cipher = crypto.createCipher(algorithm, password);
+  const cipher = crypto.createCipher(options.algorithm, password);
   let crypted = cipher.update(text, 'utf8', 'hex');
   crypted += cipher.final('hex');
 
@@ -27,7 +30,7 @@ function encrypt(text, password) {
  * @returns {String}
  */
 function decrypt(text, password) {
-  const decipher = crypto.createDecipher(algorithm, password);
+  const decipher = crypto.createDecipher(options.algorithm, password);
   let dec = decipher.update(text, 'hex', 'utf8');
   dec += decipher.final('utf8');
 
@@ -59,5 +62,5 @@ function encode(text) {
 
 module.exports = {
   encode,
-  decode
+  decode,
 };
