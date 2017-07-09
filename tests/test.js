@@ -13,7 +13,7 @@ test('database config', t => {
 
 test('crypto', t => {
   process.env.SALT_PASSWORD = '123456';
-  const crypt = require('../src/services/crypt');
+  const crypt = require('../src/services/crypt.service');
   const eWord = crypt.encode('Something What?');
   const dWord = crypt.decode(eWord);
   t.is(dWord, 'Something What?');
@@ -31,7 +31,7 @@ test('commands', t => {
 });
 
 test('datetime', t => {
-  const datetime = require('../src/services/datetime');
+  const datetime = require('../src/services/date.service');
   // isNormalDate
   {
     t.is(datetime.isNormalDate('1.1.2016'), true);
@@ -61,13 +61,13 @@ test('datetime', t => {
 });
 
 test('session', t => {
-  const session = require('../src/services/sessions');
+  const session = require('../src/services/session.service');
   t.is(typeof session.getSession(123), 'object');
   t.is(typeof session.getSession(123).id, 'number');
 });
 
 test('money', t => {
-  const spentMoney = require('../src/services/spent_money');
+  const spentMoney = require('../src/services/calc.service');
   t.is(spentMoney(['Поел 300']), 300);
   t.is(spentMoney(['Поел 100р', 'Магаз 100₽', 'Магаз 100р.']), 300);
   t.is(spentMoney(['Поел 300', 'Магазин 100']), 400);

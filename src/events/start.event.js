@@ -1,4 +1,4 @@
-const sessions = require('../services/sessions');
+const sessions = require('../services/session.service');
 const bot = require('./../config/bot.config');
 const dbUsers = require('./../database/database.users');
 /***

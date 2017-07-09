@@ -1,5 +1,5 @@
-const crypt = require('./crypt');
-const {convertIn2DigitFormat} = require('./datetime');
+const crypt = require('./crypt.service');
+const {convertIn2DigitFormat} = require('./date.service');
 /**
  *
  * @param entries {Array}
@@ -8,6 +8,7 @@ const {convertIn2DigitFormat} = require('./datetime');
 const formatRows = entries => {
   let out = '';
   let currentDateStr = '';
+  // TODO reduce
   entries.forEach(data => {
     const dataDate = data.date_added;
     const DD = convertIn2DigitFormat(dataDate.getDate());

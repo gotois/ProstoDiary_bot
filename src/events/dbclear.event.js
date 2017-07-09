@@ -1,5 +1,5 @@
 const dbEntries = require('../database/bot.database');
-const sessions = require('../services/sessions');
+const sessions = require('../services/session.service');
 const bot = require('./../config/bot.config');
 /***
  * Очистить базу данных с подтверждением

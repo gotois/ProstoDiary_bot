@@ -1,10 +1,10 @@
 const dbEntries = require('../database/bot.database');
-const sessions = require('../services/sessions');
+const sessions = require('../services/session.service');
 const bot = require('./../config/bot.config');
-const plot = require('../services/plotly.wrapper');
+const plot = require('../services/graph.service');
 const commands = require('../commands/bot.commands');
-const crypt = require('../services/crypt');
-const datetime = require('../services/datetime');
+const crypt = require('../services/crypt.service');
+const datetime = require('../services/date.service');
 const {createRegexInput} = require('./graph.controller');
 /**
  *

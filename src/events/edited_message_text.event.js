@@ -1,8 +1,8 @@
-const sessions = require('../services/sessions');
+const sessions = require('../services/session.service');
 const bot = require('./../config/bot.config');
 const dbEntries = require('../database/bot.database');
-const crypt = require('../services/crypt');
-const format = require('../services/format');
+const crypt = require('../services/crypt.service');
+const format = require('../services/format.service');
 /***
  * текст редактируется он обновляет свое значение в БД.
  * @param msg {Object}

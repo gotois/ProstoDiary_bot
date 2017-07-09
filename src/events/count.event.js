@@ -1,8 +1,8 @@
 const dbEntries = require('../database/bot.database');
-const sessions = require('../services/sessions');
-const crypt = require('../services/crypt');
+const sessions = require('../services/session.service');
+const crypt = require('../services/crypt.service');
 const bot = require('./../config/bot.config');
-const spentMoney = require('./../services/spent_money');
+const spentMoney = require('../services/calc.service');
 /***
  * @example /count зп -> выведет всю полученную зарплату
  * @example /count RegExp -> выведет потраченного по RegExp

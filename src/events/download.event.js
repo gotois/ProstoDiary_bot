@@ -1,7 +1,7 @@
 const zip = require('node-native-zip');
-const format = require('../services/format');
+const format = require('../services/format.service');
 const dbEntries = require('../database/bot.database');
-const sessions = require('../services/sessions');
+const sessions = require('../services/session.service');
 const bot = require('./../config/bot.config');
 /***
  * Скачивание файла БД на устройство

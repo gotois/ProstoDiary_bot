@@ -2,7 +2,7 @@
  *
  * @type {number}
  */
-const MS_PER_DAY = 1000 * 60 * 60 * 24;
+const MS_PER_DAY = (1000 * 60 * 60 * 24);
 /**
  *
  * @param date {Date}
@@ -21,11 +21,8 @@ const dateIsIncorrect = date => (isNaN((Date).parse(date)));
  * @return {boolean}
  */
 const isNormalDate = date => {
-  if (checkDateLaterThanNow(new Date(date))) {
-    return false;
-  }
   //noinspection RedundantIfStatementJS
-  if (dateIsIncorrect(date)) {
+  if (checkDateLaterThanNow(new Date(date)) || dateIsIncorrect(date)) {
     return false;
   }
   return true;

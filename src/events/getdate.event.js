@@ -1,8 +1,8 @@
-const sessions = require('../services/sessions');
+const sessions = require('../services/session.service');
 const bot = require('./../config/bot.config');
-const datetime = require('../services/datetime');
+const datetime = require('../services/date.service');
 const dbEntries = require('../database/bot.database');
-const crypt = require('../services/crypt');
+const crypt = require('../services/crypt.service');
 /***
  * Получить все что я делал в эту дату
  * @example /get 26.11.2016

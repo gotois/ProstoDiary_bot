@@ -1,7 +1,7 @@
-const sessions = require('../services/sessions');
+const sessions = require('../services/session.service');
 const bot = require('./../config/bot.config');
-const crypt = require('../services/crypt');
-const format = require('../services/format');
+const crypt = require('../services/crypt.service');
+const format = require('../services/format.service');
 const commands = require('../commands/bot.commands');
 const dbEntries = require('../database/bot.database');
 /***
