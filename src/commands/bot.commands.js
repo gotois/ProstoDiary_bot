@@ -11,4 +11,6 @@ module.exports = {
   'SETDATE': /^\/set (\d{1,2}\.\d{1,2}\.\d{4})\s/,
   'GRAPH': /^\/graph(\s)/,
   'COUNT': /^\/count(\s)(.+)/,
+  'EDITED_MESSAGE_TEXT': 'edited_message_text',
+  'TEXT': 'text',
 };

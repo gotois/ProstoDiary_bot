@@ -17,9 +17,9 @@ function onDownload({chat, from, date}) {
   const fileName = `prosto-diary-backup-${date}.txt`;
   const archive = new zip();
   const currentUser = sessions.getSession(fromId);
-  dbEntries.getAll(currentUser.id).then(data => {
-    if (data.rows.length > 0) {
-      const formatData = format.formatRows(data.rows);
+  dbEntries.getAll(currentUser.id).then(({rows}) => {
+    if (rows.length > 0) {
+      const formatData = format.formatRows(rows);
       archive.add(fileName, new Buffer(formatData, 'utf8'));
       const buffer = archive.toBuffer();
       return bot.sendDocument(chatId, buffer);

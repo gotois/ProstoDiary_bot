@@ -1,12 +1,18 @@
 const pg = require('pg');
 const config = require('./../config/database.config.js');
-const mode = process.env.NODE_ENV;
-let DATABASE_URL;
-// отличается одним символом @
-if (mode === 'production') {
-  DATABASE_URL = `postgres://${config.user}:${config.password}.${config.host}:${config.port}/${config.database}`;
-} else {
-  DATABASE_URL = `postgres://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
-}
+const {PRODUCTION_MODE} = require('./../config/constants.config');
+const {NODE_ENV} = process.env;
 
-module.exports = new pg.Client(DATABASE_URL);
+/**
+ * @return pg.Client
+ */
+const client = (() => {
+  // отличается одним символом @
+  if (NODE_ENV === PRODUCTION_MODE) {
+    return new pg.Client(`postgres://${config.user}:${config.password}.${config.host}:${config.port}/${config.database}`);
+  } else {
+    return new pg.Client(`postgres://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`);
+  }
+})();
+
+module.exports = client;

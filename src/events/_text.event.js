@@ -7,14 +7,20 @@ const dbEntries = require('../database/bot.database');
 /***
  * Все что пишешь - записывается в сегодняшний день
  * @param msg {Object}
+ * @param msg.chat {Object}
+ * @param msg.from {Object}
+ * @param msg.text {String}
+ * @param msg.reply_to_message {Object}
+ * @param msg.message_id {Number}
+ * @param msg.date {Date}
  * @return {void}
  */
-function onText(msg) {
-  const chatId = msg.chat.id;
-  const fromId = msg.from.id;
-  const input = msg.text.trim();
+function onText({chat, from, text, reply_to_message, message_id, date}) {
+  const chatId = chat.id;
+  const fromId = from.id;
+  const input = text.trim();
   // Пропускаем Reply сообщений
-  if (msg.reply_to_message instanceof Object) {
+  if (reply_to_message instanceof Object) {
     return;
   }
   // Пропускаем зарезервированные команды
@@ -28,7 +34,7 @@ function onText(msg) {
     return;
   }
   const currentUser = sessions.getSession(fromId);
-  dbEntries.post(currentUser.id, crypt.encode(input), msg.message_id, new Date(msg.date * 1000)).then(() => {
+  dbEntries.post(currentUser.id, crypt.encode(input), message_id, new Date(date * 1000)).then(() => {
     const text = format.prevInput(input);
     return bot.sendMessage(chatId, text);
   }).catch(error => {

@@ -18,10 +18,7 @@ function getPassword() {
  */
 function encrypt(text, password) {
   const cipher = crypto.createCipher(options.algorithm, password);
-  let crypted = cipher.update(text, 'utf8', 'hex');
-  crypted += cipher.final('hex');
-
-  return crypted;
+  return cipher.update(text, 'utf8', 'hex') + cipher.final('hex');
 }
 /**
  *
@@ -31,10 +28,7 @@ function encrypt(text, password) {
  */
 function decrypt(text, password) {
   const decipher = crypto.createDecipher(options.algorithm, password);
-  let dec = decipher.update(text, 'hex', 'utf8');
-  dec += decipher.final('utf8');
-
-  return dec;
+  return decipher.update(text, 'hex', 'utf8') + decipher.final('utf8');
 }
 /**
  *

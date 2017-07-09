@@ -7,9 +7,9 @@ const client = require('./database.client.js');
  */
 module.exports = (query, params = []) => {
   return new Promise((resolve, reject) => {
-    client.query(query, params, (err, result) => {
-      if (err) {
-        return reject(err);
+    client.query(query, params, (error, result) => {
+      if (error) {
+        return reject(error);
       }
       // Check available updating
       switch (result.command) {

@@ -17,11 +17,10 @@ function onDBCLEAR({chat, from}) {
     }
   };
   const currentUser = sessions.getSession(fromId);
-  bot.sendMessage(chatId, 'Очистить ваши записи? (Y/N)', options).then(sended => {
-    const senderId = sended.chat.id;
-    const messageId = sended.message_id;
+  bot.sendMessage(chatId, 'Очистить ваши записи? (Y/N)', options).then(({chat, message_id}) => {
+    const senderId = chat.id;
 
-    return bot.onReplyToMessage(senderId, messageId, message => {
+    return bot.onReplyToMessage(senderId, message_id, message => {
       if (message.text.toUpperCase() === 'Y') {
         return dbEntries.clear(currentUser.id).then(() => {
           return bot.sendMessage(senderId, 'Данные очищены');

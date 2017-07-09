@@ -9,19 +9,23 @@ const format = require('../services/format');
  * Установить что я делал в какой-то день:
  * /set 26.11.2016 something text
  * @param msg {Object}
+ * @param msg.chat {Object}
+ * @param msg.text {String}
+ * @param msg.from {Object}
+ * @param msg.message_id {Number}
  * @param match {Array}
  * @return {void}
  */
-function setDataFromDate(msg, match) {
-  const chatId = msg.chat.id;
-  const input = msg.text.replace(commands.SETDATE, '').trim();
+function setDataFromDate({chat, text, from, message_id}, match) {
+  const chatId = chat.id;
+  const input = text.replace(commands.SETDATE, '').trim();
   const date = datetime.convertToNormalDate(match[1]);
   if (!datetime.isNormalDate(date)) {
     bot.sendMessage(chatId, 'Установленное время не валидно');
     return;
   }
-  const currentUser = sessions.getSession(msg.from.id);
-  dbEntries.post(currentUser.id, crypt.encode(input), msg.message_id, new Date(), match[1]).then(() => {
+  const currentUser = sessions.getSession(from.id);
+  dbEntries.post(currentUser.id, crypt.encode(input), message_id, new Date(), match[1]).then(() => {
     const text = format.prevInput(input);
     return bot.sendMessage(chatId, text);
   }).catch(error => {

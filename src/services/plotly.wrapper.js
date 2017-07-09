@@ -1,7 +1,6 @@
-const login = process.env.PLOTLY_LOGIN;
-const token = process.env.PLOTLY_TOKEN;
-const plotly = require('plotly')(login, token);
-const stream = require('stream');
+const {PLOTLY_LOGIN, PLOTLY_TOKEN} = process.env;
+const plotly = require('plotly')(PLOTLY_LOGIN, PLOTLY_TOKEN);
+const {Writable} = require('stream');
 /**
  *
  * @param figure {Object}
@@ -27,7 +26,6 @@ function getImage(figure, options = {}) {
 function getImageBuffer(figure, options = {}) {
   return getImage(figure, options).then(imageStream => {
     return new Promise((resolve, reject) => {
-      const Writable = stream.Writable;
       const ws = Writable();
       const buffers = [];
       ws._write = (chunk, enc, next) => {

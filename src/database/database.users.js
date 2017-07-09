@@ -24,5 +24,5 @@ function post(telegram_user_id) {
 
 module.exports = {
   post,
-  check
+  check,
 };

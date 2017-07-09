@@ -56,7 +56,7 @@ function convertStringToRegexp(string) {
 }
 /**
  *
- * @param input
+ * @param input {String}
  * @returns {RegExp}
  */
 function createRegexInput(input) {

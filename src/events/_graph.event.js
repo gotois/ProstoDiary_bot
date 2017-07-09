@@ -36,19 +36,19 @@ function getGraph({chat, from, text}) {
     y: [],
     type: BAR_TYPE
   };
-  dbEntries.getAll(currentUser.id).then(data => {
-    if (data.rows.length <= 0) {
+  dbEntries.getAll(currentUser.id).then(({rows}) => {
+    if (rows.length <= 0) {
       throw 'Null rows exception';
     }
-    const entryRows = data.rows.map(({date_added, entry}) => ({
+    const entryRows = rows.map(({date_added, entry}) => ({
       date: date_added,
       entry: crypt.decode(entry)
     })).filter(text => regExp.test(text.entry));
     if (!entryRows.length) {
       throw 'Нет данных для построения графика';
     }
-    const firstDate = data.rows[0].date_added;
-    const latestDate = data.rows[data.rows.length - 1].date_added;
+    const firstDate = rows[0].date_added;
+    const latestDate = rows[rows.length - 1].date_added;
     const rangeTimes = datetime.fillRangeTimes(firstDate, latestDate);
     rangeTimes.forEach(_date => {
       const findedCount = entryRows.filter(({date}) => (

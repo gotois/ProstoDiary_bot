@@ -21,15 +21,11 @@ function onCount({chat, from}, match) {
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
 
-  dbEntries.getAll(currentUser.id).then(data => {
-
-    if (data.rows.length <= 0) {
+  dbEntries.getAll(currentUser.id).then(({rows}) => {
+    if (rows.length <= 0) {
       throw 'Null rows exception';
     }
-    const entryRows = data.rows.map(row => {
-      const entry = crypt.decode(row.entry);
-      return entry;
-    });
+    const entryRows = rows.map(row => crypt.decode(row.entry));
 
     switch (match[2].toUpperCase()) {
       case 'ЗП': {

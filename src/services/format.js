@@ -1,17 +1,17 @@
 const crypt = require('./crypt');
-const datetime = require('./datetime');
+const {convertIn2DigitFormat} = require('./datetime');
 /**
  *
  * @param entries {Array}
  * @returns {string}
  */
-function formatRows(entries) {
+const formatRows = entries => {
   let out = '';
   let currentDateStr = '';
   entries.forEach(data => {
     const dataDate = data.date_added;
-    const DD = datetime.convertIn2DigitFormat(dataDate.getDate());
-    const MM = datetime.convertIn2DigitFormat(dataDate.getMonth() + 1);
+    const DD = convertIn2DigitFormat(dataDate.getDate());
+    const MM = convertIn2DigitFormat(dataDate.getMonth() + 1);
     const YYYY = dataDate.getFullYear();
     const dateStr = `${DD}.${MM}.${YYYY}`;
     if (dateStr !== currentDateStr) {
@@ -27,15 +27,13 @@ function formatRows(entries) {
   });
 
   return out.trim();
-}
+};
 /***
- * Message updated
+ * Message updated text
  * @param input {String}
  * @returns {string}
  */
-function prevInput(input) {
-  return '✓' + input.replace(/\n/g, ' ').substring(0, 6) + '…';
-}
+const prevInput = input => (`✓${input.replace(/\n/g, ' ').substring(0, 6)}…`);
 
 module.exports = {
   formatRows,
