@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const {SALT_PASSWORD} = process.env;
 const options = {
   algorithm: 'aes-256-ctr',
 };
@@ -7,9 +8,9 @@ const options = {
  *
  * @return {string}
  */
-function getPassword() {
-  return process.env.SALT_PASSWORD;
-}
+const getPassword = () => {
+  return SALT_PASSWORD;
+};
 /**
  *
  * @param text {String}
@@ -39,6 +40,7 @@ function decode(entry) {
   try {
     return decrypt(entry, getPassword());
   } catch (error) {
+    console.error(error);
     return entry;
   }
 }

@@ -1,10 +1,10 @@
 /**
  *
- * @param word {String}
+ * @param input {String}
  * @returns {String}
  */
-function formatWord(word) {
-  switch (word.toLowerCase()) {
+const formatWord = input => {
+  switch (input.toLowerCase()) {
     case '\\d':
     case '\\s':
     case '\\b':
@@ -20,48 +20,46 @@ function formatWord(word) {
     case '+':
     case '(':
     case ')':
-      return `\\${word}`;
+      return `\\${input}`;
     default: {
-      return word;
+      return input;
     }
   }
-}
+};
 /**
  *
- * @param word {String}
+ * @param input {String}
  * @return {RegExp}
  */
-function createRegExp(word) {
-  const fWord = formatWord(word);
+const createRegExp = input => {
+  const fWord = formatWord(input);
   return new RegExp(`( ${fWord} )|(\n${fWord})|(${fWord}\n)|(\n${fWord}\n)|( ${fWord}$)|(^${fWord} )|(^${fWord}$)`, 'i');
-}
+};
 /**
  *
- * @param string {String}
+ * @param input {String}
  * @return {boolean}
  */
-function isRegexString(string) {
-  if (string[0] === '/' && string[string.length - 1] === '/') {
+function isRegexString(input) {
+  if (input[0] === '/' && input[input.length - 1] === '/') {
     return true;
   }
   return false;
 }
 /**
  *
- * @param string {String}
+ * @param input {String}
  * @return {RegExp}
  */
-function convertStringToRegexp(string) {
-  return new RegExp(string.slice(1, string.length - 1));
-}
+const convertStringToRegexp = input => new RegExp(input.slice(1, input.length - 1));
 /**
  *
  * @param input {String}
  * @returns {RegExp}
  */
-function createRegexInput(input) {
-  return (isRegexString(input) ? convertStringToRegexp(input) : createRegExp(input));
-}
+const createRegexInput = input => (
+  isRegexString(input) ? convertStringToRegexp(input) : createRegExp(input)
+);
 
 module.exports = {
   formatWord,

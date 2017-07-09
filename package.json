@@ -8,7 +8,7 @@
     "test": "./node_modules/.bin/ava tests/test.js",
     "test:watch": "npm test -- --watch",
     "start": "./bin/index",
-    "coverage": "./node_modules/.bin/nyc --reporter=lcov --reporter=text npm test ./node_modules/.bin/codecov"
+    "coverage": "./node_modules/.bin/nyc --reporter=lcov --reporter=text npm test ./node_modules/.bin/codecov -e TRAVIS_NODE_VERSION"
   },
   "engines": {
     "node": "6.10.2",
@@ -38,7 +38,7 @@
   "devDependencies": {
     "ava": "~0.20.0",
     "codecov": "^2.2.0",
-    "eslint": "~4.1.1",
+    "eslint": "~4.2.0",
     "nyc": "^11.0.3"
   }
 }

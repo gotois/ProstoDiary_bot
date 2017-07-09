@@ -12,7 +12,7 @@ function onDBCLEAR({chat, from}) {
   const chatId = chat.id;
   const fromId = from.id;
   const options = {
-    reply_markup: {
+    'reply_markup': {
       'force_reply': true
     }
   };
@@ -20,17 +20,16 @@ function onDBCLEAR({chat, from}) {
   bot.sendMessage(chatId, 'Очистить ваши записи? (Y/N)', options).then(({chat, message_id}) => {
     const senderId = chat.id;
 
-    return bot.onReplyToMessage(senderId, message_id, message => {
-      if (message.text.toUpperCase() === 'Y') {
-        return dbEntries.clear(currentUser.id).then(() => {
-          return bot.sendMessage(senderId, 'Данные очищены');
-        }).catch(error => {
-          console.error(error);
-          return bot.sendMessage(senderId, 'Ошибка в операции');
-        });
-      } else {
+    return bot.onReplyToMessage(senderId, message_id, ({text}) => {
+      if (text.toUpperCase() !== 'Y') {
         return bot.sendMessage(senderId, 'Операция не выполнена');
       }
+      return dbEntries.clear(currentUser.id).then(() => {
+        return bot.sendMessage(senderId, 'Данные очищены');
+      }).catch(error => {
+        console.error(error);
+        return bot.sendMessage(senderId, 'Ошибка в операции');
+      });
     });
   });
 }

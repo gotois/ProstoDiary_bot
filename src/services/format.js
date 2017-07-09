@@ -22,7 +22,6 @@ const formatRows = entries => {
     if (decodeEntry) {
       out += decodeEntry + '\n';
     }
-
     return out;
   });
 
