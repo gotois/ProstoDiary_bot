@@ -8,24 +8,23 @@ const {convertIn2DigitFormat} = require('./date.service');
 const formatRows = entries => {
   let out = '';
   let currentDateStr = '';
-  // TODO reduce
-  entries.forEach(data => {
-    const dataDate = data.date_added;
-    const DD = convertIn2DigitFormat(dataDate.getDate());
-    const MM = convertIn2DigitFormat(dataDate.getMonth() + 1);
-    const YYYY = dataDate.getFullYear();
-    const dateStr = `${DD}.${MM}.${YYYY}`;
+  entries.map(({date_added, entry}) => {
+    const DD = convertIn2DigitFormat(date_added.getDate());
+    const MM = convertIn2DigitFormat(date_added.getMonth() + 1);
+    const YYYY = date_added.getFullYear();
+    return {
+      dateStr: `${DD}.${MM}.${YYYY}`,
+      decodeEntry: crypt.decode(entry)
+    };
+  }).forEach(({dateStr, decodeEntry}) => {
     if (dateStr !== currentDateStr) {
-      out += '\n' + dateStr + '\n';
+      out += `\n${dateStr}\n`;
     }
     currentDateStr = dateStr;
-    const decodeEntry = crypt.decode(data.entry);
     if (decodeEntry) {
-      out += decodeEntry + '\n';
+      out += `${decodeEntry}\n`;
     }
-    return out;
   });
-
   return out.trim();
 };
 /***

@@ -24,9 +24,9 @@ function onDBCLEAR({chat, from}) {
       if (text.toUpperCase() !== 'Y') {
         return bot.sendMessage(senderId, 'Операция не выполнена');
       }
-      return dbEntries.clear(currentUser.id).then(() => {
-        return bot.sendMessage(senderId, 'Данные очищены');
-      }).catch(error => {
+      return dbEntries.clear(currentUser.id).then(() => (
+        bot.sendMessage(senderId, 'Данные очищены')
+      )).catch(error => {
         console.error(error);
         return bot.sendMessage(senderId, 'Ошибка в операции');
       });

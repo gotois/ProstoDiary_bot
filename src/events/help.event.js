@@ -12,6 +12,7 @@ function onHelp({chat}) {
     '/graph': 'Построение графиков (/graph String|RegExp)',
     '/get': 'Получение данных за этот срок (/get 01.12.2016)',
     '/set': 'Добавление данных за этот срок (/set 31.01.2016 something)',
+    '/count': 'Подсчет финансов (/count ЗП)',
   };
   const chatId = chat.id;
   bot.sendMessage(chatId, JSON.stringify(data, null, 2));

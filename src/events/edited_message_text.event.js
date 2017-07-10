@@ -22,9 +22,9 @@ function onEditedMessageText({chat, from, text, message_id}) {
   }
   const currentUser = sessions.getSession(fromId);
   if (input === 'del') {
-    dbEntries.delete(currentUser.id, message_id).then(() => {
-      return bot.sendMessage(chatId, 'Запись удалена');
-    }).catch(error => {
+    dbEntries.delete(currentUser.id, message_id).then(() => (
+      bot.sendMessage(chatId, 'Запись удалена')
+    )).catch(error => {
       console.error(error);
       return bot.sendMessage(chatId, error.toLocaleString());
     });

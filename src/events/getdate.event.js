@@ -21,13 +21,11 @@ function getDataFromDate({chat,from}, match) {
     return;
   }
   const currentUser = sessions.getSession(userId);
-  dbEntries.get(currentUser.id, match[1]).then(data => {
-    const rows = data.rows.map(({entry}) => crypt.decode(entry));
-    if (rows.length) {
-      return bot.sendMessage(chatId, JSON.stringify(rows, null, 2));
-    } else {
-      return bot.sendMessage(chatId, 'Записей нет');
-    }
+  dbEntries.get(currentUser.id, match[1]).then(({rows}) => {
+    const decodeRows = rows.map(({entry}) => crypt.decode(entry));
+    return (decodeRows.length)
+      ? (bot.sendMessage(chatId, JSON.stringify(decodeRows, null, 2)))
+      : (bot.sendMessage(chatId, 'Записей нет'));
   }).catch(error => {
     console.error(error);
     return bot.sendMessage(chatId, 'Произошла ошибка');

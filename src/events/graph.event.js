@@ -73,11 +73,11 @@ function getGraph({chat, from, text}) {
     };
     return plot.getImageBuffer(figure, imgOpts);
     // TODO: если потребуется удаление графиков использовать `return plot.deletePlot('0');`
-  }).then(photoBuffer => {
-    return bot.sendPhoto(chatId, photoBuffer, {
+  }).then(photoBuffer => (
+    bot.sendPhoto(chatId, photoBuffer, {
       caption: `График для "${regExp.toString()}"`
-    });
-  }).catch(error => {
+    })
+  )).catch(error => {
     console.error(error);
     switch (typeof error) {
       case 'string': {

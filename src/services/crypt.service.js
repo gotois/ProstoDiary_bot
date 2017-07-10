@@ -17,44 +17,44 @@ const getPassword = () => {
  * @param password {String}
  * @returns {String}
  */
-function encrypt(text, password) {
+const encrypt = (text, password) => {
   const cipher = crypto.createCipher(options.algorithm, password);
   return cipher.update(text, 'utf8', 'hex') + cipher.final('hex');
-}
+};
 /**
  *
  * @param text {String}
  * @param password {String}
  * @returns {String}
  */
-function decrypt(text, password) {
+const decrypt = (text, password) => {
   const decipher = crypto.createDecipher(options.algorithm, password);
   return decipher.update(text, 'hex', 'utf8') + decipher.final('utf8');
-}
+};
 /**
  *
  * @param entry {String}
  * @returns {String}
  */
-function decode(entry) {
+const decode = entry => {
   try {
     return decrypt(entry, getPassword());
   } catch (error) {
     console.error(error);
     return entry;
   }
-}
+};
 /**
  *
  * @param text {String}
  * @returns {String}
  */
-function encode(text) {
+const encode = text => {
   if (!text) {
     throw 'Empty text';
   }
   return encrypt(text, getPassword());
-}
+};
 
 module.exports = {
   encode,

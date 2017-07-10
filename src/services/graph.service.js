@@ -7,25 +7,22 @@ const {Writable} = require('stream');
  * @param options {Object}
  * @returns {Promise}
  */
-function getImage(figure, options = {}) {
-  return new Promise((resolve, reject) => {
-    plotly.getImage(figure, options, (error, imageStream) => {
-      if (error) {
-        return reject(error);
-      }
-      resolve(imageStream);
-    });
-  });
-}
+const getImage = (figure, options = {}) => (
+  new Promise((resolve, reject) => (
+    plotly.getImage(figure, options, (error, imageStream) => (
+      error ? reject(error) : resolve(imageStream)
+    ))
+  ))
+);
 /**
  *
  * @param figure {Object}
  * @param options {Object}
  * @returns {Promise}
  */
-function getImageBuffer(figure, options = {}) {
-  return getImage(figure, options).then(imageStream => {
-    return new Promise((resolve, reject) => {
+const getImageBuffer = (figure, options = {}) => (
+  getImage(figure, options).then(imageStream => (
+    new Promise((resolve, reject) => {
       const ws = Writable();
       const buffers = [];
       ws._write = (chunk, enc, next) => {
@@ -41,24 +38,21 @@ function getImageBuffer(figure, options = {}) {
         console.error(error);
         reject(error);
       });
-    });
-  });
-}
+    })
+  ))
+);
 /**
  *
  * @param plotId {String}
  * @returns {Promise}
  */
-function deletePlot(plotId) {
-  return new Promise((resolve, reject) => {
-    plotly.deletePlot(plotId, (error, plot) => {
-      if (error) {
-        return reject(error);
-      }
-      resolve(plot);
-    });
-  });
-}
+const deletePlot = plotId => (
+  new Promise((resolve, reject) => (
+    plotly.deletePlot(plotId, (error, plot) => (
+      error ? reject(error) : resolve(plot)
+    ))
+  ))
+);
 
 module.exports = {
   getImage,
