@@ -8,7 +8,7 @@ const bot = require('./../config/bot.config');
  * @param msg.from {Object}
  * @return {void}
  */
-function onDBCLEAR({chat, from}) {
+const onDBCLEAR = ({chat, from}) => {
   const chatId = chat.id;
   const fromId = from.id;
   const options = {
@@ -32,6 +32,6 @@ function onDBCLEAR({chat, from}) {
       });
     });
   });
-}
+};
 
 module.exports = onDBCLEAR;

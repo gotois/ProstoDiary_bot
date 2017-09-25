@@ -1,19 +1,41 @@
 /**
- *
- * @param texts
- * @param local
- * @returns {String}
+ * @type {{salaryReceived: number, allSpent: number, allReceived: number}}
  */
-function spentMoney(texts, local) {
+const TYPES = {
+  allSpent: 0,
+  allReceived: 1,
+};
+const regExpMonthNumber = /^\d+ (?=Января|Февраля|Марта|Апреля|Мая|Июня|Июля|Августа|Сентября|Октября|Ноября|Декабря)/gi;
+const regExpYear = /\d+ (?=Понедельник|Вторник|Среда|Четверг|Пятница|Суббота|Воскресенье)/gi;
+const regExpWeight = /вес.\d+(,|\.).+/gi;
+const regExpNumbers = /^.+ (\d+)/gi;
+const regExpRubles = /р|руб|₽| р| ₽| руб| рублей/i;
+const regExpMyZP = /(зп|зарплата|получил|получено|заработано|заработал)(\s?)+\d/gi;
+
+/**
+ * @param text {String}
+ * @return {Array}
+ */
+const splitText = text => text.split('\n');
+/**
+ *
+ * @param texts {Array}
+ * @param local {String}
+ * @param type {Number}
+ * @return {String}
+ */
+const getMoney = ({texts, type, local}) => {
   /**
    * @return {Number}
    */
   const allSpentMoney = (() => {
     if (texts.length) {
-      return texts.map(text => calcMoney(text)).reduce((acc, money) => acc + money);
+      return texts
+        .map(text => formatType(text, type))
+        .map(text => calcMoney(text))
+        .reduce((acc, money) => acc + money);
     } else {
-      console.warn('Данные пусты!');
-      return 0.0;
+      return 0;
     }
   })();
   switch (local) {
@@ -24,64 +46,74 @@ function spentMoney(texts, local) {
       return allSpentMoney;
     }
   }
-}
+};
 /**
  * Локализуем сумму в рублях
  * @param money {Number}
  * @returns {String}
  */
-function getSumRub(money) {
+const getSumRub = money => {
   const options = {style: 'currency', currency: 'RUB'};
   const numberFormat = new Intl.NumberFormat('ru-RU', options);
   return numberFormat.format(money);
-}
+};
 /**
- * TODO: Отрефатчить. Нужно дать возможность расширять
+ * @param str {String}
+ * @param type {Number}
+ * @returns {number}
+ */
+const formatType = (str, type) => {
+  str = str.trim();
+  // Находим число месяца и удаляем из поиска строчку число месяца
+  str = str.replace(regExpMonthNumber, '');
+  // Находим год и удаляем строчку о найденном годе
+  str = str.replace(regExpYear, '');
+  // Находим вес и удаляем строчку о своем весе
+  str = str.replace(regExpWeight, '');
+  switch (type) {
+    // Удаляем строчку о зарплате и прочих получениях
+    case TYPES.allSpent: {
+      str = str.replace(regExpMyZP, '');
+      break;
+    }
+    // Находим потраченное
+    case TYPES.allReceived: {
+      if (!str.match(regExpMyZP)) {
+        str = '';
+      }
+      break;
+    }
+    default: {
+      console.warn('Unknown type');
+    }
+  }
+  return str;
+};
+/**
  * @param str {String}
  * @returns {number}
  */
-function calcMoney(str) {
-  let allSum = 0.0;
+const calcMoney = (str) => {
   if (str.length <= 1) {
-    return allSum;
+    return 0;
   }
-  str = str.trim();
-  //Находим число месяца
-  const regExpMonthNumber = /^\d+ (?=Января|Февраля|Марта|Апреля|Мая|Июня|Июля|Августа|Сентября|Октября|Ноября|Декабря)/gi;
-  // const monthNumber = str.match(regExpMonthNumber);
-  //удаляем из поиска строчку число месяца
-  str = str.replace(regExpMonthNumber, '');
-  //находим год
-  const regExpYear = /\d+ (?=Понедельник|Вторник|Среда|Четверг|Пятница|Суббота|Воскресенье)/gi;
-  // const year = str.match(regExpYear);
-  //удаляем строчку о найденном годе
-  str = str.replace(regExpYear, '');
-  //находим вес
-  const regExpWeight = /вес.\d+(,|\.).+/gi;
-  // const weight = str.match(regExpWeight);
-  //удаляем строчку о своем весе
-  str = str.replace(regExpWeight, '');
-  //находим свою зп
-  const regExpMyZP = /(зп|зарплата).+\d/gi;
-  // const myZP = str.match(regExpMyZP);
-  //удаляем из поиска строчку о зарплате
-  str = str.replace(regExpMyZP, '');
-  //находим цифры потраченное
-  const regExpNumbers = str.match(/^.+ (\d+)/gi);
-  const numbers = str.match(regExpNumbers);
-  if (numbers) {
-    allSum = getAllSum(numbers.input);
+  const numbers = str.match(str.match(regExpNumbers));
+  if (!numbers) {
+    return 0;
   }
-  return allSum;
-}
+  return splitText(numbers.input).reduce((acc, text) => {
+    acc += getAllSum(text);
+    return acc;
+  }, 0);
+};
 /**
  * @param numbers {String}
  * @returns {number}
  */
-function getAllSum(numbers) {
+const getAllSum = (numbers) => {
   let daySpentMoney = 0.0;
   let out = numbers.replace(/^\D+/, '');
-  out = out.replace(/р|руб|₽| р| ₽| руб| рублей/i, '');
+  out = out.replace(regExpRubles, '');
   out = out.replace(/к/i, () => '000');
   if (out.match(/^\d/) > '0') {
     out = out.replace(/\W/gi, '');
@@ -89,6 +121,9 @@ function getAllSum(numbers) {
     daySpentMoney += out;
   }
   return daySpentMoney;
-}
+};
 
-module.exports = spentMoney;
+module.exports = {
+  getMoney,
+  TYPES,
+};

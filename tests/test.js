@@ -4,10 +4,6 @@ process.env.SALT_PASSWORD = '123456';
 process.env.NODE_ENV = 'production';
 process.env.TOKEN = '123456';
 
-test('bot config', t => {
-  const botConfig = require('../src/config/bot.config');
-  t.true(botConfig instanceof Object);
-});
 test('database config', t => {
   const dbConfig = require('../src/config/database.config');
   t.is(typeof dbConfig, 'object');
@@ -82,11 +78,42 @@ test('session', t => {
 });
 
 test('money', t => {
-  const spentMoney = require('../src/services/calc.service');
-  t.is(spentMoney(['Поел 300']), 300);
-  t.is(spentMoney(['Поел 100р', 'Магаз 100₽', 'Магаз 100р.']), 300);
-  t.is(spentMoney(['Поел 300', 'Магазин 100']), 400);
-  t.is(spentMoney(['ЗП 300']), 0);
+  const {getMoney, TYPES} = require('../src/services/calc.service');
+
+  // Spent
+  {
+    t.is(getMoney({
+      texts: ['Поел 300'],
+      type: TYPES.allSpent,
+    }), 300);
+    t.is(getMoney({
+      texts: ['Поел 100р', 'Магаз 100₽', 'Магаз 100р.'],
+      type: TYPES.allSpent,
+    }), 300);
+    t.is(getMoney({
+      texts: ['Поел 300', 'Магазин 100', 'Зп 999'],
+      type: TYPES.allSpent,
+    }), 400);
+    t.is(getMoney({
+      texts: ['ЗП 300'],
+      type: TYPES.allSpent,
+    }), 0);
+    t.is(getMoney({
+      texts: ['что-то отправил 300рублей ', 'Поел джаганнат за 200', 'получил 100р'],
+      type: TYPES.allSpent,
+    }), 500);
+  }
+  // received
+  {
+    t.is(getMoney({
+      texts: ['ЗП 300рублей ', 'зп 200 рублей', 'зарплата 100руб', 'получил 100', 'Водка 50'],
+      type: TYPES.allReceived,
+    }), 700);
+    t.is(getMoney({
+      texts: ['ЗП 5\n ЗП 5'],
+      type: TYPES.allReceived,
+    }), 10);
+  }
 });
 
 test('graph service', t => {

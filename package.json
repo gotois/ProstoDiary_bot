@@ -1,7 +1,8 @@
 {
   "name": "ProstoDiary_bot",
-  "version": "1.0.0",
   "description": "ProstoDiary Telegram Bot",
+  "version": "1.0.0",
+  "homepage": "https://gotointeractive.com/#Prosto Diary",
   "main": "./bin/index",
   "scripts": {
     "lint": "./node_modules/.bin/eslint src/**/*.js",
@@ -11,8 +12,8 @@
     "coverage": "./node_modules/.bin/nyc --reporter=lcov --reporter=text npm test ./node_modules/.bin/codecov -e TRAVIS_NODE_VERSION"
   },
   "engines": {
-    "node": "6.10.2",
-    "npm": "3.10.9"
+    "node": "8.5.0",
+    "npm": "5.3.0"
   },
   "repository": {
     "type": "git",
@@ -21,24 +22,23 @@
   "keywords": [
     "prostodiary",
     "prosto diary",
-    "telegram bot"
+    "telegram diary bot"
   ],
   "author": "goto Interactive",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/gotois/ProstoDiary_bot/issues"
   },
-  "homepage": "https://gotointeractive.com/#Prosto Diary",
   "dependencies": {
     "node-native-zip": "~1.1.0",
-    "node-telegram-bot-api": "^0.27.1",
-    "pg": "~6.4.0",
+    "node-telegram-bot-api": "~0.28.0",
+    "pg": "~7.3.0",
     "plotly": "~1.0.6"
   },
   "devDependencies": {
-    "ava": "~0.20.0",
-    "codecov": "^2.2.0",
-    "eslint": "~4.2.0",
-    "nyc": "^11.0.3"
+    "ava": "~0.22.0",
+    "codecov": "~2.3.0",
+    "eslint": "~4.7.2",
+    "nyc": "~11.2.1"
   }
 }

@@ -90,5 +90,5 @@ module.exports = {
   put,
   delete: del,
   getAll,
-  clear
+  clear,
 };

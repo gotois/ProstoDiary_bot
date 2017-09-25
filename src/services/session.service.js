@@ -8,12 +8,12 @@
  * @param userId {String}
  * @return {{id: String, password: string}}
  */
-function getSession(userId) {
+const getSession = (userId) => {
   return {
     id: userId,
     password: '123456'
   };
-}
+};
 
 module.exports = {
   getSession,
