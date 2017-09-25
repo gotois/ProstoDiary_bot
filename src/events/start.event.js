@@ -8,7 +8,7 @@ const dbUsers = require('./../database/database.users');
  * @param msg.from {Object}
  * @return {void}
  */
-function onStart({chat, from}) {
+const onStart = async ({chat, from}) => {
   const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
@@ -24,6 +24,6 @@ function onStart({chat, from}) {
     console.error(error);
     return bot.sendMessage(chatId, 'Операция не выполнена');
   });
-}
+};
 
 module.exports = onStart;

@@ -1,2 +1,6 @@
 #!/usr/bin/env node
+// Simple Heroku Detect
+if (!process.env.PORT) {
+  require('dotenv').config();
+}
 module.exports = require('./../src/bot');

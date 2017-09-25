@@ -1,6 +1,6 @@
 const bot = require('./../config/bot.config');
 const commands = require('../commands/bot.commands');
-/***
+/**
  * Events
  */
 {

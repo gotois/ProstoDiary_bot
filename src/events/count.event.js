@@ -23,7 +23,7 @@ const onCount = async ({chat, from}, match) => {
   if (rows.length <= 0) {
     throw 'Null rows exception';
   }
-  const entryRows = rows.map(row => crypt.decode(row.entry));
+  const entryRows = rows.map(({entry}) => crypt.decode(entry));
   // TODO: на будущее дать выбор формату финансов (рубли, евро, доллары)
   const local = 'RUB';
 

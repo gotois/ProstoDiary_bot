@@ -8,7 +8,7 @@ const bot = require('./../config/bot.config');
  * @param msg.from {Object}
  * @return {void}
  */
-const onDBCLEAR = ({chat, from}) => {
+const onDBCLEAR = async ({chat, from}) => {
   const chatId = chat.id;
   const fromId = from.id;
   const options = {

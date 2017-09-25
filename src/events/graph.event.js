@@ -24,7 +24,7 @@ const NOT_FOUND = 'NOT FOUND';
  * @param msg.text {String}
  * @return {void}
  */
-function getGraph({chat, from, text}) {
+const getGraph = async ({chat, from, text}) => {
   const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
@@ -94,6 +94,6 @@ function getGraph({chat, from, text}) {
       }
     }
   });
-}
+};
 
 module.exports = getGraph;

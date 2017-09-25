@@ -12,12 +12,12 @@ const format = require('../services/format.service');
  * @param msg.message_id {String}
  * @return {void}
  */
-function onEditedMessageText({chat, from, text, message_id}) {
+const onEditedMessageText = async ({chat, from, text, message_id}) => {
   const chatId = chat.id;
   const fromId = from.id;
   const input = text.trim();
   if (input.startsWith('/')) {
-    bot.sendMessage(chatId, 'Редактирование этой записи невозможно');
+    await bot.sendMessage(chatId, 'Редактирование этой записи невозможно');
     return;
   }
   const currentUser = sessions.getSession(fromId);
@@ -36,6 +36,6 @@ function onEditedMessageText({chat, from, text, message_id}) {
     console.error(error);
     return bot.sendMessage(chatId, error.toLocaleString());
   });
-}
+};
 
 module.exports = onEditedMessageText;

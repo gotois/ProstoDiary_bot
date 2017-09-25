@@ -5,7 +5,7 @@ const bot = require('./../config/bot.config.js');
  * @param msg.chat {Object}
  * @return {void}
  */
-function onHelp({chat}) {
+const onHelp = async ({chat}) => {
   const data = {
     '/download': 'Загрузка файла с данными (/download)',
     '/dbclear': 'Удаление БД (/dbclear Y/N)',
@@ -15,7 +15,7 @@ function onHelp({chat}) {
     '/count': 'Подсчет потраченого (/count -) и полученного (/count +)',
   };
   const chatId = chat.id;
-  bot.sendMessage(chatId, JSON.stringify(data, null, 2));
-}
+  await bot.sendMessage(chatId, JSON.stringify(data, null, 2));
+};
 
 module.exports = onHelp;

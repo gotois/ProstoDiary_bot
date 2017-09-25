@@ -70,6 +70,9 @@ const formatType = (str, type) => {
   str = str.replace(regExpYear, '');
   // Находим вес и удаляем строчку о своем весе
   str = str.replace(regExpWeight, '');
+  // Удаляем знак + чтобы не было рекурсивного обхода регулярки
+  str = str.replace(/\+/, '');
+
   switch (type) {
     // Удаляем строчку о зарплате и прочих получениях
     case TYPES.allSpent: {
@@ -98,7 +101,7 @@ const calcMoney = (str) => {
     return 0;
   }
   const numbers = str.match(str.match(regExpNumbers));
-  if (!numbers) {
+  if (!(numbers && numbers.length)) {
     return 0;
   }
   return splitText(numbers.input).reduce((acc, text) => {

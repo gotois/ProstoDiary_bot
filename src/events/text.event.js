@@ -15,7 +15,7 @@ const dbEntries = require('../database/bot.database');
  * @param msg.date {Date}
  * @return {void}
  */
-function onText({chat, from, text, reply_to_message, message_id, date}) {
+const onText = async ({chat, from, text, reply_to_message, message_id, date}) => {
   const chatId = chat.id;
   const fromId = from.id;
   const input = text.trim();
@@ -30,7 +30,7 @@ function onText({chat, from, text, reply_to_message, message_id, date}) {
     }
   }
   if (input.startsWith('/')) {
-    bot.sendMessage(chatId, 'Такой комманды нет. Нажмите /help для помощи');
+    await bot.sendMessage(chatId, 'Такой комманды нет. Нажмите /help для помощи');
     return;
   }
   const currentUser = sessions.getSession(fromId);
@@ -40,6 +40,6 @@ function onText({chat, from, text, reply_to_message, message_id, date}) {
   }).catch(error => {
     return bot.sendMessage(chatId, error);
   });
-}
+};
 
 module.exports = onText;

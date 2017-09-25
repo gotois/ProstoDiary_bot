@@ -16,12 +16,12 @@ const format = require('../services/format.service');
  * @param match {Array}
  * @return {void}
  */
-function setDataFromDate({chat, text, from, message_id}, match) {
+const setDataFromDate = async ({chat, text, from, message_id}, match) => {
   const chatId = chat.id;
   const input = text.replace(commands.SETDATE, '').trim();
   const date = datetime.convertToNormalDate(match[1]);
   if (!datetime.isNormalDate(date)) {
-    bot.sendMessage(chatId, 'Установленное время не валидно');
+    await bot.sendMessage(chatId, 'Установленное время не валидно');
     return;
   }
   const currentUser = sessions.getSession(from.id);
@@ -32,6 +32,6 @@ function setDataFromDate({chat, text, from, message_id}, match) {
     console.error(error);
     return bot.sendMessage(chatId, 'Произошла ошибка');
   });
-}
+};
 
 module.exports = setDataFromDate;

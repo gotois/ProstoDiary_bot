@@ -11,7 +11,7 @@ const bot = require('./../config/bot.config');
  * @param msg.date {String}
  * @return {void}
  */
-function onDownload({chat, from, date}) {
+const onDownload = async ({chat, from, date}) => {
   const chatId = chat.id;
   const fromId = from.id;
   const fileName = `prosto-diary-backup-${date}.txt`;
@@ -30,6 +30,6 @@ function onDownload({chat, from, date}) {
     console.error(error);
     return bot.sendMessage(chatId, 'Операция не выполнена');
   });
-}
+};
 
 module.exports = onDownload;

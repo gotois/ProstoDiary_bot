@@ -18,7 +18,7 @@ Checking Unit tests:
 npm run test:watch
 ```
 
-Server Environments
+Server Environments (needs update .env file)
 ---
 ```
 TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
@@ -45,8 +45,8 @@ Username: @ProstoDiary_bot
 Telegram commands
 ---
 ```
-download - Скачать txt описание на устройство
-dbclear - Очистить базу данных пользователя
+download - Скачать txt БД на устройство
+dbclear - Очистить удаленную БД
 get - Получить все что я делал за эту дату
 set - Что я делал в эту дату
 graph - Построить график

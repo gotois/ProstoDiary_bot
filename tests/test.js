@@ -83,7 +83,7 @@ test('money', t => {
   // Spent
   {
     t.is(getMoney({
-      texts: ['Поел 300'],
+      texts: ['Поел 300', '+ ЗП 1'],
       type: TYPES.allSpent,
     }), 300);
     t.is(getMoney({
@@ -95,7 +95,7 @@ test('money', t => {
       type: TYPES.allSpent,
     }), 400);
     t.is(getMoney({
-      texts: ['ЗП 300'],
+      texts: ['+ ЗП 300'],
       type: TYPES.allSpent,
     }), 0);
     t.is(getMoney({

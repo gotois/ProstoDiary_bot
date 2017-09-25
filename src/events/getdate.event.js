@@ -12,12 +12,12 @@ const crypt = require('../services/crypt.service');
  * @param match {Array}
  * @return {void}
  */
-function getDataFromDate({chat,from}, match) {
+const getDataFromDate = async ({chat,from}, match) => {
   const chatId = chat.id;
   const userId = from.id;
   const date = datetime.convertToNormalDate(match[1]);
   if (!datetime.isNormalDate(date)) {
-    bot.sendMessage(chatId, 'Установленное время не валидно');
+    await bot.sendMessage(chatId, 'Установленное время не валидно');
     return;
   }
   const currentUser = sessions.getSession(userId);
@@ -30,6 +30,6 @@ function getDataFromDate({chat,from}, match) {
     console.error(error);
     return bot.sendMessage(chatId, 'Произошла ошибка');
   });
-}
+};
 
 module.exports = getDataFromDate;
