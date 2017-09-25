@@ -30,7 +30,7 @@ const getMoney = ({texts, type, local}) => {
    */
   const allSpentMoney = (() => {
     if (texts.length) {
-      return texts
+      return texts.reduce((acc, raw) => acc.concat(...splitText(raw)), [])
         .map(text => formatType(text, type))
         .map(text => calcMoney(text))
         .reduce((acc, money) => acc + money);
@@ -114,16 +114,18 @@ const calcMoney = (str) => {
  * @returns {number}
  */
 const getAllSum = (numbers) => {
-  let daySpentMoney = 0.0;
   let out = numbers.replace(/^\D+/, '');
   out = out.replace(regExpRubles, '');
   out = out.replace(/к/i, () => '000');
+  // TODO: не обрабатывается случай `Игра престолов 1серич` => добавляется 1
   if (out.match(/^\d/) > '0') {
-    out = out.replace(/\W/gi, '');
-    out = Number.parseFloat(out);
-    daySpentMoney += out;
+    const outArray = out.replace(/\W/gi, ',').split(',');
+    return outArray
+      .filter(temp => temp.length && !isNaN(temp))
+      .reduce((acc, str) => (acc += Number.parseFloat(str)), 0);
+  } else {
+    return 0;
   }
-  return daySpentMoney;
 };
 
 module.exports = {

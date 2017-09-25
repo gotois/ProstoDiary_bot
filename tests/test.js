@@ -102,6 +102,10 @@ test('money', t => {
       texts: ['что-то отправил 300рублей ', 'Поел джаганнат за 200', 'получил 100р'],
       type: TYPES.allSpent,
     }), 500);
+    t.is(getMoney({
+      texts: ['поел 300 100р 100'],
+      type: TYPES.allSpent,
+    }), 500);
   }
   // received
   {

@@ -21,7 +21,8 @@ const onCount = async ({chat, from}, match) => {
   const {rows} = await dbEntries.getAll(currentUser.id);
 
   if (rows.length <= 0) {
-    throw 'Null rows exception';
+    await bot.sendMessage(chatId, 'No data');
+    return;
   }
   const entryRows = rows.map(({entry}) => crypt.decode(entry));
   // TODO: на будущее дать выбор формату финансов (рубли, евро, доллары)
@@ -34,7 +35,7 @@ const onCount = async ({chat, from}, match) => {
         type: TYPES.allSpent,
         local,
       });
-      bot.sendMessage(chatId, `Всего потрачено: ${allSpentMoney}`);
+      await bot.sendMessage(chatId, `Всего потрачено: ${allSpentMoney}`);
 
       break;
     }
@@ -44,12 +45,11 @@ const onCount = async ({chat, from}, match) => {
         type: TYPES.allReceived,
         local,
       });
-      bot.sendMessage(chatId, `Всего получено: ${allSpentMoney}`);
-
+      await bot.sendMessage(chatId, `Всего получено: ${allSpentMoney}`);
       break;
     }
     default: {
-      bot.sendMessage(chatId, 'Проверьте правильность запроса. \nНапример: "/count -"');
+      await bot.sendMessage(chatId, 'Проверьте правильность запроса. \nНапример: "/count -"');
       break;
     }
   }
