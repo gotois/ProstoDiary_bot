@@ -117,12 +117,15 @@ const getAllSum = (numbers) => {
   let out = numbers.replace(/^\D+/, '');
   out = out.replace(regExpRubles, '');
   out = out.replace(/к/i, () => '000');
-  // TODO: не обрабатывается случай `Игра престолов 1серич` => добавляется 1
-  if (out.match(/^\d/) > '0') {
-    const outArray = out.replace(/\W/gi, ',').split(',');
-    return outArray
-      .filter(temp => temp.length && !isNaN(temp))
-      .reduce((acc, str) => (acc += Number.parseFloat(str)), 0);
+  // TODO: не обрабатывается случай `Игра престолов 1серия` => добавляется 1
+  // Отсеивание int+float значений
+  if (out.match(/^\d\.?(\d\d)?/) > '0') {
+    const outArray = out.replace(/[^A-Za-z0-9_.,]/gi, ',').split(',');
+    const res = outArray
+      .filter(temp => temp.length && !Number.isNaN(temp))
+      .reduce((acc, str) => (acc += Number.parseFloat(str)), 0)
+      .toFixed(2);
+    return Number(res);
   } else {
     return 0;
   }

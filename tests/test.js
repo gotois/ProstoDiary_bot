@@ -87,9 +87,13 @@ test('money', t => {
       type: TYPES.allSpent,
     }), 300);
     t.is(getMoney({
-      texts: ['Поел 100р', 'Магаз 100₽', 'Магаз 100р.'],
+      texts: ['Поел 100р', 'Магаз 100.2₽', 'Магаз 100р.', 'Магазин 20.11р'],
       type: TYPES.allSpent,
-    }), 300);
+    }), 320.31);
+    t.is(getMoney({
+      texts: ['Поел 0.1р', 'some 0.1₽', 'some x 0.112', 'еще 0.1 \n и еще 0.1'],
+      type: TYPES.allSpent,
+    }), 0.51);
     t.is(getMoney({
       texts: ['Поел 300', 'Магазин 100', 'Зп 999'],
       type: TYPES.allSpent,
