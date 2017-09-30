@@ -6,10 +6,10 @@
   "main": "./bin/index",
   "scripts": {
     "lint": "./node_modules/.bin/eslint src/**/*.js",
-    "test": "./node_modules/.bin/ava tests/test.js",
+    "test": "./node_modules/.bin/nyc --reporter=text ./node_modules/.bin/ava tests/test.js --verbose",
     "test:watch": "npm test -- --watch",
     "start": "./bin/index",
-    "coverage": "./node_modules/.bin/nyc --reporter=lcov --reporter=text npm test ./node_modules/.bin/codecov -e TRAVIS_NODE_VERSION"
+    "coverage": "./node_modules/.bin/nyc report --reporter=lcov | codecov"
   },
   "engines": {
     "node": "8.5.0",
@@ -22,7 +22,7 @@
   "keywords": [
     "prostodiary",
     "prosto diary",
-    "telegram diary bot"
+    "telegram bot"
   ],
   "author": "goto Interactive",
   "license": "GPL-3.0",

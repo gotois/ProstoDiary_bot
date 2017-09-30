@@ -8,7 +8,7 @@ const TYPES = {
 const regExpMonthNumber = /^\d+ (?=Января|Февраля|Марта|Апреля|Мая|Июня|Июля|Августа|Сентября|Октября|Ноября|Декабря)/gi;
 const regExpYear = /\d+ (?=Понедельник|Вторник|Среда|Четверг|Пятница|Суббота|Воскресенье)/gi;
 const regExpWeight = /вес.\d+(,|\.).+/gi;
-const regExpNumbers = /^.+ (\d+)/gi;
+const regExpNumbers = /^.+ ?(\d+)/gi;
 const regExpRubles = /р|руб|₽| р| ₽| руб| рублей/i;
 const regExpMyZP = /(зп|зарплата|получил|получено|заработано|заработал)(\s?)+\d/gi;
 
@@ -16,7 +16,7 @@ const regExpMyZP = /(зп|зарплата|получил|получено|за�
  * @param text {String}
  * @return {Array}
  */
-const splitText = text => text.split('\n');
+const splitText = text => (typeof text === 'string' ? text.split('\n') : []);
 /**
  *
  * @param texts {Array}
@@ -76,7 +76,9 @@ const formatType = (str, type) => {
   switch (type) {
     // Удаляем строчку о зарплате и прочих получениях
     case TYPES.allSpent: {
-      str = str.replace(regExpMyZP, '');
+      if (str.match(regExpMyZP)) {
+        str = '';
+      }
       break;
     }
     // Находим потраченное
@@ -104,10 +106,8 @@ const calcMoney = (str) => {
   if (!(numbers && numbers.length)) {
     return 0;
   }
-  return splitText(numbers.input).reduce((acc, text) => {
-    acc += getAllSum(text);
-    return acc;
-  }, 0);
+  return splitText(numbers.input)
+    .reduce((acc, text) => (acc += getAllSum(text)), 0);
 };
 /**
  * @param numbers {String}
@@ -122,7 +122,12 @@ const getAllSum = (numbers) => {
   if (out.match(/^\d\.?(\d\d)?/) > '0') {
     const outArray = out.replace(/[^A-Za-z0-9_.,]/gi, ',').split(',');
     const res = outArray
-      .filter(temp => temp.length && !Number.isNaN(temp))
+      .filter(temp => {
+        if (!temp.length || Number.isNaN(Number(temp))) {
+          return false;
+        }
+        return true;
+      })
       .reduce((acc, str) => (acc += Number.parseFloat(str)), 0)
       .toFixed(2);
     return Number(res);

@@ -83,11 +83,15 @@ test('money', t => {
   // Spent
   {
     t.is(getMoney({
-      texts: ['Поел 300', '+ ЗП 1'],
+      texts: [1, 2, '0', 'sdlfjsdlfjsldkfj'],
+      type: TYPES.allSpent,
+    }), 0);
+    t.is(getMoney({
+      texts: ['Поел 300 рыбу', '+ ЗП 1 \n\nsad', 'nuff said'],
       type: TYPES.allSpent,
     }), 300);
     t.is(getMoney({
-      texts: ['Поел 100р', 'Магаз 100.2₽', 'Магаз 100р.', 'Магазин 20.11р'],
+      texts: ['Поел мясо 100р', 'Магаз 100.20₽', 'Магаз 100р.', '20.11р магазин'],
       type: TYPES.allSpent,
     }), 320.31);
     t.is(getMoney({
@@ -99,7 +103,7 @@ test('money', t => {
       type: TYPES.allSpent,
     }), 400);
     t.is(getMoney({
-      texts: ['+ ЗП 300'],
+      texts: ['+ ЗП 300', 'что-то еще'],
       type: TYPES.allSpent,
     }), 0);
     t.is(getMoney({
@@ -132,7 +136,7 @@ test('graph service', t => {
 });
 
 test('graph controller', t => {
-  const {formatWord, createRegExp, isRegexString, createRegexInput, convertStringToRegexp} = require('../src/events/graph.controller');
+  const {formatWord, createRegExp, isRegexString, createRegexInput} = require('../src/events/graph.controller');
   // formatWord
   {
     t.true(typeof formatWord('lksdjf') === 'string');
@@ -179,5 +183,4 @@ test('format', t => {
       entry: 'some2'
     }]), '01.01.1991\nsome1\n\n01.01.1992\nsome2');
   }
-
 });
