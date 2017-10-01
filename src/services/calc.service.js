@@ -25,6 +25,9 @@ const splitText = text => (typeof text === 'string' ? text.split('\n') : []);
  * @return {String}
  */
 const getMoney = ({texts, type, local}) => {
+  if (!Array.isArray(texts)) {
+    throw 'Not valid argument';
+  }
   /**
    * @return {Number}
    */

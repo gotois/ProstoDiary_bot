@@ -40,12 +40,12 @@ const createRegExp = input => {
  * @param input {String}
  * @return {boolean}
  */
-function isRegexString(input) {
+const isRegexString = input => {
   if (input[0] === '/' && input[input.length - 1] === '/') {
     return true;
   }
   return false;
-}
+};
 /**
  *
  * @param input {String}

@@ -7,12 +7,10 @@ const crypt = require('../services/crypt.service');
 const datetime = require('../services/date.service');
 const {createRegexInput} = require('./graph.controller');
 /**
- *
  * @type {string}
  */
 const BAR_TYPE = 'bar';
 /**
- *
  * @type {string}
  */
 const NOT_FOUND = 'NOT FOUND';

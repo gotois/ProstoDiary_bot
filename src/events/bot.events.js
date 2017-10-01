@@ -12,6 +12,7 @@ const commands = require('../commands/bot.commands');
   bot.onText(commands.SETDATE, require('./setdate.event'));
   bot.onText(commands.GRAPH, require('./graph.event'));
   bot.onText(commands.COUNT, require('./count.event'));
+  bot.onText(commands.SEARCH, require('./search.event'));
   bot.on(commands.EDITED_MESSAGE_TEXT, require('./edited_message_text.event'));
   bot.on(commands.TEXT, require('./text.event'));
 }

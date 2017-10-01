@@ -4,7 +4,7 @@ const dbEntries = require('../database/bot.database');
 const crypt = require('../services/crypt.service');
 const format = require('../services/format.service');
 /***
- * текст редактируется он обновляет свое значение в БД.
+ * Обновление текста в БД
  * @param msg {Object}
  * @param msg.chat {Object}
  * @param msg.from {Object}
@@ -22,20 +22,24 @@ const onEditedMessageText = async ({chat, from, text, message_id}) => {
   }
   const currentUser = sessions.getSession(fromId);
   if (input === 'del') {
-    dbEntries.delete(currentUser.id, message_id).then(() => (
-      bot.sendMessage(chatId, 'Запись удалена')
-    )).catch(error => {
+    try {
+      await dbEntries.delete(currentUser.id, message_id);
+      await bot.sendMessage(chatId, 'Запись удалена');
+    } catch (error) {
       console.error(error);
-      return bot.sendMessage(chatId, error.toLocaleString());
-    });
-    return;
+      await bot.sendMessage(chatId, error.toLocaleString());
+    }
+  } else {
+    try {
+      await dbEntries.put(currentUser.id, crypt.encode(input), new Date(), message_id);
+      await bot.sendMessage(chatId, format.prevInput(input) + '\n_Запись обновлена_', {
+        'parse_mode': 'Markdown'
+      });
+    } catch (error) {
+      console.error(error);
+      await bot.sendMessage(chatId, error.toLocaleString());
+    }
   }
-  dbEntries.put(currentUser.id, crypt.encode(input), new Date(), message_id).then(() => {
-    return bot.sendMessage(chatId, format.prevInput(input) + 'Запись обновлена');
-  }).catch(error => {
-    console.error(error);
-    return bot.sendMessage(chatId, error.toLocaleString());
-  });
 };
 
 module.exports = onEditedMessageText;

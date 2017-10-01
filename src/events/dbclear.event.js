@@ -8,7 +8,7 @@ const bot = require('./../config/bot.config');
  * @param msg.from {Object}
  * @return {void}
  */
-const onDBCLEAR = async ({chat, from}) => {
+const onDBClear = async ({chat, from}) => {
   const chatId = chat.id;
   const fromId = from.id;
   const options = {
@@ -17,21 +17,20 @@ const onDBCLEAR = async ({chat, from}) => {
     }
   };
   const currentUser = sessions.getSession(fromId);
-  bot.sendMessage(chatId, 'Очистить ваши записи? (Y/N)', options).then(({chat, message_id}) => {
-    const senderId = chat.id;
-
-    return bot.onReplyToMessage(senderId, message_id, ({text}) => {
-      if (text.toUpperCase() !== 'Y') {
-        return bot.sendMessage(senderId, 'Операция не выполнена');
-      }
-      return dbEntries.clear(currentUser.id).then(() => (
-        bot.sendMessage(senderId, 'Данные очищены')
-      )).catch(error => {
-        console.error(error);
-        return bot.sendMessage(senderId, 'Ошибка в операции');
-      });
-    });
+  const {message_id} = await bot.sendMessage(chatId, 'Очистить ваши записи?\nНапишите: YES', options);
+  await bot.onReplyToMessage(chat.id, message_id, async ({text}) => {
+    if (text !== 'YES') {
+      await bot.sendMessage(chat.id, 'Операция отменена');
+      return;
+    }
+    try {
+      await dbEntries.clear(currentUser.id);
+      await bot.sendMessage(chat.id, 'Данные очищены');
+    } catch (error) {
+      console.error(error);
+      await bot.sendMessage(chat.id, 'Ошибка в операции');
+    }
   });
 };
 
-module.exports = onDBCLEAR;
+module.exports = onDBClear;

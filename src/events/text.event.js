@@ -34,12 +34,16 @@ const onText = async ({chat, from, text, reply_to_message, message_id, date}) =>
     return;
   }
   const currentUser = sessions.getSession(fromId);
-  dbEntries.post(currentUser.id, crypt.encode(input), message_id, new Date(date * 1000)).then(() => {
+  try {
+    await dbEntries.post(currentUser.id, crypt.encode(input), message_id, new Date(date * 1000));
     const text = format.prevInput(input);
-    return bot.sendMessage(chatId, text);
-  }).catch(error => {
-    return bot.sendMessage(chatId, error);
-  });
+    await bot.sendMessage(chatId, text, {
+      'disable_notification': true,
+      'disable_web_page_preview': true,
+    });
+  } catch (error) {
+    await bot.sendMessage(chatId, error);
+  }
 };
 
 module.exports = onText;

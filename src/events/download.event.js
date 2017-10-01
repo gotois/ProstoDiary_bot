@@ -3,6 +3,13 @@ const format = require('../services/format.service');
 const dbEntries = require('../database/bot.database');
 const sessions = require('../services/session.service');
 const bot = require('./../config/bot.config');
+/**
+ * @param date
+ * @return {string}
+ */
+const generateName = date => {
+  return `ProstoDiary_backup_${date}`;
+};
 /***
  * Скачивание файла БД на устройство
  * @param msg {Object}
@@ -14,22 +21,25 @@ const bot = require('./../config/bot.config');
 const onDownload = async ({chat, from, date}) => {
   const chatId = chat.id;
   const fromId = from.id;
-  const fileName = `prosto-diary-backup-${date}.txt`;
+  const fileName = generateName(date) + '.txt';
   const archive = new zip();
   const currentUser = sessions.getSession(fromId);
-  dbEntries.getAll(currentUser.id).then(({rows}) => {
+  try {
+    const {rows} = await dbEntries.getAll(currentUser.id);
     if (rows.length > 0) {
       const formatData = format.formatRows(rows);
       archive.add(fileName, new Buffer(formatData, 'utf8'));
       const buffer = archive.toBuffer();
-      return bot.sendDocument(chatId, buffer);
+      await bot.sendDocument(chatId, buffer, {
+        'caption': generateName(date)
+      });
     } else {
-      return bot.sendMessage(chatId, 'Нет данных');
+      await bot.sendMessage(chatId, 'Нет данных');
     }
-  }).catch(error => {
+  } catch (error) {
     console.error(error);
-    return bot.sendMessage(chatId, 'Операция не выполнена');
-  });
+    await bot.sendMessage(chatId, 'Операция не выполнена');
+  }
 };
 
 module.exports = onDownload;
