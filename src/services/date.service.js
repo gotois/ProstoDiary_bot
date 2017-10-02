@@ -37,10 +37,16 @@ const convertToNormalDate = date => {
     return date;
   } else {
     date = date.replace(/\./g, '-');
+    const dd = +(date.match(/(\d+)-/)[1]);
+    const mm = +(date.match(/-(\d+)/)[1]) - 1;
+    const yyyy = +(date.match(/-\d+-(\d+)/)[1]);
+    if (dd > 31 || mm > 12) {
+      throw new Error('Invalid Date');
+    }
     const newDate = new Date();
-    newDate.setDate(+(date.match(/(\d+)-/)[1]));
-    newDate.setMonth(+(date.match(/-(\d+)/)[1]) - 1);
-    newDate.setYear(+(date.match(/-\d+-(\d+)/)[1]));
+    newDate.setDate(dd);
+    newDate.setMonth(mm);
+    newDate.setYear(yyyy);
     return newDate;
   }
 };

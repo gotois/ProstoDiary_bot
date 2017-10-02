@@ -1,8 +1,8 @@
 const dbEntries = require('../database/bot.database');
 const sessions = require('../services/session.service');
-const crypt = require('../services/crypt.service');
 const bot = require('./../config/bot.config');
 const {getMoney, TYPES} = require('../services/calc.service');
+const {decodeRows} = require('./../services/format.service');
 /**
  * @param startTime
  * @param endTime
@@ -26,11 +26,8 @@ const onCount = async ({chat, from}, match) => {
   const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
-  const {rows = []} = await dbEntries.getAll(currentUser.id);
-  const objRows = rows.map(({date_added, entry}) => ({
-    date: date_added,
-    entry: crypt.decode(entry)
-  }));
+  const {rows} = await dbEntries.getAll(currentUser.id);
+  const objRows = decodeRows(rows);
   if (!objRows.length) {
     await bot.sendMessage(chatId, 'No data');
     return;

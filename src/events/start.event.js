@@ -10,20 +10,19 @@ const dbUsers = require('./../database/database.users');
  */
 const onStart = async ({chat, from}) => {
   const chatId = chat.id;
-  const fromId = from.id;
-  const currentUser = sessions.getSession(fromId);
-  dbUsers.check(currentUser.id).then(({rowCount}) => {
+  const currentUser = sessions.getSession(from.id);
+  try {
+    const {rowCount} = await dbUsers.check(currentUser.id);
     if (rowCount === 0) {
-      return dbUsers.post(currentUser.id).then(() => (
-        bot.sendMessage(chatId, 'Вы вошли в систему')
-      ));
+      await dbUsers.post(currentUser.id);
+      await bot.sendMessage(chatId, 'Вы вошли в систему');
     } else {
-      return bot.sendMessage(chatId, 'Повторный вход не требуется');
+      await bot.sendMessage(chatId, 'Повторный вход не требуется');
     }
-  }).catch(error => {
+  } catch (error) {
     console.error(error);
-    return bot.sendMessage(chatId, 'Операция не выполнена');
-  });
+    await bot.sendMessage(chatId, 'Операция не выполнена');
+  }
 };
 
 module.exports = onStart;

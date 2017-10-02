@@ -14,13 +14,12 @@ const format = require('../services/format.service');
  */
 const onEditedMessageText = async ({chat, from, text, message_id}) => {
   const chatId = chat.id;
-  const fromId = from.id;
   const input = text.trim();
   if (input.startsWith('/')) {
     await bot.sendMessage(chatId, 'Редактирование этой записи невозможно');
     return;
   }
-  const currentUser = sessions.getSession(fromId);
+  const currentUser = sessions.getSession(from.id);
   if (input === 'del') {
     try {
       await dbEntries.delete(currentUser.id, message_id);
@@ -33,7 +32,7 @@ const onEditedMessageText = async ({chat, from, text, message_id}) => {
     try {
       await dbEntries.put(currentUser.id, crypt.encode(input), new Date(), message_id);
       await bot.sendMessage(chatId, format.prevInput(input) + '\n_Запись обновлена_', {
-        'parse_mode': 'Markdown'
+        'parse_mode': 'Markdown',
       });
     } catch (error) {
       console.error(error);

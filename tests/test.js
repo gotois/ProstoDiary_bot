@@ -47,11 +47,14 @@ test('datetime', t => {
   {
     t.is(typeof convertToNormalDate('3-12-2016'), 'object');
     t.true(convertToNormalDate('3-12-2016') instanceof Date);
-    t.is(convertToNormalDate('01.02.2016').getYear(), 116);
-    t.is(convertToNormalDate('08.07.2017').getDay(), 6);
-    t.is(convertToNormalDate('07.08.2017').getDay(), 1);
-    t.is(convertToNormalDate('07-08-2017').getDay(), 1);
-    t.is(convertToNormalDate('2.27.2017').getDay(), 4);
+    t.is(convertToNormalDate('01.02.2016').getFullYear(), 2016);
+    t.is(convertToNormalDate('08.07.2017').getDate(), 8);
+    t.is(convertToNormalDate('07.08.2017').getDate(), 7);
+    t.is(convertToNormalDate('07-08-2017').getMonth(), 7);
+    const error = t.throws(() => {
+      convertToNormalDate('2.27.2017');
+    }, Error);
+    t.is(error.message, 'Invalid Date');
     t.is(convertToNormalDate(new Date(0)).getMonth(), 0);
     t.is(convertToNormalDate(new Date(0)).toDateString(), 'Thu Jan 01 1970');
     t.true(convertToNormalDate(new Date()) instanceof Date);

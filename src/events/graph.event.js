@@ -3,9 +3,9 @@ const sessions = require('../services/session.service');
 const bot = require('./../config/bot.config');
 const plot = require('../services/graph.service');
 const commands = require('../commands/bot.commands');
-const crypt = require('../services/crypt.service');
 const datetime = require('../services/date.service');
 const {createRegexInput} = require('./graph.controller');
+const {decodeRows} = require('./../services/format.service');
 /**
  * @type {string}
  */
@@ -24,24 +24,18 @@ const NOT_FOUND = 'NOT FOUND';
  */
 const getGraph = async ({chat, from, text}) => {
   const chatId = chat.id;
-  const fromId = from.id;
-  const currentUser = sessions.getSession(fromId);
+  const currentUser = sessions.getSession(from.id);
   const input = text.replace(commands.GRAPH, '').trim();
   const regExp = createRegexInput(input);
   // временная шкала х {String} и частота y {Number}
   const trace = {
     x: [],
     y: [],
-    type: BAR_TYPE
+    type: BAR_TYPE,
   };
-  dbEntries.getAll(currentUser.id).then(({rows}) => {
-    if (rows.length <= 0) {
-      throw 'Null rows exception';
-    }
-    const entryRows = rows.map(({date_added, entry}) => ({
-      date: date_added,
-      entry: crypt.decode(entry)
-    })).filter(text => regExp.test(text.entry));
+  try {
+    const {rows} = await dbEntries.getAll(currentUser.id);
+    const entryRows = decodeRows(rows).filter(text => regExp.test(text.entry));
     if (!entryRows.length) {
       throw 'Нет данных для построения графика';
     }
@@ -62,36 +56,37 @@ const getGraph = async ({chat, from, text}) => {
         ++trace.y[xIndex];
       }
     });
-  }).then(() => {
     const figure = {'data': [trace]};
     const imgOpts = {
       format: 'png',
       width: 768,
       height: 512
     };
-    return plot.getImageBuffer(figure, imgOpts);
     // TODO: если потребуется удаление графиков использовать `return plot.deletePlot('0');`
-  }).then(photoBuffer => (
-    bot.sendPhoto(chatId, photoBuffer, {
+    const photoBuffer = await plot.getImageBuffer(figure, imgOpts);
+    await bot.sendPhoto(chatId, photoBuffer, {
       caption: `График для "${regExp.toString()}"`
-    })
-  )).catch(error => {
+    });
+  } catch (error) {
     console.error(error);
     switch (typeof error) {
       case 'string': {
-        return bot.sendMessage(chatId, error);
+        await bot.sendMessage(chatId, error);
+        return;
       }
       case 'object': {
         if (error.statusMessage !== NOT_FOUND) {
-          return bot.sendMessage(chatId, 'Произошла ошибка при удалении графика с сервера');
+          await bot.sendMessage(chatId, 'Произошла ошибка при удалении графика с сервера');
+          return;
         }
         break;
       }
       default: {
-        return bot.sendMessage(chatId, 'Произошла неизвестная ошибка');
+        await bot.sendMessage(chatId, 'Произошла неизвестная ошибка');
+        return;
       }
     }
-  });
+  }
 };
 
 module.exports = getGraph;

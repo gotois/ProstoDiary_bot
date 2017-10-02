@@ -15,21 +15,27 @@ const crypt = require('../services/crypt.service');
 const getDataFromDate = async ({chat,from}, match) => {
   const chatId = chat.id;
   const userId = from.id;
-  const date = datetime.convertToNormalDate(match[1]);
-  if (!datetime.isNormalDate(date)) {
+  const getTime = match[1].trim();
+  try {
+    const date = datetime.convertToNormalDate(getTime);
+    if (!datetime.isNormalDate(date)) {
+      throw 'Not normal date';
+    }
+  } catch (error) {
     await bot.sendMessage(chatId, 'Установленное время не валидно');
     return;
   }
   const currentUser = sessions.getSession(userId);
-  dbEntries.get(currentUser.id, match[1]).then(({rows}) => {
+  try {
+    const {rows} = await dbEntries.get(currentUser.id, getTime);
     const decodeRows = rows.map(({entry}) => crypt.decode(entry));
-    return (decodeRows.length)
+    await (decodeRows.length)
       ? (bot.sendMessage(chatId, JSON.stringify(decodeRows, null, 2)))
       : (bot.sendMessage(chatId, 'Записей нет'));
-  }).catch(error => {
+  } catch (error) {
     console.error(error);
-    return bot.sendMessage(chatId, 'Произошла ошибка');
-  });
+    await bot.sendMessage(chatId, 'Произошла ошибка');
+  }
 };
 
 module.exports = getDataFromDate;

@@ -33,8 +33,19 @@ const formatRows = entries => {
  * @returns {string}
  */
 const prevInput = input => (`✓${input.replace(/\n/g, ' ').substring(0, 6)}…`);
+/**
+ * @param rows {Array}
+ * @return {Array}
+ */
+const decodeRows = (rows = []) => {
+  return rows.map(({date_added, entry}) => ({
+    date: date_added,
+    entry: crypt.decode(entry),
+  }));
+};
 
 module.exports = {
   formatRows,
   prevInput,
+  decodeRows,
 };

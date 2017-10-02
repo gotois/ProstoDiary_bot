@@ -45,7 +45,6 @@ const decode = entry => {
   }
 };
 /**
- *
  * @param text {String}
  * @returns {String}
  */

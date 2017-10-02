@@ -20,27 +20,26 @@ const getImage = (figure, options = {}) => (
  * @param options {Object}
  * @returns {Promise}
  */
-const getImageBuffer = (figure, options = {}) => (
-  getImage(figure, options).then(imageStream => (
-    new Promise((resolve, reject) => {
-      const ws = Writable();
-      const buffers = [];
-      ws._write = (chunk, enc, next) => {
-        buffers.push(chunk);
-        next();
-      };
-      imageStream.pipe(ws);
-      imageStream.on('end', () => {
-        const photoBuffer = Buffer.concat(buffers);
-        resolve(photoBuffer);
-      });
-      imageStream.on('error', error => {
-        console.error(error);
-        reject(error);
-      });
-    })
-  ))
-);
+const getImageBuffer = async (figure, options = {}) => {
+  const imageStream = await getImage(figure, options);
+  return new Promise((resolve, reject) => {
+    const ws = Writable();
+    const buffers = [];
+    ws._write = (chunk, enc, next) => {
+      buffers.push(chunk);
+      next();
+    };
+    imageStream.pipe(ws);
+    imageStream.on('end', () => {
+      const photoBuffer = Buffer.concat(buffers);
+      resolve(photoBuffer);
+    });
+    imageStream.on('error', error => {
+      console.error(error);
+      reject(error);
+    });
+  });
+};
 /**
  *
  * @param plotId {String}

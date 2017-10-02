@@ -18,7 +18,6 @@ const regExpMyZP = /(зп|зарплата|получил|получено|за�
  */
 const splitText = text => (typeof text === 'string' ? text.split('\n') : []);
 /**
- *
  * @param texts {Array}
  * @param local {String}
  * @param type {Number}
