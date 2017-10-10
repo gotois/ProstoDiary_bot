@@ -1,5 +1,7 @@
 const crypto = require('crypto');
 const {SALT_PASSWORD} = process.env;
+const UTF8 = 'utf8';
+const HEX = 'hex';
 const options = {
   algorithm: 'aes-256-ctr',
 };
@@ -19,7 +21,7 @@ const getPassword = () => {
  */
 const encrypt = (text, password) => {
   const cipher = crypto.createCipher(options.algorithm, password);
-  return cipher.update(text, 'utf8', 'hex') + cipher.final('hex');
+  return cipher.update(text, UTF8, HEX) + cipher.final(HEX);
 };
 /**
  *
@@ -29,7 +31,7 @@ const encrypt = (text, password) => {
  */
 const decrypt = (text, password) => {
   const decipher = crypto.createDecipher(options.algorithm, password);
-  return decipher.update(text, 'hex', 'utf8') + decipher.final('utf8');
+  return decipher.update(text, HEX, UTF8) + decipher.final(UTF8);
 };
 /**
  *

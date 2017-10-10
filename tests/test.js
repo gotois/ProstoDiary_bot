@@ -18,16 +18,49 @@ test('crypto', t => {
 
 test('commands', t => {
   const commands = require('../src/commands/bot.commands');
-  t.true(commands.DOWNLOAD instanceof RegExp);
-  t.true(commands.DBCLEAR instanceof RegExp);
-  t.true(commands.START instanceof RegExp);
-  t.true(commands.HELP instanceof RegExp);
-  t.true(commands.GETDATE instanceof RegExp);
-  t.true(commands.SETDATE instanceof RegExp);
-  t.true(commands.GRAPH instanceof RegExp);
-  t.true(commands.COUNT instanceof RegExp);
-  t.true(typeof commands.EDITED_MESSAGE_TEXT === 'string');
-  t.true(typeof commands.TEXT === 'string');
+  const {
+    DOWNLOAD,
+    DBCLEAR,
+    START,
+    HELP,
+    GETDATE,
+    SETDATE,
+    GRAPH,
+    COUNT,
+    SEARCH,
+    EDITED_MESSAGE_TEXT,
+    TEXT,
+  } = commands;
+
+  t.true(DOWNLOAD instanceof RegExp);
+  t.true(DBCLEAR instanceof RegExp);
+  t.true(START instanceof RegExp);
+  t.true(HELP instanceof RegExp);
+  t.true(GETDATE instanceof RegExp);
+  t.true(SETDATE instanceof RegExp);
+  t.true(GRAPH instanceof RegExp);
+  t.true(COUNT instanceof RegExp);
+  t.true(SEARCH instanceof RegExp);
+  t.true(typeof EDITED_MESSAGE_TEXT === 'string');
+  t.true(typeof TEXT === 'string');
+
+  {
+    t.true(DOWNLOAD.test('/download'));
+    t.false(DOWNLOAD.test('/download 1'));
+  }
+  {
+    t.true(DBCLEAR.test('/dbclear'));
+    t.false(DBCLEAR.test('/dbclear/'));
+  }
+  {
+    t.true(COUNT.test('/count'));
+    t.true(COUNT.test('/count +'));
+    t.true(COUNT.test('/count -'));
+    t.false(COUNT.test('/count/'));
+  }
+  {
+    t.true(SEARCH.test('/search something'));
+  }
 });
 
 test('datetime', t => {

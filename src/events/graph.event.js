@@ -37,7 +37,7 @@ const getGraph = async ({chat, from, text}) => {
     const {rows} = await dbEntries.getAll(currentUser.id);
     const entryRows = decodeRows(rows).filter(text => regExp.test(text.entry));
     if (!entryRows.length) {
-      throw 'Нет данных для построения графика';
+      throw new Error('Нет данных для построения графика');
     }
     const firstDate = rows[0].date_added;
     const latestDate = rows[rows.length - 1].date_added;
@@ -65,7 +65,8 @@ const getGraph = async ({chat, from, text}) => {
     // TODO: если потребуется удаление графиков использовать `return plot.deletePlot('0');`
     const photoBuffer = await plot.getImageBuffer(figure, imgOpts);
     await bot.sendPhoto(chatId, photoBuffer, {
-      caption: `График для "${regExp.toString()}"`
+      'caption': `График для "${regExp.toString()}"`,
+      'parse_mode': 'Markdown',
     });
   } catch (error) {
     console.error(error);
@@ -76,7 +77,7 @@ const getGraph = async ({chat, from, text}) => {
       }
       case 'object': {
         if (error.statusMessage !== NOT_FOUND) {
-          await bot.sendMessage(chatId, 'Произошла ошибка при удалении графика с сервера');
+          await bot.sendMessage(chatId, 'Нет данных');
           return;
         }
         break;

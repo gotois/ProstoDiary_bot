@@ -4,13 +4,13 @@ const bot = require('./../config/bot.config');
 const {getMoney, TYPES} = require('../services/calc.service');
 const {decodeRows} = require('./../services/format.service');
 /**
- * @param startTime
- * @param endTime
- * @param allSpentMoney
+ * @param startTime {String}
+ * @param endTime {String}
+ * @param money {String}
  * @return {string}
  */
-const formatResponse = ({startTime, endTime, allSpentMoney}) => {
-  return `С ${startTime} по ${endTime}:\n*${allSpentMoney}*`;
+const formatResponse = ({startTime, endTime, money}) => {
+  return `С ${startTime} по ${endTime}:\n*${money}*`;
 };
 /***
  * @example /count - -> выведет сколько всего потрачено
@@ -26,6 +26,34 @@ const onCount = async ({chat, from}, match) => {
   const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
+  const getAllSpentMoney = () => getMoney({
+    texts: entries,
+    type: TYPES.allSpent,
+    local,
+  });
+  const getReceivedMoney = () => getMoney({
+    texts: entries,
+    type: TYPES.allReceived,
+    local,
+  });
+  const getResult = async (data, params) => {
+    switch (data) {
+      case '-': {
+        const money = getAllSpentMoney();
+        await bot.sendMessage(chatId, '_Всего потрачено_:\n' + formatResponse({startTime, endTime, money}), params);
+        return;
+      }
+      case '+': {
+        const money = getReceivedMoney();
+        await bot.sendMessage(chatId, '_Всего получено_:\n' + formatResponse({startTime, endTime, money}), params);
+        return;
+      }
+      default: {
+        await bot.sendMessage(chatId, 'Проверьте правильность запроса. \nНапример: "/count -"');
+        return;
+      }
+    }
+  };
   const {rows} = await dbEntries.getAll(currentUser.id);
   const objRows = decodeRows(rows);
   if (!objRows.length) {
@@ -40,29 +68,24 @@ const onCount = async ({chat, from}, match) => {
   const params = {
     'parse_mode': 'Markdown',
   };
-  switch (match[2].toUpperCase()) {
-    case '-': {
-      const allSpentMoney = getMoney({
-        texts: entries,
-        type: TYPES.allSpent,
-        local,
-      });
-      await bot.sendMessage(chatId, '_Всего потрачено_:\n' + formatResponse({startTime, endTime, allSpentMoney}), params);
-      return;
-    }
-    case '+': {
-      const allSpentMoney = getMoney({
-        texts: entries,
-        type: TYPES.allReceived,
-        local,
-      });
-      await bot.sendMessage(chatId, '_Всего получено_:\n' + formatResponse({startTime, endTime, allSpentMoney}), params);
-      return;
-    }
-    default: {
-      await bot.sendMessage(chatId, 'Проверьте правильность запроса. \nНапример: "/count -"');
-      return;
-    }
+  if (match[1]) {
+    await getResult(match[1].toUpperCase(), params);
+  } else {
+    const replyParams = Object.assign({}, params, {
+      'reply_markup': {
+        inline_keyboard: [
+          [
+            { 'text': 'Всего потрачено', 'callback_data': '-' },
+            { 'text': 'Всего получено', 'callback_data': '+' }
+          ]
+        ]
+      }
+    });
+    await bot.sendMessage(chatId, 'Финансы', replyParams);
+    // TODO: возможна утечка, если не уничтожать слушатель
+    bot.once('callback_query', async ({data}) => {
+      await getResult(data, params);
+    });
   }
 };
 

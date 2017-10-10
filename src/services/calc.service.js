@@ -7,10 +7,10 @@ const TYPES = {
 };
 const regExpMonthNumber = /^\d+ (?=Января|Февраля|Марта|Апреля|Мая|Июня|Июля|Августа|Сентября|Октября|Ноября|Декабря)/gi;
 const regExpYear = /\d+ (?=Понедельник|Вторник|Среда|Четверг|Пятница|Суббота|Воскресенье)/gi;
-const regExpWeight = /вес.\d+(,|\.).+/gi;
-const regExpNumbers = /^.+ ?(\d+)/gi;
-const regExpRubles = /р|руб|₽| р| ₽| руб| рублей/i;
-const regExpMyZP = /(зп|зарплата|получил|получено|заработано|заработал)(\s?)+\d/gi;
+const regExpWeight = /вес.\d+(,|\.).+/gim;
+const regExpNumbers = /^.+ ?(\d+)/gim;
+const regExpRubles = /р|руб|₽| р| ₽| руб| рублей/im;
+const regExpMyZP = /(зп|зарплата|получил|получено|заработано|заработал)(\s?)+\d/gim;
 
 /**
  * @param text {String}
