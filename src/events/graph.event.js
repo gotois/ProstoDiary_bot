@@ -4,7 +4,7 @@ const bot = require('./../config/bot.config');
 const plot = require('../services/graph.service');
 const commands = require('../commands/bot.commands');
 const datetime = require('../services/date.service');
-const {createRegexInput} = require('./graph.controller');
+const {createRegexInput} = require('../services/input.service');
 const {decodeRows} = require('./../services/format.service');
 /**
  * @type {string}
@@ -35,7 +35,7 @@ const getGraph = async ({chat, from, text}) => {
   };
   try {
     const {rows} = await dbEntries.getAll(currentUser.id);
-    const entryRows = decodeRows(rows).filter(text => regExp.test(text.entry));
+    const entryRows = decodeRows(rows).filter(({entry}) => regExp.test(entry));
     if (!entryRows.length) {
       throw new Error('Нет данных для построения графика');
     }

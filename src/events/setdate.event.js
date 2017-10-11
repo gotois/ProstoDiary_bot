@@ -25,13 +25,14 @@ const setDataFromDate = async ({chat, text, from, message_id}, match) => {
     return;
   }
   const currentUser = sessions.getSession(from.id);
-  dbEntries.post(currentUser.id, crypt.encode(input), message_id, new Date(), match[1]).then(() => {
-    const text = format.prevInput(input);
-    return bot.sendMessage(chatId, text);
-  }).catch(error => {
+  try {
+    await dbEntries.post(currentUser.id, crypt.encode(input), message_id, new Date(), match[1]);
+    const prevInput = format.prevInput(input);
+    await bot.sendMessage(chatId, prevInput);
+  } catch (error) {
     console.error(error);
-    return bot.sendMessage(chatId, 'Произошла ошибка');
-  });
+    await bot.sendMessage(chatId, 'Произошла ошибка');
+  }
 };
 
 module.exports = setDataFromDate;

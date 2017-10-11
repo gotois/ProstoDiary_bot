@@ -172,7 +172,7 @@ test('graph service', t => {
 });
 
 test('graph controller', t => {
-  const {formatWord, createRegExp, isRegexString, createRegexInput} = require('../src/events/graph.controller');
+  const {formatWord, createRegExp, isRegexString, createRegexInput} = require('../src/services/input.service');
   // formatWord
   {
     t.true(typeof formatWord('lksdjf') === 'string');

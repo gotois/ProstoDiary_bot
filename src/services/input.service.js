@@ -60,11 +60,20 @@ const convertStringToRegexp = input => new RegExp(input.slice(1, input.length - 
 const createRegexInput = input => (
   isRegexString(input) ? convertStringToRegexp(input) : createRegExp(input)
 );
+/**
+ *
+ * @param regexString {String}
+ * @return {string}
+ */
+const normalizeRegexStringToString = regexString => {
+  return regexString.replace(/^\//, '').replace(/\/$/, '');
+};
 
 module.exports = {
   formatWord,
   createRegExp,
   isRegexString,
   convertStringToRegexp,
+  normalizeRegexStringToString,
   createRegexInput,
 };

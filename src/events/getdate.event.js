@@ -19,7 +19,7 @@ const getDataFromDate = async ({chat,from}, match) => {
   try {
     const date = datetime.convertToNormalDate(getTime);
     if (!datetime.isNormalDate(date)) {
-      throw 'Not normal date';
+      throw new Error('Wrong date');
     }
   } catch (error) {
     await bot.sendMessage(chatId, 'Установленное время не валидно');

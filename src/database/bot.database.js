@@ -13,12 +13,12 @@ const getAll = user_id => {
   );
 };
 /***
- *
+ * TODO: фича. День начинается с рассвета и до следующего рассвета (вместо привычного дня времени)
  * @param user_id {Number}
  * @param date {String} like 2016-12-01
  * @return {Promise}
  */
-const get = (user_id, date) => {
+const _get = (user_id, date) => {
   const from = `${date} 0:0:0`;
   const until = `${date} 23:59:59`;
   return $$(
@@ -36,7 +36,7 @@ const get = (user_id, date) => {
  * @param date_added {Date|null}
  * @return {Promise}
  */
-const post = (user_id, entry, telegram_entry_id, date_modified, date_added = new Date()) => {
+const _post = (user_id, entry, telegram_entry_id, date_modified, date_added = new Date()) => {
   return $$(
     `INSERT INTO entries (user_id, entry, telegram_entry_id, date_modified, date_added) 
     VALUES ($1, $2, $3, $4, $5)`,
@@ -51,7 +51,7 @@ const post = (user_id, entry, telegram_entry_id, date_modified, date_added = new
  * @param telegram_entry_id {Number}
  * @return {Promise}
  */
-const put = (user_id, entry, date_modified, telegram_entry_id) => {
+const _put = (user_id, entry, date_modified, telegram_entry_id) => {
   return $$(
     `UPDATE entries
     SET entry = $2, date_modified = $3
@@ -64,7 +64,7 @@ const put = (user_id, entry, date_modified, telegram_entry_id) => {
  * @param telegram_entry_id {Number}
  * @return {Promise}
  */
-const del = (user_id, telegram_entry_id) => {
+const _delete = (user_id, telegram_entry_id) => {
   return $$(
     `DELETE from entries
     WHERE (user_id = $1 AND telegram_entry_id = $2)`,
@@ -85,10 +85,10 @@ const clear = user_id => {
 };
 
 module.exports = {
-  post,
-  get,
-  put,
-  delete: del,
+  post: _post,
+  get: _get,
+  put: _put,
+  delete: _delete,
   getAll,
   clear,
 };
