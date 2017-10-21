@@ -1,16 +1,20 @@
 const dbEntries = require('../database/bot.database');
 const sessions = require('../services/session.service');
 const bot = require('./../config/bot.config');
-const {getMoney, TYPES} = require('../services/calc.service');
+const {getMoney, getFormatMoney, TYPES} = require('../services/calc.service');
 const {decodeRows} = require('./../services/format.service');
 /**
  * @param startTime {String}
  * @param endTime {String}
- * @param money {String}
+ * @param money {Object}
  * @return {string}
  */
 const formatResponse = ({startTime, endTime, money}) => {
-  return `С ${startTime} по ${endTime}:\n*${money}*`;
+  const formatMoney = getFormatMoney(money);
+  return `С ${startTime} по ${endTime}:\n` +
+      `*${formatMoney.rub}*\n` +
+      `*${formatMoney.eur}*\n` +
+      `*${formatMoney.usd}*`;
 };
 /***
  * @example /count - -> выведет сколько всего потрачено
@@ -29,12 +33,10 @@ const onCount = async ({chat, from}, match) => {
   const getAllSpentMoney = () => getMoney({
     texts: entries,
     type: TYPES.allSpent,
-    local,
   });
   const getReceivedMoney = () => getMoney({
     texts: entries,
     type: TYPES.allReceived,
-    local,
   });
   const getResult = async (data, params) => {
     switch (data) {
@@ -60,8 +62,6 @@ const onCount = async ({chat, from}, match) => {
     await bot.sendMessage(chatId, 'No data');
     return;
   }
-  // TODO: на будущее дать выбор формату финансов (рубли, евро, доллары)
-  const local = 'RUB';
   const entries = objRows.map(row => row.entry);
   const startTime = objRows[0].date.toLocaleDateString();
   const endTime = objRows[objRows.length - 1].date.toLocaleDateString();

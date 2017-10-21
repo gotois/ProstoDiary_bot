@@ -114,53 +114,96 @@ test('session', t => {
 });
 
 test('money', t => {
-  const {getMoney, TYPES} = require('../src/services/calc.service');
+  const {getMoney, getFormatMoney, TYPES} = require('../src/services/calc.service');
 
-  // Spent
+  // TODO: getFormatMoney
   {
-    t.is(getMoney({
+  }
+  // getMoney
+  {
+    t.deepEqual(getMoney({
       texts: [1, 2, '0', 'sdlfjsdlfjsldkfj'],
       type: TYPES.allSpent,
-    }), 0);
-    t.is(getMoney({
+    }), {
+      eur: 0,
+      rub: 0,
+      usd: 0,
+    });
+    t.deepEqual(getMoney({
       texts: ['Поел 300 рыбу', '+ ЗП 1 \n\nsad', 'nuff said'],
       type: TYPES.allSpent,
-    }), 300);
-    t.is(getMoney({
+    }), {
+      eur: 0,
+      rub: 300,
+      usd: 0,
+    });
+    t.deepEqual(getMoney({
       texts: ['Поел мясо 100р', 'Магаз 100.20₽', 'Магаз 100р.', '20.11р магазин'],
       type: TYPES.allSpent,
-    }), 320.31);
-    t.is(getMoney({
+    }), {
+      eur: 0,
+      rub: 320.31,
+      usd: 0,
+    });
+    t.deepEqual(getMoney({
       texts: ['Поел 0.1р', 'some 0.1₽', 'some x 0.112', 'еще 0.1 \n и еще 0.1'],
       type: TYPES.allSpent,
-    }), 0.51);
-    t.is(getMoney({
+    }), {
+      eur: 0,
+      rub: 0.512,
+      usd: 0,
+    });
+    t.deepEqual(getMoney({
       texts: ['Поел 300', 'Магазин 100', 'Зп 999'],
       type: TYPES.allSpent,
-    }), 400);
-    t.is(getMoney({
+    }), {
+      eur: 0,
+      rub: 400,
+      usd: 0,
+    });
+    t.deepEqual(getMoney({
       texts: ['+ ЗП 300', 'что-то еще'],
       type: TYPES.allSpent,
-    }), 0);
-    t.is(getMoney({
+    }), {
+      eur: 0,
+      rub: 0,
+      usd: 0,
+    });
+    t.deepEqual(getMoney({
       texts: ['что-то отправил 300рублей ', 'Поел джаганнат за 200', 'получил 100р'],
       type: TYPES.allSpent,
-    }), 500);
-    t.is(getMoney({
+    }), {
+      eur: 0,
+      rub: 500,
+      usd: 0,
+    });
+    t.deepEqual(getMoney({
       texts: ['поел 300 100р 100'],
       type: TYPES.allSpent,
-    }), 500);
+    }), {
+      eur: 0,
+      rub: 500,
+      usd: 0,
+    });
   }
   // received
   {
-    t.is(getMoney({
-      texts: ['ЗП 300рублей ', 'зп 200 рублей', 'зарплата 100руб', 'получил 100', 'Водка 50'],
+    t.deepEqual(getMoney({
+      texts: ['ЗП 300рублей ', 'зп 10 евро', 'зарплата $10', 'зп 200 рублей', 'зарплата 100руб', 'получил 100', 'Водка 50'],
       type: TYPES.allReceived,
-    }), 700);
-    t.is(getMoney({
+    }), {
+      eur: 10,
+      rub: 700,
+      usd: 10,
+    });
+    t.deepEqual(getMoney({
       texts: ['ЗП 5\n ЗП 5'],
       type: TYPES.allReceived,
-    }), 10);
+    }), {
+      eur: 0,
+      rub: 10,
+      usd: 0,
+    });
   }
 });
 
