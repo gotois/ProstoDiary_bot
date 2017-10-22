@@ -22,6 +22,17 @@ const regExpUsd = new RegExp(usdString);
 const [EUR, RUB, USD] = ['eur', 'rub', 'usd',];
 const defaultOut = Object.freeze({[EUR]: 0, [RUB]: 0, [USD]: 0,});
 /**
+ * @param acc {Object}
+ * @param money {Object}
+ * @return {Object}
+ */
+const accMoney = (acc, money) => {
+  acc[EUR] += money.eur;
+  acc[RUB] += money.rub;
+  acc[USD] += money.usd;
+  return acc;
+};
+/**
  * @param text {String}
  * @return {Array}
  */
@@ -74,12 +85,9 @@ const getMoney = ({texts, type,}) => {
       .reduce((acc, raw) => acc.concat(...splitText(raw)), [])
       .map(text => formatType(text, type))
       .map(text => calcMoney(text))
-      .reduce((acc, money) => {
-        acc[EUR] += money.eur;
-        acc[RUB] += money.rub;
-        acc[USD] += money.usd;
-        return acc;
-      }, Object.assign({}, defaultOut));
+      .reduce((acc, money) => (
+        accMoney(acc, money)
+      ), Object.assign({}, defaultOut));
   } else {
     return defaultOut;
   }
@@ -129,10 +137,26 @@ const calcMoney = (str) => {
   if (str.length <= 1) {
     return defaultOut;
   }
-  // TODO: ничего не находит в случае когда str === '$100'
   // явно объявляю доллары
   str = str.replace(/\$.+/, (str) => {
     return str.substr(1) + 'долларов';
+  });
+  // явно объявляю евро
+  // TODO: говнокод :)
+  str.replace(/€\d+/, (_str, index, text) => {
+    let currentIndex = index + 1;
+    let end = text.length - 1;
+    while (currentIndex !== end) {
+      const currentText = text[currentIndex];
+      if (currentText === '.' || /\d/.test(currentText)) {
+        currentIndex++;
+        continue;
+      }
+      break;
+    }
+    const textFinded = text.substr(index, currentIndex);
+    str = textFinded.replace('€', '').replace(/$/, 'евро');
+    return str;
   });
 
   const numbers = str.match(str.match(regExpNumbers));
@@ -140,13 +164,9 @@ const calcMoney = (str) => {
     return defaultOut;
   }
   return splitText(numbers.input)
-    .reduce((acc, text) => {
-      const money = getAllSum(text);
-      acc[RUB] += money.rub;
-      acc[EUR] += money.eur;
-      acc[USD] += money.usd;
-      return acc;
-    }, Object.assign({}, defaultOut));
+    .reduce((acc, text) => (
+      accMoney(acc, getAllSum(text))
+    ), Object.assign({}, defaultOut));
 };
 /**
  * @param str {String}
