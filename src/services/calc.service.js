@@ -9,7 +9,7 @@ const regExpMonthNumber = /^\d+ (?=Января|Февраля|Марта|Апр
 const regExpYear = /\d+ (?=Понедельник|Вторник|Среда|Четверг|Пятница|Суббота|Воскресенье)/gi;
 const regExpWeight = /вес.\d+(,|\.).+/gim;
 const regExpNumbers = /^.+ ?(\d+)/gim;
-const regExpMyZP = /(зп|зарплата|получил|получено|заработано|заработал)(\s?)+\d|\$|€/gim;
+const regExpMyZP = /(зп|зарплата|получил|получено|заработано|заработал)(\s?|\$|€)+\d/gim;
 
 const onlyNumberString = 'A-Za-z0-9_.,';
 const rublesString = ' рублей|рублей|рублей | руб|руб|руб | р|р|р | ₽|₽|₽ | rub|rub|rub ';
