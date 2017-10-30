@@ -5,6 +5,7 @@ const dbEntries = require('../database/bot.database');
 const crypt = require('../services/crypt.service');
 const commands = require('../commands/bot.commands');
 const format = require('../services/format.service');
+const logger = require('../services/logger.service');
 /***
  * Установить что я делал в какой-то день:
  * /set 26.11.2016 something text
@@ -30,7 +31,7 @@ const setDataFromDate = async ({chat, text, from, message_id}, match) => {
     const prevInput = format.prevInput(input);
     await bot.sendMessage(chatId, prevInput);
   } catch (error) {
-    console.error(error);
+    logger.log('error', error);
     await bot.sendMessage(chatId, 'Произошла ошибка');
   }
 };

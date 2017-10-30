@@ -3,6 +3,14 @@ const bot = require('./../config/bot.config');
 const dbEntries = require('../database/bot.database');
 const crypt = require('../services/crypt.service');
 const format = require('../services/format.service');
+const logger = require('../services/logger.service');
+/**
+ * @param input {string}
+ * @return {string}
+ */
+const formatResponse = (input) => {
+  return format.prevInput(input) + '\n_Запись обновлена_';
+};
 /***
  * Обновление текста в БД
  * @param msg {Object}
@@ -25,17 +33,17 @@ const onEditedMessageText = async ({chat, from, text, message_id}) => {
       await dbEntries.delete(currentUser.id, message_id);
       await bot.sendMessage(chatId, 'Запись удалена');
     } catch (error) {
-      console.error(error);
+      logger.log('error', error);
       await bot.sendMessage(chatId, error.toLocaleString());
     }
   } else {
     try {
       await dbEntries.put(currentUser.id, crypt.encode(input), new Date(), message_id);
-      await bot.sendMessage(chatId, format.prevInput(input) + '\n_Запись обновлена_', {
+      await bot.sendMessage(chatId, formatResponse(input), {
         'parse_mode': 'Markdown',
       });
     } catch (error) {
-      console.error(error);
+      logger.log('error', error);
       await bot.sendMessage(chatId, error.toLocaleString());
     }
   }

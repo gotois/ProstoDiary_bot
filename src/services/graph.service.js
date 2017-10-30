@@ -1,8 +1,8 @@
 const {PLOTLY_LOGIN, PLOTLY_TOKEN} = process.env;
 const plotly = require('plotly')(PLOTLY_LOGIN, PLOTLY_TOKEN);
 const {Writable} = require('stream');
+const logger = require('../services/logger.service');
 /**
- *
  * @param figure {Object}
  * @param options {Object}
  * @returns {Promise}
@@ -15,7 +15,6 @@ const getImage = (figure, options = {}) => (
   ))
 );
 /**
- *
  * @param figure {Object}
  * @param options {Object}
  * @returns {Promise}
@@ -35,13 +34,12 @@ const getImageBuffer = async (figure, options = {}) => {
       resolve(photoBuffer);
     });
     imageStream.on('error', error => {
-      console.error(error);
+      logger.log('error', error);
       reject(error);
     });
   });
 };
 /**
- *
  * @param plotId {String}
  * @returns {Promise}
  */

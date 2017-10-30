@@ -1,6 +1,7 @@
 const dbEntries = require('../database/bot.database');
 const sessions = require('../services/session.service');
 const bot = require('./../config/bot.config');
+const logger = require('../services/logger.service');
 /***
  * Очистить базу данных с подтверждением
  * @param msg {Object}
@@ -27,7 +28,7 @@ const onDBClear = async ({chat, from}) => {
       await dbEntries.clear(currentUser.id);
       await bot.sendMessage(chat.id, 'Данные очищены');
     } catch (error) {
-      console.error(error);
+      logger.log('error', error);
       await bot.sendMessage(chat.id, 'Ошибка в операции');
     }
   });

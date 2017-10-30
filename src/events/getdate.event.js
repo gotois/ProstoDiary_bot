@@ -3,6 +3,7 @@ const bot = require('./../config/bot.config');
 const datetime = require('../services/date.service');
 const dbEntries = require('../database/bot.database');
 const crypt = require('../services/crypt.service');
+const logger = require('../services/logger.service');
 /***
  * Получить все что я делал в эту дату
  * @example /get 26.11.2016
@@ -33,7 +34,7 @@ const getDataFromDate = async ({chat,from}, match) => {
       ? (bot.sendMessage(chatId, JSON.stringify(decodeRows, null, 2)))
       : (bot.sendMessage(chatId, 'Записей нет'));
   } catch (error) {
-    console.error(error);
+    logger.log('error', error);
     await bot.sendMessage(chatId, 'Произошла ошибка');
   }
 };

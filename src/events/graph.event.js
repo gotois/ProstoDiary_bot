@@ -6,12 +6,13 @@ const commands = require('../commands/bot.commands');
 const datetime = require('../services/date.service');
 const {createRegexInput} = require('../services/input.service');
 const {decodeRows} = require('./../services/format.service');
+const logger = require('./../services/logger.service');
 /**
- * @type {string}
+ * @constant {string}
  */
 const BAR_TYPE = 'bar';
 /**
- * @type {string}
+ * @constant {string}
  */
 const NOT_FOUND = 'NOT FOUND';
 /***
@@ -69,7 +70,7 @@ const getGraph = async ({chat, from, text}) => {
       'parse_mode': 'Markdown',
     });
   } catch (error) {
-    console.error(error);
+    logger.log('error', error);
     switch (typeof error) {
       case 'string': {
         await bot.sendMessage(chatId, error);

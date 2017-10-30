@@ -2,18 +2,22 @@
   "name": "ProstoDiary_bot",
   "description": "ProstoDiary Telegram Bot",
   "version": "1.0.0",
-  "homepage": "https://gotointeractive.com/#Prosto Diary",
-  "main": "./bin/index",
+  "homepage": "https://gotointeractive.com/#ProstoDiary",
+  "main": "./src/bot.js",
+  "bin": {
+    "app" : "./bin/index"
+  },
   "scripts": {
     "lint": "./node_modules/.bin/eslint src/**/*.js",
     "test": "./node_modules/.bin/nyc --reporter=text ./node_modules/.bin/ava tests/test.js --verbose",
     "test:watch": "npm test -- --watch",
     "start": "./bin/index",
+    "debug": "node --inspect ./bin/index",
     "coverage": "./node_modules/.bin/nyc report --reporter=lcov --reporter=text npm test"
   },
   "engines": {
-    "node": "8.5.0",
-    "npm": "5.3.0"
+    "node": "~8.5.0",
+    "npm": "~5.5.1"
   },
   "repository": {
     "type": "git",
@@ -24,22 +28,28 @@
     "prosto diary",
     "telegram bot"
   ],
-  "author": "goto Interactive",
-  "license": "GPL-3.0",
+  "author": {
+    "name" : "Denis Baskovsky",
+    "url" : "http://denis.baskovsky.ru/"
+  },
+  "license": "SEE LICENSE IN LICENSE",
   "bugs": {
-    "url": "https://github.com/gotois/ProstoDiary_bot/issues"
+    "url": "https://github.com/gotois/ProstoDiary_bot/issues",
+    "email" : "info@gotointeractive.com"
   },
   "dependencies": {
-    "dotenv": "^4.0.0",
+    "dotenv": "~4.0.0",
     "node-native-zip": "~1.1.0",
-    "node-telegram-bot-api": "~0.28.0",
+    "node-telegram-bot-api": "~0.29.0",
+    "parsimmon": "^1.6.2",
     "pg": "~7.3.0",
-    "plotly": "~1.0.6"
+    "plotly": "~1.0.6",
+    "winston": "^3.0.0-rc1"
   },
   "devDependencies": {
-    "ava": "~0.22.0",
-    "codecov": "~2.3.0",
-    "eslint": "~4.7.2",
-    "nyc": "~11.2.1"
+    "ava": "~0.23.0",
+    "codecov": "~3.0.0",
+    "eslint": "~4.10.0",
+    "nyc": "~11.3.0"
   }
 }

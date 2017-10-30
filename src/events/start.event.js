@@ -1,6 +1,7 @@
 const sessions = require('../services/session.service');
 const bot = require('./../config/bot.config');
 const dbUsers = require('./../database/database.users');
+const logger = require('../services/logger.service');
 /***
  * При первом включении создаем в БД специальную колонку для работы
  * @param msg {Object}
@@ -20,7 +21,7 @@ const onStart = async ({chat, from}) => {
       await bot.sendMessage(chatId, 'Повторный вход не требуется');
     }
   } catch (error) {
-    console.error(error);
+    logger.log('error', error);
     await bot.sendMessage(chatId, 'Операция не выполнена');
   }
 };

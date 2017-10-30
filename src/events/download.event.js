@@ -3,6 +3,7 @@ const format = require('../services/format.service');
 const dbEntries = require('../database/bot.database');
 const sessions = require('../services/session.service');
 const bot = require('./../config/bot.config');
+const logger = require('../services/logger.service');
 /**
  * @param date
  * @return {string}
@@ -37,7 +38,7 @@ const onDownload = async ({chat, from, date}) => {
       await bot.sendMessage(chatId, 'Нет данных');
     }
   } catch (error) {
-    console.error(error);
+    logger.log('error', error);
     await bot.sendMessage(chatId, 'Операция не выполнена');
   }
 };

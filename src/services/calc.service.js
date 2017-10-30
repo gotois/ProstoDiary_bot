@@ -1,4 +1,6 @@
+const logger = require('../services/logger.service');
 /**
+ * @constant
  * @type {{salaryReceived: number, allSpent: number, allReceived: number}}
  */
 const TYPES = {
@@ -18,7 +20,9 @@ const euroString = ' евро|евро| €|€|€ ';
 const regExpEuro = new RegExp(euroString);
 const usdString = ' долларов|долларов|долларов | доллар|доллар|доллар | dollars|dollars|dollars |\\$';
 const regExpUsd = new RegExp(usdString);
-
+/**
+ * @constant
+ */
 const [EUR, RUB, USD] = ['eur', 'rub', 'usd',];
 const defaultOut = Object.freeze({[EUR]: 0, [RUB]: 0, [USD]: 0,});
 /**
@@ -78,7 +82,7 @@ const getFormatMoney = (money) => {
  */
 const getMoney = ({texts, type,}) => {
   if (!Array.isArray(texts)) {
-    throw 'Not valid argument';
+    throw new Error('Invalid argument');
   }
   if (texts.length) {
     return texts
@@ -124,7 +128,8 @@ const formatType = (str, type) => {
       break;
     }
     default: {
-      console.warn('Unknown type');
+      logger.log('info', 'Unknown type');
+      break;
     }
   }
   return str;
