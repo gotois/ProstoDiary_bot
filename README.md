@@ -3,6 +3,7 @@
 [![dependencies Status](https://david-dm.org/gotois/ProstoDiary_bot/status.svg)](https://david-dm.org/gotois/ProstoDiary_bot)
 [![devDependencies Status](https://david-dm.org/gotois/ProstoDiary_bot/dev-status.svg)](https://david-dm.org/gotois/ProstoDiary_bot?type=dev)
 [![codecov](https://codecov.io/gh/gotois/ProstoDiary_bot/branch/master/graph/badge.svg)](https://codecov.io/gh/gotois/ProstoDiary_bot)
+[![Maintainability](https://api.codeclimate.com/v1/badges/709ebb5f0eae1d062e5e/maintainability)](https://codeclimate.com/github/gotois/ProstoDiary_bot/maintainability)
 
 Install
 ---
@@ -29,9 +30,8 @@ DATABASE={ database name }
 USER={ database username }
 DBPORT={ database port }
 PASSWORD={ database password }
-```
-Optional variables
-```
+
+# Optional variables
 PLOTLY_LOGIN={ plotly login }
 PLOTLY_TOKEN={ plotly token }
 ```
