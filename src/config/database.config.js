@@ -1,5 +1,5 @@
 //TODO: Добавить сюда значение из database.client.js
-const {HOST, DATABASE, USER, DBPORT, PASSWORD} = process.env;
+const {HOST, DATABASE, DB_USER, DBPORT, PASSWORD} = process.env;
 /**
  *
  * @type {{host: String, database: String, user: String, port: String, password: String}}
@@ -7,7 +7,7 @@ const {HOST, DATABASE, USER, DBPORT, PASSWORD} = process.env;
 module.exports = {
   host: HOST,
   database: DATABASE,
-  user: USER,
+  user: DB_USER,
   port: DBPORT,
   password: PASSWORD,
 };

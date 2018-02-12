@@ -4,6 +4,7 @@ const crypt = require('../services/crypt.service');
 const format = require('../services/format.service');
 const commands = require('../commands/bot.commands');
 const dbEntries = require('../database/bot.database');
+const logger = require('../services/logger.service');
 /***
  * Все что пишешь - записывается в сегодняшний день
  * @param msg {Object}
@@ -42,7 +43,8 @@ const onText = async ({chat, from, text, reply_to_message, message_id, date}) =>
       'disable_web_page_preview': true,
     });
   } catch (error) {
-    await bot.sendMessage(chatId, error);
+    await bot.sendMessage(chatId, error.toString());
+    logger.log('error', error);
   }
 };
 

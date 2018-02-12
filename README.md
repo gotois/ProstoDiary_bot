@@ -10,13 +10,29 @@ Install
 ```bash
 npm i
 ```
-Execute SQL queries (it hosted in directory /SQL)
+
+```
+Setup PostgreSQL 10.2+
+* Create database ProstoDiaryDB
+* Create user table > SQL/table_users.sql
+* Create entries table > SQL/table_entries.sql
+```
 
 Usage
 ---
 Checking Unit tests:
 ```bash
 npm run test:watch
+```
+
+Run development:
+```bash
+npm run dev
+```
+
+Run production:
+```bash
+npm start
 ```
 
 Server Environments (needs update .env file)
@@ -27,7 +43,7 @@ HEROKU_NAME={ Your heroku server name }
 SALT_PASSWORD={ User salt password }
 HOST={ database host }
 DATABASE={ database name }
-USER={ database username }
+DB_USER={ database username }
 DBPORT={ database port }
 PASSWORD={ database password }
 
