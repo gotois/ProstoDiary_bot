@@ -1,5 +1,5 @@
 module.exports = t => {
-  const commands = require('../src/commands/bot.commands');
+  const commands = require('../src/commands');
   const {
     DOWNLOAD,
     DBCLEAR,

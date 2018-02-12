@@ -1,4 +1,4 @@
-const bot = require('./../config/bot.config.js');
+const bot = require('../config/index.js');
 /***
  * @param key {String}
  * @param value {String}

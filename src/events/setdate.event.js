@@ -1,9 +1,9 @@
 const sessions = require('../services/session.service');
-const bot = require('./../config/bot.config');
+const bot = require('../config');
 const datetime = require('../services/date.service');
-const dbEntries = require('../database/bot.database');
+const dbEntries = require('../database');
 const crypt = require('../services/crypt.service');
-const commands = require('../commands/bot.commands');
+const commands = require('../commands');
 const format = require('../services/format.service');
 const logger = require('../services/logger.service');
 /***

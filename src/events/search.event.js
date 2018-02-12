@@ -1,8 +1,8 @@
-const dbEntries = require('../database/bot.database');
+const dbEntries = require('../database');
 const sessions = require('../services/session.service');
-const bot = require('./../config/bot.config');
-const {decodeRows} = require('./../services/format.service');
-const {createRegexInput, normalizeRegexStringToString} = require('./../services/input.service');
+const bot = require('../config');
+const {decodeRows} = require('../services/format.service');
+const {createRegexInput, normalizeRegexStringToString} = require('../services/input.service');
 /**
  * @param date {Date}
  * @param entry {String}

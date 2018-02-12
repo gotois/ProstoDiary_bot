@@ -11,11 +11,20 @@ Install
 npm i
 ```
 
+```bash
+chmod +x bin/index 
+```
+
 ```
 Setup PostgreSQL 10.2+
 * Create database ProstoDiaryDB
 * Create user table > SQL/table_users.sql
 * Create entries table > SQL/table_entries.sql
+```
+
+```
+Run Telegram Bot
+/start
 ```
 
 Usage

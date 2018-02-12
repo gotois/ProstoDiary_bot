@@ -1,5 +1,5 @@
 const sessions = require('../services/session.service');
-const bot = require('./../config/bot.config');
+const bot = require('../config');
 const dbUsers = require('./../database/database.users');
 const logger = require('../services/logger.service');
 /***
