@@ -6,7 +6,7 @@ const crypt = require('../services/crypt.service');
 const logger = require('../services/logger.service');
 /***
  * Получить все что я делал в эту дату
- * @example /get 26.11.2016
+ * @example /get 26.11.2016 or /get today
  * @param msg {Object}
  * @param msg.chat {Object}
  * @param msg.from {Object}
@@ -16,19 +16,30 @@ const logger = require('../services/logger.service');
 const getDataFromDate = async ({chat,from}, match) => {
   const chatId = chat.id;
   const userId = from.id;
-  const getTime = match[1].trim();
+  
+  let getTime;
+  let date;
+  
+  if (match[0] === '/get today') {
+    getTime = new Date();
+  } else {
+    getTime = match[1].trim();
+  }
+  
   try {
-    const date = datetime.convertToNormalDate(getTime);
+    date = datetime.convertToNormalDate(getTime);
     if (!datetime.isNormalDate(date)) {
       throw new Error('Wrong date');
     }
   } catch (error) {
+    logger.log('error', error);
     await bot.sendMessage(chatId, 'Установленное время не валидно');
+    
     return;
   }
   const currentUser = sessions.getSession(userId);
   try {
-    const {rows} = await dbEntries.get(currentUser.id, getTime);
+    const {rows} = await dbEntries.get(currentUser.id, date);
     const decodeRows = rows.map(({entry}) => crypt.decode(entry));
     await (decodeRows.length)
       ? (bot.sendMessage(chatId, JSON.stringify(decodeRows, null, 2)))

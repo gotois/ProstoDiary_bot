@@ -4,11 +4,12 @@
  */
 module.exports = {
   'DOWNLOAD': /^\/download$/,
-  'DBCLEAR': /^\/dbclear$/,
+  'DB_CLEAR': /^\/dbclear$/,
   'START': /^\/start$/,
   'HELP': /^\/help$/,
-  'GETDATE': /^\/get (\d{1,2}\.\d{1,2}\.\d{4})$/,
-  'SETDATE': /^\/set (\d{1,2}\.\d{1,2}\.\d{4})\s/,
+  'GET_TODAY': /^\/get today$/,
+  'GET_DATE': /^\/get (\d{4}-\d{1,2}-\d{1,2})$/,
+  'SET_DATE': /^\/set (\d{4}-\d{1,2}-\d{1,2})\s/,
   'GRAPH': /^\/graph(\s)/,
   'COUNT': /^\/count$|\/count\s(.+)/,
   'SEARCH': /^\/search(\s)(.+)/,

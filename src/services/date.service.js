@@ -28,7 +28,7 @@ const isNormalDate = date => {
   return true;
 };
 /**
- * @example convertToNormalDate('01.02.2016')
+ * @example convertToNormalDate('YYY-MM-DD')
  * @param date {String|Date}
  * @returns {Date}
  */
@@ -36,10 +36,12 @@ const convertToNormalDate = date => {
   if (date instanceof Date) {
     return date;
   } else {
-    date = date.replace(/\./g, '-');
-    const dd = +(date.match(/(\d+)-/)[1]);
+    date = date.split('.').join('-');
+  
+    const dd = +(date.match(/-\d+-(\d+)/)[1]);
     const mm = +(date.match(/-(\d+)/)[1]) - 1;
-    const yyyy = +(date.match(/-\d+-(\d+)/)[1]);
+    const yyyy = +(date.match(/(\d+)-/)[1]);
+    
     if (dd > 31 || mm > 12) {
       throw new Error('Invalid Date');
     }

@@ -16,14 +16,14 @@ module.exports = t => {
   }
   // convertToNormalDate
   {
-    t.is(typeof convertToNormalDate('3-12-2016'), 'object');
-    t.true(convertToNormalDate('3-12-2016') instanceof Date);
-    t.is(convertToNormalDate('01.02.2016').getFullYear(), 2016);
-    t.is(convertToNormalDate('08.07.2017').getDate(), 8);
-    t.is(convertToNormalDate('07.08.2017').getDate(), 7);
-    t.is(convertToNormalDate('07-08-2017').getMonth(), 7);
+    t.is(typeof convertToNormalDate('2016-12-3'), 'object');
+    t.true(convertToNormalDate('2016-3-12') instanceof Date);
+    t.is(convertToNormalDate('2016-01.02').getFullYear(), 2016);
+    t.is(convertToNormalDate('2017-07-08').getDate(), 8);
+    t.is(convertToNormalDate('2017-08-07').getDate(), 7);
+    t.is(convertToNormalDate('2017-08-07').getMonth(), 7);
     const error = t.throws(() => {
-      convertToNormalDate('2.27.2017');
+      convertToNormalDate('2017-27-2');
     }, Error);
     t.is(error.message, 'Invalid Date');
     t.is(convertToNormalDate(new Date(0)).getMonth(), 0);

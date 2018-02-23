@@ -17,8 +17,8 @@ const onHelp = async ({chat}) => {
     '/download': 'Загрузка файла с данными `/download`',
     '/dbclear': 'Удаление БД `/dbclear YES`',
     '/graph': 'Построение графиков `/graph String|RegExp`',
-    '/get': 'Получение данных за этот срок `/get 01.12.2016`',
-    '/set': 'Добавление данных за этот срок `/set 31.01.2016 something`',
+    '/get': 'Получение данных за этот срок `/get YYYY-MM-DD`',
+    '/set': 'Добавление данных за этот срок `/set YYYY-MM-DD something`',
     '/count': 'Подсчет потраченого `/count -` и полученного `/count +`',
     '/search': 'Поиск вхождения `/search something`',
   };

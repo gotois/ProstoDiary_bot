@@ -2,11 +2,12 @@ module.exports = t => {
   const commands = require('../src/commands');
   const {
     DOWNLOAD,
-    DBCLEAR,
+    DB_CLEAR,
     START,
     HELP,
-    GETDATE,
-    SETDATE,
+    GET_DATE,
+    GET_TODAY,
+    SET_DATE,
     GRAPH,
     COUNT,
     SEARCH,
@@ -15,11 +16,12 @@ module.exports = t => {
   } = commands;
 
   t.true(DOWNLOAD instanceof RegExp);
-  t.true(DBCLEAR instanceof RegExp);
+  t.true(DB_CLEAR instanceof RegExp);
+  t.true(GET_TODAY instanceof RegExp);
   t.true(START instanceof RegExp);
   t.true(HELP instanceof RegExp);
-  t.true(GETDATE instanceof RegExp);
-  t.true(SETDATE instanceof RegExp);
+  t.true(GET_DATE instanceof RegExp);
+  t.true(SET_DATE instanceof RegExp);
   t.true(GRAPH instanceof RegExp);
   t.true(COUNT instanceof RegExp);
   t.true(SEARCH instanceof RegExp);
@@ -31,8 +33,8 @@ module.exports = t => {
     t.false(DOWNLOAD.test('/download 1'));
   }
   {
-    t.true(DBCLEAR.test('/dbclear'));
-    t.false(DBCLEAR.test('/dbclear/'));
+    t.true(DB_CLEAR.test('/dbclear'));
+    t.false(DB_CLEAR.test('/dbclear/'));
   }
   {
     t.true(COUNT.test('/count'));

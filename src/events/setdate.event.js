@@ -22,12 +22,14 @@ const setDataFromDate = async ({chat, text, from, message_id}, match) => {
   const input = text.replace(commands.SETDATE, '').trim();
   const date = datetime.convertToNormalDate(match[1]);
   if (!datetime.isNormalDate(date)) {
+    logger.log('error', 'Установленное время не валидно');
     await bot.sendMessage(chatId, 'Установленное время не валидно');
+    
     return;
   }
   const currentUser = sessions.getSession(from.id);
   try {
-    await dbEntries.post(currentUser.id, crypt.encode(input), message_id, new Date(), match[1]);
+    await dbEntries.post(currentUser.id, crypt.encode(input), message_id, new Date(), date);
     const prevInput = format.prevInput(input);
     await bot.sendMessage(chatId, prevInput);
   } catch (error) {
