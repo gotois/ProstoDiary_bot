@@ -29,6 +29,10 @@ module.exports = t => {
   t.true(typeof TEXT === 'string');
 
   {
+    t.true(GET_TODAY.test('/get today'));
+    t.false(GET_TODAY.test('/get тудей'));
+  }
+  {
     t.true(DOWNLOAD.test('/download'));
     t.false(DOWNLOAD.test('/download 1'));
   }
