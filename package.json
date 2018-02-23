@@ -12,6 +12,8 @@
     "test": "./node_modules/.bin/nyc --reporter=text ./node_modules/.bin/ava tests/test.js --verbose",
     "test:watch": "npm test -- --watch",
     "start": "./bin/index",
+    "dev": "./node_modules/.bin/nodemon ./bin/index",
+    "start:debug": "./node_modules/.bin/nodemon --inspect ./bin/index",
     "debug": "node --inspect ./bin/index",
     "coverage": "./node_modules/.bin/nyc report --reporter=lcov --reporter=text npm test"
   },
@@ -50,6 +52,7 @@
     "ava": "~0.25.0",
     "codecov": "~3.0.0",
     "eslint": "~4.17.0",
+    "nodemon": "^1.15.1",
     "nyc": "~11.4.1"
   }
 }
