@@ -1,2 +1,2 @@
 web: npm start
-dev: npm run watch
+dev: npm run dev

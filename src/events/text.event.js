@@ -43,8 +43,8 @@ const onText = async ({chat, from, text, reply_to_message, message_id, date}) =>
       'disable_web_page_preview': true,
     });
   } catch (error) {
-    await bot.sendMessage(chatId, error.toString());
     logger.log('error', error);
+    await bot.sendMessage(chatId, error.toString());
   }
 };
 

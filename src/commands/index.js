@@ -15,4 +15,6 @@ module.exports = {
   'SEARCH': /^\/search(\s)(.+)/,
   'EDITED_MESSAGE_TEXT': 'edited_message_text',
   'TEXT': 'text',
+  'WEBHOOK_ERROR': 'webhook_error',
+  'PHOTO': 'photo',
 };
