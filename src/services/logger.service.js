@@ -12,15 +12,6 @@ const levels = {
   silly: 5
 };
 
-// global configuration for coralogix
-const coralogixConfig = {
-  privateKey: CORALOGIX_WINSTON_PRIVATE_KEY,
-  applicationName: CORALOGIX_WINSTON_APPLICATION_NAME,
-  subsystemName: 'YOUR SUBSYSTEM',
-};
-
-CoralogixWinston.CoralogixTransport.configure(coralogixConfig);
-
 const logger = winston.createLogger({
   level: 'info',
   levels: levels,
@@ -34,6 +25,12 @@ const logger = winston.createLogger({
 });
 
 if (NODE_ENV === PRODUCTION_MODE) {
+  const coralogixConfig = {
+    privateKey: CORALOGIX_WINSTON_PRIVATE_KEY,
+    applicationName: CORALOGIX_WINSTON_APPLICATION_NAME,
+    subsystemName: 'YOUR SUBSYSTEM',
+  };
+  CoralogixWinston.CoralogixTransport.configure(coralogixConfig);
   logger.add(new winston.transports.Console({
     format: winston.format.simple()
   }));

@@ -7,8 +7,7 @@ const commands = require('../commands');
 const format = require('../services/format.service');
 const logger = require('../services/logger.service');
 /***
- * Установить что я делал в какой-то день:
- * /set 26.11.2016 something text
+ * /set 2016-12-29 something text
  * @param msg {Object}
  * @param msg.chat {Object}
  * @param msg.text {String}
@@ -20,11 +19,15 @@ const logger = require('../services/logger.service');
 const setDataFromDate = async ({chat, text, from, message_id}, match) => {
   const chatId = chat.id;
   const input = text.replace(commands.SETDATE, '').trim();
-  const date = datetime.convertToNormalDate(match[1]);
-  if (!datetime.isNormalDate(date)) {
-    logger.log('error', 'Установленное время не валидно');
-    await bot.sendMessage(chatId, 'Установленное время не валидно');
-    
+  let date;
+  try {
+    date = datetime.convertToNormalDate(match[1]);
+    if (!datetime.isNormalDate(date)) {
+      throw new Error('Wrong date');
+    }
+  } catch(e) {
+    logger.log('error', e.message);
+    await bot.sendMessage(chatId, e.message);
     return;
   }
   const currentUser = sessions.getSession(from.id);

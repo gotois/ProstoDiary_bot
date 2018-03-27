@@ -4,7 +4,7 @@ const {PRODUCTION_MODE} = require('./../config/constants.config');
 const {NODE_ENV} = process.env;
 /**
  * @return pg.Client
- * @see отличается одним символом @
+ * @see path отличается одним символом @
  */
 const client = (() => {
   if (NODE_ENV === PRODUCTION_MODE) {
