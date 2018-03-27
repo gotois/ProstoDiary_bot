@@ -59,6 +59,8 @@ PASSWORD={ database password }
 # Optional variables
 PLOTLY_LOGIN={ plotly login }
 PLOTLY_TOKEN={ plotly token }
+GOOGLE_MAPS_GEOCODING_API={ geocoding key }
+GOOGLE_APPLICATION_CREDENTIALS={ Path to your Google Natural Language.json }
 ```
 
 Global Bot Environments
@@ -70,13 +72,7 @@ Username: @ProstoDiary_bot
 Telegram commands
 ---
 ```
-download - Скачать txt БД на устройство
-dbclear - Очистить удаленную БД
-get - Получить все что я делал за эту дату
-set - Что я делал в эту дату
-graph - Построить график
-count - Подсчет финансов
-search - Поиск по вхождению
+/help
 ```
 
 License:

@@ -13,6 +13,7 @@ module.exports = t => {
     SEARCH,
     EDITED_MESSAGE_TEXT,
     TEXT,
+    LOCATION,
   } = commands;
 
   t.true(DOWNLOAD instanceof RegExp);
@@ -27,10 +28,19 @@ module.exports = t => {
   t.true(SEARCH instanceof RegExp);
   t.true(typeof EDITED_MESSAGE_TEXT === 'string');
   t.true(typeof TEXT === 'string');
+  t.true(typeof LOCATION === 'string');
 
+  {
+    t.true(SET_DATE.test('/set 2018-03-18 something'));
+    t.false(SET_DATE.test('/set something'));
+  }
   {
     t.true(GET_TODAY.test('/get today'));
     t.false(GET_TODAY.test('/get тудей'));
+  }
+  {
+    t.true(GET_DATE.test('/get 2018-03-18'));
+    t.false(GET_DATE.test('/get something'));
   }
   {
     t.true(DOWNLOAD.test('/download'));
@@ -45,8 +55,13 @@ module.exports = t => {
     t.true(COUNT.test('/count +'));
     t.true(COUNT.test('/count -'));
     t.false(COUNT.test('/count/'));
+    t.false(COUNT.test('/count-'));
+    t.false(COUNT.test('/count+'));
   }
   {
     t.true(SEARCH.test('/search something'));
+  }
+  {
+    t.true(LOCATION === 'location');
   }
 };

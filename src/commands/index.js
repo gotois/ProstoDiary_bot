@@ -1,5 +1,4 @@
 /**
- *
  * @type {Object}
  */
 module.exports = {
@@ -17,4 +16,5 @@ module.exports = {
   'TEXT': 'text',
   'WEBHOOK_ERROR': 'webhook_error',
   'PHOTO': 'photo',
+  'LOCATION': 'location',
 };

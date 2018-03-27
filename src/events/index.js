@@ -18,6 +18,7 @@ const commands = require('../commands');
   bot.on(commands.TEXT, require('./text.event'));
   bot.on(commands.PHOTO, require('./photo.event'));
   bot.on(commands.WEBHOOK_ERROR, require('./webhook-error.event'));
+  bot.on(commands.LOCATION, require('./location.event'));
 }
 
 module.exports = bot;
