@@ -21,9 +21,10 @@ const onPhoto = async ({chat, /*date, from, message_id,*/photo}) => {
     const sum = params.s;
     const fn = params.fn;
     
+    // TODO: данные должны попадать в БД
     await bot.sendMessage(chatId, '___TEST_FEATURE__  TIME:' + time + '  SUMMA:' + sum + '  FN:' + fn);
   } catch (error) {
-    logger.log('error', error);
+    logger.log('error', error.toString());
     await bot.sendMessage(chatId, error.toString());
   }
 };
