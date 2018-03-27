@@ -41,9 +41,9 @@
   },
   "dependencies": {
     "@google-cloud/language": "^1.1.0",
-    "coralogix-logger-winston": "^1.0.9",
     "dotenv": "~5.0.0",
     "jimp": "^0.2.28",
+    "le_node": "^1.7.1",
     "node-native-zip": "~1.1.0",
     "node-telegram-bot-api": "~0.30.0",
     "parsimmon": "^1.6.2",
