@@ -48,7 +48,7 @@ const decode = entry => {
   try {
     return decrypt(entry, getPassword());
   } catch (error) {
-    logger.log('error', error);
+    logger.log('error', error.toString());
     return entry;
   }
 };

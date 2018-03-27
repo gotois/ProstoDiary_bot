@@ -13,7 +13,7 @@ const connect = async error => {
     await require('./events');
     logger.log('info', 'server started');
   } catch (error) {
-    logger.log('error', error);
+    logger.log('error', error.toString());
   }
 };
 

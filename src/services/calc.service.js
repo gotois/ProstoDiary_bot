@@ -99,7 +99,7 @@ const getMoney = ({texts, type,}) => {
 /**
  * @param str {String}
  * @param type {Number}
- * @returns {number}
+ * @returns {String}
  */
 const formatType = (str, type) => {
   str = str.trim();

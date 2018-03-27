@@ -38,7 +38,7 @@ const onDownload = async ({chat, from, date}) => {
       await bot.sendMessage(chatId, 'Нет данных');
     }
   } catch (error) {
-    logger.log('error', error);
+    logger.log('error', error.toString());
     await bot.sendMessage(chatId, 'Операция не выполнена');
   }
 };

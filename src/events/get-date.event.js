@@ -32,7 +32,7 @@ const getDataFromDate = async ({chat,from}, match) => {
       throw new Error('Wrong date');
     }
   } catch (error) {
-    logger.log('error', error);
+    logger.log('error', error.toString());
     await bot.sendMessage(chatId, 'Установленное время не валидно');
     
     return;
@@ -45,7 +45,7 @@ const getDataFromDate = async ({chat,from}, match) => {
       ? (bot.sendMessage(chatId, JSON.stringify(decodeRows, null, 2)))
       : (bot.sendMessage(chatId, 'Записей нет'));
   } catch (error) {
-    logger.log('error', error);
+    logger.log('error', error.toString());
     await bot.sendMessage(chatId, 'Произошла ошибка');
   }
 };

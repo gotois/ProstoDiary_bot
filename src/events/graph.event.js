@@ -70,7 +70,7 @@ const getGraph = async ({chat, from, text}) => {
       'parse_mode': 'Markdown',
     });
   } catch (error) {
-    logger.log('error', error);
+    logger.log('error', error.toString());
     switch (typeof error) {
       case 'string': {
         await bot.sendMessage(chatId, error);

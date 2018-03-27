@@ -18,7 +18,7 @@ const onLocation = async ({chat, location: {latitude, longitude}}) => {
   try {
     formattedAddress = JSON.parse(bufferData).results[0].formatted_address;
   } catch (error) {
-    logger.log('error', error);
+    logger.log('error', error.toString());
     await bot.sendMessage(chatId, error.toString());
     return;
   }

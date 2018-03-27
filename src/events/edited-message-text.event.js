@@ -33,7 +33,7 @@ const onEditedMessageText = async ({chat, from, text, message_id}) => {
       await dbEntries.delete(currentUser.id, message_id);
       await bot.sendMessage(chatId, 'Запись удалена');
     } catch (error) {
-      logger.log('error', error);
+      logger.log('error', error.toString());
       await bot.sendMessage(chatId, error.toLocaleString());
     }
   } else {
@@ -43,7 +43,7 @@ const onEditedMessageText = async ({chat, from, text, message_id}) => {
         'parse_mode': 'Markdown',
       });
     } catch (error) {
-      logger.log('error', error);
+      logger.log('error', error.toString());
       await bot.sendMessage(chatId, error.toLocaleString());
     }
   }

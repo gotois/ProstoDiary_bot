@@ -3,18 +3,7 @@ const CoralogixWinston = require('coralogix-logger-winston');
 const {PRODUCTION_MODE} = require('./../config/constants.config');
 const {NODE_ENV, CORALOGIX_WINSTON_PRIVATE_KEY, CORALOGIX_WINSTON_APPLICATION_NAME} = process.env;
 
-const levels = {
-  error: 0,
-  warn: 1,
-  info: 2,
-  verbose: 3,
-  debug: 4,
-  silly: 5
-};
-
 const logger = winston.createLogger({
-  level: 'info',
-  levels: levels,
   transports: [
     new winston.transports.Console(),
   ],
@@ -28,7 +17,7 @@ if (NODE_ENV === PRODUCTION_MODE) {
   const coralogixConfig = {
     privateKey: CORALOGIX_WINSTON_PRIVATE_KEY,
     applicationName: CORALOGIX_WINSTON_APPLICATION_NAME,
-    subsystemName: 'YOUR SUBSYSTEM',
+    subsystemName: 'ALL SUBSYSTEM',
   };
   CoralogixWinston.CoralogixTransport.configure(coralogixConfig);
   logger.add(new winston.transports.Console({

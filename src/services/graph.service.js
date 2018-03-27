@@ -34,7 +34,7 @@ const getImageBuffer = async (figure, options = {}) => {
       resolve(photoBuffer);
     });
     imageStream.on('error', error => {
-      logger.log('error', error);
+      logger.log('error', error.toString());
       reject(error);
     });
   });
