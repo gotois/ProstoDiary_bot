@@ -44,7 +44,7 @@ Run production:
 npm start
 ```
 
-Server Environments (needs update .env file)
+Server Environments (needs update file .env in root project)
 ---
 ```
 TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }

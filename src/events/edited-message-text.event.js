@@ -11,6 +11,18 @@ const logger = require('../services/logger.service');
 const formatResponse = (input) => {
   return format.prevInput(input) + '\n_Запись обновлена_';
 };
+/**
+ * @param message {String}
+ * @returns {boolean}
+ */
+const isDeleteMessage = (message) => {
+  /**
+   * @constant
+   * @type {string[]}
+   */
+  const DELETE_VARIABLES = ['del', 'delete'];
+  return DELETE_VARIABLES.some(del => message.toLowerCase() === del.toLowerCase());
+};
 /***
  * Обновление текста в БД
  * @param msg {Object}
@@ -28,10 +40,10 @@ const onEditedMessageText = async ({chat, from, text, message_id}) => {
     return;
   }
   const currentUser = sessions.getSession(from.id);
-  if (input === 'del') {
+  if (isDeleteMessage(input)) {
     try {
       await dbEntries.delete(currentUser.id, message_id);
-      await bot.sendMessage(chatId, 'Запись удалена');
+      await bot.sendMessage(chatId, 'Message removed');
     } catch (error) {
       logger.log('error', error.toString());
       await bot.sendMessage(chatId, error.toLocaleString());
