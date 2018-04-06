@@ -15,6 +15,27 @@ const BAR_TYPE = 'bar';
  * @constant {string}
  */
 const NOT_FOUND = 'NOT FOUND';
+/**
+ * временная шкала х {String} и частота y {Number}
+ * @returns {{x: Array, y: Array, type: string}}
+ */
+const createTrace = () => {
+  return {
+    x: [],
+    y: [],
+    type: BAR_TYPE,
+  };
+};
+/**
+ * @returns {{format: string, width: number, height: number}}
+ */
+const getImgOpts = () => {
+  return {
+    format: 'png',
+    width: 768,
+    height: 512,
+  };
+};
 /***
  * Построить график
  * @param msg {Object}
@@ -24,16 +45,12 @@ const NOT_FOUND = 'NOT FOUND';
  * @return {void}
  */
 const getGraph = async ({chat, from, text}) => {
+  logger.log('info', getGraph.name);
   const chatId = chat.id;
   const currentUser = sessions.getSession(from.id);
   const input = text.replace(commands.GRAPH, '').trim();
   const regExp = createRegexInput(input);
-  // временная шкала х {String} и частота y {Number}
-  const trace = {
-    x: [],
-    y: [],
-    type: BAR_TYPE,
-  };
+  const trace = createTrace();
   try {
     const {rows} = await dbEntries.getAll(currentUser.id);
     const entryRows = decodeRows(rows).filter(({entry}) => regExp.test(entry));
@@ -58,11 +75,7 @@ const getGraph = async ({chat, from, text}) => {
       }
     });
     const figure = {'data': [trace]};
-    const imgOpts = {
-      format: 'png',
-      width: 768,
-      height: 512
-    };
+    const imgOpts = getImgOpts();
     // TODO: если потребуется удаление графиков использовать `return plot.deletePlot('0');`
     const photoBuffer = await plot.getImageBuffer(figure, imgOpts);
     await bot.sendPhoto(chatId, photoBuffer, {

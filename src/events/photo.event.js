@@ -9,6 +9,7 @@ const {getParams} = require('../services/params.service');
  * @returns {Promise<void>}
  */
 const onPhoto = async ({chat, /*date, from, message_id,*/photo}) => {
+  logger.log('info', onPhoto.name);
   const chatId = chat.id;
   const fileInfo = await bot.getFile(photo[photo.length - 1].file_id);
   

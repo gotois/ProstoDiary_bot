@@ -17,6 +17,7 @@ const logger = require('../services/logger.service');
  * @return {void}
  */
 const onText = async ({chat, from, text, reply_to_message, message_id, date}) => {
+  logger.log('info', onText.name);
   const chatId = chat.id;
   const fromId = from.id;
   const input = text.trim();

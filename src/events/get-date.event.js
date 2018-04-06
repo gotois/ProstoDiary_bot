@@ -14,6 +14,7 @@ const logger = require('../services/logger.service');
  * @return {void}
  */
 const getDataFromDate = async ({chat,from}, match) => {
+  logger.log('info', getDataFromDate.name);
   const chatId = chat.id;
   const userId = from.id;
   

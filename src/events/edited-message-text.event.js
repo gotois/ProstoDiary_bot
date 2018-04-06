@@ -33,6 +33,7 @@ const isDeleteMessage = (message) => {
  * @return {void}
  */
 const onEditedMessageText = async ({chat, from, text, message_id}) => {
+  logger.log('info', onEditedMessageText.name);
   const chatId = chat.id;
   const input = text.trim();
   if (input.startsWith('/')) {

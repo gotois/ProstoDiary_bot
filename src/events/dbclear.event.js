@@ -10,6 +10,7 @@ const logger = require('../services/logger.service');
  * @return {void}
  */
 const onDBClear = async ({chat, from}) => {
+  logger.log('info', onDBClear.name);
   const chatId = chat.id;
   const fromId = from.id;
   const options = {

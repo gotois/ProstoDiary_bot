@@ -9,6 +9,7 @@ const {GOOGLE_MAPS_GEOCODING_API} = process.env;
  * @return {void}
  */
 const onLocation = async ({chat, location: {latitude, longitude}}) => {
+  logger.log('info', onLocation.name);
   const googleServiceAPI = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_GEOCODING_API}`;
   const buffer = await get(googleServiceAPI);
   const bufferData = buffer.toString('utf8');

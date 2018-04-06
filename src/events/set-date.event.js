@@ -17,6 +17,7 @@ const logger = require('../services/logger.service');
  * @return {void}
  */
 const setDataFromDate = async ({chat, text, from, message_id}, match) => {
+  logger.log('info', setDataFromDate.name);
   const chatId = chat.id;
   const input = text.replace(commands.SETDATE, '').trim();
   let date;

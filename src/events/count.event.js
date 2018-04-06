@@ -3,6 +3,7 @@ const sessions = require('../services/session.service');
 const bot = require('../config');
 const {getMoney, getFormatMoney, TYPES} = require('../services/calc.service');
 const {decodeRows} = require('./../services/format.service');
+const logger = require('../services/logger.service');
 /**
  * @param startTime {String}
  * @param endTime {String}
@@ -27,6 +28,7 @@ const formatResponse = ({startTime, endTime, money}) => {
  * @return {void}
  */
 const onCount = async ({chat, from}, match) => {
+  logger.log('info', onCount.name);
   const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);

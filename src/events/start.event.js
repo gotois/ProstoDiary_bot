@@ -10,6 +10,7 @@ const logger = require('../services/logger.service');
  * @return {void}
  */
 const onStart = async ({chat, from}) => {
+  logger.log('info', onStart.name);
   const chatId = chat.id;
   const currentUser = sessions.getSession(from.id);
   try {

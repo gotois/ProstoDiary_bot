@@ -2,7 +2,7 @@ const bot = require('../config/index.js');
 /***
  * @param key {String}
  * @param value {String}
- * @return {void}
+ * @return {string}
  */
 const formatResponse = ({key, value}) => {
   return `\n${key}: ${value}`;
