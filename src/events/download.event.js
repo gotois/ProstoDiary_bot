@@ -5,7 +5,7 @@ const sessions = require('../services/session.service');
 const bot = require('../config');
 const logger = require('../services/logger.service');
 /**
- * @param date
+ * @param date {string}
  * @return {string}
  */
 const generateName = date => {
@@ -17,9 +17,10 @@ const generateName = date => {
  * @param msg.chat {Object}
  * @param msg.from {Object}
  * @param msg.date {String}
- * @return {void}
+ * @return {Promise<void>}
  */
 const onDownload = async ({chat, from, date}) => {
+  logger.log('info', onDownload.name);
   const chatId = chat.id;
   const fromId = from.id;
   const fileName = generateName(date) + '.txt';
@@ -32,7 +33,10 @@ const onDownload = async ({chat, from, date}) => {
       archive.add(fileName, new Buffer(formatData, 'utf8'));
       const buffer = archive.toBuffer();
       await bot.sendDocument(chatId, buffer, {
-        'caption': generateName(date)
+        'caption': fileName,
+      }, {
+        'filename':  generateName(date) + '.zip',
+        'contentType': 'application/zip',
       });
     } else {
       await bot.sendMessage(chatId, 'Нет данных');
