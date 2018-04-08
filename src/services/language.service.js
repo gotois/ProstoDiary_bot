@@ -1,28 +1,17 @@
-// const language = require('@google-cloud/language');
+/* eslint-disable */
+const {GOOGLE_APPLICATION_CREDENTIALS} = process.env;
+const language = require('@google-cloud/language');
 
-// The text to analyze
-// const text = 'dollars 100';
-
-// const document = {
-//   content: text,
-//   type: 'PLAIN_TEXT',
-// };
-
-// (async () => {
-// return
-
+if (!GOOGLE_APPLICATION_CREDENTIALS) {
+  throw new Error('GOOGLE_APPLICATION_CREDENTIALS not initialized');
+}
+const GOOGLE_CREDENTIALS = JSON.parse(GOOGLE_APPLICATION_CREDENTIALS);
 // Instantiates a client
-// const client = new language.LanguageServiceClient();
+const client = new language.LanguageServiceClient({
+  credentials: GOOGLE_CREDENTIALS
+});
 
-// const results = await client.analyzeSyntax({document: document})
-// const syntax = results[0];
-
-// console.log('Parts of speech:');
-// syntax.tokens.forEach(part => {
-// console.log(`${part.partOfSpeech.tag}: ${part.text.content}`);
-// console.log(`Morphology:`, part.partOfSpeech);
-// });
-
+// TEST
 // client
 // .analyzeEntitySentiment({document: document})
 // .then(results => {
@@ -39,7 +28,6 @@
 // .catch(err => {
 //   console.error('ERROR:', err);
 // });
-
 
 // Detects the sentiment of the document
 // client
@@ -60,4 +48,26 @@
 // .catch(err => {
 //   console.error('ERROR:', err);
 // });
-// })();
+
+// TESTEND
+
+// The text to analyze
+const analyze = async (text) => {
+  const document = {
+    content: text,
+    type: 'PLAIN_TEXT',
+  };
+  
+  const results = await client.analyzeSyntax({document: document});
+  const syntax = results[0];
+  
+  console.log('Parts of speech:');
+  syntax.tokens.forEach(part => {
+    console.log(`${part.partOfSpeech.tag}: ${part.text.content}`);
+    console.log(`Morphology:`, part.partOfSpeech);
+  });
+};
+
+module.exports = {
+  'analyze': analyze,
+};

@@ -2,5 +2,6 @@
 /.idea/
 /coverage/
 /.nyc_output/
+/keys/
 *-debug.log*
 .env

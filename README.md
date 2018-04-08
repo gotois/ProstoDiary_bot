@@ -60,7 +60,7 @@ PASSWORD={ database password }
 PLOTLY_LOGIN={ plotly login }
 PLOTLY_TOKEN={ plotly token }
 GOOGLE_MAPS_GEOCODING_API={ geocoding key }
-GOOGLE_APPLICATION_CREDENTIALS={ Path to your Google Natural Language.json }
+GOOGLE_APPLICATION_CREDENTIALS={ one line stringify object } 
 ```
 
 Global Bot Environments

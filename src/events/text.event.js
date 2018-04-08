@@ -5,6 +5,7 @@ const format = require('../services/format.service');
 const commands = require('../commands');
 const dbEntries = require('../database');
 const logger = require('../services/logger.service');
+const language = require('../services/language.service');
 /***
  * Все что пишешь - записывается в сегодняшний день
  * @param msg {Object}
@@ -32,14 +33,19 @@ const onText = async ({chat, from, text, reply_to_message, message_id, date}) =>
     }
   }
   if (input.startsWith('/')) {
-    await bot.sendMessage(chatId, 'Такой комманды нет. Нажмите /help для помощи');
+    await bot.sendMessage(chatId, 'Command not found. Text /help for help');
     return;
   }
   const currentUser = sessions.getSession(fromId);
   try {
+    await language.analyze(input);
+  } catch (error) {
+    logger.log('error', error.toString());
+  }
+  try {
     await dbEntries.post(currentUser.id, crypt.encode(input), message_id, new Date(date * 1000));
-    const text = format.prevInput(input);
-    await bot.sendMessage(chatId, text, {
+    const okText = format.prevInput(input);
+    await bot.sendMessage(chatId, okText, {
       'disable_notification': true,
       'disable_web_page_preview': true,
     });
