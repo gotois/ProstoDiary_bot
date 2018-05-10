@@ -8,7 +8,7 @@ if (!GOOGLE_APPLICATION_CREDENTIALS) {
 const GOOGLE_CREDENTIALS = JSON.parse(GOOGLE_APPLICATION_CREDENTIALS);
 // Instantiates a client
 const client = new language.LanguageServiceClient({
-  credentials: GOOGLE_CREDENTIALS
+  'credentials': GOOGLE_CREDENTIALS
 });
 
 // TEST

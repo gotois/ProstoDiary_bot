@@ -5,7 +5,7 @@ const format = require('../services/format.service');
 const commands = require('../commands');
 const dbEntries = require('../database');
 const logger = require('../services/logger.service');
-const language = require('../services/language.service');
+// const language = require('../services/language.service');
 /***
  * Все что пишешь - записывается в сегодняшний день
  * @param msg {Object}
@@ -38,7 +38,7 @@ const onText = async ({chat, from, text, reply_to_message, message_id, date}) =>
   }
   const currentUser = sessions.getSession(fromId);
   try {
-    await language.analyze(input);
+    // await language.analyze(input);
   } catch (error) {
     logger.log('error', error.toString());
   }
