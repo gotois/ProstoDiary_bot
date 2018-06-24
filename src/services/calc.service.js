@@ -44,7 +44,7 @@ const splitText = text => (typeof text === 'string' ? text.split('\n') : []);
 /**
  * Локализуем
  * @param money {Object}
- * @returns {String}
+ * @returns {Object}
  */
 const getFormatMoney = (money) => {
   const CURRENCY = 'currency';
