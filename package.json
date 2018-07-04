@@ -2,7 +2,7 @@
   "name": "ProstoDiary_bot",
   "description": "ProstoDiary Telegram Bot",
   "version": "1.0.0",
-  "homepage": "https://gotointeractive.com/#ProstoDiary",
+  "homepage": "https://gotointeractive.com/#prostodiary",
   "main": "./src/index.js",
   "bin": {
     "prosto_diary": "./bin/index"

@@ -14,6 +14,7 @@ module.exports = t => {
     EDITED_MESSAGE_TEXT,
     TEXT,
     LOCATION,
+    VERSION,
   } = commands;
 
   t.true(DOWNLOAD instanceof RegExp);
@@ -26,6 +27,7 @@ module.exports = t => {
   t.true(GRAPH instanceof RegExp);
   t.true(COUNT instanceof RegExp);
   t.true(SEARCH instanceof RegExp);
+  t.true(VERSION instanceof RegExp);
   t.true(typeof EDITED_MESSAGE_TEXT === 'string');
   t.true(typeof TEXT === 'string');
   t.true(typeof LOCATION === 'string');
@@ -63,5 +65,8 @@ module.exports = t => {
   }
   {
     t.true(LOCATION === 'location');
+  }
+  {
+    t.true(VERSION.test('/version'));
   }
 };

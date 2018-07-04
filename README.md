@@ -18,6 +18,7 @@ chmod +x bin/index
 ```
 Setup PostgreSQL 10.2+
 * Create database ProstoDiaryDB
+* Grant roles > SQL/roles.sql
 * Create user table > SQL/table_users.sql
 * Create entries table > SQL/table_entries.sql
 ```
@@ -36,6 +37,8 @@ npm run test:watch
 
 Run development:
 ```bash
+run graphql server
+
 npm run dev
 ```
 
@@ -61,6 +64,10 @@ PLOTLY_LOGIN={ plotly login }
 PLOTLY_TOKEN={ plotly token }
 GOOGLE_MAPS_GEOCODING_API={ geocoding key }
 GOOGLE_APPLICATION_CREDENTIALS={ one line stringify object } 
+
+DIALOGFLOW_CREDENTIALS={ one line stringify object } 
+# You can find your project ID in your Dialogflow agent settings https://dialogflow.com/docs/agents#settings
+DIALOGFLOW_PROJECT_ID={ project_id }
 ```
 
 Global Bot Environments
