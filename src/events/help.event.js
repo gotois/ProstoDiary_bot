@@ -1,4 +1,4 @@
-const bot = require('../config/index.js');
+const bot = require('../config/index');
 /***
  * @param key {String}
  * @param value {String}
@@ -21,6 +21,7 @@ const onHelp = async ({chat}) => {
     '/set': 'Добавление данных за этот срок `/set YYYY-MM-DD something`',
     '/count': 'Подсчет потраченого `/count -` и полученного `/count +`',
     '/search': 'Поиск вхождения `/search something`',
+    '/version': 'Получение версии `/version`',
   };
   const message = Object.keys(data).reduce((acc, val) => (
     acc += formatResponse({key: val, value: data[val]})

@@ -1,4 +1,4 @@
-const bot = require('../config/index.js');
+const bot = require('../config/index');
 const {get} = require('../services/request.service');
 const logger = require('../services/logger.service');
 const {GOOGLE_MAPS_GEOCODING_API} = process.env;
