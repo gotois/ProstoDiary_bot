@@ -30,6 +30,7 @@ const spellCheck = (text) => {
   });
 };
 /**
+ * Исправляем очевидные ошибки (рублкй -> рублей)
  * @param myText {string}
  * @returns {Promise<string>}
  */

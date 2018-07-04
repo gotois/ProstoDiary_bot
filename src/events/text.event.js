@@ -5,7 +5,8 @@ const format = require('../services/format.service');
 const commands = require('../commands');
 const dbEntries = require('../database');
 const logger = require('../services/logger.service');
-// const language = require('../services/language.service');
+const {inputAnalyze} = require('../services/wit.service');
+const {spellText} = require('../services/speller.service');
 /***
  * Все что пишешь - записывается в сегодняшний день
  * @param msg {Object}
@@ -38,7 +39,15 @@ const onText = async ({chat, from, text, reply_to_message, message_id, date}) =>
   }
   const currentUser = sessions.getSession(fromId);
   try {
-    // await language.analyze(input);
+    
+    // TODO: обернуть весь pipe работы с input в отдельный сервис, где расписать подробно весь процесс
+    
+    const spelledText = await spellText(input);
+    const intentMessage = await inputAnalyze(spelledText);
+    
+    if (intentMessage.length) {
+      await bot.sendMessage(chatId, intentMessage);
+    }
   } catch (error) {
     logger.log('error', error.toString());
   }
