@@ -11,7 +11,7 @@ test('crypto', require('./crypto.test'));
 test('commands', require('./commands.test'));
 test('datetime', require('./datetime.test'));
 test('session', require('./session.test'));
-test('money', require('./graph-controller.test'));
+test('money', require('./money.test'));
 test('graph service', require('./graph-service.test'));
 test('graph controller', require('./graph-controller.test'));
 test('format', require('./format.test'));

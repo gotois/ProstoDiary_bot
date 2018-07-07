@@ -3,8 +3,8 @@ module.exports = t => {
     getMoney,
     TYPES,
   } = require('../src/services/calc.service');
-
-  t.todo('TODO: getFormatMoney');
+  
+  // TODO: getFormatMoney
   // getMoney
   {
     t.deepEqual(getMoney({
