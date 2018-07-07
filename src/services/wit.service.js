@@ -1,14 +1,12 @@
 const dialogflow = require('dialogflow');
 const {detectLang, getLangCode} = require('./detect-language.service');
 const {formatQuery} = require('./text.service');
+const INTENTS = require('../intents');
 // const language = require('../services/language.service');
 
 const {DIALOGFLOW_CREDENTIALS, DIALOGFLOW_PROJECT_ID} = process.env;
 const GOOGLE_CREDENTIALS = JSON.parse(DIALOGFLOW_CREDENTIALS);
 
-const INTENDS = {
-  'BUY': 'projects/prostodiary/agent/intents/41e519b4-c864-4fe6-9096-1282259c8c91'
-};
 const sessionClient = new dialogflow.SessionsClient({
   'credentials': GOOGLE_CREDENTIALS
 });
@@ -44,11 +42,26 @@ const processResponse = (responses) => {
     
     if (result.intent) {
       switch (result.intent.name) {
-        case INTENDS.BUY: {
+        case INTENTS.BUY: {
           // if (result.parameters) {
           // price: result.parameters.fields.price
           // currency: result.parameters.fields.currency
           // }
+          return result.fulfillmentText;
+        }
+        case INTENTS.EAT: {
+          return result.fulfillmentText;
+        }
+        case INTENTS.FINANCE: {
+          return result.fulfillmentText;
+        }
+        case INTENTS.FITNESS: {
+          return result.fulfillmentText;
+        }
+        case INTENTS.WEIGHT: {
+          return result.fulfillmentText;
+        }
+        case INTENTS.WORK: {
           return result.fulfillmentText;
         }
         default: {
