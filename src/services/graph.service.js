@@ -1,4 +1,4 @@
-const {PLOTLY_LOGIN, PLOTLY_TOKEN} = process.env;
+const {PLOTLY_LOGIN, PLOTLY_TOKEN} = require('../env');
 const plotly = require('plotly')(PLOTLY_LOGIN, PLOTLY_TOKEN);
 const {Writable} = require('stream');
 const logger = require('../services/logger.service');

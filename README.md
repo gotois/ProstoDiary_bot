@@ -37,7 +37,7 @@ npm run test:watch
 
 Run development:
 ```bash
-run graphql server
+#run graphql server
 
 npm run dev
 ```

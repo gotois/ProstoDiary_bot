@@ -1,7 +1,6 @@
 const winston = require('winston');
 const CoralogixWinston = require('coralogix-logger-winston');
-const {PRODUCTION_MODE} = require('./../config/constants.config');
-const {NODE_ENV, CORALOGIX_WINSTON_PRIVATE_KEY, CORALOGIX_WINSTON_APPLICATION_NAME} = process.env;
+const {IS_PRODUCTION, CORALOGIX_WINSTON_PRIVATE_KEY, CORALOGIX_WINSTON_APPLICATION_NAME} = require('../env');
 
 const logger = winston.createLogger({
   transports: [
@@ -14,7 +13,7 @@ const logger = winston.createLogger({
   exitOnError: false,
 });
 
-if (NODE_ENV === PRODUCTION_MODE) {
+if (IS_PRODUCTION) {
   const coralogixConfig = {
     privateKey: CORALOGIX_WINSTON_PRIVATE_KEY,
     applicationName: CORALOGIX_WINSTON_APPLICATION_NAME,

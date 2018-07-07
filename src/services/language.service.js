@@ -1,5 +1,5 @@
 /* eslint-disable */
-const {GOOGLE_APPLICATION_CREDENTIALS} = process.env;
+const {GOOGLE_APPLICATION_CREDENTIALS} = require('../env');
 const language = require('@google-cloud/language');
 
 if (!GOOGLE_APPLICATION_CREDENTIALS) {

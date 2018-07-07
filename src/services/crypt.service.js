@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const logger = require('../services/logger.service');
-const {SALT_PASSWORD} = process.env;
+const {SALT_PASSWORD} = require('../env');
 /**
  * @constant {string}
  */
@@ -15,12 +15,6 @@ const HEX = 'hex';
  */
 const options = {
   algorithm: 'aes-256-ctr',
-};
-/**
- * @return {string}
- */
-const getPassword = () => {
-  return SALT_PASSWORD;
 };
 /**
  * @param text {String}
@@ -46,7 +40,7 @@ const decrypt = (text, password) => {
  */
 const decode = entry => {
   try {
-    return decrypt(entry, getPassword());
+    return decrypt(entry, SALT_PASSWORD);
   } catch (error) {
     logger.log('error', error.toString());
     return entry;
@@ -60,7 +54,7 @@ const encode = text => {
   if (!text) {
     throw new Error('Encode empty');
   }
-  return encrypt(text, getPassword());
+  return encrypt(text, SALT_PASSWORD);
 };
 
 module.exports = {
