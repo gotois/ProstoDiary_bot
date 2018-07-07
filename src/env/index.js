@@ -38,6 +38,20 @@ module.exports = {
   PLOTLY_TOKEN,
   SALT_PASSWORD,
   
+  get GOOGLE_CREDENTIALS_PARSED() {
+    if (!GOOGLE_APPLICATION_CREDENTIALS) {
+      throw new Error('GOOGLE_APPLICATION_CREDENTIALS is not initialized');
+    }
+    return JSON.parse(GOOGLE_APPLICATION_CREDENTIALS);
+  },
+  
+  get DIALOGFLOW_CREDENTIALS_PARSED() {
+    if (!DIALOGFLOW_CREDENTIALS) {
+      throw new Error('DIALOGFLOW_CREDENTIALS is not initialized');
+    }
+    return JSON.parse(DIALOGFLOW_CREDENTIALS);
+  },
+  
   get IS_PRODUCTION() {
     return String(process.env.NODE_ENV) === 'production';
   },

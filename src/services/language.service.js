@@ -1,14 +1,10 @@
 /* eslint-disable */
-const {GOOGLE_APPLICATION_CREDENTIALS} = require('../env');
+const {GOOGLE_CREDENTIALS_PARSED} = require('../env');
 const language = require('@google-cloud/language');
 
-if (!GOOGLE_APPLICATION_CREDENTIALS) {
-  throw new Error('GOOGLE_APPLICATION_CREDENTIALS not initialized');
-}
-const GOOGLE_CREDENTIALS = JSON.parse(GOOGLE_APPLICATION_CREDENTIALS);
 // Instantiates a client
 const client = new language.LanguageServiceClient({
-  'credentials': GOOGLE_CREDENTIALS
+  'credentials': GOOGLE_CREDENTIALS_PARSED
 });
 
 // TEST

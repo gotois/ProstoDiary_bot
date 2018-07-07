@@ -8,7 +8,7 @@
     "prosto_diary": "./bin/index"
   },
   "scripts": {
-    "prestart": ";",
+    "prestart": "echo 'prestart'",
     "start": "./bin/index",
     "lint": "./node_modules/.bin/eslint src/**/*.js",
     "test": "./node_modules/.bin/nyc --reporter=text ./node_modules/.bin/ava tests/test.js --verbose",

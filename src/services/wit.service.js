@@ -2,14 +2,11 @@ const dialogflow = require('dialogflow');
 const {detectLang, getLangCode} = require('./detect-language.service');
 const {formatQuery} = require('./text.service');
 const INTENTS = require('../intents');
-const {DIALOGFLOW_CREDENTIALS, DIALOGFLOW_PROJECT_ID} = require('../env');
+const {DIALOGFLOW_PROJECT_ID, DIALOGFLOW_CREDENTIALS_PARSED} = require('../env');
 // const language = require('../services/language.service');
 
-// TODO: move in ../env/index.js
-const GOOGLE_CREDENTIALS = JSON.parse(DIALOGFLOW_CREDENTIALS);
-
 const sessionClient = new dialogflow.SessionsClient({
-  'credentials': GOOGLE_CREDENTIALS
+  'credentials': DIALOGFLOW_CREDENTIALS_PARSED
 });
 /**
  * Send request and log result
