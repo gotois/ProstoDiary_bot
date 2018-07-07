@@ -43,7 +43,7 @@
   "dependencies": {
     "@google-cloud/language": "~1.2.0",
     "coralogix-logger-winston": "^1.0.9",
-    "dialogflow": "~4.0.3",
+    "dialogflow": "~0.5.0",
     "dotenv": "~6.0.0",
     "franc": "~4.0.0",
     "jimp": "~0.2.28",
