@@ -1,25 +1,32 @@
 const franc = require('franc');
-
+/**
+ * @constant
+ * @type {string}
+ */
 const ENG = 'eng';
+/**
+ * @constant
+ * @type {string}
+ */
 const RUS = 'rus';
-
+/**
+ * @param francCode {string}
+ * @return {string}
+ */
 const getLangCode = (francCode) => {
-  let languageCode;
-  
   switch (francCode) {
     case RUS: {
-      languageCode = 'ru';
-      break;
+      return 'ru';
     }
     default: {
-      languageCode = 'en';
-      break;
+      return 'en';
     }
   }
-  
-  return languageCode;
 };
-
+/**
+ * @param query {string}
+ * @return {string}
+ */
 const detectLang = (query) => {
   return franc(query, {whitelist: [ENG, RUS]});
 };

@@ -5,7 +5,7 @@ const format = require('../services/format.service');
 const commands = require('../commands');
 const dbEntries = require('../database');
 const logger = require('../services/logger.service');
-const {inputAnalyze} = require('../services/wit.service');
+const {inputAnalyze} = require('../services/intent.service');
 const {spellText} = require('../services/speller.service');
 /***
  * Все что пишешь - записывается в сегодняшний день
