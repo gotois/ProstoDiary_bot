@@ -41,8 +41,21 @@ const createRegExp = input => {
  * @return {boolean}
  */
 const isRegexString = input => {
-  if (input[0] === '/' && input[input.length - 1] === '/') {
-    return true;
+  if (input.length <= 2) {
+    return false;
+  }
+  if (input.startsWith('/')) {
+    if ((input.endsWith('/'))) {
+      return true;
+    }
+    const backslashes = input.split('/');
+    if (backslashes.length < 3) {
+      return false;
+    }
+    const endBackslashe = backslashes[backslashes.length - 1];
+    if (endBackslashe.includes('m') || endBackslashe.includes('i') || endBackslashe.includes('g')) {
+      return true;
+    }
   }
   return false;
 };

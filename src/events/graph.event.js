@@ -48,12 +48,12 @@ const getGraph = async ({chat, from, text}) => {
   logger.log('info', getGraph.name);
   const chatId = chat.id;
   const currentUser = sessions.getSession(from.id);
-  const input = text.replace(commands.GRAPH, '').trim();
+  const input = text.replace(commands.GRAPH, '').trim().toLowerCase();
   const regExp = createRegexInput(input);
   const trace = createTrace();
   try {
     const {rows} = await dbEntries.getAll(currentUser.id);
-    const entryRows = decodeRows(rows).filter(({entry}) => regExp.test(entry));
+    const entryRows = decodeRows(rows).filter(({entry}) => regExp.test(entry.toLowerCase()));
     if (!entryRows.length) {
       throw new Error('Нет данных для построения графика');
     }
