@@ -1,0 +1,290 @@
+{
+	"__info__": "На 100 гр. продукта",
+
+	"бренди": {
+		"protein": 0,
+		"fat": 0,
+		"carbs": 1,
+		"kcal": 225
+	},
+
+	"вермут": {
+		"protein": 0,
+		"fat": 0,
+		"carbs": 15,
+		"kcal": 155
+	},
+
+	"вино": {
+		"protein": 0,
+		"fat": 0,
+		"carbs": 0,
+		"kcal": 66
+	},
+
+	"виски": {
+		"protein": 0,
+		"fat": 0,
+		"carbs": 0,
+		"kcal": 222
+	},
+
+	"водка": {
+		"protein": 0,
+		"fat": 0,
+		"carbs": 0.1,
+		"kcal": 234
+	},
+
+	"джин": {
+		"protein": 0,
+		"fat": 0,
+		"carbs": 0,
+		"kcal": 223
+	},
+
+	"коньяк": {
+		"protein": 0,
+		"fat": 0,
+		"carbs": 0.1,
+		"kcal": 240
+	},
+
+	"пиво": {
+		"protein": 0.5,
+		"fat": 0,
+		"carbs": 3.5,
+		"kcal": 37
+	},
+
+	"ром": {
+		"protein": 0,
+		"fat": 0,
+		"carbs": 0,
+		"kcal": 217
+	},
+
+	"шампанское": {
+		"protein": 0.3,
+		"fat": 0,
+		"carbs": 5.2,
+		"kcal": 88
+	},
+
+	"сок": {
+		"protein": 1,
+		"fat": 0.1,
+		"carbs": 8.5,
+		"kcal": 36
+	},
+
+	"какао": {
+		"protein": 24,
+		"fat": 17,
+		"carbs": 33.1,
+		"kcal": 377
+	},
+
+	"квас": {
+		"protein": 0.2,
+		"fat": 0,
+		"carbs": 5,
+		"kcal": 26
+	},
+
+	"кола": {
+		"protein": 0,
+		"fat": 0,
+		"carbs": 10,
+		"kcal": 40
+	},
+
+	"кофе": {
+		"protein": 0.8,
+		"fat": 1,
+		"carbs": 11,
+		"kcal": 56
+	},
+
+	"чай": {
+		"protein": 0,
+		"fat": 0,
+		"carbs": 0,
+		"kcal": 0
+	},
+
+	"грибы": {
+		"protein": 4.3,
+		"fat": 0.9,
+		"carbs": 1.4,
+		"kcal": 29
+	},
+
+	"икра": {
+		"protein": 28.3,
+		"fat": 9.5,
+		"carbs": 0,
+		"kcal": 201
+	},
+
+	"каша": {
+		"protein": 3,
+		"fat": 0.5,
+		"carbs": 20,
+		"kcal": 137
+	},
+
+	"хлопья"	: {
+		"protein": 6.5,
+		"fat": 2.9,
+		"carbs": 83.8,
+		"kcal": 372
+	},
+
+	"колбаса": {
+		"protein": 10,
+		"fat": 31.8,
+		"carbs": 1.7,
+		"kcal": 330
+	},
+
+	"сосиска": {
+		"protein": 11,
+		"fat": 23.9,
+		"carbs": 1.1,
+		"kcal": 260
+	},
+
+	"йогурт": {
+		"protein": 4.3,
+		"fat": 1.5,
+		"carbs": 8.4,
+		"kcal": 65
+	},
+
+	"кефир": {
+		"protein": 3,
+		"fat": 2.5,
+		"carbs": 4,
+		"kcal": 51
+	},
+
+	"молоко": {
+		"protein": 2.8,
+		"fat": 2.5,
+		"carbs": 4.6,
+		"kcal": 53
+	},
+
+	"сыр": {
+		"protein": 24,
+		"fat": 29,
+		"carbs": 0.4,
+		"kcal": 366
+	},
+
+	"творог": {
+		"protein": 16.5,
+		"fat": 9,
+		"carbs": 1.9,
+		"kcal": 156
+	},
+
+	"птица": {
+		"protein": 20,
+		"fat": 8.6,
+		"carbs": 0.8,
+		"kcal": 161
+	},
+
+	"мясо": {
+		"protein": 15,
+		"fat": 8.6,
+		"carbs": 0.5,
+		"kcal": 197
+	},
+
+	"овощи": {
+		"protein": 1.3,
+		"fat": 0.1,
+		"carbs": 6.7,
+		"kcal": 36
+  },
+
+	"орехи": {
+		"protein": 13.5,
+		"fat": 45.3,
+		"carbs": 10.6,
+		"kcal": 555
+	},
+
+	"рыба": {
+		"protein": 17,
+		"fat": 19,
+		"carbs": 0,
+		"kcal": 248
+	},
+
+	"вафли": {
+		"protein": 8.2,
+		"fat": 19.8,
+		"carbs": 53,
+		"kcal": 425
+	},
+
+	"конфеты": {
+		"protein": 3.9,
+		"fat": 39.7,
+		"carbs": 54.6,
+		"kcal": 576
+	},
+
+	"мороженое": {
+		"protein": 3.6,
+		"fat": 10,
+		"carbs": 19.5,
+		"kcal": 182
+	},
+
+	"печенье": {
+		"protein": 6.5,
+		"fat": 14,
+		"carbs": 71,
+		"kcal": 430
+	},
+
+	"шоколад": {
+		"protein": 6.7,
+		"fat": 35.6,
+		"carbs": 52.4,
+		"kcal": 552
+	},
+
+	"фрукты": {
+		"protein": 1.2,
+		"fat": 0,
+		"carbs": 12.1,
+		"kcal": 57
+	},
+
+	"хлеб": {
+		"protein": 7.4,
+		"fat": 1.8,
+		"carbs": 43.7,
+		"kcal": 218
+	},
+
+	"яйцо": {
+		"protein": 12.7,
+		"fat": 11.1,
+		"carbs": 0.6,
+		"kcal": 153
+	},
+
+	"омлет": {
+		"protein": 9.7,
+		"fat": 15.5,
+		"carbs": 1.7,
+		"kcal": 181
+	}
+}

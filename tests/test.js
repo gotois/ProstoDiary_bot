@@ -17,3 +17,4 @@ test('graph controller', require('./graph-controller.test'));
 test('format', require('./format.test'));
 test('text service', require('./text-service.test'));
 test('speller service', require('./speller-service.test'));
+test('detect lang', require('./detect-lang.test'));

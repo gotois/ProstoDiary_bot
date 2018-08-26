@@ -10,6 +10,11 @@ const ENG = 'eng';
  */
 const RUS = 'rus';
 /**
+ * @constant
+ * @type {string}
+ */
+const UNDEFINED = 'und';
+/**
  * @param francCode {string}
  * @return {string}
  */
@@ -28,10 +33,25 @@ const getLangCode = (francCode) => {
  * @return {string}
  */
 const detectLang = (query) => {
-  return franc(query, {whitelist: [ENG, RUS]});
+  const lang = franc(query, {whitelist: [RUS, ENG]});
+  
+  if (lang === UNDEFINED) {
+    if (/[А-Я]/i.test(query)) {
+      return RUS;
+    } else if (/[А-Я]/i.test(query)) {
+      return ENG;
+    }
+  }
+  
+  return lang;
 };
 
 module.exports = {
   detectLang,
   getLangCode,
+  languages: {
+    ENG,
+    RUS,
+    UNDEFINED,
+  }
 };

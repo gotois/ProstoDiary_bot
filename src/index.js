@@ -6,11 +6,15 @@ const {IS_PRODUCTION} = require('./env');
  */
 const checkAuth = () => new Promise(async (resolve, reject) => {
   // noinspection MagicNumberJS
-  const DELAY = IS_PRODUCTION ? 10000 : 1000;
+  const DELAY = IS_PRODUCTION ? 10000 : 2500;
   const timer = setTimeout(() => reject(new Error('Network unavailable')), DELAY);
-  const me = await require('./config').getMe();
-  clearTimeout(timer);
-  resolve(me);
+  try {
+    const me = await require('./config').getMe();
+    clearTimeout(timer);
+    resolve(me);
+  } catch (error) {
+    logger.log('info', error);
+  }
 });
 
 (async function main() {
@@ -26,6 +30,6 @@ const checkAuth = () => new Promise(async (resolve, reject) => {
     setTimeout(async () => {
       logger.log({level: 'info', message: 'try reconnecting...'});
       await main();
-    }, 10000);
+    }, IS_PRODUCTION ? 10000 : 500);
   }
 })();

@@ -1,6 +1,7 @@
 const dialogflow = require('dialogflow');
 const {detectLang, getLangCode} = require('./detect-language.service');
 const {formatQuery} = require('./text.service');
+const {getProductInfo} = require('./products.service');
 const INTENTS = require('../intents');
 const {DIALOGFLOW_PROJECT_ID, DIALOGFLOW_CREDENTIALS_PARSED} = require('../env');
 // const language = require('../services/language.service');
@@ -34,7 +35,7 @@ const detectTextIntent = async ({sessionId, query}) => {
  * @param responses {Array}
  * @return {string}
  */
-const processResponse = (responses) => {
+const processResponse = async (responses) => {
   for (const res of responses) {
     const result = res.queryResult;
     
@@ -48,7 +49,12 @@ const processResponse = (responses) => {
           return result.fulfillmentText;
         }
         case INTENTS.EAT: {
-          return result.fulfillmentText;
+          let outMessage = result.fulfillmentText;
+          for (const eatValue of result.parameters.fields.Food.listValue.values) {
+            const res = await getProductInfo(eatValue.stringValue);
+            outMessage += '\n' + eatValue.stringValue + ':' + JSON.stringify(res);
+          }
+          return outMessage;
         }
         case INTENTS.FINANCE: {
           return result.fulfillmentText;
@@ -84,9 +90,8 @@ const processResponse = (responses) => {
 const inputAnalyze = async (rawMsg) => {
   const sessionId = 'quickstart-session-id';
   const query = formatQuery(rawMsg);
-  
   const responses = await detectTextIntent({sessionId, query});
-  return processResponse(responses);
+  return await processResponse(responses);
 };
 
 module.exports = {

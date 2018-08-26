@@ -4,35 +4,37 @@ const {SALT_PASSWORD} = require('../env');
 /**
  * @constant {string}
  */
-const UTF8 = 'utf8';
+const ALGORITHM = 'aes-256-ctr';
 /**
- * @constant {string}
+ * @constant {number}
  */
-const HEX = 'hex';
+const BITES_LENGTH = 16;
 /**
- * @constant
- * @type {{algorithm: string}}
+ * @param text {String}
+ * @returns {String}
  */
-const options = {
-  algorithm: 'aes-256-ctr',
+const encrypt = (text) => {
+  const sha256 = crypto.createHash('sha256');
+  sha256.update(SALT_PASSWORD);
+  // Initialization Vector
+  const iv = crypto.randomBytes(BITES_LENGTH);
+  const cipher = crypto.createCipheriv(ALGORITHM, sha256.digest(), iv);
+  const ciphertext = cipher.update(new Buffer(text));
+  return Buffer.concat([iv, ciphertext, cipher.final()]).toString('base64');
 };
 /**
  * @param text {String}
- * @param password {String}
  * @returns {String}
  */
-const encrypt = (text, password) => {
-  const cipher = crypto.createCipher(options.algorithm, password);
-  return cipher.update(text, UTF8, HEX) + cipher.final(HEX);
-};
-/**
- * @param text {String}
- * @param password {String}
- * @returns {String}
- */
-const decrypt = (text, password) => {
-  const decipher = crypto.createDecipher(options.algorithm, password);
-  return decipher.update(text, HEX, UTF8) + decipher.final(UTF8);
+const decrypt = (text) => {
+  const sha256 = crypto.createHash('sha256');
+  sha256.update(SALT_PASSWORD);
+  const input = new Buffer(text, 'base64');
+  // Initialization Vector
+  const iv = input.slice(0, BITES_LENGTH);
+  const decipher = crypto.createDecipheriv(ALGORITHM, sha256.digest(), iv);
+  const ciphertext = input.slice(BITES_LENGTH);
+  return decipher.update(ciphertext) + decipher.final();
 };
 /**
  * @param entry {String}
@@ -40,7 +42,7 @@ const decrypt = (text, password) => {
  */
 const decode = entry => {
   try {
-    return decrypt(entry, SALT_PASSWORD);
+    return decrypt(entry);
   } catch (error) {
     logger.log('error', error.toString());
     return entry;
@@ -54,7 +56,7 @@ const encode = text => {
   if (!text) {
     throw new Error('Encode empty');
   }
-  return encrypt(text, SALT_PASSWORD);
+  return encrypt(text);
 };
 
 module.exports = {
