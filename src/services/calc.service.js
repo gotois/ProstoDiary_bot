@@ -11,7 +11,7 @@ const regExpMonthNumber = /^\d+ (?=Января|Февраля|Марта|Апр
 const regExpYear = /\d+ (?=Понедельник|Вторник|Среда|Четверг|Пятница|Суббота|Воскресенье)/gi;
 const regExpWeight = /вес.\d+(,|\.).+/gim;
 const regExpNumbers = /^.+ ?(\d+)/gim;
-const regExpMyZP = /(дивиденды|кэшбэк|кешбэк|кэшбек|зп|зарплата|получил|получено|заработано|заработал)(\s?|\$|€)+\d/gim;
+const regExpMyZP = /(дивиденды|кэшбэк|кешбэк|кэшбек|зп|зарплата|получил|получено|заработано|заработал)(\s?|\$|€|~)+\d/gim;
 
 const onlyNumberString = 'A-Za-z0-9_.,';
 const rublesString = ' рублей|рублей|рублей | руб|руб|руб | р|р|р | ₽|₽|₽ | rub|rub|rub ';
@@ -237,9 +237,24 @@ const getAllSum = (numbers) => {
     return defaultOut;
   }
 };
+/**
+ * Высчитывание медианы
+ * @param values {Array}
+ * @return {Number}
+ */
+const getMedian = values => {
+  values.sort((a,b) => a - b);
+  const half = Math.floor(values.length / 2);
+  if (values.length % 2) {
+    return values[half];
+  } else {
+    return (values[half-1] + values[half]) / 2.0;
+  }
+};
 
 module.exports = {
   getMoney,
   getFormatMoney,
+  getMedian,
   TYPES,
 };

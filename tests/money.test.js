@@ -1,8 +1,13 @@
 module.exports = t => {
   const {
     getMoney,
+    getMedian,
     TYPES,
   } = require('../src/services/calc.service');
+  
+  {
+    t.is(getMedian([100, 200, 900, 900]), 550);
+  }
   
   // TODO: getFormatMoney
   // getMoney
@@ -143,6 +148,14 @@ module.exports = t => {
       eur: 110,
       rub: 700,
       usd: 20.5,
+    });
+    t.deepEqual(getMoney({
+      texts: ['ЗП ~1050$'],
+      type: TYPES.allReceived,
+    }), {
+      eur: 0,
+      rub: 0,
+      usd: 1050,
     });
     t.deepEqual(getMoney({
       texts: ['ЗП 5\n ЗП 5'],

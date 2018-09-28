@@ -23,9 +23,14 @@ Setup PostgreSQL 10.2+
 * Create entries table > SQL/table_entries.sql
 ```
 
-```
 Run Telegram Bot
+```
 /start
+```
+
+After change node version
+```
+npm rebuild
 ```
 
 Usage
