@@ -19,8 +19,8 @@
     "coverage": "./node_modules/.bin/nyc report --reporter=lcov --reporter=text npm test"
   },
   "engines": {
-    "node": "~9.4.0",
-    "npm": "~6.1.0"
+    "node": "~10.10.0",
+    "npm": "~6.4.1"
   },
   "repository": {
     "type": "git",
@@ -41,26 +41,26 @@
     "email": "info@gotointeractive.com"
   },
   "dependencies": {
-    "@google-cloud/language": "~1.2.0",
+    "@google-cloud/language": "~2.0.0",
     "coralogix-logger-winston": "~1.0.9",
     "dialogflow": "~0.6.0",
     "dotenv": "~6.0.0",
     "franc": "~4.0.0",
-    "jimp": "~0.3.2",
+    "jimp": "~0.5.3",
     "node-native-zip": "~1.1.0",
     "node-telegram-bot-api": "~0.30.0",
     "pg": "~7.4.3",
     "plotly": "~1.0.6",
     "postgraphile": "~4.0.0-rc.3",
     "qrcode-reader": "~1.0.4",
-    "winston": "~3.0.0"
+    "winston": "~3.1.0"
   },
   "devDependencies": {
     "ava": "~0.25.0",
-    "codecov": "~3.0.4",
-    "eslint": "~5.3.0",
+    "codecov": "~3.1.0",
+    "eslint": "~5.6.1",
     "nodemon": "~1.18.3",
     "npm-check-updates": "~2.14.2",
-    "nyc": "~12.0.2"
+    "nyc": "~13.0.1"
   }
 }
