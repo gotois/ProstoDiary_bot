@@ -20,6 +20,7 @@ const commands = require('../commands');
   bot.on(commands.PHOTO, require('./photo.event'));
   bot.on(commands.WEBHOOK_ERROR, require('./webhook-error.event'));
   bot.on(commands.LOCATION, require('./location.event'));
+  bot.on(commands.VOICE, require('./voice.event'));
 }
 
 module.exports = bot;

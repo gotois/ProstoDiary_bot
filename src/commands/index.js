@@ -18,4 +18,5 @@ module.exports = {
   'WEBHOOK_ERROR': 'webhook_error',
   'PHOTO': 'photo',
   'LOCATION': 'location',
+  'VOICE': 'voice'
 };
