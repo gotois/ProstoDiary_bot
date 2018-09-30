@@ -9,7 +9,7 @@ const client = new speech.SpeechClient({
 });
 /**
  *
- * @param mimeType
+ * @param mimeType {string}
  * @return {string}
  */
 const convertTelegramMIMEToGoogleMIME = (mimeType) => {
