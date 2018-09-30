@@ -6,14 +6,15 @@ const {get} = require('./request.service');
  * @return {Promise<any|*>}
  */
 const getFullName = async (name) => {
-  let encodeName;
   try {
-    encodeName = encodeURI(name);
+    const encodeName = encodeURI(name);
+    const restCountriesBuffer = await get(`https://restcountries.eu/rest/v2/name/${encodeName}?fullText=true`);
+    const restCountriesBufferData = restCountriesBuffer.toString('utf8');
+    return JSON.parse(restCountriesBufferData);
   } catch (error) {
     logger.log('error', error.toString());
     throw new Error(error);
   }
-  return await get(`https://restcountries.eu/rest/v2/name/${encodeName}?fullText=true`);
 };
 
 module.exports = {
