@@ -77,7 +77,7 @@ const _put = (user_id, entry, date_modified, telegram_entry_id) => {
 /**
  * @param user_id {Number}
  * @param telegram_entry_id {Number}
- * @return {Promise}
+ * @returns {Promise}
  */
 const _delete = (user_id, telegram_entry_id) => {
   return $$(

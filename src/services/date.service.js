@@ -6,19 +6,19 @@ const MS_PER_DAY = (1000 * 60 * 60 * 24);
 /**
  *
  * @param date {Date}
- * @return {boolean}
+ * @returns {boolean}
  */
 const checkDateLaterThanNow = date => ((new Date()).getTime() < (date).getTime());
 /**
  *
  * @param date {Date|String}
- * @return {boolean}
+ * @returns {boolean}
  */
 const dateIsIncorrect = date => (isNaN((Date).parse(date)));
 /**
  *
  * @param date {String|Date}
- * @return {boolean}
+ * @returns {boolean}
  */
 const isNormalDate = date => {
   //noinspection RedundantIfStatementJS
@@ -59,15 +59,15 @@ const convertToNormalDate = date => {
  */
 const convertIn2DigitFormat = text => ((`0${text}`).slice(-2));
 /**
- * @param {Date|String} date
- * @return {boolean}
+ * @param date {Date|String}
+ * @returns {boolean}
  */
 const isDate = date => (date instanceof Date || typeof date === 'string');
 /**
  *
- * @param fromDate
- * @param untilDate
- * @return {number}
+ * @param fromDate {number}
+ * @param untilDate {number}
+ * @returns {number}
  */
 const getDifferenceDays = (fromDate, untilDate) => {
   const differenceDays = Math.floor((untilDate - fromDate) / (MS_PER_DAY));
@@ -80,11 +80,11 @@ const getDifferenceDays = (fromDate, untilDate) => {
  * Например если есть "2016-05-01" и "2016-05-03" то автоматически создаются
  * ["2016-05-01", "2016-05-02", "2016-05-03"]
  *
- * @desc Эта функция заполняет датами пустоты во времени
+ * @description Эта функция заполняет датами пустоты во времени
  * @param from {String|Date}
  * @param until {String|Date}
- * @return {Array}
- * @link https://gist.github.com/qertis/c1ed54a5f7cbaa9709030c0ff14d5b9e
+ * @returns {Array}
+ * {@link https://gist.github.com/qertis/c1ed54a5f7cbaa9709030c0ff14d5b9e}
  * @example fillRangeTimes('2015-01-01', "2016-03-02");
  */
 const fillRangeTimes = (from, until) => {

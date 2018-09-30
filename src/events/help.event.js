@@ -10,7 +10,7 @@ const formatResponse = ({key, value}) => {
 /**
  * @param msg {Object}
  * @param msg.chat {Object}
- * @return {void}
+ * @returns {undefined}
  */
 const onHelp = async ({chat}) => {
   const data = {

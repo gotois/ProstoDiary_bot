@@ -6,7 +6,7 @@ const bot = require('../config');
 const logger = require('../services/logger.service');
 /**
  * @param date {string}
- * @return {string}
+ * @returns {string}
  */
 const generateName = date => {
   return `ProstoDiary_backup_${date}`;

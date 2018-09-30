@@ -6,7 +6,7 @@ const {getParams} = require('../services/params.service');
 /**
  * @param chat {Object}
  * @param photo {Array}
- * @returns {Promise<void>}
+ * @returns {Promise<undefined>}
  */
 const onPhoto = async ({chat, /*date, from, message_id,*/photo}) => {
   logger.log('info', onPhoto.name);

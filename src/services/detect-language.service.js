@@ -16,7 +16,7 @@ const RUS = 'rus';
 const UNDEFINED = 'und';
 /**
  * @param francCode {string}
- * @return {string}
+ * @returns {string}
  */
 const getLangCode = (francCode) => {
   switch (francCode) {
@@ -30,7 +30,7 @@ const getLangCode = (francCode) => {
 };
 /**
  * @param query {string}
- * @return {string}
+ * @returns {string}
  */
 const detectLang = (query) => {
   const lang = franc(query, {whitelist: [RUS, ENG]});

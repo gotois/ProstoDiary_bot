@@ -1,5 +1,4 @@
 const bot = require('../config/index');
-const {get} = require('../services/request.service');
 const logger = require('../services/logger.service');
 const {getFullName} = require('../services/restcountries.service');
 const {getGeoCode} = require('../services/geocode.service');
@@ -7,7 +6,7 @@ const {getGeoCode} = require('../services/geocode.service');
  * @param msg {Object}
  * @param msg.chat {Object}
  * @param msg.location {Object}
- * @return {void}
+ * @returns {undefined}
  */
 const onLocation = async ({chat, location: {latitude, longitude}}) => {
   logger.log('info', onLocation.name);

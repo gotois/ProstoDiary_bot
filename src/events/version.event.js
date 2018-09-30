@@ -3,8 +3,8 @@ const {version} = require('../../package');
 const bot = require('../config');
 /**
  *
- * @param chat
- * @returns {Promise<void>}
+ * @param chat {Object}
+ * @returns {Promise<undefined>}
  */
 const getVersion = async ({chat}) => {
   logger.log('info', getVersion.name);

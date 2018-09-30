@@ -3,9 +3,9 @@ const {get} = require('./request.service');
 const {GOOGLE_MAPS_GEOCODING_API} = require('../env');
 /**
  * @param obj {object}
- * @param obj.latitude {string}
- * @param obj.longitude {string}
- * @return {Promise<any|*>}
+ * @param obj.latitude {number}
+ * @param obj.longitude {number}
+ * @returns {Promise<Array<Object>|Error>}
  */
 const getGeoCode = async ({latitude, longitude}) => {
   try {

@@ -28,7 +28,7 @@ const defaultOut = Object.freeze({[EUR]: 0, [RUB]: 0, [USD]: 0,});
 /**
  * @param acc {Object}
  * @param money {Object}
- * @return {Object}
+ * @returns {Object}
  */
 const accMoney = (acc, money) => {
   acc[EUR] += money.eur;
@@ -38,7 +38,7 @@ const accMoney = (acc, money) => {
 };
 /**
  * @param text {String}
- * @return {Array}
+ * @returns {Array}
  */
 const splitText = text => (typeof text === 'string' ? text.split('\n') : []);
 /**
@@ -78,7 +78,7 @@ const getFormatMoney = (money) => {
 /**
  * @param texts {Array}
  * @param type {Number}
- * @return {Object}
+ * @returns {Object}
  */
 const getMoney = ({texts, type,}) => {
   if (!Array.isArray(texts)) {
@@ -99,7 +99,7 @@ const getMoney = ({texts, type,}) => {
 /**
  * @param str {String}
  * @param type {Number}
- * @returns {String}
+ * @returns {string}
  */
 const formatType = (str, type) => {
   str = str.trim();
@@ -175,7 +175,7 @@ const calcMoney = (str) => {
 };
 /**
  * @param str {String}
- * @return {number}
+ * @returns {number}
  */
 const cleanDirtyNumberString = (str) => {
   const [val] = str
@@ -240,7 +240,7 @@ const getAllSum = (numbers) => {
 /**
  * Высчитывание медианы
  * @param values {Array}
- * @return {Number}
+ * @returns {number}
  */
 const getMedian = values => {
   values.sort((a,b) => a - b);

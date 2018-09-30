@@ -29,13 +29,13 @@ const formatRows = entries => {
 };
 /***
  * Message updated text
- * @param input {String}
+ * @param {String} input
  * @returns {string}
  */
 const prevInput = input => (`✓${input.replace(/\n/g, ' ').substring(0, 6)}…`);
 /**
  * @param rows {Array}
- * @return {Array}
+ * @returns {Array}
  */
 const decodeRows = (rows = []) => {
   return rows.map(({date_added, entry}) => ({

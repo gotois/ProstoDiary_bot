@@ -1,7 +1,7 @@
 /**
  *
  * @param input {String}
- * @returns {String}
+ * @returns {string}
  */
 const formatWord = input => {
   switch (input.toLowerCase()) {
@@ -29,7 +29,7 @@ const formatWord = input => {
 /**
  *
  * @param input {String}
- * @return {RegExp}
+ * @returns {RegExp}
  */
 const createRegExp = input => {
   const fWord = formatWord(input);
@@ -38,7 +38,7 @@ const createRegExp = input => {
 /**
  *
  * @param input {String}
- * @return {boolean}
+ * @returns {boolean}
  */
 const isRegexString = input => {
   if (input.length <= 2) {
@@ -62,7 +62,7 @@ const isRegexString = input => {
 /**
  *
  * @param input {String}
- * @return {RegExp}
+ * @returns {RegExp}
  */
 const convertStringToRegexp = input => new RegExp(input.slice(1, input.length - 1));
 /**
@@ -76,7 +76,7 @@ const createRegexInput = input => (
 /**
  *
  * @param regexString {String}
- * @return {string}
+ * @returns {string}
  */
 const normalizeRegexStringToString = regexString => {
   return regexString.replace(/^\//, '').replace(/\/$/, '');

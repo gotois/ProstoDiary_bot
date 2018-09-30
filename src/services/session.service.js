@@ -6,7 +6,7 @@
 /**
  * @todo return sessions.find(session => session.userId === userId);
  * @param userId {String}
- * @return {{id: Number, password: string}}
+ * @returns {{id: number, password: string}}
  */
 const getSession = (userId) => ({
   id: userId,

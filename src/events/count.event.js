@@ -8,7 +8,7 @@ const logger = require('../services/logger.service');
  * @param startTime {String}
  * @param endTime {String}
  * @param money {Object}
- * @return {string}
+ * @returns {string}
  */
 const formatResponse = ({startTime, endTime, money}) => {
   const formatMoney = getFormatMoney(money);

@@ -18,7 +18,7 @@ const NEXT_PAGE_VALUE = '__next_page';
  * @param date {Date}
  * @param entry {String}
  * @param matcher {String}
- * @return {String}
+ * @returns {string}
  */
 const formatResponse = ({date, entry, matcher}) => {
   const dateOut = `_${date.toLocaleDateString()}_`;
@@ -30,7 +30,7 @@ const formatResponse = ({date, entry, matcher}) => {
  * @param chat {Object}
  * @param from {Object}
  * @param match {Array}
- * @return {void}
+ * @returns {undefined}
  */
 const onSearch = async ({chat, from}, match) => {
   logger.log('info', onSearch.name);
@@ -46,9 +46,9 @@ const onSearch = async ({chat, from}, match) => {
     return;
   }
   /**
-   * @param entry
-   * @param date
-   * @returns {Promise<void>}
+   * @param entry {*}
+   * @param date {*}
+   * @returns {Promise<undefined>}
    */
   const botSendMessage = async ({entry, date}) => {
     await bot.sendMessage(chatId, formatResponse({entry, date, matcher: input}), {
@@ -58,7 +58,7 @@ const onSearch = async ({chat, from}, match) => {
   };
   /**
    * @param page {number}
-   * @returns {Promise<void>}
+   * @returns {Promise<undefined>}
    */
   function* generateEntries(page) {
     for (let i = 0; i < matchFilterRows.length; i += page) {
@@ -67,7 +67,7 @@ const onSearch = async ({chat, from}, match) => {
   }
   /**
    *
-   * @returns {Promise<void>}
+   * @returns {Promise<undefined>}
    */
   const showNextEntries = async () => {
     const nextEntries = generator.next();

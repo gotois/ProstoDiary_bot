@@ -6,7 +6,7 @@ const format = require('../services/format.service');
 const logger = require('../services/logger.service');
 /**
  * @param input {string}
- * @return {string}
+ * @returns {string}
  */
 const formatResponse = (input) => {
   return format.prevInput(input) + '\n_Запись обновлена_';

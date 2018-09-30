@@ -10,7 +10,7 @@ const client = new speech.SpeechClient({
 /**
  *
  * @param mimeType {string}
- * @return {string}
+ * @returns {string}
  */
 const convertTelegramMIMEToGoogleMIME = (mimeType) => {
   switch (mimeType) {
@@ -23,10 +23,10 @@ const convertTelegramMIMEToGoogleMIME = (mimeType) => {
   }
 };
 /**
- *
+ * @function
  * @param chat {Object}
  * @param voice {Object}
- * @returns {Promise<void>}
+ * @returns {Promise<undefined>}
  */
 const getVoice = async ({chat, voice}) => {
   logger.log('info', getVoice.name);

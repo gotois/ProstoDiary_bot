@@ -11,7 +11,7 @@ const ALGORITHM = 'aes-256-ctr';
 const BITES_LENGTH = 16;
 /**
  * @param text {String}
- * @returns {String}
+ * @returns {string}
  */
 const encrypt = (text) => {
   const sha256 = crypto.createHash('sha256');
@@ -24,7 +24,7 @@ const encrypt = (text) => {
 };
 /**
  * @param text {String}
- * @returns {String}
+ * @returns {string}
  */
 const decrypt = (text) => {
   const sha256 = crypto.createHash('sha256');
@@ -38,7 +38,7 @@ const decrypt = (text) => {
 };
 /**
  * @param entry {String}
- * @returns {String}
+ * @returns {string}
  */
 const decode = entry => {
   try {
@@ -50,7 +50,7 @@ const decode = entry => {
 };
 /**
  * @param text {String}
- * @returns {String}
+ * @returns {string}
  */
 const encode = text => {
   if (!text) {

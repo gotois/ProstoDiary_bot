@@ -3,7 +3,7 @@ const {get} = require('./request.service');
 /**
  *
  * @param name {string}
- * @return {Promise<any|*>}
+ * @returns {Promise<Array<Object>|Error>}
  */
 const getFullName = async (name) => {
   try {

@@ -33,7 +33,7 @@ const detectTextIntent = async ({sessionId, query}) => {
  * TODO: получаю имя и значение Intent
  * на основе этого делаю записи в нужные части БД (сохраняя при этом стандартный rawMsg)
  * @param responses {Array}
- * @return {string}
+ * @returns {string}
  */
 const processResponse = async (responses) => {
   for (const res of responses) {
