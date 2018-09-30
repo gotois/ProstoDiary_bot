@@ -1,4 +1,5 @@
 const speech = require('@google-cloud/speech');
+const mm = require('music-metadata');
 const {GOOGLE_CREDENTIALS_PARSED} = require('../env');
 const logger = require('../services/logger.service');
 const bot = require('../config');
@@ -32,9 +33,10 @@ const getVoice = async ({chat, voice}) => {
   const chatId = chat.id;
   const fileInfo = await bot.getFile(voice.file_id);
   const buffer = await get(`https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`);
+  const metadata = await mm.parseBuffer(buffer, voice.mime_type, {fileSize: voice.file_size});
   const config = {
     encoding: convertTelegramMIMEToGoogleMIME(voice.mime_type), // raw 16-bit signed LE samples
-    sampleRateHertz: 48000, // 48 khz
+    sampleRateHertz: metadata.format.sampleRate,
     languageCode: 'ru-RU', // a BCP-47 language tag
   };
   const request = {

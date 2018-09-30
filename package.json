@@ -48,11 +48,12 @@
     "dotenv": "~6.0.0",
     "franc": "~4.0.0",
     "jimp": "~0.5.3",
+    "music-metadata": "~3.1.0",
     "node-native-zip": "~1.1.0",
     "node-telegram-bot-api": "~0.30.0",
     "pg": "~7.4.3",
     "plotly": "~1.0.6",
-    "postgraphile": "~4.0.0-rc.3",
+    "postgraphile": "^4.0.0-rc.5.1-ab3bbc5",
     "qrcode-reader": "~1.0.4",
     "winston": "~3.1.0"
   },
@@ -60,7 +61,7 @@
     "ava": "~0.25.0",
     "codecov": "~3.1.0",
     "eslint": "~5.6.1",
-    "nodemon": "~1.18.3",
+    "nodemon": "~1.18.4",
     "npm-check-updates": "~2.14.2",
     "nyc": "~13.0.1"
   }
