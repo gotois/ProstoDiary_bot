@@ -45,7 +45,6 @@ const getVoice = async ({chat, voice}) => {
     },
     config: config,
   };
-  logger.log('info', config);
   try {
     const [response] = await client.recognize(request);
     if (response && Array.isArray(response.results)) {

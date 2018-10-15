@@ -8,7 +8,8 @@
     "prosto_diary": "./bin/index"
   },
   "scripts": {
-    "prestart": "npx ncu",
+    "prestart": "",
+    "package-upgrade": "npx ncu",
     "start": "./bin/index",
     "lint": "./node_modules/.bin/eslint src/**/*.js",
     "test": "./node_modules/.bin/nyc --reporter=text ./node_modules/.bin/ava tests/test.js --verbose",
@@ -42,18 +43,17 @@
   },
   "dependencies": {
     "@google-cloud/language": "~2.0.0",
-    "@google-cloud/speech": "^2.1.0",
+    "@google-cloud/speech": "~2.1.1",
     "coralogix-logger-winston": "~1.0.9",
     "dialogflow": "~0.6.0",
     "dotenv": "~6.0.0",
     "franc": "~4.0.0",
-    "jimp": "~0.5.3",
-    "music-metadata": "~3.1.0",
+    "jimp": "~0.5.4",
+    "music-metadata": "~3.1.4",
     "node-native-zip": "~1.1.0",
     "node-telegram-bot-api": "~0.30.0",
     "pg": "~7.4.3",
     "plotly": "~1.0.6",
-    "postgraphile": "^4.0.0-rc.5.1-ab3bbc5",
     "qrcode-reader": "~1.0.4",
     "winston": "~3.1.0"
   },
