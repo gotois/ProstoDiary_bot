@@ -1,8 +1,8 @@
 const client = require('./database.client.js');
 /**
  *
- * @param query {String}
- * @param params {Array|undefined}
+ * @param {string} query - query
+ * @param {Array|undefined} params - params
  * @returns {Promise}
  */
 module.exports = (query, params = []) => (

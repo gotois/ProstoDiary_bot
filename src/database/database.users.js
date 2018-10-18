@@ -1,7 +1,7 @@
 const $$ = require('./database.promise.js');
 /**
  *
- * @param telegram_user_id {*}
+ * @param {*} telegram_user_id - id
  */
 const check = telegram_user_id => {
   return $$(
@@ -12,7 +12,7 @@ const check = telegram_user_id => {
 };
 /**
  *
- * @param telegram_user_id {*}
+ * @param {*} telegram_user_id - id
  */
 const post = telegram_user_id => {
   return $$(

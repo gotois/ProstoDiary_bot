@@ -1,8 +1,8 @@
 const $$ = require('./database.promise.js');
-/***
+/**
  *
- * @param user_id {Number}
- * @return {Promise}
+ * @param {number} user_id - user id
+ * @returns {Promise}
  */
 const getAll = user_id => {
   return $$(
@@ -13,11 +13,12 @@ const getAll = user_id => {
     [user_id]
   );
 };
-/***
+/**
  * TODO: фича. День начинается с рассвета и до следующего рассвета (вместо привычного дня времени)
- * @param user_id {Number}
- * @param date {String} like 2016-12-01 or {Date}
- * @return {Promise}
+ *
+ * @param {number} user_id - user id
+ * @param {string|Date} date - like 2016-12-01
+ * @returns {Promise}
  */
 const _get = (user_id, date) => {
   switch (date.constructor) {
@@ -42,14 +43,14 @@ const _get = (user_id, date) => {
     WHERE (user_id = $1) AND date_added BETWEEN ${from} AND ${until}`, [user_id]
   );
 };
-/***
+/**
  *
- * @param user_id {Number}
- * @param entry {String}
- * @param telegram_entry_id {Number}
- * @param date_modified {Date}
- * @param date_added {Date|null}
- * @return {Promise}
+ * @param {number} user_id - user id
+ * @param {string} entry - entry
+ * @param {number} telegram_entry_id - telegram entry id
+ * @param {Date} date_modified - date
+ * @param {Date|undefined} date_added - date
+ * @returns {Promise}
  */
 const _post = (user_id, entry, telegram_entry_id, date_modified, date_added = new Date()) => {
   return $$(
@@ -58,13 +59,13 @@ const _post = (user_id, entry, telegram_entry_id, date_modified, date_added = ne
     [user_id, entry, telegram_entry_id, date_modified, date_added]
   );
 };
-/***
+/**
  *
- * @param user_id {Number}
- * @param entry {String}
- * @param date_modified {Date}
- * @param telegram_entry_id {Number}
- * @return {Promise}
+ * @param {number} user_id - user id
+ * @param {string} entry - entry
+ * @param {Date} date_modified - date
+ * @param {number} telegram_entry_id - date
+ * @returns {Promise}
  */
 const _put = (user_id, entry, date_modified, telegram_entry_id) => {
   return $$(
@@ -75,8 +76,8 @@ const _put = (user_id, entry, date_modified, telegram_entry_id) => {
   );
 };
 /**
- * @param user_id {Number}
- * @param telegram_entry_id {Number}
+ * @param {number} user_id - user id
+ * @param {number} telegram_entry_id - telegram entry id
  * @returns {Promise}
  */
 const _delete = (user_id, telegram_entry_id) => {
@@ -86,10 +87,11 @@ const _delete = (user_id, telegram_entry_id) => {
     [user_id, telegram_entry_id]
   );
 };
-/***
+/**
  * Удаление данных из БД
- * @param user_id {Number}
- * @return {Promise}
+ *
+ * @param {number} user_id - id user
+ * @returns {Promise}
  */
 const clear = user_id => {
   return $$(

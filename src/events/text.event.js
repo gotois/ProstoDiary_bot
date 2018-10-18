@@ -7,16 +7,17 @@ const dbEntries = require('../database');
 const logger = require('../services/logger.service');
 const {inputAnalyze} = require('../services/intent.service');
 const {spellText} = require('../services/speller.service');
-/***
+/**
  * Все что пишешь - записывается в сегодняшний день
- * @param msg {Object}
- * @param msg.chat {Object}
- * @param msg.from {Object}
- * @param msg.text {String}
- * @param msg.reply_to_message {Object}
- * @param msg.message_id {Number}
- * @param msg.date {Date}
- * @return {void}
+ *
+ * @param {Object} msg - message
+ * @param {Object} msg.chat - chat
+ * @param {Object} msg.from - from
+ * @param {string} msg.text - text
+ * @param {Object} msg.reply_to_message - message
+ * @param {number} msg.message_id - id message
+ * @param {Date} msg.date -date message
+ * @returns {undefined}
  */
 const onText = async ({chat, from, text, reply_to_message, message_id, date}) => {
   logger.log('info', onText.name);

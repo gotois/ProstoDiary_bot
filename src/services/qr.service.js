@@ -1,7 +1,7 @@
 const QrCode = require('qrcode-reader');
 const Jimp = require('jimp');
 /**
- * @param buffer {Buffer}
+ * @param {Buffer} buffer - buffer
  * @returns {Promise<any>}
  */
 module.exports = (buffer) => new Promise ((resolve, reject) => {

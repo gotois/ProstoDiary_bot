@@ -6,15 +6,16 @@ const crypt = require('../services/crypt.service');
 const commands = require('../commands');
 const format = require('../services/format.service');
 const logger = require('../services/logger.service');
-/***
+/**
  * /set 2016-12-29 something text
- * @param msg {Object}
- * @param msg.chat {Object}
- * @param msg.text {String}
- * @param msg.from {Object}
- * @param msg.message_id {Number}
- * @param match {Array}
- * @return {void}
+ *
+ * @param {Object} msg - message
+ * @param {Object} msg.chat - chat
+ * @param {string} msg.text - text
+ * @param {Object} msg.from - from
+ * @param {number} msg.message_id - id message
+ * @param {Array} match - match
+ * @returns {undefined}
  */
 const setDataFromDate = async ({chat, text, from, message_id}, match) => {
   logger.log('info', setDataFromDate.name);

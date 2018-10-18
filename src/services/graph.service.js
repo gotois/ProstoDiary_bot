@@ -3,8 +3,8 @@ const plotly = require('plotly')(PLOTLY_LOGIN, PLOTLY_TOKEN);
 const {Writable} = require('stream');
 const logger = require('../services/logger.service');
 /**
- * @param figure {Object}
- * @param options {Object}
+ * @param {Object} figure - figure
+ * @param {Object} options - options object
  * @returns {Promise}
  */
 const getImage = (figure, options = {}) => (
@@ -15,8 +15,8 @@ const getImage = (figure, options = {}) => (
   ))
 );
 /**
- * @param figure {Object}
- * @param options {Object}
+ * @param {Object} figure - object figure
+ * @param {Object} options - options object
  * @returns {Promise}
  */
 const getImageBuffer = async (figure, options = {}) => {
@@ -40,7 +40,7 @@ const getImageBuffer = async (figure, options = {}) => {
   });
 };
 /**
- * @param plotId {String}
+ * @param {string} plotId - plot id
  * @returns {Promise}
  */
 const deletePlot = plotId => (

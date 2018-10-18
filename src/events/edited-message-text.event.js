@@ -5,14 +5,14 @@ const crypt = require('../services/crypt.service');
 const format = require('../services/format.service');
 const logger = require('../services/logger.service');
 /**
- * @param input {string}
+ * @param {string} input - text
  * @returns {string}
  */
 const formatResponse = (input) => {
   return format.prevInput(input) + '\n_Запись обновлена_';
 };
 /**
- * @param message {String}
+ * @param {string} message - message
  * @returns {boolean}
  */
 const isDeleteMessage = (message) => {
@@ -23,14 +23,15 @@ const isDeleteMessage = (message) => {
   const DELETE_VARIABLES = ['del', 'delete'];
   return DELETE_VARIABLES.some(del => message.toLowerCase() === del.toLowerCase());
 };
-/***
+/**
  * Обновление текста в БД
- * @param msg {Object}
- * @param msg.chat {Object}
- * @param msg.from {Object}
- * @param msg.text {String}
- * @param msg.message_id {String}
- * @return {void}
+ *
+ * @param {Object} msg - msg
+ * @param {Object} msg.chat - chat
+ * @param {Object} msg.from - from
+ * @param {string} msg.text - text
+ * @param {string} msg.message_id - message
+ * @returns {undefined}
  */
 const onEditedMessageText = async ({chat, from, text, message_id}) => {
   logger.log('info', onEditedMessageText.name);

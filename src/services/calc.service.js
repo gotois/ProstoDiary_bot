@@ -1,7 +1,7 @@
 const logger = require('../services/logger.service');
 /**
  * @constant
- * @type {{salaryReceived: number, allSpent: number, allReceived: number}}
+ * @type {{allSpent: number, allReceived: number}}
  */
 const TYPES = {
   allSpent: 0,
@@ -26,8 +26,8 @@ const regExpUsd = new RegExp(usdString);
 const [EUR, RUB, USD] = ['eur', 'rub', 'usd',];
 const defaultOut = Object.freeze({[EUR]: 0, [RUB]: 0, [USD]: 0,});
 /**
- * @param acc {Object}
- * @param money {Object}
+ * @param {Object} acc - accumulator
+ * @param {Object} money - money
  * @returns {Object}
  */
 const accMoney = (acc, money) => {
@@ -37,13 +37,14 @@ const accMoney = (acc, money) => {
   return acc;
 };
 /**
- * @param text {String}
+ * @param {string} text - text
  * @returns {Array}
  */
 const splitText = text => (typeof text === 'string' ? text.split('\n') : []);
 /**
  * Локализуем
- * @param money {Object}
+ *
+ * @param {Object} money - money
  * @returns {Object}
  */
 const getFormatMoney = (money) => {
@@ -76,8 +77,8 @@ const getFormatMoney = (money) => {
   };
 };
 /**
- * @param texts {Array}
- * @param type {Number}
+ * @param {Array} texts - text array
+ * @param {number} type - money type
  * @returns {Object}
  */
 const getMoney = ({texts, type,}) => {
@@ -97,8 +98,8 @@ const getMoney = ({texts, type,}) => {
   }
 };
 /**
- * @param str {String}
- * @param type {Number}
+ * @param {string} str - text
+ * @param {number} type - type
  * @returns {string}
  */
 const formatType = (str, type) => {
@@ -135,7 +136,7 @@ const formatType = (str, type) => {
   return str;
 };
 /**
- * @param str {String}
+ * @param {string} str - string
  * @returns {Object}
  */
 const calcMoney = (str) => {
@@ -174,7 +175,7 @@ const calcMoney = (str) => {
     ), Object.assign({}, defaultOut));
 };
 /**
- * @param str {String}
+ * @param {string} str - text
  * @returns {number}
  */
 const cleanDirtyNumberString = (str) => {
@@ -187,7 +188,7 @@ const cleanDirtyNumberString = (str) => {
   return Number.parseFloat(val);
 };
 /**
- * @param numbers {String}
+ * @param {string} numbers - number text
  * @returns {Object}
  */
 const getAllSum = (numbers) => {
@@ -239,7 +240,8 @@ const getAllSum = (numbers) => {
 };
 /**
  * Высчитывание медианы
- * @param values {Array}
+ *
+ * @param  {Array} values - value array
  * @returns {number}
  */
 const getMedian = values => {

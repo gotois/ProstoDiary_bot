@@ -17,6 +17,7 @@ const BAR_TYPE = 'bar';
 const NOT_FOUND = 'NOT FOUND';
 /**
  * временная шкала х {String} и частота y {Number}
+ *
  * @returns {{x: Array, y: Array, type: string}}
  */
 const createTrace = () => {
@@ -36,13 +37,14 @@ const getImgOpts = () => {
     height: 512,
   };
 };
-/***
+/**
  * Построить график
- * @param msg {Object}
- * @param msg.chat {Object}
- * @param msg.from {Object}
- * @param msg.text {String}
- * @return {void}
+ *
+ * @param {Object} msg - message
+ * @param {Object} msg.chat - message chat
+ * @param {Object} msg.from - from
+ * @param {string} msg.text - text
+ * @returns {undefined}
  */
 const getGraph = async ({chat, from, text}) => {
   logger.log('info', getGraph.name);

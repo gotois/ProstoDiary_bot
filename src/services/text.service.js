@@ -1,8 +1,8 @@
 /**
  * @example .5 -> 0.5
- * @param match {string}
- * @param matchIndex {Number}
- * @param text {string}
+ * @param {string} match - match
+ * @param {number} matchIndex - index
+ * @param {string} text - text
  * @returns {string}
  */
 const dotNumberReplacer = (match, matchIndex, text) => {
@@ -14,7 +14,7 @@ const dotNumberReplacer = (match, matchIndex, text) => {
   return match;
 };
 /**
- * @param query {string}
+ * @param {string} query - query
  * @returns {string}
  */
 const formatQuery = (query) => {
@@ -30,10 +30,10 @@ const formatQuery = (query) => {
   return temp;
 };
 /**
- * @param str {string}
- * @param start {Number}
- * @param end {Number}
- * @param what {string}
+ * @param {string} str - string
+ * @param {number} start - start
+ * @param {number} end - end
+ * @param {string} what - what text
  * @returns {string}
  */
 const replaceBetween = (str, start, end, what) => {

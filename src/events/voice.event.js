@@ -8,8 +8,7 @@ const client = new speech.SpeechClient({
   'credentials': GOOGLE_CREDENTIALS_PARSED
 });
 /**
- *
- * @param mimeType {string}
+ * @param {string} mimeType - mime type
  * @returns {string}
  */
 const convertTelegramMIMEToGoogleMIME = (mimeType) => {
@@ -24,8 +23,9 @@ const convertTelegramMIMEToGoogleMIME = (mimeType) => {
 };
 /**
  * @function
- * @param chat {Object}
- * @param voice {Object}
+ * @param {Object} msg - msg
+ * @param {Object} msg.chat - chat
+ * @param {Object} msg.voice - voice
  * @returns {Promise<undefined>}
  */
 const getVoice = async ({chat, voice}) => {

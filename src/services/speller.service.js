@@ -1,7 +1,7 @@
 const request = require('request');
 const {replaceBetween} = require('./text.service');
 /**
- * @param text {string}
+ * @param {string} text - text
  * @returns {Promise<Array>}
  */
 const spellCheck = (text) => {
@@ -31,7 +31,8 @@ const spellCheck = (text) => {
 };
 /**
  * Исправляем очевидные ошибки (рублкй -> рублей)
- * @param myText {string}
+ *
+ * @param {string} myText - user text
  * @returns {Promise<string>}
  */
 const spellText = async (myText) => {

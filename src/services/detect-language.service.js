@@ -15,7 +15,7 @@ const RUS = 'rus';
  */
 const UNDEFINED = 'und';
 /**
- * @param francCode {string}
+ * @param {string} francCode - code
  * @returns {string}
  */
 const getLangCode = (francCode) => {
@@ -29,7 +29,7 @@ const getLangCode = (francCode) => {
   }
 };
 /**
- * @param query {string}
+ * @param {string} query - query
  * @returns {string}
  */
 const detectLang = (query) => {

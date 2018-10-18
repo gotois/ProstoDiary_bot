@@ -2,7 +2,8 @@ const products = require('../../data/products.json');
 
 /**
  * TODO: потом получать данные из БД
- * @param name {string}
+ *
+ * @param {string} name - product name
  * @returns {Promise<Object|undefined>}
  */
 const getProductInfo = async (name) => {

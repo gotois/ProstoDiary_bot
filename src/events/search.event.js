@@ -15,9 +15,10 @@ const PAGE_SKIP = 10;// default every 10 times
  */
 const NEXT_PAGE_VALUE = '__next_page';
 /**
- * @param date {Date}
- * @param entry {String}
- * @param matcher {String}
+ * @param {Object} msg - data
+ * @param {Date} msg.date - date
+ * @param {string} msg.entry - entry
+ * @param {string} msg.matcher - matcher string
  * @returns {string}
  */
 const formatResponse = ({date, entry, matcher}) => {
@@ -27,9 +28,10 @@ const formatResponse = ({date, entry, matcher}) => {
   return `${dateOut}\n${entryOut}`;
 };
 /**
- * @param chat {Object}
- * @param from {Object}
- * @param match {Array}
+ * @param {Object} msg - message
+ * @param {Object} msg.chat - chat
+ * @param {Object} msg.from - from
+ * @param {Array} match - match
  * @returns {undefined}
  */
 const onSearch = async ({chat, from}, match) => {
@@ -46,8 +48,8 @@ const onSearch = async ({chat, from}, match) => {
     return;
   }
   /**
-   * @param entry {*}
-   * @param date {*}
+   * @param {*} entry - entry
+   * @param {*} date - date
    * @returns {Promise<undefined>}
    */
   const botSendMessage = async ({entry, date}) => {
@@ -57,7 +59,7 @@ const onSearch = async ({chat, from}, match) => {
     });
   };
   /**
-   * @param page {number}
+   * @param {number} page - page
    * @returns {Promise<undefined>}
    */
   function* generateEntries(page) {

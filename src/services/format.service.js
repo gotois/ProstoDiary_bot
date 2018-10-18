@@ -2,7 +2,7 @@ const crypt = require('./crypt.service');
 const {convertIn2DigitFormat} = require('./date.service');
 /**
  *
- * @param entries {Array}
+ * @param {Array} entries - entries
  * @returns {string}
  */
 const formatRows = entries => {
@@ -27,14 +27,15 @@ const formatRows = entries => {
   });
   return out.trim();
 };
-/***
+/**
  * Message updated text
- * @param {String} input
+ *
+ * @param {string} input - user input text
  * @returns {string}
  */
 const prevInput = input => (`✓${input.replace(/\n/g, ' ').substring(0, 6)}…`);
 /**
- * @param rows {Array}
+ * @param {Array} rows - array rows
  * @returns {Array}
  */
 const decodeRows = (rows = []) => {

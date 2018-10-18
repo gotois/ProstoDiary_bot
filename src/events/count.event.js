@@ -5,9 +5,10 @@ const {getMoney, getFormatMoney, TYPES} = require('../services/calc.service');
 const {decodeRows} = require('./../services/format.service');
 const logger = require('../services/logger.service');
 /**
- * @param startTime {String}
- * @param endTime {String}
- * @param money {Object}
+ * @param {Object} msg - message
+ * @param {string} msg.startTime - start time
+ * @param {string} msg.endTime - end time
+ * @param {Object} msg.money - money
  * @returns {string}
  */
 const formatResponse = ({startTime, endTime, money}) => {
@@ -17,15 +18,15 @@ const formatResponse = ({startTime, endTime, money}) => {
       `*${formatMoney.eur}*\n` +
       `*${formatMoney.usd}*`;
 };
-/***
+/**
  * @example /count - -> выведет сколько всего потрачено
  * @example /count + -> выведет сколько всего получено
  *
- * @param msg {Object}
- * @param msg.chat {Object}
- * @param msg.from {Object}
- * @param match {Array}
- * @return {void}
+ * @param {Object} msg - message
+ * @param {Object} msg.chat - chat
+ * @param {Object} msg.from - from
+ * @param {Array} match - mather
+ * @returns {undefined}
  */
 const onCount = async ({chat, from}, match) => {
   logger.log('info', onCount.name);

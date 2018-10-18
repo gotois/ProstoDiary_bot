@@ -1,6 +1,6 @@
 const request = require('request');
 /**
- * @param url {String}
+ * @param {string} url - url
  * @returns {Promise<any>}
  */
 const get = url => new Promise((resolve, reject) => {

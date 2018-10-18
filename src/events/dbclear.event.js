@@ -2,12 +2,13 @@ const dbEntries = require('../database');
 const sessions = require('../services/session.service');
 const bot = require('../config');
 const logger = require('../services/logger.service');
-/***
+/**
  * Очистить базу данных с подтверждением
- * @param msg {Object}
- * @param msg.chat {Object}
- * @param msg.from {Object}
- * @return {void}
+ *
+ * @param {Object} msg - message
+ * @param {Object} msg.chat - chat
+ * @param {Object} msg.from - from
+ * @returns {undefined}
  */
 const onDBClear = async ({chat, from}) => {
   logger.log('info', onDBClear.name);

@@ -1,5 +1,5 @@
 /**
- * @param query {String}
+ * @param {string} query - query
  * @returns {Object}
  */
 const getParams = query => {

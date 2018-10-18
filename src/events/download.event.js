@@ -5,19 +5,20 @@ const sessions = require('../services/session.service');
 const bot = require('../config');
 const logger = require('../services/logger.service');
 /**
- * @param date {string}
+ * @param {string} date - date
  * @returns {string}
  */
 const generateName = date => {
   return `ProstoDiary_backup_${date}`;
 };
-/***
+/**
  * Скачивание файла БД на устройство
- * @param msg {Object}
- * @param msg.chat {Object}
- * @param msg.from {Object}
- * @param msg.date {String}
- * @return {Promise<void>}
+ *
+ * @param {Object} msg - message
+ * @param {Object} msg.chat - message chat
+ * @param {Object} msg.from - from
+ * @param {string} msg.date - date
+ * @returns {Promise<undefined>}
  */
 const onDownload = async ({chat, from, date}) => {
   logger.log('info', onDownload.name);

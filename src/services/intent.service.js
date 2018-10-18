@@ -11,8 +11,9 @@ const sessionClient = new dialogflow.SessionsClient({
 });
 /**
  * Send request and log result
- * @param sessionId {string}
- * @param query {string}
+ *
+ * @param {string} sessionId - session id
+ * @param {string} query - query
  * @returns {Promise<Array>}
  */
 const detectTextIntent = async ({sessionId, query}) => {
@@ -32,7 +33,8 @@ const detectTextIntent = async ({sessionId, query}) => {
 /**
  * TODO: получаю имя и значение Intent
  * на основе этого делаю записи в нужные части БД (сохраняя при этом стандартный rawMsg)
- * @param responses {Array}
+ *
+ * @param {Array} responses - responses array
  * @returns {string}
  */
 const processResponse = async (responses) => {
@@ -84,7 +86,7 @@ const processResponse = async (responses) => {
  * анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
  * await language.analyze(input);
  *
- * @param rawMsg {string} купил овощи 30 рублей
+ * @param {string} rawMsg - купил овощи 30 рублей
  * @returns {Promise<string>}
  */
 const inputAnalyze = async (rawMsg) => {

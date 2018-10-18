@@ -1,15 +1,16 @@
 const bot = require('../config/index');
-/***
- * @param key {String}
- * @param value {String}
- * @return {string}
+/**
+ * @param {Object} obj - object
+ * @param {string} obj.key - key
+ * @param {string} obj.value - value
+ * @returns {string}
  */
 const formatResponse = ({key, value}) => {
   return `\n${key}: ${value}`;
 };
 /**
- * @param msg {Object}
- * @param msg.chat {Object}
+ * @param {Object} msg - message
+ * @param {Object} msg.chat - chat
  * @returns {undefined}
  */
 const onHelp = async ({chat}) => {

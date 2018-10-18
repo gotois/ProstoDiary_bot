@@ -4,8 +4,9 @@ const {get} = require('../services/request.service');
 const qr = require('../services/qr.service');
 const {getParams} = require('../services/params.service');
 /**
- * @param chat {Object}
- * @param photo {Array}
+ * @param {Object} msg - message
+ * @param {Object} msg.chat - chat
+ * @param {Array} msg.photo - photo
  * @returns {Promise<undefined>}
  */
 const onPhoto = async ({chat, /*date, from, message_id,*/photo}) => {

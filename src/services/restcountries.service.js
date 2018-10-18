@@ -2,7 +2,7 @@ const logger = require('./logger.service');
 const {get} = require('./request.service');
 /**
  *
- * @param name {string}
+ * @param {string} name - text
  * @returns {Promise<Array<Object>|Error>}
  */
 const getFullName = async (name) => {

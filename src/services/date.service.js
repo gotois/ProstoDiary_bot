@@ -5,19 +5,19 @@
 const MS_PER_DAY = (1000 * 60 * 60 * 24);
 /**
  *
- * @param date {Date}
+ * @param {Date} date - date
  * @returns {boolean}
  */
 const checkDateLaterThanNow = date => ((new Date()).getTime() < (date).getTime());
 /**
  *
- * @param date {Date|String}
+ * @param {Date|string} date - date
  * @returns {boolean}
  */
 const dateIsIncorrect = date => (isNaN((Date).parse(date)));
 /**
  *
- * @param date {String|Date}
+ * @param {string|Date} date - date
  * @returns {boolean}
  */
 const isNormalDate = date => {
@@ -29,7 +29,7 @@ const isNormalDate = date => {
 };
 /**
  * @example convertToNormalDate('YYY-MM-DD')
- * @param date {String|Date}
+ * @param {string|Date} date - date
  * @returns {Date}
  */
 const convertToNormalDate = date => {
@@ -54,19 +54,19 @@ const convertToNormalDate = date => {
 };
 /**
  *
- * @param text {Number|String}
+ * @param {number} text - text
  * @returns {string}
  */
 const convertIn2DigitFormat = text => ((`0${text}`).slice(-2));
 /**
- * @param date {Date|String}
+ * @param {Date|string} date - date
  * @returns {boolean}
  */
 const isDate = date => (date instanceof Date || typeof date === 'string');
 /**
  *
- * @param fromDate {number}
- * @param untilDate {number}
+ * @param {Date} fromDate - from date
+ * @param {Date} untilDate - until date
  * @returns {number}
  */
 const getDifferenceDays = (fromDate, untilDate) => {
@@ -81,8 +81,8 @@ const getDifferenceDays = (fromDate, untilDate) => {
  * ["2016-05-01", "2016-05-02", "2016-05-03"]
  *
  * @description Эта функция заполняет датами пустоты во времени
- * @param from {String|Date}
- * @param until {String|Date}
+ * @param {string|Date} from - from date
+ * @param {string|Date} until - until date
  * @returns {Array}
  * {@link https://gist.github.com/qertis/c1ed54a5f7cbaa9709030c0ff14d5b9e}
  * @example fillRangeTimes('2015-01-01', "2016-03-02");

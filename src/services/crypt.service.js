@@ -10,7 +10,7 @@ const ALGORITHM = 'aes-256-ctr';
  */
 const BITES_LENGTH = 16;
 /**
- * @param text {String}
+ * @param {string} text - text
  * @returns {string}
  */
 const encrypt = (text) => {
@@ -23,7 +23,7 @@ const encrypt = (text) => {
   return Buffer.concat([iv, ciphertext, cipher.final()]).toString('base64');
 };
 /**
- * @param text {String}
+ * @param {string} text - text
  * @returns {string}
  */
 const decrypt = (text) => {
@@ -37,7 +37,7 @@ const decrypt = (text) => {
   return decipher.update(ciphertext) + decipher.final();
 };
 /**
- * @param entry {String}
+ * @param {string} entry - entry
  * @returns {string}
  */
 const decode = entry => {
@@ -49,7 +49,7 @@ const decode = entry => {
   }
 };
 /**
- * @param text {String}
+ * @param {string} text - text
  * @returns {string}
  */
 const encode = text => {

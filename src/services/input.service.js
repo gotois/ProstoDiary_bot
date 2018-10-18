@@ -1,6 +1,6 @@
 /**
  *
- * @param input {String}
+ * @param {string} input - text
  * @returns {string}
  */
 const formatWord = input => {
@@ -28,7 +28,7 @@ const formatWord = input => {
 };
 /**
  *
- * @param input {String}
+ * @param {string} input - text
  * @returns {RegExp}
  */
 const createRegExp = input => {
@@ -37,7 +37,7 @@ const createRegExp = input => {
 };
 /**
  *
- * @param input {String}
+ * @param {string} input - text
  * @returns {boolean}
  */
 const isRegexString = input => {
@@ -61,13 +61,13 @@ const isRegexString = input => {
 };
 /**
  *
- * @param input {String}
+ * @param {string} input - text
  * @returns {RegExp}
  */
 const convertStringToRegexp = input => new RegExp(input.slice(1, input.length - 1));
 /**
  *
- * @param input {String}
+ * @param {string} input - text
  * @returns {RegExp}
  */
 const createRegexInput = input => (
@@ -75,7 +75,7 @@ const createRegexInput = input => (
 );
 /**
  *
- * @param regexString {String}
+ * @param {string} regexString - regexp
  * @returns {string}
  */
 const normalizeRegexStringToString = regexString => {

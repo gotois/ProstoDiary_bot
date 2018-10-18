@@ -4,14 +4,15 @@ const datetime = require('../services/date.service');
 const dbEntries = require('../database');
 const crypt = require('../services/crypt.service');
 const logger = require('../services/logger.service');
-/***
+/**
  * Получить все что я делал в эту дату
+ *
  * @example /get 26.11.2016 or /get today
- * @param msg {Object}
- * @param msg.chat {Object}
- * @param msg.from {Object}
- * @param match {Array}
- * @return {void}
+ * @param {Object} msg - message
+ * @param {Object} msg.chat - chat
+ * @param {Object} msg.from - from
+ * @param {Array} match - matcher
+ * @returns {undefined}
  */
 const getDataFromDate = async ({chat,from}, match) => {
   logger.log('info', getDataFromDate.name);

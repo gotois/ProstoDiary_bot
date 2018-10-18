@@ -2,12 +2,13 @@ const sessions = require('../services/session.service');
 const bot = require('../config');
 const dbUsers = require('./../database/database.users');
 const logger = require('../services/logger.service');
-/***
+/**
  * При первом включении создаем в БД специальную колонку для работы
- * @param msg {Object}
- * @param msg.chat {Object}
- * @param msg.from {Object}
- * @return {void}
+ *
+ * @param {Object} msg - message
+ * @param {Object} msg.chat - chat
+ * @param {Object} msg.from - from
+ * @returns {undefined}
  */
 const onStart = async ({chat, from}) => {
   logger.log('info', onStart.name);
