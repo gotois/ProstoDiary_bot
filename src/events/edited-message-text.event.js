@@ -12,10 +12,12 @@ const formatResponse = (input) => {
   return format.prevInput(input) + '\n_Запись обновлена_';
 };
 /**
+ * Сообщение удалено?
+ *
  * @param {string} message - message
  * @returns {boolean}
  */
-const isDeleteMessage = (message) => {
+const isDeletedMessage = (message) => {
   /**
    * @constant
    * @type {string[]}
@@ -42,7 +44,8 @@ const onEditedMessageText = async ({chat, from, text, message_id}) => {
     return;
   }
   const currentUser = sessions.getSession(from.id);
-  if (isDeleteMessage(input)) {
+  // TODO: https://github.com/gotois/ProstoDiary_bot/issues/34
+  if (isDeletedMessage(input)) {
     try {
       await dbEntries.delete(currentUser.id, message_id);
       await bot.sendMessage(chatId, 'Message removed');

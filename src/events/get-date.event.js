@@ -24,6 +24,9 @@ const getDataFromDate = async ({chat,from}, match) => {
   
   if (match[0] === '/get today') {
     getTime = new Date();
+  } else if (match[0] === '/get week') {
+    // TODO: https://github.com/gotois/ProstoDiary_bot/issues/54
+    // Который отдаёт все за прошлую неделю
   } else {
     getTime = match[1].trim();
   }
