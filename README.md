@@ -29,7 +29,7 @@ Run Telegram Bot
 ```
 
 After change node version
-```
+```bash
 npm rebuild
 ```
 
