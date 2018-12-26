@@ -5,6 +5,7 @@ const {replaceBetween} = require('./text.service');
  * @returns {Promise<Array>}
  */
 const spellCheck = (text) => {
+  // todo: use request.post
   return new Promise((resolve, reject) => {
     request({
       url: 'https://speller.yandex.net/services/spellservice.json/checkText',

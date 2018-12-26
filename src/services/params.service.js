@@ -1,10 +1,12 @@
 /**
  * @param {string} query - query
- * @returns {Object}
+ * t - время нужно преобразовать
+ * s - сумма
+ * @returns {{t: string, fn: string, i: string, fp: string, n: string}}
  */
 const getParams = query => {
   if (!query) {
-    return {};
+    return {}; //fixme: throw new Error
   }
   
   return (/^[?#]/.test(query) ? query.slice(1) : query)

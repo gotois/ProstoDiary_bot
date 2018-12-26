@@ -2,7 +2,7 @@ const QrCode = require('qrcode-reader');
 const Jimp = require('jimp');
 /**
  * @param {Buffer} buffer - buffer
- * @returns {Promise<any>}
+ * @returns {Promise<string>}
  */
 module.exports = (buffer) => new Promise ((resolve, reject) => {
   Jimp.read(buffer, (error, image) => {
