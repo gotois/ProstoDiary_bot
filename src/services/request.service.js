@@ -2,10 +2,11 @@ const request = require('request');
 /**
  * @param {string} url - url
  * @param {Object|undefined} headers - headers
+ * @param {any} encoding - encoding
  * @returns {Promise<any>}
  */
-const get = (url, headers = {}) => new Promise((resolve, reject) => {
-  request.get({url, headers, encoding: null}, (error, response, body) => {
+const get = (url, headers = {}, encoding = null) => new Promise((resolve, reject) => {
+  request.get({url, headers, encoding}, (error, response, body) => {
     if (error) {
       return reject(error);
     }

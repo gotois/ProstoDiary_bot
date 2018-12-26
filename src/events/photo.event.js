@@ -3,7 +3,7 @@ const logger = require('../services/logger.service');
 const {get} = require('../services/request.service');
 const qr = require('../services/qr.service');
 const {getParams} = require('../services/params.service');
-const {getKPPData} = require('../services/kpp.service');
+const {/*nalogRuSignUp, */getKPPData} = require('../services/kpp.service');
 /**
  * @description Работа с QR
  * @param {Object} msg - message
@@ -20,6 +20,8 @@ const onPhoto = async ({chat, /*date, from, message_id,*/photo}) => {
     const buffer = await get(`https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`);
     const qrResult = await qr(buffer);
     const params = getParams(qrResult);
+    // todo: авторизуемся uncomment this if getKPPData doesn't work
+    // await nalogRuSignUp()
     // используем данные для получения подробного результата:
     // TODO: данные должны попадать в БД
     const kppData = await getKPPData({

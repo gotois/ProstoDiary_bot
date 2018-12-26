@@ -1,5 +1,6 @@
 const {NALOGRU_EMAIL, NALOGRU_NAME, NALOGRU_PHONE, NALOGRU_KP_PASSWORD} = require('../env');
-const {get, post} = require('../services/request.service');
+const logger = require('./logger.service');
+const {get, post} = require('./request.service');
 // TODO: (нужен отдельный мидлварь для фейковых данных)
 /* fake device_id */
 const DEVICE_ID = 'curl';
@@ -9,10 +10,10 @@ const DEVICE_OS = 'linux';
  * @description - получаем пароль NALOGRU_KP_PASSWORD на мобильный телефон в виде СМС
  * @returns {Promise}
  */
-const kpSignUp = async () => {
+const nalogRuSignUp = async () => {
   return await post('https://proverkacheka.nalog.ru:9999/v1/mobile/users/signup', {
-    email: NALOGRU_EMAIL,
     name: NALOGRU_NAME,
+    email: NALOGRU_EMAIL,
     phone: NALOGRU_PHONE,
   });
 };
@@ -28,8 +29,15 @@ const getKPPData = async ({ FN, FD, FDP }) => {
     'Device-Id': DEVICE_ID,
     'Device-OS': DEVICE_OS,
   });
-  const formatData = JSON.parse(data.toString('utf8'));
-  const {items, user, totalSum, dateTime, retailPlaceAddress} = formatData.document.receipt;
+  const formatData = data.toString('utf8');
+  let formatDataObject;
+  try {
+    formatDataObject = JSON.parse(formatData);
+  } catch (error) {
+    logger.log('error', error.toString());
+    throw new Error('KPP:Parse');
+  }
+  const {items, user, totalSum, dateTime, retailPlaceAddress} = formatDataObject.document.receipt;
   return {
     items,
     user,
@@ -40,5 +48,5 @@ const getKPPData = async ({ FN, FD, FDP }) => {
 };
 module.exports = {
   getKPPData,
-  kpSignUp,
+  nalogRuSignUp,
 };
