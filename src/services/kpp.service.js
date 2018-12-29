@@ -31,6 +31,10 @@ const getKPPData = async ({ FN, FD, FDP }) => {
   });
   const formatData = data.toString('utf8');
   let formatDataObject;
+  if (formatData === 'illegal public api usage') {
+    logger.log('error', formatData);
+    throw new Error('KPP:API');
+  }
   try {
     formatDataObject = JSON.parse(formatData);
   } catch (error) {
