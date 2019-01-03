@@ -20,7 +20,7 @@
     "coverage": "./node_modules/.bin/nyc report --reporter=lcov --reporter=text npm test"
   },
   "engines": {
-    "node": "~11.6.0",
+    "node": "~10.15.0",
     "npm": "~6.5.0"
   },
   "repository": {

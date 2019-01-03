@@ -8,6 +8,7 @@
 Install
 ---
 ```bash
+npm rebuild
 npm i
 ```
 
