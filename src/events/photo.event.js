@@ -3,7 +3,10 @@ const logger = require('../services/logger.service');
 const {get} = require('../services/request.service');
 const qr = require('../services/qr.service');
 const {getParams} = require('../services/params.service');
-const {/*nalogRuSignUp, */getKPPData} = require('../services/kpp.service');
+const {
+  // nalogRuSignUp,
+  getKPPData
+} = require('../services/kpp.service');
 /**
  * @description Работа с QR
  * @param {Object} msg - message
