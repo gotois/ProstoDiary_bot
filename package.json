@@ -4,25 +4,34 @@
   "version": "1.0.0",
   "homepage": "https://gotointeractive.com/#prostodiary",
   "main": "./src/index.js",
+  "man": [],
+  "private": false,
   "bin": {
-    "prosto_diary": "./bin/index"
+    "ProstoDiary_bot": "./bin/index"
   },
   "scripts": {
     "prestart": "",
     "package-upgrade": "npx ncu -u",
-    "dev": "./node_modules/.bin/nodemon ./bin/index",
-    "dev:debug": "./node_modules/.bin/nodemon --inspect ./bin/index",
+    "dev": "nodemon ./bin/index",
+    "dev:debug": "nodemon --inspect ./bin/index",
     "start": "./bin/index",
     "start:debug": "node --inspect ./bin/index",
-    "lint": "./node_modules/.bin/eslint src/**/*.js",
-    "test": "./node_modules/.bin/nyc --reporter=text ./node_modules/.bin/ava tests/test.js --verbose",
+    "lint": "eslint src/**/*.js e2e/**/*.js tests/**/*.js",
+    "test": "nyc --reporter=text ava tests/test.js --verbose",
+    "e2e": "ava e2e/index.js e2e/**/*.test.js",
     "test:watch": "npm test -- --watch",
-    "coverage": "./node_modules/.bin/nyc report --reporter=lcov --reporter=text npm test"
+    "coverage": "nyc report --reporter=lcov --reporter=text npm test"
   },
   "engines": {
     "node": "~10.15.0",
-    "npm": "~6.5.0"
+    "npm": "~6.7.0"
   },
+  "os": [
+    "!win32"
+  ],
+  "cpu": [
+    "x64"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/gotois/ProstoDiary_bot.git"
@@ -41,29 +50,33 @@
     "url": "https://github.com/gotois/ProstoDiary_bot/issues",
     "email": "info@gotointeractive.com"
   },
+  "ava": {
+    "verbose": true
+  },
   "dependencies": {
-    "@google-cloud/language": "~2.0.0",
-    "@google-cloud/speech": "~2.1.1",
+    "@google-cloud/language": "~2.0.1",
+    "@google-cloud/speech": "~2.3.0",
     "coralogix-logger-winston": "~1.0.9",
-    "dialogflow": "~0.7.0",
+    "dialogflow": "~0.8.0",
     "dotenv": "~6.2.0",
     "franc": "~4.0.0",
     "jimp": "~0.6.0",
-    "music-metadata": "~3.4.1",
+    "music-metadata": "~3.5.2",
     "node-native-zip": "~1.1.0",
     "node-telegram-bot-api": "~0.30.0",
-    "pg": "~7.7.1",
+    "pg": "~7.8.0",
     "plotly": "~1.0.6",
     "qrcode-reader": "~1.0.4",
-    "winston": "~3.1.0"
+    "winston": "~3.2.1"
   },
   "devDependencies": {
-    "ava": "~1.0.1",
+    "ava": "~1.2.1",
     "codecov": "~4.0.0-0",
-    "eslint": "~5.11.1",
-    "eslint-plugin-jsdoc": "~3.15.0",
-    "nodemon": "~1.18.9",
+    "eslint": "~5.13.0",
+    "eslint-plugin-jsdoc": "~4.1.0",
+    "nodemon": "~1.18.10",
     "npm-check-updates": "~2.15.0",
-    "nyc": "~13.1.0"
+    "nyc": "~13.2.0",
+    "telegram-test-api": "~1.2.3"
   }
 }

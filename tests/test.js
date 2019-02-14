@@ -1,4 +1,3 @@
-//noinspection Eslint
 import test from 'ava';
 
 process.env.SALT_PASSWORD = '123456';

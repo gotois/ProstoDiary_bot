@@ -3,11 +3,16 @@ const {IS_PRODUCTION, TOKEN, PORT, HEROKU_NAME} = require('../env');
 /**
  * @type TelegramBot
  */
-const bot = (IS_PRODUCTION)
-  ? new TelegramBot(TOKEN, {webHook: {port: PORT}})
-  : new TelegramBot(TOKEN, {polling: true});
-if (IS_PRODUCTION) {
-  bot.setWebHook(`https://${HEROKU_NAME}.herokuapp.com/bot${TOKEN}`);
+let bot;
+if (global.hasOwnProperty('bot')) {
+  bot = global.bot;
+} else {
+  if (IS_PRODUCTION) {
+    bot = new TelegramBot(TOKEN, {webHook: {port: PORT}});
+    bot.setWebHook(`https://${HEROKU_NAME}.herokuapp.com/bot${TOKEN}`);
+  } else {
+    bot = new TelegramBot(TOKEN, {polling: true});
+  }
 }
 
 module.exports = bot;
