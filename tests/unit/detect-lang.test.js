@@ -1,5 +1,5 @@
 module.exports = t => {
-  const {detectLang, languages} = require('../src/services/detect-language.service');
+  const {detectLang, languages} = require('../../src/services/detect-language.service');
   const engText1 = detectLang('Are you ready?');
   t.is(engText1, languages.ENG);
   

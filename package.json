@@ -12,14 +12,13 @@
   "scripts": {
     "prestart": "",
     "package-upgrade": "npx ncu -u",
-    "web": "nodemon ./web/index",
     "dev": "nodemon ./bin/index",
     "dev:debug": "nodemon --inspect ./bin/index",
     "start": "./bin/index",
     "start:debug": "node --inspect ./bin/index",
-    "lint": "eslint src/**/*.js e2e/**/*.js tests/**/*.js web/**/*.js",
-    "test": "nyc --reporter=text ava tests/test.js --verbose",
-    "e2e": "ava e2e/index.js e2e/**/*.test.js",
+    "lint": "eslint src/**/*.js tests/**/*.js",
+    "test": "ava tests/unit/index.js --verbose",
+    "e2e": "ava tests/e2e/index.js tests/e2e/**/*.test.js",
     "test:watch": "npm test -- --watch",
     "coverage": "nyc report --reporter=lcov --reporter=text npm test"
   },

@@ -3,7 +3,7 @@ module.exports = t => {
     getMoney,
     getMedian,
     TYPES,
-  } = require('../src/services/calc.service');
+  } = require('../../src/services/calc.service');
   
   {
     t.is(getMedian([100, 200, 900, 900]), 550);

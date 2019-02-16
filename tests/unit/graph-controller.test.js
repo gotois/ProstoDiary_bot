@@ -5,7 +5,7 @@ module.exports = t => {
     isRegexString,
     createRegexInput,
     convertStringToRegexp,
-  } = require('../src/services/input.service');
+  } = require('../../src/services/input.service');
   // formatWord
   {
     t.true(typeof formatWord('lksdjf') === 'string');

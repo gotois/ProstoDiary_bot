@@ -3,7 +3,7 @@ module.exports = t => {
     getImage,
     getImageBuffer,
     deletePlot,
-  } = require('../src/services/graph.service');
+  } = require('../../src/services/graph.service');
   t.true(typeof getImage === 'function');
   t.true(typeof getImageBuffer === 'function');
   t.true(typeof deletePlot === 'function');

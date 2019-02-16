@@ -1,5 +1,5 @@
 module.exports = t => {
-  const commands = require('../src/commands');
+  const commands = require('../../src/commands/index');
   const {
     DOWNLOAD,
     DB_CLEAR,

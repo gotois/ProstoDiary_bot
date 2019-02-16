@@ -4,7 +4,7 @@ module.exports = t => {
     convertToNormalDate,
     checkDateLaterThanNow,
     fillRangeTimes,
-  } = require('../src/services/date.service');
+  } = require('../../src/services/date.service');
   // isNormalDate
   {
     t.true(isNormalDate('1.1.2016'));

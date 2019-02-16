@@ -1,5 +1,5 @@
 module.exports = t => {
-  const {formatQuery, replaceBetween} = require('../src/services/text.service');
+  const {formatQuery, replaceBetween} = require('../../src/services/text.service');
   t.is(typeof formatQuery, 'function');
   
   // spaces
