@@ -1,6 +1,10 @@
 {
   "name": "ProstoDiary",
-  "stack": "heroku-18",
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
   "environments": {
     "test": {
       "scripts": {
