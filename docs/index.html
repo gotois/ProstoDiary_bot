@@ -17,18 +17,53 @@
       window.location = "tg:\/\/resolve?domain=ProstoDiary_bot";
     }, 100);
   </script>
+
+  <style>
+    body {
+      background-color: #886486;
+    }
+    main {
+      font-size: .9rem;
+      letter-spacing: 2px;
+      white-space: normal;
+    }
+    a {
+      color: snow;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    h1 {
+      font-weight: 600;
+      margin: 0;
+    }
+    main,
+    section,
+    footer {
+      color: #fff;
+      padding: 1rem 2rem;
+      margin: .4rem .5rem;
+    }
+    .border {
+      border-radius: 0;
+      border: 2px solid #fff;
+    }
+  </style>
 </head>
 <body>
-  <main>
-    <h1 class="tgme_page_title">ProstoDiary</h1>
-    <div class="tgme_page_extra">@ProstoDiary_bot</div>
+  <main class="border">
+    <h1>ProstoDiary</h1>
+    <a href="tg:\/\/resolve?domain=ProstoDiary_bot">@ProstoDiary_bot</a>
   </main>
-
-  <section>
+  <section class="border">
     <h2>Documentation</h2>
-    <a href="/commands.md">Commands</a>
-    <a href="/faq.md">F.A.Q.</a>
+    <ul>
+      <li><a href="/commands">Commands</a></li>
+      <li><a href="/faq">F.A.Q.</a></li>
+    </ul>
   </section>
-
-  <footer></footer>
+  <footer>
+    <a href="https://gotointeractive.com/">gotois Technologies</a>
+  </footer>
 </body>
