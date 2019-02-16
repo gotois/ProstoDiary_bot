@@ -44,6 +44,12 @@ Run production:
 npm start
 ```
 
+Package Upgrade
+---
+```bash
+npm run package-upgrade
+```
+
 Global Bot Environments
 ---
 Name: ProstoDiary
