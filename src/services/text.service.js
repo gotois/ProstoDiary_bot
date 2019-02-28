@@ -20,13 +20,13 @@ const dotNumberReplacer = (match, matchIndex, text) => {
 const formatQuery = (query) => {
   let temp;
   if (Array.isArray(query)) {
-    temp = query[0];
+    [temp] = query;
   } else {
     temp = query;
   }
   temp = temp.trim();
   temp = temp.replace(/\.\d+/gm, dotNumberReplacer);
-  
+
   return temp;
 };
 /**

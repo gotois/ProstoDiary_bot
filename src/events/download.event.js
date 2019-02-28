@@ -8,7 +8,7 @@ const logger = require('../services/logger.service');
  * @param {string} date - date
  * @returns {string}
  */
-const generateName = date => {
+const generateName = (date) => {
   return `ProstoDiary_backup_${date}`;
 };
 /**
@@ -20,7 +20,7 @@ const generateName = date => {
  * @param {string} msg.date - date
  * @returns {Promise<undefined>}
  */
-const onDownload = async ({chat, from, date}) => {
+const onDownload = async ({ chat, from, date }) => {
   logger.log('info', onDownload.name);
   const chatId = chat.id;
   const fromId = from.id;
@@ -28,17 +28,22 @@ const onDownload = async ({chat, from, date}) => {
   const archive = new zip();
   const currentUser = sessions.getSession(fromId);
   try {
-    const {rows} = await dbEntries.getAll(currentUser.id);
+    const { rows } = await dbEntries.getAll(currentUser.id);
     if (rows.length > 0) {
       const formatData = format.formatRows(rows);
       archive.add(fileName, new Buffer(formatData, 'utf8'));
       const buffer = archive.toBuffer();
-      await bot.sendDocument(chatId, buffer, {
-        'caption': fileName,
-      }, {
-        'filename':  generateName(date) + '.zip',
-        'contentType': 'application/zip',
-      });
+      await bot.sendDocument(
+        chatId,
+        buffer,
+        {
+          caption: fileName,
+        },
+        {
+          filename: generateName(date) + '.zip',
+          contentType: 'application/zip',
+        },
+      );
     } else {
       await bot.sendMessage(chatId, 'Нет данных');
     }

@@ -20,7 +20,9 @@ const onPhoto = async ({ chat, /*date, from, message_id,*/ photo }) => {
   const fileInfo = await bot.getFile(photo[photo.length - 1].file_id);
 
   try {
-    const buffer = await get(`https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`);
+    const buffer = await get(
+      `https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`,
+    );
     const qrResult = await qr(buffer);
     const params = getParams(qrResult);
     // todo: авторизуемся uncomment this if getKPPData doesn't work
@@ -30,7 +32,7 @@ const onPhoto = async ({ chat, /*date, from, message_id,*/ photo }) => {
     const kppData = await getKPPData({
       FN: params.fn,
       FD: params.i,
-      FDP: params.fp
+      FDP: params.fp,
     });
     await bot.sendMessage(chatId, JSON.stringify(kppData, null, 2));
   } catch (error) {

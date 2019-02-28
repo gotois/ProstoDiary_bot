@@ -14,14 +14,14 @@ const logger = require('../services/logger.service');
  * @param {Array} match - matcher
  * @returns {undefined}
  */
-const getDataFromDate = async ({chat,from}, match) => {
+const getDataFromDate = async ({ chat, from }, match) => {
   logger.log('info', getDataFromDate.name);
   const chatId = chat.id;
   const userId = from.id;
-  
+
   let getTime;
   let date;
-  
+
   if (match[0] === '/get today') {
     getTime = new Date();
   } else if (match[0] === '/get week') {
@@ -30,7 +30,7 @@ const getDataFromDate = async ({chat,from}, match) => {
   } else {
     getTime = match[1].trim();
   }
-  
+
   try {
     date = datetime.convertToNormalDate(getTime);
     if (!datetime.isNormalDate(date)) {
@@ -39,16 +39,18 @@ const getDataFromDate = async ({chat,from}, match) => {
   } catch (error) {
     logger.log('error', error.toString());
     await bot.sendMessage(chatId, 'Установленное время не валидно');
-    
+
     return;
   }
   const currentUser = sessions.getSession(userId);
   try {
-    const {rows} = await dbEntries.get(currentUser.id, date);
-    const decodeRows = rows.map(({entry}) => crypt.decode(entry));
-    await (decodeRows.length)
-      ? (bot.sendMessage(chatId, JSON.stringify(decodeRows, null, 2)))
-      : (bot.sendMessage(chatId, 'Записей нет'));
+    const { rows } = await dbEntries.get(currentUser.id, date);
+    const decodeRows = rows.map(({ entry }) => {
+      return crypt.decode(entry);
+    });
+    decodeRows.length
+      ? await bot.sendMessage(chatId, JSON.stringify(decodeRows, null, 2))
+      : await bot.sendMessage(chatId, 'Записей нет');
   } catch (error) {
     logger.log('error', error.toString());
     await bot.sendMessage(chatId, 'Произошла ошибка');

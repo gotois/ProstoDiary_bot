@@ -8,7 +8,9 @@ const { get } = require('./request.service');
 const getFullName = async (name) => {
   try {
     const encodeName = encodeURI(name);
-    const restCountriesBuffer = await get(`https://restcountries.eu/rest/v2/name/${encodeName}?fullText=true`);
+    const restCountriesBuffer = await get(
+      `https://restcountries.eu/rest/v2/name/${encodeName}?fullText=true`,
+    );
     const restCountriesBufferData = restCountriesBuffer.toString('utf8');
     return JSON.parse(restCountriesBufferData);
   } catch (error) {

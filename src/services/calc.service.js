@@ -14,17 +14,19 @@ const regExpNumbers = /^.+ ?(\d+)/gim;
 const regExpMyZP = /(дивиденды|кэшбэк|кешбэк|кэшбек|зп|зарплата|получил|получено|заработано|заработал)(\s?|\$|€|~)+\d/gim;
 
 const onlyNumberString = 'A-Za-z0-9_.,';
-const rublesString = ' рублей|рублей|рублей | руб|руб|руб | р|р|р | ₽|₽|₽ | rub|rub|rub ';
+const rublesString =
+  ' рублей|рублей|рублей | руб|руб|руб | р|р|р | ₽|₽|₽ | rub|rub|rub ';
 const regExpRubles = new RegExp(rublesString);
 const euroString = ' евро|евро| €|€|€ ';
 const regExpEuro = new RegExp(euroString);
-const usdString = ' долларов|долларов|долларов | доллар|доллар|доллар | dollars|dollars|dollars |\\$';
+const usdString =
+  ' долларов|долларов|долларов | доллар|доллар|доллар | dollars|dollars|dollars |\\$';
 const regExpUsd = new RegExp(usdString);
 /**
  * @constant
  */
-const [EUR, RUB, USD] = ['eur', 'rub', 'usd',];
-const defaultOut = Object.freeze({[EUR]: 0, [RUB]: 0, [USD]: 0,});
+const [EUR, RUB, USD] = ['eur', 'rub', 'usd'];
+const defaultOut = Object.freeze({ [EUR]: 0, [RUB]: 0, [USD]: 0 });
 /**
  * @param {Object} acc - accumulator
  * @param {Object} money - money
@@ -52,30 +54,24 @@ const splitText = (text) => {
 const getFormatMoney = (money) => {
   const CURRENCY = 'currency';
   return {
-    [EUR]: new Intl
-      .NumberFormat('de-DE', {
-        'style': CURRENCY,
-        'currency': 'EUR',
-        'minimumFractionDigits': 2,
-        'maximumFractionDigits': 2,
-      })
-      .format(money[EUR]),
-    [RUB]: new Intl
-      .NumberFormat('ru-RU', {
-        'style': CURRENCY,
-        'currency': 'RUB',
-        'minimumFractionDigits': 2,
-        'maximumFractionDigits': 2,
-      })
-      .format(money[RUB]),
-    [USD]: new Intl
-      .NumberFormat('en-US', {
-        'style': CURRENCY,
-        'currency': 'USD',
-        'minimumFractionDigits': 2,
-        'maximumFractionDigits': 2,
-      })
-      .format(money[USD]),
+    [EUR]: new Intl.NumberFormat('de-DE', {
+      style: CURRENCY,
+      currency: 'EUR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(money[EUR]),
+    [RUB]: new Intl.NumberFormat('ru-RU', {
+      style: CURRENCY,
+      currency: 'RUB',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(money[RUB]),
+    [USD]: new Intl.NumberFormat('en-US', {
+      style: CURRENCY,
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(money[USD]),
   };
 };
 /**
@@ -89,12 +85,18 @@ const getMoney = ({ texts, type }) => {
   }
   if (texts.length) {
     return texts
-      .reduce((acc, raw) => acc.concat(...splitText(raw)), [])
-      .map((text) => formatType(text, type))
-      .map((text) => calcMoney(text))
-      .reduce((acc, money) => (
-        accMoney(acc, money)
-      ), Object.assign({}, defaultOut));
+      .reduce((acc, raw) => {
+        return acc.concat(...splitText(raw));
+      }, [])
+      .map((text) => {
+        return formatType(text, type);
+      })
+      .map((text) => {
+        return calcMoney(text);
+      })
+      .reduce((acc, money) => {
+        return accMoney(acc, money);
+      }, Object.assign({}, defaultOut));
   } else {
     return defaultOut;
   }
@@ -171,10 +173,9 @@ const calcMoney = (str) => {
   if (!(numbers && numbers.length)) {
     return defaultOut;
   }
-  return splitText(numbers.input)
-    .reduce((acc, text) => (
-      accMoney(acc, getAllSum(text))
-    ), Object.assign({}, defaultOut));
+  return splitText(numbers.input).reduce((acc, text) => {
+    return accMoney(acc, getAllSum(text));
+  }, Object.assign({}, defaultOut));
 };
 /**
  * @param {string} str - text
@@ -195,12 +196,15 @@ const cleanDirtyNumberString = (str) => {
  */
 const getAllSum = (numbers) => {
   let out = numbers.replace(/^\D+/, '');
-  out = out.replace(/к/i, () => '000');
+  out = out.replace(/к/i, () => {
+    return '000';
+  });
   // TODO: не обрабатывается случай `Игра престолов 1серия` => добавляется 1
   // Отсеивание int+float значений
   if (out.match(/^\d\.?(\d\d)?/) > '0') {
     const regexp = new RegExp(
-      '[^' + onlyNumberString + rublesString + euroString + usdString + ']', 'gim'
+      '[^' + onlyNumberString + rublesString + euroString + usdString + ']',
+      'gim',
     );
     const outArray = out
       .replace(regexp, ',')
@@ -211,7 +215,7 @@ const getAllSum = (numbers) => {
         const nextStr = all.substr(start, end);
         if (regExpUsd.test(nextStr)) {
           return str.trimRight() + 'долларов ';
-        } else if(regExpEuro.test(nextStr)) {
+        } else if (regExpEuro.test(nextStr)) {
           return str.trimRight() + 'евро ';
         } else {
           return str.trimRight() + 'рублей ';
@@ -220,8 +224,11 @@ const getAllSum = (numbers) => {
       .replace(/\s/g, ',')
       .split(',');
     return outArray
-      .filter(temp => {
-        if (!temp.length || !(/\d/.test(temp)) /*|| Number.isNaN(Number(temp))*/) {
+      .filter((temp) => {
+        if (
+          !temp.length ||
+          !/\d/.test(temp) /*|| Number.isNaN(Number(temp))*/
+        ) {
           return false;
         }
         return true;
@@ -229,7 +236,7 @@ const getAllSum = (numbers) => {
       .reduce((acc, str) => {
         if (regExpUsd.test(str)) {
           acc[USD] += cleanDirtyNumberString(str);
-        } else if(regExpEuro.test(str)) {
+        } else if (regExpEuro.test(str)) {
           acc[EUR] += cleanDirtyNumberString(str);
         } else {
           acc[RUB] += cleanDirtyNumberString(str);
@@ -247,13 +254,14 @@ const getAllSum = (numbers) => {
  * @returns {number}
  */
 const getMedian = (values) => {
-  values.sort((a, b) => a - b);
+  values.sort((a, b) => {
+    return a - b;
+  });
   const half = Math.floor(values.length / 2);
   if (values.length % 2) {
     return values[half];
-  } else {
-    return (values[half - 1] + values[half]) / 2.0;
   }
+  return (values[half - 1] + values[half]) / 2.0;
 };
 
 module.exports = {

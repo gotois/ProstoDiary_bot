@@ -2,8 +2,11 @@ const dbEntries = require('../database');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 const bot = require('../config');
-const {decodeRows} = require('../services/format.service');
-const {createRegexInput, normalizeRegexStringToString} = require('../services/input.service');
+const { decodeRows } = require('../services/format.service');
+const {
+  createRegexInput,
+  normalizeRegexStringToString,
+} = require('../services/input.service');
 /**
  * @constant
  * @type {number}
@@ -21,7 +24,7 @@ const NEXT_PAGE_VALUE = '__next_page';
  * @param {string} msg.matcher - matcher string
  * @returns {string}
  */
-const formatResponse = ({date, entry, matcher}) => {
+const formatResponse = ({ date, entry, matcher }) => {
   const dateOut = `_${date.toLocaleDateString()}_`;
   matcher = normalizeRegexStringToString(matcher);
   const entryOut = entry.split(matcher).join(`*${matcher}*`);
@@ -34,15 +37,17 @@ const formatResponse = ({date, entry, matcher}) => {
  * @param {Array} match - match
  * @returns {undefined}
  */
-const onSearch = async ({chat, from}, match) => {
+const onSearch = async ({ chat, from }, match) => {
   logger.log('info', onSearch.name);
   const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
-  const {rows} = await dbEntries.getAll(currentUser.id);
+  const { rows } = await dbEntries.getAll(currentUser.id);
   const input = String(match[2]).trim();
   const regExp = createRegexInput(input);
-  const matchFilterRows = decodeRows(rows).filter(({entry}) => regExp.test(entry));
+  const matchFilterRows = decodeRows(rows).filter(({ entry }) => {
+    return regExp.test(entry);
+  });
   if (!matchFilterRows.length) {
     await bot.sendMessage(chatId, 'Not found');
     return;
@@ -52,11 +57,15 @@ const onSearch = async ({chat, from}, match) => {
    * @param {*} date - date
    * @returns {Promise<undefined>}
    */
-  const botSendMessage = async ({entry, date}) => {
-    await bot.sendMessage(chatId, formatResponse({entry, date, matcher: input}), {
-      'disable_web_page_preview': true,
-      'parse_mode': 'Markdown',
-    });
+  const botSendMessage = async ({ entry, date }) => {
+    await bot.sendMessage(
+      chatId,
+      formatResponse({ entry, date, matcher: input }),
+      {
+        disable_web_page_preview: true,
+        parse_mode: 'Markdown',
+      },
+    );
   };
   /**
    * @param {number} page - page
@@ -64,7 +73,7 @@ const onSearch = async ({chat, from}, match) => {
    */
   function* generateEntries(page) {
     for (let i = 0; i < matchFilterRows.length; i += page) {
-      yield (matchFilterRows.slice(i, i + page));
+      yield matchFilterRows.slice(i, i + page);
     }
   }
   /**
@@ -76,20 +85,16 @@ const onSearch = async ({chat, from}, match) => {
     if (!nextEntries.value) {
       return;
     }
-    const promises = nextEntries.value.map(async ({entry, date}) => {
-      await botSendMessage({entry, date});
+    const promises = nextEntries.value.map(async ({ entry, date }) => {
+      await botSendMessage({ entry, date });
     });
     await Promise.all(promises);
-    
+
     if (nextEntries.value.length === PAGE_SKIP && !nextEntries.done) {
       await bot.sendMessage(chatId, 'Show next entries', {
-        'reply_markup': {
-          'inline_keyboard': [
-            [
-              {'text': 'NEXT', 'callback_data': NEXT_PAGE_VALUE},
-            ]
-          ]
-        }
+        reply_markup: {
+          inline_keyboard: [[{ text: 'NEXT', callback_data: NEXT_PAGE_VALUE }]],
+        },
       });
       bot.once('callback_query', async (callbackQuery) => {
         if (callbackQuery.data === NEXT_PAGE_VALUE) {

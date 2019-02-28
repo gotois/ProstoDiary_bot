@@ -23,7 +23,9 @@ const isDeletedMessage = (message) => {
    * @type {string[]}
    */
   const DELETE_VARIABLES = ['del', 'delete'];
-  return DELETE_VARIABLES.some(del => message.toLowerCase() === del.toLowerCase());
+  return DELETE_VARIABLES.some((del) => {
+    return message.toLowerCase() === del.toLowerCase();
+  });
 };
 /**
  * Обновление текста в БД
@@ -35,7 +37,7 @@ const isDeletedMessage = (message) => {
  * @param {string} msg.message_id - message
  * @returns {undefined}
  */
-const onEditedMessageText = async ({chat, from, text, message_id}) => {
+const onEditedMessageText = async ({ chat, from, text, message_id }) => {
   logger.log('info', onEditedMessageText.name);
   const chatId = chat.id;
   const input = text.trim();
@@ -55,9 +57,14 @@ const onEditedMessageText = async ({chat, from, text, message_id}) => {
     }
   } else {
     try {
-      await dbEntries.put(currentUser.id, crypt.encode(input), new Date(), message_id);
+      await dbEntries.put(
+        currentUser.id,
+        crypt.encode(input),
+        new Date(),
+        message_id,
+      );
       await bot.sendMessage(chatId, formatResponse(input), {
-        'parse_mode': 'Markdown',
+        parse_mode: 'Markdown',
       });
     } catch (error) {
       logger.log('error', error.toString());

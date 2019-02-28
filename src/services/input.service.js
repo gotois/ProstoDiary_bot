@@ -3,7 +3,7 @@
  * @param {string} input - text
  * @returns {string}
  */
-const formatWord = input => {
+const formatWord = (input) => {
   switch (input.toLowerCase()) {
     case '\\d':
     case '\\s':
@@ -31,21 +31,24 @@ const formatWord = input => {
  * @param {string} input - text
  * @returns {RegExp}
  */
-const createRegExp = input => {
+const createRegExp = (input) => {
   const fWord = formatWord(input);
-  return new RegExp(`( ${fWord} )|(\n${fWord})|(${fWord}\n)|(\n${fWord}\n)|( ${fWord}$)|(^${fWord} )|(^${fWord}$)`, 'i');
+  return new RegExp(
+    `( ${fWord} )|(\n${fWord})|(${fWord}\n)|(\n${fWord}\n)|( ${fWord}$)|(^${fWord} )|(^${fWord}$)`,
+    'i',
+  );
 };
 /**
  *
  * @param {string} input - text
  * @returns {boolean}
  */
-const isRegexString = input => {
+const isRegexString = (input) => {
   if (input.length <= 2) {
     return false;
   }
   if (input.startsWith('/')) {
-    if ((input.endsWith('/'))) {
+    if (input.endsWith('/')) {
       return true;
     }
     const backslashes = input.split('/');
@@ -53,7 +56,11 @@ const isRegexString = input => {
       return false;
     }
     const endBackslashe = backslashes[backslashes.length - 1];
-    if (endBackslashe.includes('m') || endBackslashe.includes('i') || endBackslashe.includes('g')) {
+    if (
+      endBackslashe.includes('m') ||
+      endBackslashe.includes('i') ||
+      endBackslashe.includes('g')
+    ) {
       return true;
     }
   }
@@ -64,21 +71,25 @@ const isRegexString = input => {
  * @param {string} input - text
  * @returns {RegExp}
  */
-const convertStringToRegexp = input => new RegExp(input.slice(1, input.length - 1));
+const convertStringToRegexp = (input) => {
+  return new RegExp(input.slice(1, input.length - 1));
+};
 /**
  *
  * @param {string} input - text
  * @returns {RegExp}
  */
-const createRegexInput = input => (
-  isRegexString(input) ? convertStringToRegexp(input) : createRegExp(input)
-);
+const createRegexInput = (input) => {
+  return isRegexString(input)
+    ? convertStringToRegexp(input)
+    : createRegExp(input);
+};
 /**
  *
  * @param {string} regexString - regexp
  * @returns {string}
  */
-const normalizeRegexStringToString = regexString => {
+const normalizeRegexStringToString = (regexString) => {
   return regexString.replace(/^\//, '').replace(/\/$/, '');
 };
 

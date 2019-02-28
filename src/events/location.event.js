@@ -1,7 +1,7 @@
 const bot = require('../config/index');
 const logger = require('../services/logger.service');
-const {getFullName} = require('../services/restcountries.service');
-const {getGeoCode} = require('../services/geocode.service');
+const { getFullName } = require('../services/restcountries.service');
+const { getGeoCode } = require('../services/geocode.service');
 /**
  * @param {Object} msg - message
  * @param {Object} msg.chat - chat
@@ -28,7 +28,8 @@ const onLocation = async ({ chat, location: { latitude, longitude } }) => {
     }
     try {
       if (parsedData.results[resultLength - 1]) {
-        return parsedData.results[resultLength - 1].address_components[0].short_name;
+        return parsedData.results[resultLength - 1].address_components[0]
+          .short_name;
       }
     } catch (error) {
       logger.log('error', 'No address_components');
@@ -42,10 +43,16 @@ const onLocation = async ({ chat, location: { latitude, longitude } }) => {
     await bot.sendMessage(chatId, 'Значение страны не найдено', {});
     return;
   }
-  const currency = parsedRestCountries[0].currencies[0];
-  await bot.sendMessage(chatId, formattedAddress +
-    ' ; валюта: ' + currency.symbol +
-    ' ; code: ' + currency.code, {});
+  const [currency] = parsedRestCountries[0].currencies;
+  await bot.sendMessage(
+    chatId,
+    formattedAddress +
+      ' ; валюта: ' +
+      currency.symbol +
+      ' ; code: ' +
+      currency.code,
+    {},
+  );
 };
 
 module.exports = onLocation;

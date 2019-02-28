@@ -33,13 +33,15 @@ const _get = (user_id, date) => {
       return Promise.reject('Wrong date type');
     }
   }
-  
+
   const from = `'${date} 00:00:00'::timestamp`;
   const until = `'${date} 23:59:59'::timestamp`;
-  
-  return $$(`SELECT entry, date_added
+
+  return $$(
+    `SELECT entry, date_added
     FROM entries
-    WHERE (user_id = $1) AND date_added BETWEEN ${from} AND ${until}`, [user_id]
+    WHERE (user_id = $1) AND date_added BETWEEN ${from} AND ${until}`,
+    [user_id],
   );
 };
 /**
@@ -51,11 +53,17 @@ const _get = (user_id, date) => {
  * @param {Date|undefined} date_added - date
  * @returns {Promise}
  */
-const _post = (user_id, entry, telegram_entry_id, date_modified, date_added = new Date()) => {
+const _post = (
+  user_id,
+  entry,
+  telegram_entry_id,
+  date_modified,
+  date_added = new Date(),
+) => {
   return $$(
     `INSERT INTO entries (user_id, entry, telegram_entry_id, date_modified, date_added)
     VALUES ($1, $2, $3, $4, $5)`,
-    [user_id, entry, telegram_entry_id, date_modified, date_added]
+    [user_id, entry, telegram_entry_id, date_modified, date_added],
   );
 };
 /**
@@ -71,7 +79,7 @@ const _put = (user_id, entry, date_modified, telegram_entry_id) => {
     `UPDATE entries
     SET entry = $2, date_modified = $3
     WHERE (user_id = $1 AND telegram_entry_id = $4)`,
-    [user_id, entry, date_modified, telegram_entry_id]
+    [user_id, entry, date_modified, telegram_entry_id],
   );
 };
 /**
@@ -83,7 +91,7 @@ const _delete = (user_id, telegram_entry_id) => {
   return $$(
     `DELETE FROM entries
     WHERE (user_id = $1 AND telegram_entry_id = $2)`,
-    [user_id, telegram_entry_id]
+    [user_id, telegram_entry_id],
   );
 };
 /**
@@ -92,11 +100,11 @@ const _delete = (user_id, telegram_entry_id) => {
  * @param {number} user_id - id user
  * @returns {Promise}
  */
-const clear = user_id => {
+const clear = (user_id) => {
   return $$(
     `DELETE FROM entries
     WHERE user_id = $1`,
-    [user_id]
+    [user_id],
   );
 };
 

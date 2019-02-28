@@ -15,6 +15,22 @@
       2,
       "always"
     ],
+    "require-await": "error",
+    "no-return-await": "error",
+    "arrow-body-style": ["error", "always"],
+    "prefer-destructuring": ["error", {
+      "array": true,
+      "object": false
+    }, {
+      "enforceForRenamedProperties": false
+    }],
+    "comma-dangle": ["error", "only-multiline"],
+    "prefer-arrow-callback": "error",
+    "curly": [
+      "error",
+      "all"
+    ],
+    "prettier/prettier": "error",
     "jsdoc/require-returns-description": 0,
     "jsdoc/require-example": 0,
     "jsdoc/require-description-complete-sentence": 0,
@@ -39,7 +55,13 @@
     "sourceType": "module"
   },
   "plugins": [
-    "jsdoc"
+    "jsdoc",
+    "node",
+    "prettier"
   ],
-  "extends": "eslint:recommended"
+  "extends": [
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "prettier/standard"
+  ]
 }

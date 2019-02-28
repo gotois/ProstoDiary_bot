@@ -4,8 +4,8 @@ const bot = require('../config');
 const plot = require('../services/graph.service');
 const commands = require('../commands');
 const datetime = require('../services/date.service');
-const {createRegexInput} = require('../services/input.service');
-const {decodeRows} = require('./../services/format.service');
+const { createRegexInput } = require('../services/input.service');
+const { decodeRows } = require('./../services/format.service');
 const logger = require('./../services/logger.service');
 /**
  * @constant {string}
@@ -50,25 +50,32 @@ const getGraph = async ({ chat, from, text }) => {
   logger.log('info', getGraph.name);
   const chatId = chat.id;
   const currentUser = sessions.getSession(from.id);
-  const input = text.replace(commands.GRAPH, '').trim().toLowerCase();
+  const input = text
+    .replace(commands.GRAPH, '')
+    .trim()
+    .toLowerCase();
   const regExp = createRegexInput(input);
   const trace = createTrace();
   try {
     const { rows } = await dbEntries.getAll(currentUser.id);
-    const entryRows = decodeRows(rows).filter(({ entry }) => regExp.test(entry.toLowerCase()));
+    const entryRows = decodeRows(rows).filter(({ entry }) => {
+      return regExp.test(entry.toLowerCase());
+    });
     if (!entryRows.length) {
       throw new Error('Нет данных для построения графика');
     }
     const firstDate = rows[0].date_added;
     const latestDate = rows[rows.length - 1].date_added;
     const rangeTimes = datetime.fillRangeTimes(firstDate, latestDate);
-    rangeTimes.forEach(_date => {
-      const findedCount = entryRows.filter(({date}) => (
-        date.toLocaleDateString() === _date.toLocaleDateString())
-      );
+    rangeTimes.forEach((_date) => {
+      const findedCount = entryRows.filter(({ date }) => {
+        return date.toLocaleDateString() === _date.toLocaleDateString();
+      });
       const x = _date.toLocaleDateString();
       const y = findedCount.length;
-      const xIndex = trace.x.findIndex(_x => _x === x);
+      const xIndex = trace.x.findIndex((_x) => {
+        return _x === x;
+      });
       if (xIndex < 0) {
         trace.x.push(x);
         trace.y.push(y);
@@ -76,13 +83,13 @@ const getGraph = async ({ chat, from, text }) => {
         ++trace.y[xIndex];
       }
     });
-    const figure = {'data': [trace]};
+    const figure = { data: [trace] };
     const imgOpts = getImgOpts();
     // TODO: если потребуется удаление графиков использовать `return plot.deletePlot('0');`
     const photoBuffer = await plot.getImageBuffer(figure, imgOpts);
     await bot.sendPhoto(chatId, photoBuffer, {
-      'caption': `График для "${regExp.toString()}"`,
-      'parse_mode': 'Markdown',
+      caption: `График для "${regExp.toString()}"`,
+      parse_mode: 'Markdown',
     });
   } catch (error) {
     logger.log('error', error.toString());

@@ -8,19 +8,23 @@ const MS_PER_DAY = 1000 * 60 * 60 * 24;
  * @param {Date} date - date
  * @returns {boolean}
  */
-const checkDateLaterThanNow = (date) => ((new Date()).getTime() < (date).getTime());
+const checkDateLaterThanNow = (date) => {
+  return new Date().getTime() < date.getTime();
+};
 /**
  *
  * @param {Date|string} date - date
  * @returns {boolean}
  */
-const dateIsIncorrect = (date) => (isNaN((Date).parse(date)));
+const dateIsIncorrect = (date) => {
+  return isNaN(Date.parse(date));
+};
 /**
  *
  * @param {string|Date} date - date
  * @returns {boolean}
  */
-const isNormalDate = date => {
+const isNormalDate = (date) => {
   //noinspection RedundantIfStatementJS
   if (checkDateLaterThanNow(new Date(date)) || dateIsIncorrect(date)) {
     return false;
@@ -32,7 +36,7 @@ const isNormalDate = date => {
  * @param {string|Date} date - date
  * @returns {Date}
  */
-const convertToNormalDate = date => {
+const convertToNormalDate = (date) => {
   if (date instanceof Date) {
     return date;
   } else {
@@ -57,12 +61,16 @@ const convertToNormalDate = date => {
  * @param {number} text - text
  * @returns {string}
  */
-const convertIn2DigitFormat = text => ((`0${text}`).slice(-2));
+const convertIn2DigitFormat = (text) => {
+  return `0${text}`.slice(-2);
+};
 /**
  * @param {Date|string} date - date
  * @returns {boolean}
  */
-const isDate = date => (date instanceof Date || typeof date === 'string');
+const isDate = (date) => {
+  return date instanceof Date || typeof date === 'string';
+};
 /**
  *
  * @param {Date} fromDate - from date
@@ -70,7 +78,7 @@ const isDate = date => (date instanceof Date || typeof date === 'string');
  * @returns {number}
  */
 const getDifferenceDays = (fromDate, untilDate) => {
-  const differenceDays = Math.floor((untilDate - fromDate) / (MS_PER_DAY));
+  const differenceDays = Math.floor((untilDate - fromDate) / MS_PER_DAY);
   if (differenceDays < 0) {
     throw new Error('until less from');
   }

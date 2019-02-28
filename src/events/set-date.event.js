@@ -17,7 +17,7 @@ const logger = require('../services/logger.service');
  * @param {Array} match - match
  * @returns {undefined}
  */
-const setDataFromDate = async ({chat, text, from, message_id}, match) => {
+const setDataFromDate = async ({ chat, text, from, message_id }, match) => {
   logger.log('info', setDataFromDate.name);
   const chatId = chat.id;
   const input = text.replace(commands.SETDATE, '').trim();
@@ -27,14 +27,20 @@ const setDataFromDate = async ({chat, text, from, message_id}, match) => {
     if (!datetime.isNormalDate(date)) {
       throw new Error('Wrong date');
     }
-  } catch(e) {
+  } catch (e) {
     logger.log('error', e.message);
     await bot.sendMessage(chatId, e.message);
     return;
   }
   const currentUser = sessions.getSession(from.id);
   try {
-    await dbEntries.post(currentUser.id, crypt.encode(input), message_id, new Date(), date);
+    await dbEntries.post(
+      currentUser.id,
+      crypt.encode(input),
+      message_id,
+      new Date(),
+      date,
+    );
     const prevInput = format.prevInput(input);
     await bot.sendMessage(chatId, prevInput);
   } catch (error) {

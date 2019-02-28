@@ -1,13 +1,16 @@
 const dialogflow = require('dialogflow');
-const {detectLang, getLangCode} = require('./detect-language.service');
-const {formatQuery} = require('./text.service');
-const {getProductInfo} = require('./products.service');
+const { detectLang, getLangCode } = require('./detect-language.service');
+const { formatQuery } = require('./text.service');
+const { getProductInfo } = require('./products.service');
 const INTENTS = require('../intents');
-const {DIALOGFLOW_PROJECT_ID, DIALOGFLOW_CREDENTIALS_PARSED} = require('../env');
+const {
+  DIALOGFLOW_PROJECT_ID,
+  DIALOGFLOW_CREDENTIALS_PARSED,
+} = require('../env');
 // const language = require('../services/language.service');
 
 const sessionClient = new dialogflow.SessionsClient({
-  'credentials': DIALOGFLOW_CREDENTIALS_PARSED
+  credentials: DIALOGFLOW_CREDENTIALS_PARSED,
 });
 /**
  * Send request and log result
@@ -16,9 +19,12 @@ const sessionClient = new dialogflow.SessionsClient({
  * @param {string} query - query
  * @returns {Promise<Array>}
  */
-const detectTextIntent = async ({sessionId, query}) => {
+const detectTextIntent = async ({ sessionId, query }) => {
   const languageCode = getLangCode(detectLang(query));
-  const sessionPath = sessionClient.sessionPath(DIALOGFLOW_PROJECT_ID, sessionId);
+  const sessionPath = sessionClient.sessionPath(
+    DIALOGFLOW_PROJECT_ID,
+    sessionId,
+  );
   const request = {
     session: sessionPath,
     queryInput: {
@@ -28,7 +34,8 @@ const detectTextIntent = async ({sessionId, query}) => {
       },
     },
   };
-  return await sessionClient.detectIntent(request);
+  const res = await sessionClient.detectIntent(request);
+  return res;
 };
 /**
  * TODO: получаю имя и значение Intent
@@ -40,7 +47,7 @@ const detectTextIntent = async ({sessionId, query}) => {
 const processResponse = async (responses) => {
   for (const res of responses) {
     const result = res.queryResult;
-    
+
     if (result.intent) {
       switch (result.intent.name) {
         case INTENTS.BUY: {
@@ -52,9 +59,11 @@ const processResponse = async (responses) => {
         }
         case INTENTS.EAT: {
           let outMessage = result.fulfillmentText;
-          for (const eatValue of result.parameters.fields.Food.listValue.values) {
+          for (const eatValue of result.parameters.fields.Food.listValue
+            .values) {
             const res = await getProductInfo(eatValue.stringValue);
-            outMessage += '\n' + eatValue.stringValue + ':' + JSON.stringify(res);
+            outMessage +=
+              '\n' + eatValue.stringValue + ':' + JSON.stringify(res);
           }
           return outMessage;
         }
@@ -92,8 +101,9 @@ const processResponse = async (responses) => {
 const inputAnalyze = async (rawMsg) => {
   const sessionId = 'quickstart-session-id';
   const query = formatQuery(rawMsg);
-  const responses = await detectTextIntent({sessionId, query});
-  return await processResponse(responses);
+  const responses = await detectTextIntent({ sessionId, query });
+  const res = await processResponse(responses);
+  return res;
 };
 
 module.exports = {

@@ -8,10 +8,12 @@
  * @param {string} userId - user id
  * @returns {{id: number, password: string}}
  */
-const getSession = (userId) => ({
-  id: userId,
-  password: '123456',
-});
+const getSession = (userId) => {
+  return {
+    id: userId,
+    password: '123456',
+  };
+};
 
 module.exports = {
   getSession,

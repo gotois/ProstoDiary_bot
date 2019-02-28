@@ -5,8 +5,8 @@ const format = require('../services/format.service');
 const commands = require('../commands');
 const dbEntries = require('../database');
 const logger = require('../services/logger.service');
-const {inputAnalyze} = require('../services/intent.service');
-const {spellText} = require('../services/speller.service');
+const { inputAnalyze } = require('../services/intent.service');
+const { spellText } = require('../services/speller.service');
 /**
  * Все что пишешь - записывается в сегодняшний день
  *
@@ -19,7 +19,14 @@ const {spellText} = require('../services/speller.service');
  * @param {Date} msg.date -date message
  * @returns {undefined}
  */
-const onText = async ({ chat, from, text, reply_to_message, message_id, date }) => {
+const onText = async ({
+  chat,
+  from,
+  text,
+  reply_to_message,
+  message_id,
+  date,
+}) => {
   logger.log('info', onText.name);
   const chatId = chat.id;
   const fromId = from.id;
@@ -40,12 +47,11 @@ const onText = async ({ chat, from, text, reply_to_message, message_id, date }) 
   }
   const currentUser = sessions.getSession(fromId);
   try {
-    
     // TODO: обернуть весь pipe работы с input в отдельный сервис, где расписать подробно весь процесс
-    
+
     const spelledText = await spellText(input);
     const intentMessage = await inputAnalyze(spelledText);
-    
+
     if (intentMessage.length) {
       await bot.sendMessage(chatId, intentMessage);
     }
@@ -53,11 +59,16 @@ const onText = async ({ chat, from, text, reply_to_message, message_id, date }) 
     logger.log('error', error.toString());
   }
   try {
-    await dbEntries.post(currentUser.id, crypt.encode(input), message_id, new Date(date * 1000));
+    await dbEntries.post(
+      currentUser.id,
+      crypt.encode(input),
+      message_id,
+      new Date(date * 1000),
+    );
     const okText = format.prevInput(input);
     await bot.sendMessage(chatId, okText, {
-      'disable_notification': true,
-      'disable_web_page_preview': true,
+      disable_notification: true,
+      disable_web_page_preview: true,
     });
   } catch (error) {
     logger.log('error', error.toString());
