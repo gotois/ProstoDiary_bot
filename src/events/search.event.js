@@ -8,7 +8,7 @@ const {createRegexInput, normalizeRegexStringToString} = require('../services/in
  * @constant
  * @type {number}
  */
-const PAGE_SKIP = 10;// default every 10 times
+const PAGE_SKIP = 10; // default every 10 times
 /**
  * @constant
  * @type {string}

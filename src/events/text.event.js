@@ -19,7 +19,7 @@ const {spellText} = require('../services/speller.service');
  * @param {Date} msg.date -date message
  * @returns {undefined}
  */
-const onText = async ({chat, from, text, reply_to_message, message_id, date}) => {
+const onText = async ({ chat, from, text, reply_to_message, message_id, date }) => {
   logger.log('info', onText.name);
   const chatId = chat.id;
   const fromId = from.id;

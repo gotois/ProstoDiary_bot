@@ -39,7 +39,7 @@ const prevInput = input => (`✓${input.replace(/\n/g, ' ').substring(0, 6)}…`
  * @returns {Array}
  */
 const decodeRows = (rows = []) => {
-  return rows.map(({date_added, entry}) => ({
+  return rows.map(({ date_added, entry }) => ({
     date: date_added,
     entry: crypt.decode(entry),
   }));

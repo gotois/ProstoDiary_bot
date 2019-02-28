@@ -10,12 +10,12 @@ const logger = require('../services/logger.service');
  * @param {Object} msg.from - from
  * @returns {undefined}
  */
-const onStart = async ({chat, from}) => {
+const onStart = async ({ chat, from }) => {
   logger.log('info', onStart.name);
   const chatId = chat.id;
   const currentUser = sessions.getSession(from.id);
   try {
-    const {rowCount} = await dbUsers.check(currentUser.id);
+    const { rowCount } = await dbUsers.check(currentUser.id);
     if (rowCount === 0) {
       await dbUsers.post(currentUser.id);
       await bot.sendMessage(chatId, 'Вы вошли в систему');

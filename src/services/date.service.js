@@ -2,19 +2,19 @@
  * @constant
  * @type {number}
  */
-const MS_PER_DAY = (1000 * 60 * 60 * 24);
+const MS_PER_DAY = 1000 * 60 * 60 * 24;
 /**
  *
  * @param {Date} date - date
  * @returns {boolean}
  */
-const checkDateLaterThanNow = date => ((new Date()).getTime() < (date).getTime());
+const checkDateLaterThanNow = (date) => ((new Date()).getTime() < (date).getTime());
 /**
  *
  * @param {Date|string} date - date
  * @returns {boolean}
  */
-const dateIsIncorrect = date => (isNaN((Date).parse(date)));
+const dateIsIncorrect = (date) => (isNaN((Date).parse(date)));
 /**
  *
  * @param {string|Date} date - date
@@ -37,11 +37,11 @@ const convertToNormalDate = date => {
     return date;
   } else {
     date = date.split('.').join('-');
-  
-    const dd = +(date.match(/-\d+-(\d+)/)[1]);
-    const mm = +(date.match(/-(\d+)/)[1]) - 1;
-    const yyyy = +(date.match(/(\d+)-/)[1]);
-    
+
+    const dd = Number(date.match(/-\d+-(\d+)/)[1]);
+    const mm = Number(date.match(/-(\d+)/)[1]) - 1;
+    const yyyy = Number(date.match(/(\d+)-/)[1]);
+
     if (dd > 31 || mm > 12) {
       throw new Error('Invalid Date');
     }

@@ -33,8 +33,8 @@ const getLangCode = (francCode) => {
  * @returns {string}
  */
 const detectLang = (query) => {
-  const lang = franc(query, {whitelist: [RUS, ENG]});
-  
+  const lang = franc(query, { whitelist: [RUS, ENG] });
+
   if (lang === UNDEFINED) {
     if (/[А-Я]/i.test(query)) {
       return RUS;
@@ -42,7 +42,7 @@ const detectLang = (query) => {
       return ENG;
     }
   }
-  
+
   return lang;
 };
 
@@ -53,5 +53,5 @@ module.exports = {
     ENG,
     RUS,
     UNDEFINED,
-  }
+  },
 };

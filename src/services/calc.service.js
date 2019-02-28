@@ -40,7 +40,9 @@ const accMoney = (acc, money) => {
  * @param {string} text - text
  * @returns {Array}
  */
-const splitText = text => (typeof text === 'string' ? text.split('\n') : []);
+const splitText = (text) => {
+  return typeof text === 'string' ? text.split('\n') : [];
+};
 /**
  * Локализуем
  *
@@ -81,15 +83,15 @@ const getFormatMoney = (money) => {
  * @param {number} type - money type
  * @returns {Object}
  */
-const getMoney = ({texts, type,}) => {
+const getMoney = ({ texts, type }) => {
   if (!Array.isArray(texts)) {
     throw new Error('Invalid argument');
   }
   if (texts.length) {
     return texts
       .reduce((acc, raw) => acc.concat(...splitText(raw)), [])
-      .map(text => formatType(text, type))
-      .map(text => calcMoney(text))
+      .map((text) => formatType(text, type))
+      .map((text) => calcMoney(text))
       .reduce((acc, money) => (
         accMoney(acc, money)
       ), Object.assign({}, defaultOut));
@@ -244,13 +246,13 @@ const getAllSum = (numbers) => {
  * @param  {Array} values - value array
  * @returns {number}
  */
-const getMedian = values => {
-  values.sort((a,b) => a - b);
+const getMedian = (values) => {
+  values.sort((a, b) => a - b);
   const half = Math.floor(values.length / 2);
   if (values.length % 2) {
     return values[half];
   } else {
-    return (values[half-1] + values[half]) / 2.0;
+    return (values[half - 1] + values[half]) / 2.0;
   }
 };
 

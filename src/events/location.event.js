@@ -8,10 +8,10 @@ const {getGeoCode} = require('../services/geocode.service');
  * @param {Object} msg.location - location
  * @returns {undefined}
  */
-const onLocation = async ({chat, location: {latitude, longitude}}) => {
+const onLocation = async ({ chat, location: { latitude, longitude } }) => {
   logger.log('info', onLocation.name);
   const chatId = chat.id;
-  const parsedData = await getGeoCode({latitude, longitude});
+  const parsedData = await getGeoCode({ latitude, longitude });
   if (!Array.isArray(parsedData.results)) {
     await bot.sendMessage(chatId, 'Геокод не найден', {});
     return;

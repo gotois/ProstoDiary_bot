@@ -1,6 +1,6 @@
 const logger = require('../services/logger.service');
 
-const webHookError = async () => {
+const webHookError = () => {
   logger.log('error', 'webHookError');
 };
 

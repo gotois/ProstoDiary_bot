@@ -10,18 +10,22 @@ const logger = require('../services/logger.service');
  * @param {Object} msg.from - from
  * @returns {undefined}
  */
-const onDBClear = async ({chat, from}) => {
+const onDBClear = async ({ chat, from }) => {
   logger.log('info', onDBClear.name);
   const chatId = chat.id;
   const fromId = from.id;
   const options = {
-    'reply_markup': {
-      'force_reply': true
-    }
+    reply_markup: {
+      force_reply: true,
+    },
   };
   const currentUser = sessions.getSession(fromId);
-  const {message_id} = await bot.sendMessage(chatId, 'Очистить ваши записи?\nНапишите: YES', options);
-  await bot.onReplyToMessage(chat.id, message_id, async ({text}) => {
+  const { message_id } = await bot.sendMessage(
+    chatId,
+    'Очистить ваши записи?\nНапишите: YES',
+    options,
+  );
+  await bot.onReplyToMessage(chat.id, message_id, async ({ text }) => {
     if (text !== 'YES') {
       await bot.sendMessage(chat.id, 'Операция отменена');
       return;

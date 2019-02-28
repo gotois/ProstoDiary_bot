@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const logger = require('../services/logger.service');
-const {SALT_PASSWORD} = require('../env');
+const { SALT_PASSWORD } = require('../env');
 /**
  * @constant {string}
  */
@@ -40,7 +40,7 @@ const decrypt = (text) => {
  * @param {string} entry - entry
  * @returns {string}
  */
-const decode = entry => {
+const decode = (entry) => {
   try {
     return decrypt(entry);
   } catch (error) {
@@ -52,7 +52,7 @@ const decode = entry => {
  * @param {string} text - text
  * @returns {string}
  */
-const encode = text => {
+const encode = (text) => {
   if (!text) {
     throw new Error('Encode empty');
   }

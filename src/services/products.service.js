@@ -6,7 +6,7 @@ const products = require('../../data/products.json');
  * @param {string} name - product name
  * @returns {Promise<Object|undefined>}
  */
-const getProductInfo = async (name) => {
+const getProductInfo = (name) => {
   return products[name.toLowerCase()];
 };
 

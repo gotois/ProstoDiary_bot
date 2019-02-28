@@ -1,11 +1,11 @@
 const bot = require('../config');
 const logger = require('../services/logger.service');
-const {get} = require('../services/request.service');
+const { get } = require('../services/request.service');
 const qr = require('../services/qr.service');
-const {getParams} = require('../services/params.service');
+const { getParams } = require('../services/params.service');
 const {
   // nalogRuSignUp,
-  getKPPData
+  getKPPData,
 } = require('../services/kpp.service');
 /**
  * @description Работа с QR
@@ -14,11 +14,11 @@ const {
  * @param {Array} msg.photo - photo
  * @returns {Promise<undefined>}
  */
-const onPhoto = async ({chat, /*date, from, message_id,*/photo}) => {
+const onPhoto = async ({ chat, /*date, from, message_id,*/ photo }) => {
   logger.log('info', onPhoto.name);
   const chatId = chat.id;
   const fileInfo = await bot.getFile(photo[photo.length - 1].file_id);
-  
+
   try {
     const buffer = await get(`https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`);
     const qrResult = await qr(buffer);

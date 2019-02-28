@@ -9,8 +9,13 @@
   "bin": {
     "ProstoDiary_bot": "./bin/index"
   },
+  "directories": {
+    "data": "./data"
+  },
   "scripts": {
     "prestart": "",
+    "prestop": "",
+    "prerestart": "",
     "package-upgrade": "npx ncu -u",
     "dev": "nodemon ./bin/index",
     "dev:debug": "nodemon --inspect ./bin/index",
@@ -23,8 +28,8 @@
     "coverage": "nyc report --reporter=lcov npm test"
   },
   "engines": {
-    "node": "~10.15.0",
-    "npm": "~6.7.0"
+    "node": "10.x",
+    "npm": "6.x"
   },
   "os": [
     "!win32"
@@ -64,7 +69,7 @@
     "music-metadata": "~3.5.2",
     "node-native-zip": "~1.1.0",
     "node-telegram-bot-api": "~0.30.0",
-    "pg": "~7.8.0",
+    "pg": "~7.8.1",
     "plotly": "~1.0.6",
     "qrcode-reader": "~1.0.4",
     "winston": "~3.2.1"
@@ -72,11 +77,21 @@
   "devDependencies": {
     "ava": "~1.2.1",
     "codecov": "~4.0.0-0",
-    "eslint": "~5.14.0",
-    "eslint-plugin-jsdoc": "~4.1.0",
+    "eslint": "~5.14.1",
+    "eslint-config-prettier": "~4.1.0",
+    "eslint-plugin-jsdoc": "~4.1.1",
+    "eslint-plugin-node": "~8.0.1",
+    "eslint-plugin-prettier": "~3.0.1",
     "nodemon": "~1.18.10",
     "npm-check-updates": "~2.15.0",
     "nyc": "~13.3.0",
+    "prettier": "~1.16.4",
     "telegram-test-api": "~1.2.3"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "tests/"
+    ],
+    "delay": "5000"
   }
 }

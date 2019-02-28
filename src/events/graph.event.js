@@ -46,7 +46,7 @@ const getImgOpts = () => {
  * @param {string} msg.text - text
  * @returns {undefined}
  */
-const getGraph = async ({chat, from, text}) => {
+const getGraph = async ({ chat, from, text }) => {
   logger.log('info', getGraph.name);
   const chatId = chat.id;
   const currentUser = sessions.getSession(from.id);
@@ -54,8 +54,8 @@ const getGraph = async ({chat, from, text}) => {
   const regExp = createRegexInput(input);
   const trace = createTrace();
   try {
-    const {rows} = await dbEntries.getAll(currentUser.id);
-    const entryRows = decodeRows(rows).filter(({entry}) => regExp.test(entry.toLowerCase()));
+    const { rows } = await dbEntries.getAll(currentUser.id);
+    const entryRows = decodeRows(rows).filter(({ entry }) => regExp.test(entry.toLowerCase()));
     if (!entryRows.length) {
       throw new Error('Нет данных для построения графика');
     }
