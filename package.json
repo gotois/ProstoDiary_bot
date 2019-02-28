@@ -13,9 +13,6 @@
     "data": "./data"
   },
   "scripts": {
-    "prestart": "",
-    "prestop": "",
-    "prerestart": "",
     "package-upgrade": "npx ncu -u",
     "dev": "nodemon ./bin/index",
     "dev:debug": "nodemon --inspect ./bin/index",
