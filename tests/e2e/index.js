@@ -12,15 +12,15 @@ test.before(async (t) => {
   const token = 'sampleToken';
   server = new TelegramServer({
     port: 9000,
-    'host': 'localhost',
-    'storage': 'RAM',
-    'storeTimeout': 60
+    host: 'localhost',
+    storage: 'RAM',
+    storeTimeout: 60,
   });
-  
+
   await server.start();
   client = server.getClient(token);
-  
-  let botOptions = {polling: true, baseApiUrl: server.ApiURL};
+
+  let botOptions = { polling: true, baseApiUrl: server.ApiURL };
   const telegramBot = new TelegramBot(token, botOptions);
   new TestBot(telegramBot);
   t.pass();
@@ -53,12 +53,12 @@ test.before(async (t) => {
 // test.afterEach.always(t => {
 // });
 
-test('/help', async t => {
+test('/help', async (t) => {
   // this.slow(400);
   // this.timeout(800);
   let message = client.makeMessage('/help');
   await client.sendMessage(message);
-  
+
   let updates = await client.getUpdates();
   t.truthy(updates.ok);
   // message = client.makeMessage(keyboard[0][0].text);

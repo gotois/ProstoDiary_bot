@@ -1,0 +1,16 @@
+{
+  "printWidth": 80,
+  "useTabs": false,
+  "bracketSpacing": true,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "proseWrap": "preserve",
+  "arrowParens": "always",
+  "semi": true,
+  "endOfLine": "lf",
+  "overrides": [{
+    "files": "*.js",
+    "options": {
+    }
+  }]
+}

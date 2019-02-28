@@ -41,7 +41,7 @@ const spellText = async (myText) => {
   const array = await spellCheck(myText);
   
   for (let a of array) {
-    const replacedWord = a.s[0];
+    const [replacedWord] = a.s;
     out = replaceBetween(out, a.pos, a.pos + a.len, replacedWord);
   }
   

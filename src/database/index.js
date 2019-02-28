@@ -4,13 +4,13 @@ const $$ = require('./database.promise.js');
  * @param {number} user_id - user id
  * @returns {Promise}
  */
-const getAll = user_id => {
+const getAll = (user_id) => {
   return $$(
     `SELECT entry, date_added
     FROM entries
     WHERE user_id = $1
     ORDER BY date_added ASC`,
-    [user_id]
+    [user_id],
   );
 };
 /**
@@ -27,7 +27,6 @@ const _get = (user_id, date) => {
       break;
     }
     case String: {
-      
       break;
     }
     default: {

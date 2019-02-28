@@ -28,7 +28,7 @@ module.exports = {
   user: DB_USER,
   port: DBPORT,
   password: PASSWORD,
-  
+
   CORALOGIX_WINSTON_PRIVATE_KEY,
   CORALOGIX_WINSTON_APPLICATION_NAME,
   GOOGLE_APPLICATION_CREDENTIALS,
@@ -41,28 +41,27 @@ module.exports = {
   PLOTLY_LOGIN,
   PLOTLY_TOKEN,
   SALT_PASSWORD,
-  
+
   NALOGRU_EMAIL,
   NALOGRU_NAME,
   NALOGRU_PHONE,
   NALOGRU_KP_PASSWORD,
-  
+
   get GOOGLE_CREDENTIALS_PARSED() {
     if (!GOOGLE_APPLICATION_CREDENTIALS) {
       throw new Error('GOOGLE_APPLICATION_CREDENTIALS is not initialized');
     }
     return JSON.parse(GOOGLE_APPLICATION_CREDENTIALS);
   },
-  
+
   get DIALOGFLOW_CREDENTIALS_PARSED() {
     if (!DIALOGFLOW_CREDENTIALS) {
       throw new Error('DIALOGFLOW_CREDENTIALS is not initialized');
     }
     return JSON.parse(DIALOGFLOW_CREDENTIALS);
   },
-  
+
   get IS_PRODUCTION() {
     return String(process.env.NODE_ENV) === 'production';
   },
-  
 };

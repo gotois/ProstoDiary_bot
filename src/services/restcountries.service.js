@@ -1,5 +1,5 @@
 const logger = require('./logger.service');
-const {get} = require('./request.service');
+const { get } = require('./request.service');
 /**
  *
  * @param {string} name - text

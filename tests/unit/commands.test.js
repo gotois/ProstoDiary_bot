@@ -1,4 +1,4 @@
-module.exports = t => {
+module.exports = (t) => {
   const commands = require('../../src/commands/index');
   const {
     DOWNLOAD,
