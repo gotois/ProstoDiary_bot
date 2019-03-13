@@ -1,3 +1,4 @@
+// const nlp = require('compromise');
 const sessions = require('../services/session.service');
 const bot = require('../config');
 const crypt = require('../services/crypt.service');
@@ -45,6 +46,12 @@ const onText = async ({
     await bot.sendMessage(chatId, 'Command not found. Text /help for help');
     return;
   }
+  // TODO: пример получения имен https://github.com/gotois/ProstoDiary_bot/issues/83
+  // пока работает только с английскими именами
+  // let xxx = nlp(input)
+  //   .people()
+  //   .data();
+  // console.log('topk', xxx);
   const currentUser = sessions.getSession(fromId);
   try {
     // TODO: обернуть весь pipe работы с input в отдельный сервис, где расписать подробно весь процесс
