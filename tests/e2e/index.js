@@ -1,5 +1,9 @@
 import test from 'ava';
 
+// Simple Heroku Detect
+if (!process.env.PORT) {
+  require('dotenv').config();
+}
 const TelegramServer = require('telegram-test-api');
 const TelegramBot = require('node-telegram-bot-api');
 const TestBot = require('./TestBot');
@@ -62,6 +66,13 @@ test('/help', async (t) => {
   let updates = await client.getUpdates();
   t.truthy(updates.ok);
   // message = client.makeMessage(keyboard[0][0].text);
+});
+
+test('fatsecret', async (t) => {
+  const foodService = require('../../src/services/food.service');
+  const results = await foodService.search('Soup', 2);
+  t.true(Array.isArray(results.foods.food));
+  t.is(results.foods.food.length, 2);
 });
 
 test.todo('/start');

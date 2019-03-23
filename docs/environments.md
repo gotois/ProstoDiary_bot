@@ -24,4 +24,8 @@ NALOGRU_EMAIL={ nalog.ru email }
 NALOGRU_NAME={ nalog.ru имя }
 NALOGRU_PHONE={ nalog.ru телефон }
 NALOGRU_KP_PASSWORD={ nalog.ru password  } #это вводится пользователем после kpSignUp (proverkacheka.nalog.ru:9999/v1/mobile/users/signup)
+
+FAT_SECRET_APPNAME={ application name }
+FAT_SECRET_API_ACCESS_KEY={ access key string }
+FAT_SECRET_API_SHARED_SECRET={ shared secret string }
 ```
