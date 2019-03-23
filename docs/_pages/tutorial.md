@@ -1,3 +1,9 @@
+---
+layout: page
+title: Tutorial
+permalink: /tutorial/
+---
+
 Telegram commands
 ---
 ```

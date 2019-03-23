@@ -22,7 +22,8 @@
     "test": "nyc --reporter=text ava tests/unit/index.js --verbose",
     "e2e": "ava tests/e2e/index.js tests/e2e/**/*.test.js",
     "test:watch": "npm test -- --watch",
-    "coverage": "nyc report --reporter=lcov npm test"
+    "coverage": "nyc report --reporter=lcov npm test",
+    "docs:serve": "cd docs/ ; jekyll serve"
   },
   "engines": {
     "node": "10.x",

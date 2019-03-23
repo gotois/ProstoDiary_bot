@@ -1,3 +1,9 @@
+---
+layout: page
+title: Install
+permalink: /install/
+---
+
 Server Environments (needs update file .env in root project)
 ---
 ```
@@ -28,4 +34,13 @@ NALOGRU_KP_PASSWORD={ nalog.ru password  } #это вводится пользо
 FAT_SECRET_APPNAME={ application name }
 FAT_SECRET_API_ACCESS_KEY={ access key string }
 FAT_SECRET_API_SHARED_SECRET={ shared secret string }
+```
+
+Setup PostgreSQL 10.2+
+---
+```
+* Create database ProstoDiaryDB
+* Grant roles > SQL/roles.sql
+* Create user table > SQL/table_users.sql
+* Create entries table > SQL/table_entries.sql
 ```

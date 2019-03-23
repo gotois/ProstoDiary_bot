@@ -56,6 +56,13 @@ Name: ProstoDiary
 
 Username: @ProstoDiary_bot
 
+docs
+---
+```
+cd docs
+bundle exec jekyll serve
+```
+
 License:
 ---
 see LICENSE file
