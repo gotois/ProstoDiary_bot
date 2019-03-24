@@ -4,10 +4,13 @@ import test from 'ava';
 if (!process.env.PORT) {
   require('dotenv').config();
 }
+const { maintainers } = require('../../package');
 const TelegramServer = require('telegram-test-api');
 const TelegramBot = require('node-telegram-bot-api');
+const sgMail = require('@sendgrid/mail');
 const TestBot = require('./TestBot');
 
+let tasks = {};
 let server;
 let client;
 
@@ -38,20 +41,23 @@ test.before(async (t) => {
 // test.after('cleanup', t => {
 // });
 
-// This will always run, regardless of earlier failures
-// test.after.always('guaranteed cleanup', t => {
-// });
+test.beforeEach((t) => {
+  const startedTestTitle = t.title.replace('beforeEach hook for ', '');
+  tasks[startedTestTitle] = startedTestTitle;
+});
 
-// This runs before each test
-// test.beforeEach(t => {
-// });
+test.afterEach((t) => {
+  const successTestTitle = t.title.replace('afterEach hook for ', '');
+  delete tasks[successTestTitle];
+});
 
-// This runs after each test
-// test.afterEach(t => {
-// this.slow(2000);
-// this.timeout(10000);
-// return server.stop()
-// });
+/* This runs after each test
+test.afterEach(t => {
+  this.slow(2000);
+  this.timeout(10000);
+  return server.stop()
+});
+*/
 
 // This runs after each test and other test hooks, even if they failed
 // test.afterEach.always(t => {
@@ -71,6 +77,7 @@ test('/help', async (t) => {
 // skip test for travis CI
 if (process.env.CI !== 'TRAVIS') {
   test('fatsecret', async (t) => {
+    t.timeout(1000);
     const foodService = require('../../src/services/food.service');
     const results = await foodService.search('Soup', 2);
     t.true(Array.isArray(results.foods.food));
@@ -85,3 +92,30 @@ test.todo('/dbclear');
 test.todo('/download');
 
 test.todo('/search');
+
+// This runs after all tests
+test.after('cleanup', (t) => {
+  t.context.testPassed = true;
+});
+
+test.after.always('guaranteed cleanup', async (t) => {
+  if (t.context.testPassed) {
+    return;
+  }
+  if (process.env.SENDGRID_API_KEY) {
+    const failedTasks = Object.entries(tasks).map(([taskName]) => {
+      return taskName;
+    });
+    t.log('Failed: ', failedTasks);
+
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    const msg = {
+      to: maintainers[0].email,
+      from: 'no-reply@gotointeractive.com',
+      subject: 'ProstoDiary: 👾 E2E failed',
+      text: `Failed test: ${JSON.stringify(failedTasks, null, 2)}`,
+    };
+    const [mailResult] = await sgMail.send(msg);
+    t.true(mailResult.statusCode >= 200 && mailResult.statusCode < 300);
+  }
+});

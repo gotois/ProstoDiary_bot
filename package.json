@@ -21,7 +21,6 @@
     "lint": "eslint src/**/*.js tests/**/*.js",
     "test": "nyc --reporter=text ava tests/unit/index.js --verbose",
     "e2e": "ava tests/e2e/index.js tests/e2e/**/*.test.js",
-    "e2e:email": "ava --tap tests/e2e/index.js tests/e2e/**/*.test.js | mail -s \"ProstoDiary: E2E Check\" \"denis@baskovsky.ru\"",
     "test:watch": "npm test -- --watch",
     "coverage": "nyc report --reporter=lcov npm test",
     "docs:serve": "cd docs/ ; jekyll serve"
@@ -66,6 +65,7 @@
   "dependencies": {
     "@google-cloud/language": "~2.0.1",
     "@google-cloud/speech": "~2.3.0",
+    "@sendgrid/mail": "~6.3.1",
     "compromise": "~11.13.1",
     "coralogix-logger-winston": "~1.0.9",
     "dialogflow": "~0.8.2",
