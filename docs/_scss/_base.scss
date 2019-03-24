@@ -1,0 +1,26 @@
+@charset "utf-8";
+
+a {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+ul {
+  white-space: nowrap;
+  padding: 0;
+}
+
+li {
+  display: inline;
+}
+
+.site-header {
+  padding: 0 15px;
+}
+
+.site-nav {
+  height: 54px;
+}
