@@ -1,16 +1,17 @@
 {
   "name": "ProstoDiary_bot",
-  "description": "ProstoDiary Bot",
+  "description": "Global virtual assistant",
   "version": "1.0.0",
-  "homepage": "https://gotointeractive.com/#prostodiary",
+  "homepage": "https://prosto-diary.gotointeractive.com",
   "main": "./src/index.js",
   "man": [],
   "private": false,
   "bin": {
-    "ProstoDiary_bot": "./bin/index"
+    "prosto-diary": "./bin/index"
   },
   "directories": {
-    "data": "./data"
+    "data": "./data",
+    "e2e": "./tests/e2e"
   },
   "scripts": {
     "package-upgrade": "npx ncu -u",
@@ -51,7 +52,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
     "url": "https://github.com/gotois/ProstoDiary_bot/issues",
-    "email": "info@gotointeractive.com"
+    "email": "support@gotointeractive.com"
   },
   "maintainers": [
     {
