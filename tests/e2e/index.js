@@ -112,8 +112,8 @@ test.after.always('guaranteed cleanup', async (t) => {
       return taskName;
     });
     t.log('Failed: ', failedTasks);
-
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    const { SENDGRID_API_KEY } = require('../../src/env');
+    sgMail.setApiKey(SENDGRID_API_KEY);
     const msg = {
       to: maintainers[0].email,
       from: 'no-reply@gotointeractive.com',

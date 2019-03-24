@@ -52,9 +52,10 @@ npm run package-upgrade
 
 Global Bot Environments
 ---
+```
 Name: ProstoDiary
-
 Username: @ProstoDiary_bot
+```
 
 docs
 ---
