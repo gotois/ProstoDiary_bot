@@ -86,12 +86,17 @@ if (process.env.CI !== 'TRAVIS') {
 }
 
 test.todo('/start');
-
 test.todo('/dbclear');
-
 test.todo('/download');
-
 test.todo('/search');
+test.todo('авторизация');
+test.todo('Создать отдельного пользователя в БД'); // TODO: используя https://github.com/marak/Faker.js/
+test.todo('Проверка удаления своей записи');
+test.todo('Запись энтри');
+test.todo('Проверека построения графика');
+test.todo('Проверка голоса');
+test.todo('Проверка считывания qr');
+test.todo('проверка скачивания архива');
 
 // This runs after all tests
 test.after('cleanup', (t) => {
