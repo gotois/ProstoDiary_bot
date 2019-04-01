@@ -36,6 +36,8 @@ FAT_SECRET_API_ACCESS_KEY={ access key string }
 FAT_SECRET_API_SHARED_SECRET={ shared secret string }
 
 SENDGRID_API_KEY={ api key }
+
+OPEN_WEATHER_KEY={ api key }
 ```
 
 Setup PostgreSQL 10.2+

@@ -2,6 +2,7 @@ const bot = require('../config/index');
 const logger = require('../services/logger.service');
 const { getFullName } = require('../services/restcountries.service');
 const { getGeoCode } = require('../services/geocode.service');
+const { getWeather } = require('../services/weather.service');
 /**
  * @param {Object} msg - message
  * @param {Object} msg.chat - chat
@@ -44,13 +45,12 @@ const onLocation = async ({ chat, location: { latitude, longitude } }) => {
     return;
   }
   const [currency] = parsedRestCountries[0].currencies;
+  const weatherInfo = getWeather({ latitude, longitude });
   await bot.sendMessage(
     chatId,
-    formattedAddress +
-      ' ; валюта: ' +
-      currency.symbol +
-      ' ; code: ' +
-      currency.code,
+    `${formattedAddress} ; валюта: ${currency.symbol} ; code: ${
+      currency.code
+    } ; погода: ${weatherInfo.description}`,
     {},
   );
 };
