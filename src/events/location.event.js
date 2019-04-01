@@ -1,4 +1,4 @@
-const bot = require('../config/index');
+const bot = require('../bot');
 const logger = require('../services/logger.service');
 const { getFullName } = require('../services/restcountries.service');
 const { getGeoCode } = require('../services/geocode.service');

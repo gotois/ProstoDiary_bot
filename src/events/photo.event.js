@@ -1,4 +1,4 @@
-const bot = require('../config');
+const bot = require('../bot');
 const logger = require('../services/logger.service');
 const { get } = require('../services/request.service');
 const qr = require('../services/qr.service');

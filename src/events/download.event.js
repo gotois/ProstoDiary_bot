@@ -2,7 +2,7 @@ const zip = require('node-native-zip');
 const format = require('../services/format.service');
 const dbEntries = require('../database');
 const sessions = require('../services/session.service');
-const bot = require('../config');
+const bot = require('../bot');
 const logger = require('../services/logger.service');
 /**
  * @param {string} date - date

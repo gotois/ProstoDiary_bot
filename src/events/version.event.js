@@ -1,6 +1,6 @@
 const logger = require('../services/logger.service');
 const { version } = require('../../package');
-const bot = require('../config');
+const bot = require('../bot');
 /**
  *
  * @param  {Object} chat - chat

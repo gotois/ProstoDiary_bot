@@ -15,7 +15,7 @@ const { IS_PRODUCTION } = require('./env');
         return reject(new Error('Network unavailable'));
       }, DELAY);
       try {
-        const me = await require('./config').getMe();
+        const me = await require('./bot').getMe();
         clearTimeout(timer);
         resolve(me);
       } catch (error) {

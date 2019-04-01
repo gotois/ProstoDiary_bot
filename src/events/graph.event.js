@@ -1,6 +1,6 @@
 const dbEntries = require('../database');
 const sessions = require('../services/session.service');
-const bot = require('../config');
+const bot = require('../bot');
 const plot = require('../services/graph.service');
 const commands = require('../commands');
 const datetime = require('../services/date.service');

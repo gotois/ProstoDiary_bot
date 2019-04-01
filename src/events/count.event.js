@@ -1,6 +1,6 @@
 const dbEntries = require('../database');
 const sessions = require('../services/session.service');
-const bot = require('../config');
+const bot = require('../bot');
 const { getMoney, getFormatMoney, TYPES } = require('../services/calc.service');
 const { decodeRows } = require('./../services/format.service');
 const logger = require('../services/logger.service');

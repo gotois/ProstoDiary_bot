@@ -1,4 +1,4 @@
-const bot = require('../config/index');
+const bot = require('../bot');
 /**
  * @param {Object} obj - object
  * @param {string} obj.key - key

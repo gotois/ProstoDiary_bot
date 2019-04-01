@@ -33,14 +33,6 @@ test.before(async (t) => {
   t.pass();
 });
 
-// This runs after the above and before tests
-// test.serial.before(t => {
-// });
-
-// This runs after all tests
-// test.after('cleanup', t => {
-// });
-
 test.beforeEach((t) => {
   const startedTestTitle = t.title.replace('beforeEach hook for ', '');
   tasks[startedTestTitle] = startedTestTitle;
@@ -50,18 +42,6 @@ test.afterEach((t) => {
   const successTestTitle = t.title.replace('afterEach hook for ', '');
   delete tasks[successTestTitle];
 });
-
-/* This runs after each test
-test.afterEach(t => {
-  this.slow(2000);
-  this.timeout(10000);
-  return server.stop()
-});
-*/
-
-// This runs after each test and other test hooks, even if they failed
-// test.afterEach.always(t => {
-// });
 
 test('/help', async (t) => {
   // this.slow(400);
@@ -124,20 +104,21 @@ test.after.always('guaranteed cleanup', async (t) => {
   if (t.context.testPassed) {
     return;
   }
-  if (process.env.SENDGRID_API_KEY) {
-    const failedTasks = Object.entries(tasks).map(([taskName]) => {
-      return taskName;
-    });
-    t.log('Failed: ', failedTasks);
-    const { SENDGRID_API_KEY } = require('../../src/env');
-    sgMail.setApiKey(SENDGRID_API_KEY);
-    const msg = {
-      to: maintainers[0].email,
-      from: 'no-reply@gotointeractive.com',
-      subject: 'ProstoDiary: 👾 E2E failed',
-      text: `Failed test: ${JSON.stringify(failedTasks, null, 2)}`,
-    };
-    const [mailResult] = await sgMail.send(msg);
-    t.true(mailResult.statusCode >= 200 && mailResult.statusCode < 300);
+  if (!process.env.SENDGRID_API_KEY) {
+    return;
   }
+  const failedTasks = Object.entries(tasks).map(([taskName]) => {
+    return taskName;
+  });
+  t.log('Failed: ', failedTasks);
+  const { SENDGRID_API_KEY } = require('../../src/env');
+  sgMail.setApiKey(SENDGRID_API_KEY);
+  const msg = {
+    to: maintainers[0].email,
+    from: 'no-reply@gotointeractive.com',
+    subject: 'ProstoDiary: 👾 E2E failed',
+    text: `Failed test: ${JSON.stringify(failedTasks, null, 2)}`,
+  };
+  const [mailResult] = await sgMail.send(msg);
+  t.true(mailResult.statusCode >= 200 && mailResult.statusCode < 300);
 });

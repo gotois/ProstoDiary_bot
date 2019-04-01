@@ -2,7 +2,7 @@ const speech = require('@google-cloud/speech');
 const mm = require('music-metadata');
 const { GOOGLE_CREDENTIALS_PARSED } = require('../env');
 const logger = require('../services/logger.service');
-const bot = require('../config');
+const bot = require('../bot');
 const { get } = require('../services/request.service');
 const client = new speech.SpeechClient({
   credentials: GOOGLE_CREDENTIALS_PARSED,

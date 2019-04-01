@@ -1,6 +1,6 @@
 // const nlp = require('compromise');
 const sessions = require('../services/session.service');
-const bot = require('../config');
+const bot = require('../bot');
 const crypt = require('../services/crypt.service');
 const format = require('../services/format.service');
 const commands = require('../commands');

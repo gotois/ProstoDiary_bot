@@ -1,3 +1,4 @@
+// TODO: переенсти в intent.service.js
 /**
  * @constant
  * @type {string}
