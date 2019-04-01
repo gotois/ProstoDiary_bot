@@ -10,7 +10,8 @@ const TelegramBot = require('node-telegram-bot-api');
 const sgMail = require('@sendgrid/mail');
 const TestBot = require('./TestBot');
 
-let tasks = {};
+const IS_TRAVIS_CI = process.env.CI === 'TRAVIS';
+let tasks = {}; // TODO: переделать под t.context.tasks
 let server;
 let client;
 
@@ -45,7 +46,6 @@ test.afterEach((t) => {
 
 test('/help', async (t) => {
   // this.slow(400);
-  // this.timeout(800);
   let message = client.makeMessage('/help');
   await client.sendMessage(message);
 
@@ -54,25 +54,26 @@ test('/help', async (t) => {
   // message = client.makeMessage(keyboard[0][0].text);
 });
 
-test('/weather', async (t) => {
-  t.timeout(1000);
-  const weatherService = require('../../src/services/weather.service');
-  const weatherInfo = await weatherService.getWeather({
-    latitude: 50.0467656,
-    longitude: 20.0048731,
+if (!IS_TRAVIS_CI) {
+  test('/weather', async (t) => {
+    t.timeout(1000);
+    const weatherService = require('../../src/services/weather.service');
+    const weatherInfo = await weatherService.getWeather({
+      latitude: 50.0467656,
+      longitude: 20.0048731,
+    });
+    t.true(typeof weatherInfo === 'object');
+    t.true(weatherInfo.hasOwnProperty('description'));
+    t.true(weatherInfo.hasOwnProperty('humidity'));
+    t.true(weatherInfo.hasOwnProperty('pressure'));
+    t.true(weatherInfo.hasOwnProperty('rain'));
+    t.true(weatherInfo.hasOwnProperty('temp'));
+    t.true(weatherInfo.hasOwnProperty('weathercode'));
+    t.is(weatherInfo.weathercode, 800);
   });
-  t.true(typeof weatherInfo === 'object');
-  t.true(weatherInfo.hasOwnProperty('description'));
-  t.true(weatherInfo.hasOwnProperty('humidity'));
-  t.true(weatherInfo.hasOwnProperty('pressure'));
-  t.true(weatherInfo.hasOwnProperty('rain'));
-  t.true(weatherInfo.hasOwnProperty('temp'));
-  t.true(weatherInfo.hasOwnProperty('weathercode'));
-  t.is(weatherInfo.weathercode, 800);
-});
+}
 
-// skip test for travis CI
-if (process.env.CI !== 'TRAVIS') {
+if (!IS_TRAVIS_CI) {
   test('fatsecret', async (t) => {
     t.timeout(1000);
     const foodService = require('../../src/services/food.service');
