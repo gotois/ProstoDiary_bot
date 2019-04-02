@@ -17,7 +17,7 @@ const DEVICE_OS = 'linux';
  */
 const nalogRuSignUp = async () => {
   const res = await post(
-    'https://proverkacheka.nalog.ru:9999/v1/mobile/users/signup',
+    'https://proverkacheka.nalog.ru:8888/v1/mobile/users/signup',
     {
       name: NALOGRU_NAME,
       email: NALOGRU_EMAIL,
@@ -25,6 +25,27 @@ const nalogRuSignUp = async () => {
     },
   );
   return res;
+};
+/**
+ * @param {number} FN - Номер ФН (Фискальный Номер) — 16-значный номер. Например 8710000100518392
+ * @param {number} FD - Номер ФД (Фискальный документ) — до 10 знаков. Например 54812
+ * @param {number} FDP - Номер ФПД (Фискальный Признак Документа, также известный как ФП) — до 10 знаков. Например 3522207165
+ * @param {number} TYPE - Вид кассового чека. В чеке помечается как n=1 (приход) и n=2 (возврат прихода)
+ * @param {string} DATE - Дата — дата с чека. Формат может отличаться. Я пробовал переворачивать дату (т.е. 17-05-2018), ставить вместо Т пробел, удалять секунды
+ * @param {string} SUM - Сумма — сумма с чека в копейках - 3900
+ * @returns {Promise<undefined>}
+ */
+const checkKPP = async ({ FN, FD, FDP, TYPE, DATE, SUM }) => {
+  // TODO: это перевести в getParams в qr.service.js
+  SUM = SUM.replace('.', '');
+  FN = Number(FN);
+  FD = Number(FD);
+  FDP = Number(FDP);
+  TYPE = Number(TYPE);
+  // END
+  await get(
+    `https://proverkacheka.nalog.ru:9999/v1/ofds/*/inns/*/fss/${FN}/operations/${TYPE}/tickets/${FD}?fiscalSign=${FDP}&date=${DATE}&sum=${SUM}`,
+  );
 };
 /**
  * @param {Object} obj - obj
@@ -70,5 +91,6 @@ const getKPPData = async ({ FN, FD, FDP }) => {
 };
 module.exports = {
   getKPPData,
+  checkKPP,
   nalogRuSignUp,
 };

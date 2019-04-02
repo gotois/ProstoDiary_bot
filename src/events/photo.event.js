@@ -2,11 +2,26 @@ const bot = require('../bot');
 const logger = require('../services/logger.service');
 const { get } = require('../services/request.service');
 const qr = require('../services/qr.service');
-const { getParams } = require('../services/params.service');
+const visionService = require('../services/vision.service');
 const {
+  checkKPP,
   // nalogRuSignUp,
   getKPPData,
 } = require('../services/kpp.service');
+/**
+ * @param {Object} visionResult - vision result
+ * @returns {boolean}
+ */
+const isQR = (visionResult) => {
+  return visionResult.labelAnnotations.some(({ description }) => {
+    // TODO: сделать более строгую и правильную проверку
+    return (
+      description === 'Text' ||
+      description === 'Receipt' ||
+      description === 'Pattern'
+    );
+  });
+};
 /**
  * @description Работа с QR
  * @param {Object} msg - message
@@ -17,17 +32,37 @@ const {
 const onPhoto = async ({ chat, /*date, from, message_id,*/ photo }) => {
   logger.log('info', onPhoto.name);
   const chatId = chat.id;
-  const fileInfo = await bot.getFile(photo[photo.length - 1].file_id);
-
+  const [smallPhoto, mediumPhoto, largePhoto, originalPhoto] = photo; // eslint-disable-line no-unused-vars
+  if (!mediumPhoto.file_id) {
+    throw new Error('Wrong file');
+  }
+  const fileInfo = await bot.getFile(mediumPhoto.file_id);
+  const buffer = await get(
+    `https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`,
+  );
+  const visionResult = await visionService.detect(buffer);
+  if (!isQR(visionResult)) {
+    await bot.sendMessage(chatId, 'QR not found');
+    return;
+  }
   try {
-    const buffer = await get(
-      `https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`,
-    );
-    const qrResult = await qr(buffer);
-    const params = getParams(qrResult);
-    // todo: авторизуемся uncomment this if getKPPData doesn't work
+    const qrResult = await qr.readQR(buffer);
+    const params = qr.getParams(qrResult);
+    // STEP 1 - авторизуемся
+    // todo: uncomment this if getKPPData doesn't work
     // await nalogRuSignUp()
-    // используем данные для получения подробного результата:
+
+    // STEP 2 - проверяем чек (необходимо чтобы избежать ошибки illegal api)
+    await checkKPP({
+      FN: params.fn,
+      FD: params.i,
+      FDP: params.fp,
+      TYPE: params.n,
+      DATE: params.t,
+      SUM: params.s,
+    });
+
+    // STEP 3 - используем данные для получения подробного результата
     // TODO: данные должны попадать в БД
     const kppData = await getKPPData({
       FN: params.fn,
