@@ -20,9 +20,10 @@
     "start": "./bin/index",
     "start:debug": "node --inspect ./bin/index",
     "lint": "eslint src/**/*.js tests/**/*.js",
-    "test": "nyc --reporter=text ava tests/unit/index.js --verbose",
+    "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js tests/e2e/**/*.test.js --verbose",
+    "unit": "ava tests/unit/index.js",
+    "unit:watch": "npm run unit -- --watch",
     "e2e": "ava tests/e2e/index.js tests/e2e/**/*.test.js",
-    "test:watch": "npm test -- --watch",
     "coverage": "nyc report --reporter=lcov npm test",
     "docs:serve": "cd docs/ ; jekyll serve"
   },

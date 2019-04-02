@@ -9,9 +9,8 @@ env:
 
 script:
   - npm run lint
-  - npm run test
-  - npm run e2e
-  - npm run coverage
+  - npm test
 
 after_success:
+  - npm run coverage
   - codecov

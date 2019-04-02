@@ -10,28 +10,20 @@ Install
 ```bash
 npm rebuild
 npm i
-```
-
-```bash
 chmod +x bin/index 
 ```
 
-
-Run Telegram Bot
-```
-/start
-```
-
-After change node version
+Package upgrade
+---
 ```bash
-npm rebuild
+npm run package-upgrade
 ```
 
 Usage
 ---
 Checking Unit tests:
 ```bash
-npm run test:watch
+npm run unit
 ```
 
 Run development:
@@ -44,17 +36,16 @@ Run production:
 npm start
 ```
 
-Package Upgrade
----
-```bash
-npm run package-upgrade
-```
-
 Global Bot Environments
 ---
 ```
 Name: ProstoDiary
 Username: @ProstoDiary_bot
+```
+
+Run Telegram Bot
+```
+/start
 ```
 
 docs
