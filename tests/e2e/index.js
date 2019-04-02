@@ -5,6 +5,7 @@ if (!process.env.PORT) {
   require('dotenv').config();
 }
 const { maintainers } = require('../../package');
+const fs = require('fs');
 const TelegramServer = require('telegram-test-api');
 const TelegramBot = require('node-telegram-bot-api');
 const sgMail = require('@sendgrid/mail');
@@ -55,6 +56,35 @@ test('/help', async (t) => {
 });
 
 if (!IS_TRAVIS_CI) {
+  test('vision', async (t) => {
+    const visionService = require('../../src/services/vision.service');
+    const buffer = fs.readFileSync('tests/data/photo/receipt-example-1.jpg');
+    const result = await visionService.detect(buffer);
+    t.true(Array.isArray(result.labelAnnotations));
+    const receipt = result.labelAnnotations.find((annotation) => {
+      return annotation.description === 'Receipt';
+    });
+    t.is(typeof receipt === 'object', true);
+  });
+}
+
+test.todo('Проверка считывания qr');
+
+if (!IS_TRAVIS_CI) {
+  test('voice', async (t) => {
+    t.timeout(3000);
+    const voiceService = require('../../src/services/voice.service');
+    const buffer = fs.readFileSync('tests/data/voice/voice-example-1.ogg');
+    const text = await voiceService.voiceToText(buffer, {
+      duration: 1,
+      mime_type: 'audio/ogg',
+      file_size: 3141,
+    });
+    t.is(text, 'тестовое сообщение');
+  });
+}
+
+if (!IS_TRAVIS_CI) {
   test('/weather', async (t) => {
     t.timeout(1000);
     const weatherService = require('../../src/services/weather.service');
@@ -93,7 +123,6 @@ test.todo('Проверка удаления своей записи');
 test.todo('Запись энтри');
 test.todo('Проверека построения графика');
 test.todo('Проверка голоса');
-test.todo('Проверка считывания qr');
 test.todo('проверка скачивания архива');
 
 // This runs after all tests
