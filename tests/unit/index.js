@@ -1,5 +1,6 @@
 import test from 'ava';
 
+// TODO: переделать под cross-env
 process.env.SALT_PASSWORD = '123456';
 process.env.NODE_ENV = 'production';
 process.env.TOKEN = '123456';

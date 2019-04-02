@@ -17,13 +17,14 @@
     "package-upgrade": "npx ncu -u",
     "dev": "nodemon ./bin/index",
     "dev:debug": "nodemon --inspect ./bin/index",
-    "start": "./bin/index",
-    "start:debug": "node --inspect ./bin/index",
+    "start": "cross-env NODE_ENV=production ./bin/index",
+    "start:debug": "cross-env NODE_ENV=production node --inspect ./bin/index",
     "lint": "eslint src/**/*.js tests/**/*.js",
     "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js tests/e2e/**/*.test.js --verbose",
     "unit": "ava tests/unit/index.js",
     "unit:watch": "npm run unit -- --watch",
     "e2e": "ava tests/e2e/index.js tests/e2e/**/*.test.js",
+    "e2e:fast": "cross-env FAST_TEST=FAST_TEST ava tests/e2e/index.js tests/e2e/**/*.test.js",
     "coverage": "nyc report --reporter=lcov npm test",
     "docs:serve": "cd docs/ ; jekyll serve"
   },
@@ -87,6 +88,7 @@
   "devDependencies": {
     "ava": "~1.4.1",
     "codecov": "~4.0.0-0",
+    "cross-env": "~5.2.0",
     "eslint": "~5.16.0",
     "eslint-config-prettier": "~4.1.0",
     "eslint-plugin-jsdoc": "~4.7.0",
@@ -101,7 +103,8 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "tests/"
+      "tests/*",
+      "docs/*"
     ],
     "delay": "5000"
   },
