@@ -1,4 +1,5 @@
 const {
+  NODE_ENV,
   HOST,
   DATABASE,
   DB_USER,
@@ -75,6 +76,10 @@ module.exports = {
   },
 
   get IS_PRODUCTION() {
-    return String(process.env.NODE_ENV) === 'production';
+    return String(NODE_ENV) === 'production';
+  },
+
+  get IS_TRAVIS_CI() {
+    return String(NODE_ENV) === 'TRAVIS_CI';
   },
 };

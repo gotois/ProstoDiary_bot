@@ -5,7 +5,7 @@ node_js:
   - "11"
 
 env:
-  - CI=TRAVIS
+  - NODE_ENV=TRAVIS_CI
 
 script:
   - npm run lint

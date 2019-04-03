@@ -1,11 +1,7 @@
 import test from 'ava';
 
-// TODO: https://github.com/gotois/ProstoDiary_bot/issues/106
-// TRAVIS удалить, когда перенесу все необходимые env на Travis
-const FAST_TEST = process.env.FAST_TEST || process.env.CI === 'TRAVIS';
-
 // Simple Heroku Detect
-if (!process.env.PORT || process.env.CI !== 'TRAVIS') {
+if (!process.env.PORT || process.env.NODE_ENV !== 'TRAVIS_CI') {
   require('dotenv').config();
 }
 const { maintainers } = require('../../package');
@@ -14,6 +10,13 @@ const TelegramServer = require('telegram-test-api');
 const TelegramBot = require('node-telegram-bot-api');
 const sgMail = require('@sendgrid/mail');
 const TestBot = require('./TestBot');
+const { IS_TRAVIS_CI } = require('../../src/env');
+
+// TODO: https://github.com/gotois/ProstoDiary_bot/issues/106
+// TRAVIS удалить, когда перенесу все необходимые env на Travis
+const IS_FAST_TEST = Boolean(process.env.FAST_TEST);
+const skipTestForFastOrTravis = IS_FAST_TEST || IS_TRAVIS_CI ? test.skip : test;
+const skipTestForFast = IS_FAST_TEST ? test.skip : test;
 
 // This runs before all tests
 test.before(async (t) => {
@@ -67,7 +70,7 @@ test('/version', async (t) => {
   t.true(updates.result[0].message.text.startsWith(version));
 });
 
-(FAST_TEST ? test.skip : test)('vision', async (t) => {
+skipTestForFastOrTravis('vision', async (t) => {
   const visionService = require('../../src/services/vision.service');
   const buffer = fs.readFileSync('tests/data/photo/receipt-example-1.jpg');
   const result = await visionService.detect(buffer);
@@ -78,7 +81,7 @@ test('/version', async (t) => {
   t.is(typeof receipt === 'object', true);
 });
 
-test('Проверка считывания qr', async (t) => {
+skipTestForFast('Проверка считывания qr', async (t) => {
   const qr = require('../../src/services/qr.service');
   const buffer = fs.readFileSync('tests/data/photo/qr-example-1.jpg');
   const qrResult = await qr.readQR(buffer);
@@ -93,9 +96,26 @@ test('Проверка считывания qr', async (t) => {
   t.is(params.t, '20181228T1319');
 });
 
-test.todo('проверка КПП API nalog.ru');
+skipTestForFastOrTravis('КПП API nalog.ru', async (t) => {
+  t.timeout(5000);
+  const kpp = require('../../src/services/kpp.service');
+  const FN = '9286000100125664';
+  const FD = '967';
+  const FDP = '841348588';
+  const TYPE = '1';
+  const DATE = '20181228T1319';
+  const SUM = '299.90';
+  await kpp.checkKPP({ FN, FD, FDP, TYPE, DATE, SUM });
+  const kppData = await kpp.getKPPData({ FN, FD, FDP });
+  t.is(kppData.dateTime, '2018-12-28T13:19:00');
+  t.true(Array.isArray(kppData.items));
+  t.is(kppData.items[0].price, 14995);
+  t.is(kppData.items[0].quantity, 1);
+  t.is(kppData.items[0].sum, 14995);
+  t.is(kppData.totalSum, 29990);
+});
 
-(FAST_TEST ? test.skip : test)('voice', async (t) => {
+skipTestForFastOrTravis('voice', async (t) => {
   t.timeout(4000);
   const voiceService = require('../../src/services/voice.service');
   const buffer = fs.readFileSync('tests/data/voice/voice-example-1.ogg');
@@ -107,7 +127,7 @@ test.todo('проверка КПП API nalog.ru');
   t.is(text, 'тестовое сообщение');
 });
 
-(FAST_TEST ? test.skip : test)('/weather', async (t) => {
+skipTestForFast('/weather', async (t) => {
   t.timeout(1000);
   const weatherService = require('../../src/services/weather.service');
   const weatherInfo = await weatherService.getWeather({
@@ -124,8 +144,8 @@ test.todo('проверка КПП API nalog.ru');
   t.is(weatherInfo.weathercode, 800);
 });
 
-(FAST_TEST ? test.skip : test)('fatsecret', async (t) => {
-  t.timeout(1000);
+skipTestForFast('fatsecret', async (t) => {
+  t.timeout(2000);
   const foodService = require('../../src/services/food.service');
   const results = await foodService.search('Soup', 2);
   t.true(Array.isArray(results.foods.food));
@@ -141,7 +161,6 @@ test.todo('Создать отдельного пользователя в БД'
 test.todo('Проверка удаления своей записи');
 test.todo('Запись энтри');
 test.todo('Проверека построения графика');
-test.todo('Проверка голоса');
 test.todo('проверка скачивания архива');
 
 // This runs after all tests
@@ -153,10 +172,10 @@ test.after.always('guaranteed cleanup', async (t) => {
   if (t.context.testPassed) {
     return;
   }
-  if (FAST_TEST) {
+  if (IS_FAST_TEST) {
     return;
   }
-  if (process.env.CI === 'TRAVIS') {
+  if (IS_TRAVIS_CI) {
     return;
   }
   const failedTasks = Object.entries(t.context.tasks).map(([taskName]) => {
