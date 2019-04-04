@@ -9,12 +9,12 @@ const TelegramServer = require('telegram-test-api');
 const TelegramBot = require('node-telegram-bot-api');
 const sgMail = require('@sendgrid/mail');
 const TestBot = require('./TestBot');
-const { IS_TRAVIS_CI, IS_DEV, SENDGRID_API_KEY } = require('../../src/env');
+const { IS_CI, IS_DEV, SENDGRID } = require('../../src/env');
 
 // TODO: https://github.com/gotois/ProstoDiary_bot/issues/106
 // TRAVIS удалить, когда перенесу все необходимые env на Travis
 const IS_FAST_TEST = Boolean(process.env.FAST_TEST);
-const skipTestForFastOrTravis = IS_FAST_TEST || IS_TRAVIS_CI ? test.skip : test;
+const skipTestForFastOrTravis = IS_FAST_TEST || IS_CI ? test.skip : test;
 const skipTestForFast = IS_FAST_TEST ? test.skip : test;
 
 // This runs before all tests
@@ -61,7 +61,7 @@ test.after.always('guaranteed cleanup', async (t) => {
   if (IS_FAST_TEST) {
     return;
   }
-  if (IS_TRAVIS_CI) {
+  if (IS_CI) {
     return;
   }
   if (IS_DEV) {
@@ -74,7 +74,7 @@ test.after.always('guaranteed cleanup', async (t) => {
     return taskName;
   });
   t.log('Failed: ', failedTasks);
-  sgMail.setApiKey(SENDGRID_API_KEY);
+  sgMail.setApiKey(SENDGRID.SENDGRID_API_KEY);
   const msg = {
     to: maintainers[0].email,
     from: 'no-reply@gotointeractive.com',
@@ -88,10 +88,10 @@ test.after.always('guaranteed cleanup', async (t) => {
 test('/help', require('./help.test'));
 test('/version', require('./version.test'));
 
+skipTestForFast('request API', require('./request.test'));
 skipTestForFast('QR check', require('./qr.test'));
 skipTestForFast('Weather API', require('./weather.test'));
 skipTestForFast('Fatsecret API', require('./fatsecret.test'));
-skipTestForFast('request API', require('../e2e/request.test'));
 
 skipTestForFastOrTravis('Google Vision API', require('./vision.test'));
 skipTestForFastOrTravis('KPP nalog.ru API', require('./kpp.test'));

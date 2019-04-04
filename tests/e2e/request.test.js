@@ -6,5 +6,5 @@ module.exports = async (t) => {
   } = require('../../src/services/request.service');
   const siteBuffer = await get('https://gotointeractive.com');
   const html = siteBuffer.toString('utf8');
-  t.is(html.slice(0, 15), '<document html>');
+  t.is(html.slice(0, 15), '<!doctype html>');
 };

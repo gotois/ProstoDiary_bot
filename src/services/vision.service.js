@@ -1,7 +1,7 @@
 const vision = require('@google-cloud/vision');
-const { GOOGLE_CREDENTIALS_PARSED } = require('../env');
+const { GOOGLE } = require('../env');
 const client = new vision.ImageAnnotatorClient({
-  credentials: GOOGLE_CREDENTIALS_PARSED,
+  credentials: GOOGLE.GOOGLE_CREDENTIALS_PARSED,
 });
 /**
  * Performs label detection on the image file

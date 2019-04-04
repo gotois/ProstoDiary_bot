@@ -1,12 +1,12 @@
 const weather = require('openweather-apis');
-const { OPEN_WEATHER_KEY } = require('../env');
+const { OPEN_WEATHER } = require('../env');
 
 const LANG_RU = 'ru'; // TODO: брать из настроек env или telegram
 const UNITS = 'metric';
 
 weather.setLang(LANG_RU);
 weather.setUnits(UNITS);
-weather.setAPPID(OPEN_WEATHER_KEY);
+weather.setAPPID(OPEN_WEATHER.OPEN_WEATHER_KEY);
 /**
  * @param {weather} weather - openweather-apis instance
  * @returns {Promise<any>}

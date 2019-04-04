@@ -1,8 +1,8 @@
 const mm = require('music-metadata');
 const speech = require('@google-cloud/speech');
-const { GOOGLE_CREDENTIALS_PARSED } = require('../env');
+const { GOOGLE } = require('../env');
 const client = new speech.SpeechClient({
-  credentials: GOOGLE_CREDENTIALS_PARSED,
+  credentials: GOOGLE.GOOGLE_CREDENTIALS_PARSED,
 });
 /**
  * @param {string} mimeType - mime type

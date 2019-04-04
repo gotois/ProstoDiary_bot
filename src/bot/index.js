@@ -1,5 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
-const { IS_PRODUCTION, TOKEN, PORT, HEROKU_NAME } = require('../env');
+const { IS_PRODUCTION, IS_DEV, TELEGRAM, SERVER } = require('../env');
 /**
  * @type TelegramBot
  */
@@ -7,11 +7,11 @@ let bot;
 if (global.hasOwnProperty('bot')) {
   bot = global.bot;
 } else {
-  if (IS_PRODUCTION) {
-    bot = new TelegramBot(TOKEN, { webHook: { port: PORT } });
-    bot.setWebHook(`https://${HEROKU_NAME}.herokuapp.com/bot${TOKEN}`);
+  if (IS_PRODUCTION && !IS_DEV) {
+    bot = new TelegramBot(TELEGRAM.TOKEN, { webHook: { port: SERVER.PORT } });
+    bot.setWebHook(TELEGRAM.WEB_HOOK_URL);
   } else {
-    bot = new TelegramBot(TOKEN, { polling: true });
+    bot = new TelegramBot(TELEGRAM.TOKEN, { polling: true });
   }
 }
 

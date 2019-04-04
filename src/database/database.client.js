@@ -1,25 +1,22 @@
 const { Client } = require('pg');
-const {
-  IS_PRODUCTION,
-  user,
-  password,
-  host,
-  port,
-  database,
-} = require('../env');
+const { IS_PRODUCTION, DATABASE } = require('../env');
 /**
  * @see path отличается одним символом @
  */
-const client = (() => {
+const dbClient = (() => {
   if (IS_PRODUCTION) {
     return new Client(
-      `postgres://${user}:${password}.${host}:${port}/${database}`,
+      `postgres://${DATABASE.dbUser}:${DATABASE.password}.${DATABASE.dbHost}:${
+        DATABASE.dbPort
+      }/${DATABASE.dbName}`,
     );
   } else {
     return new Client(
-      `postgres://${user}:${password}@${host}:${port}/${database}`,
+      `postgres://${DATABASE.dbUser}:${DATABASE.password}@${DATABASE.dbHost}:${
+        DATABASE.dbPort
+      }/${DATABASE.dbName}`,
     );
   }
 })();
 
-module.exports = client;
+module.exports = dbClient;

@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const logger = require('../services/logger.service');
-const { SALT_PASSWORD } = require('../env');
+const { DATABASE } = require('../env');
 /**
  * @constant {string}
  */
@@ -15,7 +15,7 @@ const BITES_LENGTH = 16;
  */
 const encrypt = (text) => {
   const sha256 = crypto.createHash('sha256');
-  sha256.update(SALT_PASSWORD);
+  sha256.update(DATABASE.passwordSalt);
   // Initialization Vector
   const iv = crypto.randomBytes(BITES_LENGTH);
   const cipher = crypto.createCipheriv(ALGORITHM, sha256.digest(), iv);
@@ -28,7 +28,7 @@ const encrypt = (text) => {
  */
 const decrypt = (text) => {
   const sha256 = crypto.createHash('sha256');
-  sha256.update(SALT_PASSWORD);
+  sha256.update(DATABASE.passwordSalt);
   const input = new Buffer(text, 'base64');
   // Initialization Vector
   const iv = input.slice(0, BITES_LENGTH);

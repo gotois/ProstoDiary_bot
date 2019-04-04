@@ -1,10 +1,10 @@
 /* eslint-disable */
-const {GOOGLE_CREDENTIALS_PARSED} = require('../env');
+const { GOOGLE } = require('../env');
 const language = require('@google-cloud/language');
 
 // Instantiates a client
 const client = new language.LanguageServiceClient({
-  credentials: GOOGLE_CREDENTIALS_PARSED
+  credentials: GOOGLE.GOOGLE_CREDENTIALS_PARSED
 });
 
 // TEST

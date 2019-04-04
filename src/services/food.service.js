@@ -2,15 +2,15 @@
 // docs - https://platform.fatsecret.com/api/Default.aspx?screen=rapih
 const crypto = require('crypto');
 const request = require('request');
-const {
-  FAT_SECRET_API_ACCESS_KEY,
-  FAT_SECRET_API_SHARED_SECRET,
-} = require('../env');
+const { FAT_SECRET } = require('../env');
 const API_BASE = 'https://platform.fatsecret.com/rest/server.api';
 
 class FatSecret {
   constructor() {
-    if (!FAT_SECRET_API_ACCESS_KEY || !FAT_SECRET_API_SHARED_SECRET) {
+    if (
+      !FAT_SECRET.FAT_SECRET_API_ACCESS_KEY ||
+      !FAT_SECRET.FAT_SECRET_API_SHARED_SECRET
+    ) {
       throw new Error('FAT_SECRET ENV not found');
     }
   }
@@ -51,7 +51,7 @@ class FatSecret {
     params['oauth_signature_method'] = 'HMAC-SHA1';
     params['oauth_nonce'] = crypto.randomBytes(10).toString('HEX');
     params['oauth_timestamp'] = Math.floor(new Date().getTime() / 1000);
-    params['oauth_consumer_key'] = FAT_SECRET_API_ACCESS_KEY;
+    params['oauth_consumer_key'] = FAT_SECRET.FAT_SECRET_API_ACCESS_KEY;
     const query = ((str = '') => {
       // build the sorted key value pair string that will be used for the hmac and request
       Object.keys(params)
@@ -62,7 +62,10 @@ class FatSecret {
       return str.substr(1); // remove first &
     })();
     // generate the hmac
-    const mac = crypto.createHmac('sha1', FAT_SECRET_API_SHARED_SECRET + '&');
+    const mac = crypto.createHmac(
+      'sha1',
+      FAT_SECRET.FAT_SECRET_API_SHARED_SECRET + '&',
+    );
     mac.update(
       'GET&' + encodeURIComponent(API_BASE) + '&' + encodeURIComponent(query),
     );

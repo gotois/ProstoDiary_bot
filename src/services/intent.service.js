@@ -3,14 +3,11 @@ const { detectLang, getLangCode } = require('./detect-language.service');
 const { formatQuery } = require('./text.service');
 const { getProductInfo } = require('./products.service');
 const INTENTS = require('../intents');
-const {
-  DIALOGFLOW_PROJECT_ID,
-  DIALOGFLOW_CREDENTIALS_PARSED,
-} = require('../env');
+const { DIALOGFLOW } = require('../env');
 // const language = require('../services/language.service');
 
 const sessionClient = new dialogflow.SessionsClient({
-  credentials: DIALOGFLOW_CREDENTIALS_PARSED,
+  credentials: DIALOGFLOW.DIALOGFLOW_CREDENTIALS,
 });
 /**
  * Send request and log result
@@ -22,7 +19,7 @@ const sessionClient = new dialogflow.SessionsClient({
 const detectTextIntent = async ({ sessionId, query }) => {
   const languageCode = getLangCode(detectLang(query));
   const sessionPath = sessionClient.sessionPath(
-    DIALOGFLOW_PROJECT_ID,
+    DIALOGFLOW.DIALOGFLOW_PROJECT_ID,
     sessionId,
   );
   const request = {

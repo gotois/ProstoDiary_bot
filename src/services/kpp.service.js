@@ -1,9 +1,4 @@
-const {
-  NALOGRU_EMAIL,
-  NALOGRU_NAME,
-  NALOGRU_PHONE,
-  NALOGRU_KP_PASSWORD,
-} = require('../env');
+const { NALOGRU } = require('../env');
 const logger = require('./logger.service');
 const { get, post } = require('./request.service');
 // TODO: (нужен отдельный мидлварь для фейковых данных)
@@ -19,9 +14,9 @@ const nalogRuSignUp = async () => {
   const res = await post(
     'https://proverkacheka.nalog.ru:8888/v1/mobile/users/signup',
     {
-      name: NALOGRU_NAME,
-      email: NALOGRU_EMAIL,
-      phone: NALOGRU_PHONE,
+      name: NALOGRU.NALOGRU_NAME,
+      email: NALOGRU.NALOGRU_EMAIL,
+      phone: NALOGRU.NALOGRU_PHONE,
     },
   );
   return res;
@@ -56,7 +51,9 @@ const checkKPP = async ({ FN, FD, FDP, TYPE, DATE, SUM }) => {
  */
 const getKPPData = async ({ FN, FD, FDP }) => {
   const data = await get(
-    `https://${NALOGRU_PHONE}:${NALOGRU_KP_PASSWORD}@proverkacheka.nalog.ru:9999/v1/inns/*/kkts/*/fss/${FN}/tickets/${FD}?fiscalSign=${FDP}&sendToEmail=${'no'}`,
+    `https://${NALOGRU.NALOGRU_PHONE}:${
+      NALOGRU.NALOGRU_KP_PASSWORD
+    }@proverkacheka.nalog.ru:9999/v1/inns/*/kkts/*/fss/${FN}/tickets/${FD}?fiscalSign=${FDP}&sendToEmail=${'no'}`,
     {
       'Device-Id': DEVICE_ID,
       'Device-OS': DEVICE_OS,

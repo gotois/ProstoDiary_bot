@@ -2,6 +2,7 @@
  * @type {Object}
  */
 module.exports = {
+  PING: /^\/ping$/,
   DOWNLOAD: /^\/download$/,
   DB_CLEAR: /^\/dbclear$/,
   START: /^\/start$/,

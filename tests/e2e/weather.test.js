@@ -12,5 +12,4 @@ module.exports = async (t) => {
   t.true(weatherInfo.hasOwnProperty('rain'));
   t.true(weatherInfo.hasOwnProperty('temp'));
   t.true(weatherInfo.hasOwnProperty('weathercode'));
-  t.is(weatherInfo.weathercode, 800);
 };
