@@ -9,20 +9,6 @@ const {
   getKPPData,
 } = require('../services/kpp.service');
 /**
- * @param {Object} visionResult - vision result
- * @returns {boolean}
- */
-const isQR = (visionResult) => {
-  return visionResult.labelAnnotations.some(({ description }) => {
-    // TODO: сделать более строгую и правильную проверку
-    return (
-      description === 'Text' ||
-      description === 'Receipt' ||
-      description === 'Pattern'
-    );
-  });
-};
-/**
  * @description Работа с QR
  * @param {Object} msg - message
  * @param {Object} msg.chat - chat
@@ -40,8 +26,8 @@ const onPhoto = async ({ chat, /*date, from, message_id,*/ photo }) => {
   const buffer = await get(
     `https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`,
   );
-  const visionResult = await visionService.detect(buffer);
-  if (!isQR(visionResult)) {
+  const visionResult = await visionService.webDetection(buffer);
+  if (!visionService.isQR(visionResult)) {
     await bot.sendMessage(chatId, 'QR not found');
     return;
   }

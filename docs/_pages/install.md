@@ -7,6 +7,7 @@ permalink: /install/
 Server Environments (needs update file .env in root project)
 ---
 ```
+NODE_ENV={ production|development|TRAVIS_CI }
 TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
 HEROKU_NAME={ Your heroku server name }
 SALT_PASSWORD={ User salt password }

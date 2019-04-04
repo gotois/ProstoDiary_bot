@@ -7,6 +7,13 @@ node_js:
 env:
   - NODE_ENV=TRAVIS_CI
 
+notifications:
+  email:
+    recipients:
+      - denis@baskovsky.ru
+    on_success: never
+    on_failure: always
+
 git:
   depth: 10
   quiet: true

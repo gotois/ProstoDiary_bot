@@ -82,4 +82,8 @@ module.exports = {
   get IS_TRAVIS_CI() {
     return String(NODE_ENV) === 'TRAVIS_CI';
   },
+
+  get IS_DEV() {
+    return !NODE_ENV || String(NODE_ENV) === 'development';
+  },
 };
