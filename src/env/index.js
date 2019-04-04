@@ -80,7 +80,9 @@ module.exports = {
     GOOGLE_MAPS_GEOCODING_API,
     get GOOGLE_CREDENTIALS_PARSED() {
       if (!GOOGLE_APPLICATION_CREDENTIALS) {
-        throw new Error('GOOGLE_APPLICATION_CREDENTIALS is not initialized');
+        throw new Error(
+          'Env error: GOOGLE_APPLICATION_CREDENTIALS is not initialized',
+        );
       }
       return JSON.parse(GOOGLE_APPLICATION_CREDENTIALS);
     },
@@ -89,7 +91,7 @@ module.exports = {
     DIALOGFLOW_PROJECT_ID,
     get DIALOGFLOW_CREDENTIALS() {
       if (!DIALOGFLOW_CREDENTIALS) {
-        throw new Error('DIALOGFLOW_CREDENTIALS is not initialized');
+        throw new Error('Env error: DIALOGFLOW_CREDENTIALS is not initialized');
       }
       return JSON.parse(DIALOGFLOW_CREDENTIALS);
     },

@@ -3,3 +3,8 @@ codecov:
 
 ignore:
   - "tests/"
+  - "ava.config.js"
+
+parsers:
+  javascript:
+    enable_partials: yes
