@@ -10,7 +10,6 @@ const TelegramBot = require('node-telegram-bot-api');
 const sgMail = require('@sendgrid/mail');
 const TestBot = require('./TestBot');
 const { IS_CI, IS_DEV, SENDGRID } = require('../../src/env');
-
 // TODO: https://github.com/gotois/ProstoDiary_bot/issues/106
 // TRAVIS удалить, когда перенесу все необходимые env на Travis
 const IS_FAST_TEST = Boolean(process.env.FAST_TEST);
@@ -21,6 +20,11 @@ const skipTestForFast = IS_FAST_TEST ? test.skip : test;
 test.before(async (t) => {
   if (IS_FAST_TEST) {
     t.log('IS FAST TEST');
+  }
+  // TODO: для dev запускаем дев сервак. В дальнейшем включить полноценно для E2E - https://github.com/gotois/ProstoDiary_bot/issues/3
+  if (IS_DEV) {
+    const dbClient = require('./../../src/database/database.client');
+    await dbClient.connect();
   }
   const token = 'sampleToken';
   const server = new TelegramServer({
@@ -85,8 +89,24 @@ test.after.always('guaranteed cleanup', async (t) => {
   t.true(mailResult.statusCode >= 200 && mailResult.statusCode < 300);
 });
 
-test('/help', require('./help.test'));
-test('/version', require('./version.test'));
+skipTestForFastOrTravis('DB:Foods', async (t) => {
+  const dbFoods = require('./../../src/database/database.foods');
+  const { rows } = await dbFoods.get('actimel ');
+  if (IS_DEV) {
+    t.log(rows);
+  }
+  t.true(Array.isArray(rows));
+  t.true(rows.length > 0);
+  const [firstRow] = rows;
+  t.true(firstRow.hasOwnProperty('title'));
+  t.true(firstRow.hasOwnProperty('fat'));
+  t.true(firstRow.hasOwnProperty('kcal'));
+  t.true(firstRow.hasOwnProperty('protein'));
+  t.true(firstRow.hasOwnProperty('carbohydrate'));
+});
+
+skipTestForFast('/help', require('./help.test'));
+skipTestForFast('/version', require('./version.test'));
 
 skipTestForFast('request API', require('./request.test'));
 skipTestForFast('QR check', require('./qr.test'));

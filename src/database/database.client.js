@@ -10,13 +10,12 @@ const dbClient = (() => {
         DATABASE.dbPort
       }/${DATABASE.dbName}`,
     );
-  } else {
-    return new Client(
-      `postgres://${DATABASE.dbUser}:${DATABASE.password}@${DATABASE.dbHost}:${
-        DATABASE.dbPort
-      }/${DATABASE.dbName}`,
-    );
   }
+  return new Client(
+    `postgres://${DATABASE.dbUser}:${DATABASE.password}@${DATABASE.dbHost}:${
+      DATABASE.dbPort
+    }/${DATABASE.dbName}`,
+  );
 })();
 
 module.exports = dbClient;

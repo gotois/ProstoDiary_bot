@@ -1,5 +1,5 @@
 const dialogflow = require('dialogflow');
-const { detectLang, getLangCode } = require('./detect-language.service');
+const { getLangCodeFromQuery } = require('./detect-language.service');
 const { formatQuery } = require('./text.service');
 const { getProductInfo } = require('./products.service');
 const INTENTS = require('../intents');
@@ -17,7 +17,7 @@ const sessionClient = new dialogflow.SessionsClient({
  * @returns {Promise<Array>}
  */
 const detectTextIntent = async ({ sessionId, query }) => {
-  const languageCode = getLangCode(detectLang(query));
+  const languageCode = getLangCodeFromQuery(query);
   const sessionPath = sessionClient.sessionPath(
     DIALOGFLOW.DIALOGFLOW_PROJECT_ID,
     sessionId,

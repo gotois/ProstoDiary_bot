@@ -103,6 +103,8 @@ module.exports = {
     return String(NODE_ENV) === 'TRAVIS_CI';
   },
   get IS_DEV() {
-    return !NODE_ENV || String(NODE_ENV) === 'development';
+    const isAvaTest = String(NODE_ENV) === 'test';
+    const isDevelopmentRun = String(NODE_ENV) === 'development';
+    return !NODE_ENV || isDevelopmentRun || isAvaTest;
   },
 };

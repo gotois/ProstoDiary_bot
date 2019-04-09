@@ -7,6 +7,9 @@ const client = require('./database.client.js');
  */
 module.exports = (query, params = []) => {
   return new Promise((resolve, reject) => {
+    if (!client._connected) {
+      return reject('Database not connected!');
+    }
     client.query(query, params, (error, result) => {
       if (error) {
         return reject(error);
