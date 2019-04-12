@@ -1,7 +1,6 @@
 const dialogflow = require('dialogflow');
 const { getLangCodeFromQuery } = require('./detect-language.service');
 const { formatQuery } = require('./text.service');
-const { getProductInfo } = require('./products.service');
 const INTENTS = require('../intents');
 const { DIALOGFLOW } = require('../env');
 // const language = require('../services/language.service');
@@ -36,12 +35,13 @@ const detectTextIntent = async ({ sessionId, query }) => {
 };
 /**
  * TODO: получаю имя и значение Intent
+ * TODO: нужно покрыть тестами
  * на основе этого делаю записи в нужные части БД (сохраняя при этом стандартный rawMsg)
  *
  * @param {Array} responses - responses array
  * @returns {string}
  */
-const processResponse = async (responses) => {
+const processResponse = (responses) => {
   for (const res of responses) {
     const result = res.queryResult;
 
@@ -58,9 +58,10 @@ const processResponse = async (responses) => {
           let outMessage = result.fulfillmentText;
           for (const eatValue of result.parameters.fields.Food.listValue
             .values) {
-            const res = await getProductInfo(eatValue.stringValue);
-            outMessage +=
-              '\n' + eatValue.stringValue + ':' + JSON.stringify(res);
+            // TODO: брать значения из database.foods;
+            // заменить stringify
+            // console.log(eatValue.stringValue)
+            outMessage += '\n' + eatValue.stringValue;
           }
           return outMessage;
         }

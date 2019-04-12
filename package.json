@@ -73,13 +73,13 @@
     "dotenv": "~7.0.0",
     "franc": "~4.0.0",
     "jimp": "~0.6.1",
+    "jsqr": "~1.2.0",
     "music-metadata": "~3.5.3",
     "node-native-zip": "~1.1.0",
     "node-telegram-bot-api": "~0.30.0",
     "openweather-apis": "~4.0.0",
     "pg": "~7.9.0",
     "plotly": "~1.0.6",
-    "qrcode-reader": "~1.0.4",
     "winston": "~3.2.1"
   },
   "devDependencies": {

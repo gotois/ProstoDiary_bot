@@ -38,6 +38,39 @@ const getImgOpts = () => {
   };
 };
 /**
+ * @param {Array} entryRows - rows
+ * @param {Array} rangeTimes - rangeTimes
+ * @returns {Promise<undefined>}
+ */
+const createPhotoBuffer = async (entryRows, rangeTimes) => {
+  const trace = createTrace();
+  if (!entryRows.length) {
+    throw new Error('Нет данных для построения графика');
+  }
+  rangeTimes.forEach((_date) => {
+    const findedCount = entryRows.filter(({ date }) => {
+      return date.toLocaleDateString() === _date.toLocaleDateString();
+    });
+    const x = _date.toLocaleDateString();
+    const y = findedCount.length;
+    const xIndex = trace.x.findIndex((_x) => {
+      return _x === x;
+    });
+    if (xIndex < 0) {
+      trace.x.push(x);
+      trace.y.push(y);
+    } else {
+      ++trace.y[xIndex];
+    }
+  });
+  const figure = { data: [trace] };
+  const imgOpts = getImgOpts();
+  // TODO: если потребуется удаление графиков использовать `return plot.deletePlot('0');`
+  const photoBuffer = await plot.getImageBuffer(figure, imgOpts);
+  return photoBuffer;
+};
+
+/**
  * Построить график
  *
  * @param {Object} msg - message
@@ -55,38 +88,15 @@ const getGraph = async ({ chat, from, text }) => {
     .trim()
     .toLowerCase();
   const regExp = createRegexInput(input);
-  const trace = createTrace();
   try {
     const { rows } = await dbEntries.getAll(currentUser.id);
     const entryRows = decodeRows(rows).filter(({ entry }) => {
       return regExp.test(entry.toLowerCase());
     });
-    if (!entryRows.length) {
-      throw new Error('Нет данных для построения графика');
-    }
     const firstDate = rows[0].date_added;
     const latestDate = rows[rows.length - 1].date_added;
     const rangeTimes = datetime.fillRangeTimes(firstDate, latestDate);
-    rangeTimes.forEach((_date) => {
-      const findedCount = entryRows.filter(({ date }) => {
-        return date.toLocaleDateString() === _date.toLocaleDateString();
-      });
-      const x = _date.toLocaleDateString();
-      const y = findedCount.length;
-      const xIndex = trace.x.findIndex((_x) => {
-        return _x === x;
-      });
-      if (xIndex < 0) {
-        trace.x.push(x);
-        trace.y.push(y);
-      } else {
-        ++trace.y[xIndex];
-      }
-    });
-    const figure = { data: [trace] };
-    const imgOpts = getImgOpts();
-    // TODO: если потребуется удаление графиков использовать `return plot.deletePlot('0');`
-    const photoBuffer = await plot.getImageBuffer(figure, imgOpts);
+    const photoBuffer = await createPhotoBuffer(entryRows, rangeTimes);
     await bot.sendPhoto(chatId, photoBuffer, {
       caption: `График для "${regExp.toString()}"`,
       parse_mode: 'Markdown',

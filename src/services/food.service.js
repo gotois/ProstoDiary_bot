@@ -86,6 +86,9 @@ module.exports = {
     });
   },
   search(searchExpression = '', maxResults = 1) {
+    searchExpression = searchExpression.trim();
+    // TODO: сначала использовать возможности БД foods
+
     return fatSecret.request({
       method: 'foods.search',
       search_expression: searchExpression,

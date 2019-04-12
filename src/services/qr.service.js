@@ -1,4 +1,4 @@
-const QrCode = require('qrcode-reader');
+const jsQR = require('jsqr');
 const Jimp = require('jimp');
 /**
  * @param {Buffer} buffer - buffer
@@ -11,15 +11,22 @@ const readQR = (buffer) => {
         reject(error);
         return;
       }
-      const qr = new QrCode();
-      qr.callback = (error, value) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve(value.result);
-      };
-      qr.decode(image.bitmap);
+      const MAX_SIZE = 640;
+      if (image.bitmap.width > MAX_SIZE || image.bitmap.height > MAX_SIZE) {
+        image = image.contain(MAX_SIZE, MAX_SIZE).autocrop({
+          cropOnlyFrames: false,
+          cropSymmetric: true,
+        });
+      }
+      const qrValue = jsQR(
+        image.bitmap.data,
+        image.bitmap.width,
+        image.bitmap.height,
+      );
+      if (!qrValue) {
+        reject('qr not found');
+      }
+      resolve(qrValue.data);
     });
   });
 };

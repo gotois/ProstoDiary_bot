@@ -37,7 +37,10 @@ const isQR = (visionResult) => {
   return visionResult.labelAnnotations.some(({ description }) => {
     const descriptionLowerCase = description.toLowerCase();
     return (
-      descriptionLowerCase === 'qr code' || descriptionLowerCase === 'code'
+      descriptionLowerCase === 'qr code' ||
+      descriptionLowerCase === 'code' ||
+      descriptionLowerCase === 'text' ||
+      descriptionLowerCase === 'font'
     );
   });
 };

@@ -21,6 +21,11 @@ npm run package-upgrade
 
 Usage
 ---
+Fix lint:
+```bash
+npm run lint -- --fix
+```
+
 Checking Unit tests:
 ```bash
 npm run unit
