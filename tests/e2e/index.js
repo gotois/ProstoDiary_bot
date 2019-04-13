@@ -24,7 +24,10 @@ test.before(async (t) => {
   // TODO: для dev запускаем дев сервак. В дальнейшем включить полноценно для E2E - https://github.com/gotois/ProstoDiary_bot/issues/3
   if (IS_DEV) {
     const dbClient = require('./../../src/database/database.client');
-    await dbClient.connect();
+    await t.notThrowsAsync(async () => {
+      await dbClient.connect();
+    });
+    t.true(dbClient._connected);
   }
   const token = 'sampleToken';
   const server = new TelegramServer({

@@ -8,14 +8,14 @@ Server Environments (needs update file .env in root project)
 ---
 ```
 NODE_ENV={ production|development|TRAVIS_CI|test }
-TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
-HEROKU_NAME={ Your heroku server name }
+TELEGRAM_TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
+SERVER_NAME={ Your heroku server name }
 SALT_PASSWORD={ User salt password }
-HOST={ database host }
-DATABASE={ database name }
-DB_USER={ database username }
-DBPORT={ database port }
-PASSWORD={ database password }
+DB_HOST={ database host }
+DB_NAME={ database name }
+DB_USER_NAME={ database username }
+DB_PORT={ database port }
+DB_PASSWORD={ database password }
 
 # Optional variables
 PLOTLY_LOGIN={ plotly login }
@@ -45,7 +45,5 @@ Setup PostgreSQL 10.2+
 ---
 ```
 * Create database ProstoDiaryDB
-* Grant roles > SQL/roles.sql
-* Create user table > SQL/table_users.sql
-* Create entries table > SQL/table_entries.sql
+* Import Foods table from data/database/tables/foods.csv
 ```

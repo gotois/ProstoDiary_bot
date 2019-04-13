@@ -1,40 +1,51 @@
 const {
   NODE_ENV,
-  HOST, // TODO: rename -> DB_HOST
-  DATABASE, // TODO: rename -> DB_NAME
-  DB_USER, // TODO: rename -> DB_USER_NAME
-  DBPORT, // TODO: rename -> DB_PORT
-  PASSWORD, // TODO: rename -> DB_PASSWORD
+
+  DB_HOST,
+  DB_NAME,
+  DB_USER_NAME,
+  DB_PORT,
+  DB_PASSWORD,
+  SALT_PASSWORD,
+
   CORALOGIX_WINSTON_PRIVATE_KEY,
   CORALOGIX_WINSTON_APPLICATION_NAME,
+
   GOOGLE_APPLICATION_CREDENTIALS,
-  TOKEN, // TODO: rename -> TELEGRAM_TOKEN
+  GOOGLE_MAPS_GEOCODING_API,
+
+  TELEGRAM_TOKEN,
+
   PORT,
-  HEROKU_NAME, // TODO: rename -> SERVER_NAME
+  SERVER_NAME,
+
   DIALOGFLOW_CREDENTIALS,
   DIALOGFLOW_PROJECT_ID,
-  GOOGLE_MAPS_GEOCODING_API,
+
   PLOTLY_LOGIN,
   PLOTLY_TOKEN,
-  SALT_PASSWORD,
+
   NALOGRU_EMAIL,
   NALOGRU_NAME,
   NALOGRU_PHONE,
   NALOGRU_KP_PASSWORD,
+
   FAT_SECRET_APPNAME,
   FAT_SECRET_API_ACCESS_KEY,
   FAT_SECRET_API_SHARED_SECRET,
+
   SENDGRID_API_KEY,
+
   OPEN_WEATHER_KEY,
 } = process.env;
 
 module.exports = {
   DATABASE: {
-    dbHost: HOST,
-    dbName: DATABASE,
-    dbUser: DB_USER,
-    dbPort: DBPORT,
-    password: PASSWORD,
+    dbHost: DB_HOST,
+    dbName: DB_NAME,
+    dbUser: DB_USER_NAME,
+    dbPort: DB_PORT,
+    password: DB_PASSWORD,
     get passwordSalt() {
       return SALT_PASSWORD;
     },
@@ -44,12 +55,12 @@ module.exports = {
     CORALOGIX_WINSTON_APPLICATION_NAME,
   },
   TELEGRAM: {
-    TOKEN,
+    TOKEN: TELEGRAM_TOKEN,
     get WEB_HOOK_URL() {
-      if (!HEROKU_NAME || !TOKEN) {
-        throw new Error('Env error: HEROKU_NAME or TOKEN not found');
+      if (!SERVER_NAME || !TELEGRAM_TOKEN) {
+        throw new Error('Env error: SERVER_NAME or TOKEN not found');
       }
-      return `https://${HEROKU_NAME}.herokuapp.com/bot${TOKEN}`;
+      return `https://${SERVER_NAME}.herokuapp.com/bot${TELEGRAM_TOKEN}`;
     },
   },
   SERVER: {

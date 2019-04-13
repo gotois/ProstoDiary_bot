@@ -3,7 +3,7 @@ import test from 'ava';
 // TODO: переделать под cross-env
 process.env.SALT_PASSWORD = '123456';
 process.env.NODE_ENV = 'production';
-process.env.TOKEN = '123456';
+process.env.TELEGRAM_TOKEN = '123456';
 
 test('database config', require('./dbconfig.test'));
 test('logger', require('./log.test'));
