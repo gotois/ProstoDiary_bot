@@ -17,5 +17,35 @@ const dbClient = (() => {
     }/${DATABASE.dbName}`,
   );
 })();
+/**
+ * @param {string} query - query
+ * @param {Array|undefined} params - params
+ * @returns {Promise}
+ */
+const $$ = (query, params = []) => {
+  return new Promise((resolve, reject) => {
+    if (!dbClient._connected) {
+      return reject('Database not connected!');
+    }
+    dbClient.query(query, params, (error, result) => {
+      if (error) {
+        return reject(error);
+      }
+      // Check available updating
+      switch (result.command) {
+        case 'UPDATE': {
+          if (!result.rowCount) {
+            return reject('Update error');
+          }
+          break;
+        }
+      }
+      return resolve(result);
+    });
+  });
+};
 
-module.exports = dbClient;
+module.exports = {
+  dbClient,
+  $$,
+};

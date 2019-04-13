@@ -1,10 +1,10 @@
 // const nlp = require('compromise');
-const sessions = require('../services/session.service');
 const bot = require('../bot');
+const sessions = require('../services/session.service');
 const crypt = require('../services/crypt.service');
 const format = require('../services/format.service');
 const commands = require('../commands');
-const dbEntries = require('../database');
+const dbEntries = require('../database/database.entities');
 const logger = require('../services/logger.service');
 const { inputAnalyze } = require('../services/intent.service');
 const { spellText } = require('../services/speller.service');

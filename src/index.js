@@ -23,6 +23,7 @@ const initBot = () => {
 };
 /**
  * connect DB
+ *
  * @returns {Promise<undefined>}
  */
 const dbConnect = async () => {
@@ -31,7 +32,8 @@ const dbConnect = async () => {
   }
 };
 /**
- * start Telegram Bot
+ * Start Telegram Bot
+ *
  * @param {number} _reconnectCount - reconnectCount
  * @returns {Promise<Object>}
  */

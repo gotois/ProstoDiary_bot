@@ -1,7 +1,7 @@
-const dbEntries = require('../database');
+const bot = require('../bot');
+const dbEntries = require('../database/database.entities');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
-const bot = require('../bot');
 const { decodeRows } = require('../services/format.service');
 const {
   createRegexInput,

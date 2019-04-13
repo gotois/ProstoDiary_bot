@@ -1,4 +1,4 @@
-const $$ = require('./database.promise.js');
+const { $$ } = require('./database.client');
 const { getPostgresLangCode } = require('../services/detect-language.service');
 /**
  *
@@ -9,8 +9,7 @@ const _get = (title) => {
   const lang = getPostgresLangCode(title);
   return $$(
     `SELECT id, title, protein, fat, carbohydrate, kcal FROM Foods
-       WHERE to_tsvector($2, title) @@ plainto_tsquery($2, $1);
-    `,
+     WHERE to_tsvector($2, title) @@ plainto_tsquery($2, $1);`,
     [title, lang],
   );
 };

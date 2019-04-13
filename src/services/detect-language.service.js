@@ -15,20 +15,6 @@ const RUS = 'rus';
  */
 const UNDEFINED = 'und';
 /**
- * @param {string} francCode - code
- * @returns {string}
- */
-const getLangCode = (francCode) => {
-  switch (francCode) {
-    case RUS: {
-      return 'ru';
-    }
-    default: {
-      return 'en';
-    }
-  }
-};
-/**
  * @param {string} query - query
  * @returns {string}
  */
@@ -46,13 +32,19 @@ const detectLang = (query) => {
   return lang;
 };
 /**
- * TODO: rename getDialogFlowLangCode
- *
  * @param {string} query - query
  * @returns {string}
  */
-const getLangCodeFromQuery = (query) => {
-  return getLangCode(detectLang(query));
+const getDialogFlowLangCodeFromQuery = (query) => {
+  const langCode = detectLang(query);
+  switch (langCode) {
+    case RUS: {
+      return 'ru';
+    }
+    default: {
+      return 'en';
+    }
+  }
 };
 /**
  * @param {string} query - query
@@ -72,8 +64,7 @@ const getPostgresLangCode = (query) => {
 
 module.exports = {
   detectLang,
-  getLangCode,
-  getLangCodeFromQuery,
+  getDialogFlowLangCodeFromQuery,
   getPostgresLangCode,
   languages: {
     ENG,

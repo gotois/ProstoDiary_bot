@@ -1,5 +1,5 @@
 const dialogflow = require('dialogflow');
-const { getLangCodeFromQuery } = require('./detect-language.service');
+const { getDialogFlowLangCodeFromQuery } = require('./detect-language.service');
 const { formatQuery } = require('./text.service');
 const INTENTS = require('../intents');
 const { DIALOGFLOW } = require('../env');
@@ -11,12 +11,12 @@ const sessionClient = new dialogflow.SessionsClient({
 /**
  * Send request and log result
  *
- * @param {string} sessionId - session id
  * @param {string} query - query
  * @returns {Promise<Array>}
  */
-const detectTextIntent = async ({ sessionId, query }) => {
-  const languageCode = getLangCodeFromQuery(query);
+const detectTextIntent = async (query) => {
+  const sessionId = 'quickstart-session-id'; // TODO: into env
+  const languageCode = getDialogFlowLangCodeFromQuery(query);
   const sessionPath = sessionClient.sessionPath(
     DIALOGFLOW.DIALOGFLOW_PROJECT_ID,
     sessionId,
@@ -89,17 +89,16 @@ const processResponse = (responses) => {
 /**
  * получаем и разбираем Intent (если есть)
  *
- * TODO: на основе Intent'a делаем различные предположения и записываем в БД в структурированном виде
- * анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
- * await language.analyze(input);
- *
- * @param {string} rawMsg - купил овощи 30 рублей
+ * @example inputAnalyze('купил овощи 30 рублей')
+ * @param {string} rawMsg - raw message
  * @returns {Promise<string>}
  */
 const inputAnalyze = async (rawMsg) => {
-  const sessionId = 'quickstart-session-id';
+  // TODO: на основе Intent'a делаем различные предположения и записываем в БД в структурированном виде
+  // * анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
+  // * await language.analyze(input);
   const query = formatQuery(rawMsg);
-  const responses = await detectTextIntent({ sessionId, query });
+  const responses = await detectTextIntent(query);
   const res = await processResponse(responses);
   return res;
 };

@@ -2,7 +2,7 @@ module.exports = (t) => {
   const {
     detectLang,
     getPostgresLangCode,
-    getLangCodeFromQuery,
+    getDialogFlowLangCodeFromQuery,
     languages,
   } = require('../../src/services/detect-language.service');
   const engText1 = detectLang('Are you ready?');
@@ -20,10 +20,10 @@ module.exports = (t) => {
   const undText = detectLang('123123132');
   t.is(undText, languages.UNDEFINED);
 
-  const ruTestFromQuery = getLangCodeFromQuery('привет мир');
+  const ruTestFromQuery = getDialogFlowLangCodeFromQuery('привет мир');
   t.is(ruTestFromQuery, 'ru');
 
-  const enTestFromQuery = getLangCodeFromQuery('hello world');
+  const enTestFromQuery = getDialogFlowLangCodeFromQuery('hello world');
   t.is(enTestFromQuery, 'en');
 
   const rusPostgresQuery = getPostgresLangCode('привет мир');
