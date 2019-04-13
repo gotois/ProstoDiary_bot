@@ -34,6 +34,7 @@ const objectLocalization = async (image) => {
  * @returns {boolean}
  */
 const isQR = (visionResult) => {
+  // TODO: поддержать также поиск через objectLocalization и webDetection.
   return visionResult.labelAnnotations.some(({ description }) => {
     const descriptionLowerCase = description.toLowerCase();
     return (

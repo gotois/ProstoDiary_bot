@@ -23,10 +23,12 @@ const onPhoto = async ({ chat, /*date, from, message_id,*/ photo }) => {
     throw new Error('Wrong file');
   }
   const fileInfo = await bot.getFile(mediumPhoto.file_id);
+  // TODO: сделать обертку для выбора файла из телеграм
   const buffer = await get(
     `https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`,
   );
-  const visionResult = await visionService.webDetection(buffer);
+  // TODO: нужно обернуть в try/catch
+  const visionResult = await visionService.labelDetection(buffer);
   if (!visionService.isQR(visionResult)) {
     await bot.sendMessage(chatId, 'QR not found');
     return;
@@ -35,7 +37,7 @@ const onPhoto = async ({ chat, /*date, from, message_id,*/ photo }) => {
     const qrResult = await qr.readQR(buffer);
     const params = qr.getParams(qrResult);
     // STEP 1 - авторизуемся
-    // todo: uncomment this if getKPPData doesn't work
+    // TODO: uncomment this if getKPPData doesn't work
     // await nalogRuSignUp()
 
     // STEP 2 - проверяем чек (необходимо чтобы избежать ошибки illegal api)
