@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const logger = require('../services/logger.service');
+const logger = require('../services/logger.service'); // TODO: в сервисах не должно быть логирования
 const { DATABASE } = require('../env');
 /**
  * @constant {string}

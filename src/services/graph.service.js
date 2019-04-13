@@ -1,7 +1,7 @@
 const { PLOTLY } = require('../env');
 const plotly = require('plotly')(PLOTLY.PLOTLY_LOGIN, PLOTLY.PLOTLY_TOKEN);
 const { Writable } = require('stream');
-const logger = require('../services/logger.service');
+const logger = require('../services/logger.service'); // TODO: в сервисах не должно быть логирования
 /**
  * @param {Object} figure - figure
  * @param {Object} options - options object

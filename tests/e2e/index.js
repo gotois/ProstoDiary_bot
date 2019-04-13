@@ -23,11 +23,11 @@ test.before(async (t) => {
   }
   // TODO: для dev запускаем дев сервак. В дальнейшем включить полноценно для E2E - https://github.com/gotois/ProstoDiary_bot/issues/3
   if (IS_DEV) {
-    const dbClient = require('./../../src/database/database.client');
+    const dbClient = require('../../src/database/index');
     await t.notThrowsAsync(async () => {
-      await dbClient.connect();
+      await dbClient.client.connect();
     });
-    t.true(dbClient._connected);
+    t.true(dbClient.client._connected);
   }
   const token = 'sampleToken';
   const server = new TelegramServer({
@@ -99,16 +99,16 @@ skipTestForFastOrTravis(
 
 skipTestForFast('/help', require('./help.test'));
 skipTestForFast('/version', require('./version.test'));
-
-skipTestForFast('request API', require('./request.test'));
 skipTestForFast('QR check', require('./qr.test'));
-skipTestForFast('Weather API', require('./weather.test'));
-skipTestForFast('Fatsecret API', require('./fatsecret.test'));
+skipTestForFast('API: request', require('./request.test'));
+skipTestForFast('API: Weather', require('./weather.test'));
+skipTestForFast('API: RestContries', require('./restcountries.test'));
 
-skipTestForFastOrTravis('Google Vision API', require('./vision.test'));
-skipTestForFastOrTravis('KPP nalog.ru API', require('./kpp.test'));
+skipTestForFastOrTravis('API: Fatsecret', require('./fatsecret.test'));
+skipTestForFastOrTravis('API: Google Vision', require('./vision.test'));
+skipTestForFastOrTravis('API: KPP nalog.ru', require('./kpp.test'));
 skipTestForFastOrTravis('voice', require('./voice.test'));
-skipTestForFastOrTravis('Translate API', require('./translate.test'));
+skipTestForFastOrTravis('API: Translate', require('./translate.test'));
 
 test.todo('/start');
 test.todo('/dbclear');

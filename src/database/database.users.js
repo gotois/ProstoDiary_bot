@@ -1,24 +1,24 @@
-const { $$ } = require('./database.client');
+const { $$ } = require('./index');
 /**
  *
- * @param {*} telegram_user_id - id
+ * @param {number} telegramUserId - id
  */
-const check = (telegram_user_id) => {
+const check = (telegramUserId) => {
   return $$(
     `SELECT 1 from users
     WHERE telegram_user_id=$1`,
-    [telegram_user_id],
+    [telegramUserId],
   );
 };
 /**
  *
- * @param {*} telegram_user_id - id
+ * @param {number} telegramUserId - id
  */
-const post = (telegram_user_id) => {
+const post = (telegramUserId) => {
   return $$(
     `INSERT INTO users (telegram_user_id)
     values ($1)`,
-    [telegram_user_id],
+    [telegramUserId],
   );
 };
 

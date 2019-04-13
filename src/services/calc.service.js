@@ -1,4 +1,4 @@
-const logger = require('../services/logger.service');
+const logger = require('../services/logger.service'); // TODO: в сервисах не должно быть логирования
 /**
  * @constant
  * @type {{allSpent: number, allReceived: number}}

@@ -46,6 +46,6 @@ const $$ = (query, params = []) => {
 };
 
 module.exports = {
-  dbClient,
+  client: dbClient,
   $$,
 };

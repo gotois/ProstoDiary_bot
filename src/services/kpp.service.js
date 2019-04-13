@@ -1,5 +1,5 @@
 const { NALOGRU } = require('../env');
-const logger = require('./logger.service');
+const logger = require('./logger.service'); // TODO: в сервисах не должно быть логирования
 const { get, post } = require('./request.service');
 const fakeService = require('./faker.service');
 /**

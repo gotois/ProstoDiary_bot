@@ -1,26 +1,26 @@
-const { $$ } = require('./database.client');
+const { $$ } = require('./index');
 /**
  *
- * @param {number} user_id - user id
+ * @param {number} userId - user id
  * @returns {Promise}
  */
-const getAll = (user_id) => {
+const getAll = (userId) => {
   return $$(
     `SELECT entry, date_added
     FROM entries
     WHERE user_id = $1
     ORDER BY date_added ASC`,
-    [user_id],
+    [userId],
   );
 };
 /**
  * TODO: фича. День начинается с рассвета и до следующего рассвета (вместо привычного дня времени)
  *
- * @param {number} user_id - user id
+ * @param {number} userId - user id
  * @param {string|Date} date - like 2016-12-01
  * @returns {Promise}
  */
-const _get = (user_id, date) => {
+const _get = (userId, date) => {
   switch (date.constructor) {
     case Date: {
       date = date.toJSON().substr(0, 10);
@@ -30,7 +30,7 @@ const _get = (user_id, date) => {
       break;
     }
     default: {
-      return Promise.reject('Wrong date type');
+      throw new Error('Wrong date type');
     }
   }
 
@@ -41,70 +41,70 @@ const _get = (user_id, date) => {
     `SELECT entry, date_added
     FROM entries
     WHERE (user_id = $1) AND date_added BETWEEN ${from} AND ${until}`,
-    [user_id],
+    [userId],
   );
 };
 /**
  *
- * @param {number} user_id - user id
+ * @param {number} userId - user id
  * @param {string} entry - entry
- * @param {number} telegram_entry_id - telegram entry id
- * @param {Date} date_modified - date
- * @param {Date|undefined} date_added - date
+ * @param {number} telegramEntryId - telegram entry id
+ * @param {Date} dateModified - date
+ * @param {Date|undefined} dateAdded - date
  * @returns {Promise}
  */
 const _post = (
-  user_id,
+  userId,
   entry,
-  telegram_entry_id,
-  date_modified,
-  date_added = new Date(),
+  telegramEntryId,
+  dateModified,
+  dateAdded = new Date(),
 ) => {
   return $$(
     `INSERT INTO entries (user_id, entry, telegram_entry_id, date_modified, date_added)
     VALUES ($1, $2, $3, $4, $5)`,
-    [user_id, entry, telegram_entry_id, date_modified, date_added],
+    [userId, entry, telegramEntryId, dateModified, dateAdded],
   );
 };
 /**
  *
- * @param {number} user_id - user id
+ * @param {number} userId - user id
  * @param {string} entry - entry
- * @param {Date} date_modified - date
- * @param {number} telegram_entry_id - date
+ * @param {Date} dateModified - date
+ * @param {number} telegramEntryId - date
  * @returns {Promise}
  */
-const _put = (user_id, entry, date_modified, telegram_entry_id) => {
+const _put = (userId, entry, dateModified, telegramEntryId) => {
   return $$(
     `UPDATE entries
     SET entry = $2, date_modified = $3
     WHERE (user_id = $1 AND telegram_entry_id = $4)`,
-    [user_id, entry, date_modified, telegram_entry_id],
+    [userId, entry, dateModified, telegramEntryId],
   );
 };
 /**
- * @param {number} user_id - user id
- * @param {number} telegram_entry_id - telegram entry id
+ * @param {number} userId - user id
+ * @param {number} telegramEntryId - telegram entry id
  * @returns {Promise}
  */
-const _delete = (user_id, telegram_entry_id) => {
+const _delete = (userId, telegramEntryId) => {
   return $$(
     `DELETE FROM entries
     WHERE (user_id = $1 AND telegram_entry_id = $2)`,
-    [user_id, telegram_entry_id],
+    [userId, telegramEntryId],
   );
 };
 /**
  * Удаление данных из БД
  *
- * @param {number} user_id - id user
+ * @param {number} userId - id user
  * @returns {Promise}
  */
-const clear = (user_id) => {
+const clear = (userId) => {
   return $$(
     `DELETE FROM entries
     WHERE user_id = $1`,
-    [user_id],
+    [userId],
   );
 };
 

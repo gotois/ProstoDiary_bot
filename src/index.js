@@ -1,4 +1,4 @@
-const dbClient = require('./database/database.client');
+const dbClient = require('./database/index');
 const logger = require('./services/logger.service');
 const { IS_PRODUCTION } = require('./env');
 const bot = require('./bot');
@@ -27,8 +27,8 @@ const initBot = () => {
  * @returns {Promise<undefined>}
  */
 const dbConnect = async () => {
-  if (!dbClient._connected) {
-    await dbClient.connect();
+  if (!dbClient.client._connected) {
+    await dbClient.client.connect();
   }
 };
 /**

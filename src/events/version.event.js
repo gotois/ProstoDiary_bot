@@ -1,6 +1,6 @@
+const bot = require('../bot');
 const logger = require('../services/logger.service');
 const { version } = require('../../package');
-const bot = require('../bot');
 const { IS_PRODUCTION } = require('../env');
 /**
  *

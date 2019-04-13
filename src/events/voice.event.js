@@ -1,6 +1,6 @@
+const bot = require('../bot');
 const logger = require('../services/logger.service');
 const { voiceToText } = require('../services/voice.service');
-const bot = require('../bot');
 const { get } = require('../services/request.service');
 /**
  * @function

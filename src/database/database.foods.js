@@ -1,4 +1,4 @@
-const { $$ } = require('./database.client');
+const { $$ } = require('./index');
 const { getPostgresLangCode } = require('../services/detect-language.service');
 /**
  *
