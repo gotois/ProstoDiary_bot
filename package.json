@@ -14,6 +14,7 @@
     "e2e": "./tests/e2e"
   },
   "scripts": {
+    "postinstall": "npx ncu",
     "package-upgrade": "npx ncu -u",
     "dev": "nodemon ./bin/index",
     "dev:debug": "nodemon --inspect ./bin/index",
