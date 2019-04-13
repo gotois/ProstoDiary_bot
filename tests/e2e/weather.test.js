@@ -12,4 +12,8 @@ module.exports = async (t) => {
   t.true(weatherInfo.hasOwnProperty('rain'));
   t.true(weatherInfo.hasOwnProperty('temp'));
   t.true(weatherInfo.hasOwnProperty('weathercode'));
+
+  await t.throwsAsync(async () => {
+    await weatherService.getWeather('wrong param');
+  });
 };

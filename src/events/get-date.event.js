@@ -1,7 +1,7 @@
 const bot = require('../bot');
 const sessions = require('../services/session.service');
 const datetime = require('../services/date.service');
-const dbEntries = require('../database/database.entities');
+const dbEntries = require('../database/entities.database');
 const crypt = require('../services/crypt.service');
 const logger = require('../services/logger.service');
 /**

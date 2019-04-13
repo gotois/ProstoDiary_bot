@@ -24,7 +24,7 @@ const detectLang = (query) => {
   if (lang === UNDEFINED) {
     if (/[А-Я]/i.test(query)) {
       return RUS;
-    } else if (/[А-Я]/i.test(query)) {
+    } else if (/[A-Z]/i.test(query)) {
       return ENG;
     }
   }

@@ -1,5 +1,5 @@
 const bot = require('../bot');
-const dbEntries = require('../database/database.entities');
+const dbEntries = require('../database/entities.database');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 /**

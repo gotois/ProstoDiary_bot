@@ -1,5 +1,5 @@
 const bot = require('../bot');
-const dbEntries = require('../database/database.entities');
+const dbEntries = require('../database/entities.database');
 const sessions = require('../services/session.service');
 const { getMoney, getFormatMoney, TYPES } = require('../services/calc.service');
 const { decodeRows } = require('./../services/format.service');

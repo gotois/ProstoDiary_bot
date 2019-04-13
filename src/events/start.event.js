@@ -1,6 +1,6 @@
 const bot = require('../bot');
 const sessions = require('../services/session.service');
-const dbUsers = require('./../database/database.users');
+const dbUsers = require('../database/users.database');
 const logger = require('../services/logger.service');
 /**
  * При первом включении создаем в БД специальную колонку для работы

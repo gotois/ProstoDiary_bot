@@ -3,4 +3,7 @@ module.exports = (t) => {
   const eWord = crypt.encode('Something What?');
   const dWord = crypt.decode(eWord);
   t.is(dWord, 'Something What?');
+  t.throws(() => {
+    crypt.encode(undefined);
+  });
 };
