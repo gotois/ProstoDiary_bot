@@ -55,7 +55,7 @@ const onText = async ({
   const currentUser = sessions.getSession(fromId);
   try {
     // TODO: обернуть весь pipe работы с input в отдельный сервис, где расписать подробно весь процесс
-
+    // ...
     const spelledText = await spellText(input);
     const intentMessage = await inputAnalyze(spelledText);
 

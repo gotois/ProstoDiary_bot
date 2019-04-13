@@ -27,11 +27,14 @@ const onPhoto = async ({ chat, /*date, from, message_id,*/ photo }) => {
   const buffer = await get(
     `https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`,
   );
-  // TODO: нужно обернуть в try/catch
-  const visionResult = await visionService.labelDetection(buffer);
-  if (!visionService.isQR(visionResult)) {
-    await bot.sendMessage(chatId, 'QR not found');
-    return;
+  try {
+    const visionResult = await visionService.labelDetection(buffer);
+    if (!visionService.isQR(visionResult)) {
+      await bot.sendMessage(chatId, 'QR not found');
+      return;
+    }
+  } catch (error) {
+    logger.log('error', error);
   }
   try {
     const qrParams = await qr.readQR(buffer);

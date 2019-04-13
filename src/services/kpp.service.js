@@ -59,8 +59,39 @@ const checkKPP = async (kppParams) => {
   );
 };
 /**
- * @param {Object} kppParams - параметры KPP
+ * @param {Buffer} data - buffer data
  * @returns {Object}
+ */
+const getKPPDocumentReceipt = (data) => {
+  const formatData = data.toString('utf8');
+  if (typeof formatData !== 'string') {
+    throw new Error('KPP: API unknown data');
+  } else if (formatData === '' || !formatData.length) {
+    throw new Error('KPP: API empty data');
+  } else if (formatData === 'illegal public api usage') {
+    throw new Error('KPP: API ' + formatData);
+  } else if (
+    formatData[0] !== '{' ||
+    formatData[formatData.length - 1] !== '}'
+  ) {
+    throw new Error('KPP: API data is not JSON: ' + formatData);
+  }
+  let formatDataObject;
+  try {
+    // TODO: что-то здесь падает. Нужно детектить ошибку и возможно делать nalogRuSignUp
+    // падает с SyntaxError: Unexpected end of JSON input
+    formatDataObject = JSON.parse(formatData);
+  } catch (error) {
+    throw new Error('KPP: JSON parse ' + error.toString());
+  }
+  if (!formatDataObject.document || !formatDataObject.document.receipt) {
+    throw new Error('KPP: document or receipt not found');
+  }
+  return formatDataObject.document.receipt;
+};
+/**
+ * @param {Object} kppParams - параметры KPP
+ * @returns {{items: *, user: *, totalSum: *, dateTime: *, retailPlaceAddress: *}}
  */
 const getKPPData = async (kppParams) => {
   const fakeDevice = new fakeService.Device();
@@ -74,34 +105,8 @@ const getKPPData = async (kppParams) => {
       'Device-OS': fakeDevice.DEVICE_OS,
     },
   );
-  const formatData = data.toString('utf8');
-  let formatDataObject;
-  if (formatData === 'illegal public api usage') {
-    throw new Error('KPP:API' + formatData);
-  }
-  try {
-    // TODO: что-то здесь падает. Нужно детектить ошибку и возможно делать nalogRuSignUp
-    formatDataObject = JSON.parse(formatData);
-  } catch (error) {
-    throw new Error('KPP:Parse' + error);
-  }
-  if (!formatDataObject.document || !formatDataObject.document.receipt) {
-    throw new Error('KPP:Document');
-  }
-  const {
-    items,
-    user,
-    totalSum,
-    dateTime,
-    retailPlaceAddress,
-  } = formatDataObject.document.receipt;
-  return {
-    items,
-    user,
-    totalSum,
-    dateTime,
-    retailPlaceAddress,
-  };
+  const kppDocumentReceipt = getKPPDocumentReceipt(data);
+  return kppDocumentReceipt;
 };
 module.exports = {
   getKPPData,

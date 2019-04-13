@@ -25,7 +25,6 @@ const readQR = async (buffer) => {
   }
   return getParams(qrValue.data);
 };
-// TODO: перенести в утилиты
 /**
  * @param {string} query - query
  * @returns {string}

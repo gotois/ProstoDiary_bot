@@ -6,4 +6,5 @@ module.exports = async (t) => {
   t.true(updates.ok);
   const { version } = require('../../package');
   t.true(updates.result[0].message.text.startsWith(version));
+  t.true(updates.result[0].message.text.length > 32);
 };
