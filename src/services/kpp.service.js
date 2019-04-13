@@ -1,18 +1,30 @@
 const { NALOGRU } = require('../env');
 const logger = require('./logger.service');
 const { get, post } = require('./request.service');
-// TODO: (нужен отдельный мидлварь для фейковых данных)
-/* fake device_id */
+// TODO: (нужен отдельный мидлварь класс для фейковых данных)
+/**
+ * fake device_id
+ * @type {string}
+ */
 const DEVICE_ID = 'curl';
-/* face device_os */
+/**
+ * face device_os
+ * @type {string}
+ */
 const DEVICE_OS = 'linux';
+/**
+ * NALOGRU_HOST
+ * @type {string}
+ */
+const NALOGRU_HOST = 'proverkacheka.nalog.ru';
 /**
  * @description - получаем пароль NALOGRU_KP_PASSWORD на мобильный телефон в виде СМС
  * @returns {Promise}
  */
 const nalogRuSignUp = async () => {
+  // TODO: не ясно почему здесь отличается порт
   const res = await post(
-    'https://proverkacheka.nalog.ru:8888/v1/mobile/users/signup',
+    `https://${NALOGRU_HOST}:8888/v1/mobile/users/signup`,
     {
       name: NALOGRU.NALOGRU_NAME,
       email: NALOGRU.NALOGRU_EMAIL,
@@ -39,7 +51,7 @@ const checkKPP = async ({ FN, FD, FDP, TYPE, DATE, SUM }) => {
   TYPE = Number(TYPE);
   // END
   await get(
-    `https://proverkacheka.nalog.ru:9999/v1/ofds/*/inns/*/fss/${FN}/operations/${TYPE}/tickets/${FD}?fiscalSign=${FDP}&date=${DATE}&sum=${SUM}`,
+    `https://${NALOGRU_HOST}:9999/v1/ofds/*/inns/*/fss/${FN}/operations/${TYPE}/tickets/${FD}?fiscalSign=${FDP}&date=${DATE}&sum=${SUM}`,
   );
 };
 /**
@@ -53,7 +65,7 @@ const getKPPData = async ({ FN, FD, FDP }) => {
   const data = await get(
     `https://${NALOGRU.NALOGRU_PHONE}:${
       NALOGRU.NALOGRU_KP_PASSWORD
-    }@proverkacheka.nalog.ru:9999/v1/inns/*/kkts/*/fss/${FN}/tickets/${FD}?fiscalSign=${FDP}&sendToEmail=${'no'}`,
+    }@${NALOGRU_HOST}:9999/v1/inns/*/kkts/*/fss/${FN}/tickets/${FD}?fiscalSign=${FDP}&sendToEmail=${'no'}`,
     {
       'Device-Id': DEVICE_ID,
       'Device-OS': DEVICE_OS,
@@ -65,11 +77,16 @@ const getKPPData = async ({ FN, FD, FDP }) => {
     logger.log('error', formatData);
     throw new Error('KPP:API');
   }
+  logger.log('info', formatData);
   try {
+    // TODO: что-то здесь падает. Нужно детектить ошибку и возможно делать nalogRuSignUp
     formatDataObject = JSON.parse(formatData);
   } catch (error) {
     logger.log('error', error.toString());
     throw new Error('KPP:Parse');
+  }
+  if (!formatDataObject.document || !formatDataObject.document.receipt) {
+    throw new Error('KPP:Document');
   }
   const {
     items,
