@@ -9,4 +9,8 @@ module.exports = async (t) => {
     return annotation.description === 'Receipt';
   });
   t.is(typeof receipt === 'object', true);
+
+  const buffer2 = fs.readFileSync('tests/data/photo/qr-example-1.jpg');
+  const result2 = await visionService.labelDetection(buffer2);
+  t.true(visionService.isQR(result2));
 };
