@@ -1,7 +1,6 @@
 const { PLOTLY } = require('../env');
 const plotly = require('plotly')(PLOTLY.PLOTLY_LOGIN, PLOTLY.PLOTLY_TOKEN);
 const { Writable } = require('stream');
-const logger = require('../services/logger.service'); // TODO: в сервисах не должно быть логирования
 /**
  * @param {Object} figure - figure
  * @param {Object} options - options object
@@ -37,7 +36,6 @@ const getImageBuffer = async (figure, options = {}) => {
       return resolve(photoBuffer);
     });
     imageStream.on('error', (error) => {
-      logger.log('error', error.toString());
       return reject(error);
     });
   });

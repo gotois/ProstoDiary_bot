@@ -100,6 +100,7 @@ skipTestForFastOrTravis(
 skipTestForFast('/help', require('./help.test'));
 skipTestForFast('/version', require('./version.test'));
 skipTestForFast('QR check', require('./qr.test'));
+skipTestForFast('API: speller service', require('./speller-service.test'));
 skipTestForFast('API: request', require('./request.test'));
 skipTestForFast('API: Weather', require('./weather.test'));
 skipTestForFast('API: RestContries', require('./restcountries.test'));

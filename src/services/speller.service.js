@@ -1,40 +1,31 @@
-const request = require('request');
+const { post } = require('./request.service');
 const { replaceBetween } = require('./text.service');
+/**
+ * @constant
+ * @type {string}
+ */
+const SPELLER_HOST = 'speller.yandex.net';
 /**
  * @param {string} text - text
  * @returns {Promise<Array>}
  */
-const spellCheck = (text) => {
-  // todo: use request.post
-  return new Promise((resolve, reject) => {
-    request(
-      {
-        url: 'https://speller.yandex.net/services/spellservice.json/checkText',
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-        },
-        form: {
-          format: 'plain',
-          text: text,
-        },
-        json: true,
-      },
-      (error, response, body) => {
-        if (error) {
-          return reject(error);
-        }
-        if (!Array.isArray(body)) {
-          return reject(body);
-        }
-        return resolve(body);
-      },
-    );
-  });
+const spellCheck = async (text) => {
+  const res = await post(
+    `https://${SPELLER_HOST}/services/spellservice.json/checkText`,
+    {
+      format: 'plain',
+      text: text,
+    },
+  );
+  if (!Array.isArray(res)) {
+    throw new Error('spellCheck' + res);
+  }
+  return res;
 };
 /**
- * Исправляем очевидные ошибки (рублкй -> рублей)
+ * Исправляем очевидные ошибки
  *
+ * @example await spellText('рублкй') -> рублей
  * @param {string} myText - user text
  * @returns {Promise<string>}
  */
@@ -51,6 +42,5 @@ const spellText = async (myText) => {
 };
 
 module.exports = {
-  spellCheck,
   spellText,
 };

@@ -96,7 +96,7 @@
     "nodemon": "~1.18.11",
     "npm-check-updates": "~3.1.7",
     "nyc": "~13.3.0",
-    "prettier": "~1.16.4",
+    "prettier": "~1.17.0",
     "telegram-test-api": "~2.0.2"
   },
   "nodemonConfig": {

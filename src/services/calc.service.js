@@ -1,4 +1,3 @@
-const logger = require('../services/logger.service'); // TODO: в сервисах не должно быть логирования
 /**
  * @constant
  * @type {{allSpent: number, allReceived: number}}
@@ -133,8 +132,7 @@ const formatType = (str, type) => {
       break;
     }
     default: {
-      logger.log('info', 'Unknown type');
-      break;
+      throw new Error('formatType: Unknown type');
     }
   }
   return str;

@@ -13,6 +13,7 @@ const getVoice = async ({ chat, voice }) => {
   logger.log('info', getVoice.name);
   const chatId = chat.id;
   const fileInfo = await bot.getFile(voice.file_id);
+  // TODO: нужен враппер для получения файлов из телеги
   const buffer = await get(
     `https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`,
   );

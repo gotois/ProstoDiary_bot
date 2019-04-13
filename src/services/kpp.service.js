@@ -1,5 +1,4 @@
 const { NALOGRU } = require('../env');
-const logger = require('./logger.service'); // TODO: в сервисах не должно быть логирования
 const { get, post } = require('./request.service');
 const fakeService = require('./faker.service');
 /**
@@ -78,16 +77,13 @@ const getKPPData = async (kppParams) => {
   const formatData = data.toString('utf8');
   let formatDataObject;
   if (formatData === 'illegal public api usage') {
-    logger.log('error', formatData);
-    throw new Error('KPP:API');
+    throw new Error('KPP:API' + formatData);
   }
-  logger.log('info', formatData);
   try {
     // TODO: что-то здесь падает. Нужно детектить ошибку и возможно делать nalogRuSignUp
     formatDataObject = JSON.parse(formatData);
   } catch (error) {
-    logger.log('error', error.toString());
-    throw new Error('KPP:Parse');
+    throw new Error('KPP:Parse' + error);
   }
   if (!formatDataObject.document || !formatDataObject.document.receipt) {
     throw new Error('KPP:Document');

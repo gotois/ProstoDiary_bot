@@ -1,7 +1,7 @@
+const bot = require('./bot');
 const dbClient = require('./database/index');
 const logger = require('./services/logger.service');
 const { IS_PRODUCTION } = require('./env');
-const bot = require('./bot');
 /**
  * @returns {Promise<any>}
  */

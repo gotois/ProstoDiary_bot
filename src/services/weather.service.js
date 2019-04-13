@@ -1,7 +1,14 @@
 const weather = require('openweather-apis');
 const { OPEN_WEATHER } = require('../env');
-
-const LANG_RU = 'ru'; // TODO: брать из настроек env или telegram
+/**
+ * @constant
+ * @type {string}
+ */
+const LANG_RU = 'ru'; // TODO: брать из detect-language.service/
+/**
+ * @constant
+ * @type {string}
+ */
 const UNITS = 'metric';
 
 weather.setLang(LANG_RU);

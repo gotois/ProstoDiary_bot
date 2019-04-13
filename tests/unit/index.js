@@ -16,7 +16,6 @@ test('graph service', require('./graph-service.test'));
 test('graph controller', require('./graph-controller.test'));
 test('format', require('./format.test'));
 test('text service', require('./text-service.test'));
-test('speller service', require('./speller-service.test'));
 test('detect lang', require('./detect-lang.test'));
 test('env', require('./env.test'));
 test('bot init', require('./telegram-bot.test'));

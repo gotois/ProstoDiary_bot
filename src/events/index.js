@@ -1,8 +1,6 @@
 const bot = require('../bot');
 const commands = require('../commands');
-/**
- * Events
- */
+
 bot.onText(commands.PING, require('./ping.event'));
 bot.onText(commands.DOWNLOAD, require('./download.event'));
 bot.onText(commands.DB_CLEAR, require('./dbclear.event'));

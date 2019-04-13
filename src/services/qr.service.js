@@ -45,5 +45,4 @@ const getParams = (query) => {
 
 module.exports = {
   readQR,
-  getParams,
 };
