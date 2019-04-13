@@ -45,7 +45,7 @@ const post = (
         if (response.statusCode >= 400) {
           return reject(body.toString('utf8'));
         }
-        resolve(body);
+        return resolve(body);
       },
     );
   });

@@ -15,7 +15,7 @@ const initBot = () => {
     try {
       const me = await bot.getMe();
       clearTimeout(timer);
-      resolve(me);
+      return resolve(me);
     } catch (error) {
       logger.log('info', error);
     }

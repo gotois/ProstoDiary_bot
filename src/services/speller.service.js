@@ -27,8 +27,7 @@ const spellCheck = (text) => {
         if (!Array.isArray(body)) {
           return reject(body);
         }
-
-        resolve(body);
+        return resolve(body);
       },
     );
   });

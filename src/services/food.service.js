@@ -4,6 +4,8 @@ const crypto = require('crypto');
 const request = require('request');
 const { FAT_SECRET } = require('../env');
 const API_BASE = 'https://platform.fatsecret.com/rest/server.api';
+const { detectLang, languages } = require('./detect-language.service');
+const translateService = require('./translate.service');
 
 class FatSecret {
   constructor() {
@@ -13,6 +15,27 @@ class FatSecret {
     ) {
       throw new Error('FAT_SECRET ENV not found');
     }
+  }
+  /**
+   * build the sorted key value pair string that will be used for the hmac and request
+   *
+   * @param {Object} params - params
+   * @returns {string}
+   */
+  static createQuery(params) {
+    params['format'] = 'json';
+    params['oauth_version'] = '1.0';
+    params['oauth_signature_method'] = 'HMAC-SHA1';
+    params['oauth_nonce'] = crypto.randomBytes(10).toString('HEX');
+    params['oauth_timestamp'] = Math.floor(new Date().getTime() / 1000);
+    params['oauth_consumer_key'] = FAT_SECRET.FAT_SECRET_API_ACCESS_KEY;
+    return Object.keys(params)
+      .sort()
+      .reduce((acc, param) => {
+        acc += '&' + param + '=' + encodeURIComponent(params[param]);
+        return acc;
+      }, '')
+      .substr(1); // remove first &
   }
   /**
    * Perform the request to fatsecret with default params merged in.
@@ -30,10 +53,9 @@ class FatSecret {
         },
         (error, response, body) => {
           if (error) {
-            reject(error);
-          } else {
-            resolve(body);
+            return reject(error);
           }
+          return resolve(body);
         },
       );
     });
@@ -46,21 +68,7 @@ class FatSecret {
    * @private
    */
   _signRequest(params) {
-    params['format'] = 'json';
-    params['oauth_version'] = '1.0';
-    params['oauth_signature_method'] = 'HMAC-SHA1';
-    params['oauth_nonce'] = crypto.randomBytes(10).toString('HEX');
-    params['oauth_timestamp'] = Math.floor(new Date().getTime() / 1000);
-    params['oauth_consumer_key'] = FAT_SECRET.FAT_SECRET_API_ACCESS_KEY;
-    const query = ((str = '') => {
-      // build the sorted key value pair string that will be used for the hmac and request
-      Object.keys(params)
-        .sort()
-        .forEach((param) => {
-          str += '&' + param + '=' + encodeURIComponent(params[param]);
-        });
-      return str.substr(1); // remove first &
-    })();
+    const query = FatSecret.createQuery(params);
     // generate the hmac
     const mac = crypto.createHmac(
       'sha1',
@@ -85,9 +93,21 @@ module.exports = {
       food_id: foodId,
     });
   },
-  search(searchExpression = '', maxResults = 1) {
+  async search(searchExpression = '', maxResults = 1) {
+    if (maxResults > 50) {
+      maxResults = 50;
+    }
     searchExpression = searchExpression.trim();
     // TODO: сначала использовать возможности БД foods
+    // ...
+
+    // FatSecret не поддерживает русский язык - переводим в английский
+    if (detectLang(searchExpression) !== languages.ENG) {
+      searchExpression = await translateService.translate(
+        searchExpression,
+        languages.ENG,
+      );
+    }
 
     return fatSecret.request({
       method: 'foods.search',

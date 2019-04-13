@@ -10,7 +10,10 @@ const logger = require('../services/logger.service');
 const getImage = (figure, options = {}) => {
   return new Promise((resolve, reject) => {
     return plotly.getImage(figure, options, (error, imageStream) => {
-      return error ? reject(error) : resolve(imageStream);
+      if (error) {
+        return reject(error);
+      }
+      return resolve(imageStream);
     });
   });
 };
@@ -31,11 +34,11 @@ const getImageBuffer = async (figure, options = {}) => {
     imageStream.pipe(ws);
     imageStream.on('end', () => {
       const photoBuffer = Buffer.concat(buffers);
-      resolve(photoBuffer);
+      return resolve(photoBuffer);
     });
     imageStream.on('error', (error) => {
       logger.log('error', error.toString());
-      reject(error);
+      return reject(error);
     });
   });
 };
@@ -46,7 +49,10 @@ const getImageBuffer = async (figure, options = {}) => {
 const deletePlot = (plotId) => {
   return new Promise((resolve, reject) => {
     return plotly.deletePlot(plotId, (error, plot) => {
-      return error ? reject(error) : resolve(plot);
+      if (error) {
+        return reject(error);
+      }
+      return resolve(plot);
     });
   });
 };

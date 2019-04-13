@@ -46,6 +46,8 @@ const detectLang = (query) => {
   return lang;
 };
 /**
+ * TODO: rename getDialogFlowLangCode
+ *
  * @param {string} query - query
  * @returns {string}
  */

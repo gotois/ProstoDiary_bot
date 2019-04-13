@@ -34,29 +34,17 @@ const onPhoto = async ({ chat, /*date, from, message_id,*/ photo }) => {
     return;
   }
   try {
-    const qrResult = await qr.readQR(buffer);
-    const params = qr.getParams(qrResult);
+    const qrParams = await qr.readQR(buffer);
     // STEP 1 - авторизуемся
     // TODO: uncomment this if getKPPData doesn't work
     // await nalogRuSignUp()
 
     // STEP 2 - проверяем чек (необходимо чтобы избежать ошибки illegal api)
-    await checkKPP({
-      FN: params.fn,
-      FD: params.i,
-      FDP: params.fp,
-      TYPE: params.n,
-      DATE: params.t,
-      SUM: params.s,
-    });
+    await checkKPP(qrParams);
 
     // STEP 3 - используем данные для получения подробного результата
     // TODO: данные должны попадать в БД
-    const kppData = await getKPPData({
-      FN: params.fn,
-      FD: params.i,
-      FDP: params.fp,
-    });
+    const kppData = await getKPPData(qrParams);
     await bot.sendMessage(chatId, JSON.stringify(kppData, null, 2));
   } catch (error) {
     logger.log('error', error.toString());

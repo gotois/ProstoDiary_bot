@@ -20,3 +20,4 @@ test('speller service', require('./speller-service.test'));
 test('detect lang', require('./detect-lang.test'));
 test('env', require('./env.test'));
 test('bot init', require('./telegram-bot.test'));
+test('faker', require('./faker.test'));

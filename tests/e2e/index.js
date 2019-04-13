@@ -108,6 +108,7 @@ skipTestForFast('Fatsecret API', require('./fatsecret.test'));
 skipTestForFastOrTravis('Google Vision API', require('./vision.test'));
 skipTestForFastOrTravis('KPP nalog.ru API', require('./kpp.test'));
 skipTestForFastOrTravis('voice', require('./voice.test'));
+skipTestForFastOrTravis('Translate API', require('./translate.test'));
 
 test.todo('/start');
 test.todo('/dbclear');

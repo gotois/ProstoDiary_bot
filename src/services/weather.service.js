@@ -13,11 +13,11 @@ weather.setAPPID(OPEN_WEATHER.OPEN_WEATHER_KEY);
  */
 const getSmartJSON = (weather) => {
   return new Promise((resolve, reject) => {
-    weather.getSmartJSON((err, smart) => {
-      if (err) {
-        return reject(err);
+    weather.getSmartJSON((error, smart) => {
+      if (error) {
+        return reject(error);
       }
-      resolve(smart);
+      return resolve(smart);
     });
   });
 };
