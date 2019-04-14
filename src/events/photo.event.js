@@ -3,6 +3,7 @@ const logger = require('../services/logger.service');
 const qr = require('../services/qr.service');
 const { getTelegramFile } = require('../services/telegram-file.service');
 const { getPhotoDetection } = require('../services/photo.service');
+const foodService = require('../services/food.service');
 const {
   checkKPP,
   // nalogRuSignUp,
@@ -42,7 +43,21 @@ const onPhoto = async ({ chat, photo, caption }) => {
       // STEP 3 - используем данные для получения подробного результата
       // TODO: данные должны попадать в БД
       const kppData = await getKPPData(qrParams);
+
+      // STEP 4 - выявляем из данных нужное
+      let foodText = '';
+      // TODO: получаем данные о еде, узнаем количество потраченных денег, время покупки, etc
+      for (const item of kppData.items) {
+        const { food_description, food_name } = await foodService.search(
+          item.name,
+        );
+        // item.quantity // здесь как количество, так и граммы могут быть
+        foodText += `\n${item.name}_${food_name}_: ${food_description}`;
+      }
       await bot.sendMessage(chatId, JSON.stringify(kppData, null, 2));
+      await bot.sendMessage(chatId, foodText, {
+        parse_mode: 'Markdown',
+      });
     } catch (error) {
       logger.log('error', error.toString());
       await bot.sendMessage(chatId, error.toString());

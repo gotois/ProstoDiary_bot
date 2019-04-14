@@ -67,6 +67,7 @@ const getKPPDocumentReceipt = (data) => {
   if (typeof formatData !== 'string') {
     throw new Error('KPP: API unknown data');
   } else if (formatData === '' || !formatData.length) {
+    // TODO: такое бывает когда их апи не просасывается, надо повторить запро
     throw new Error('KPP: API empty data');
   } else if (formatData === 'illegal public api usage') {
     throw new Error('KPP: API ' + formatData);

@@ -86,6 +86,36 @@ class FatSecret {
 
 const fatSecret = new FatSecret();
 
+/**
+ * @param {string} searchExpression - food name
+ * @param {number} maxResults - max results
+ * @returns {Promise<Array<{food_name: string}>>}
+ */
+const search = async (searchExpression = '', maxResults = 1) => {
+  if (maxResults > 50) {
+    maxResults = 50;
+  }
+  searchExpression = searchExpression.trim();
+  // TODO: сначала использовать возможности БД foods
+  // ...
+  // FatSecret не поддерживает русский язык - переводим в английский
+  if (detectLang(searchExpression) !== languages.ENG) {
+    searchExpression = await translateService.translate(
+      searchExpression,
+      languages.ENG,
+    );
+  }
+  const res = await fatSecret.request({
+    method: 'foods.search',
+    search_expression: searchExpression,
+    max_results: maxResults,
+  });
+  if (!res.foods || !res.foods.food) {
+    throw new Error('Food: not found');
+  }
+  return res.foods.food;
+};
+
 module.exports = {
   get(foodId) {
     return fatSecret.request({
@@ -93,26 +123,5 @@ module.exports = {
       food_id: foodId,
     });
   },
-  async search(searchExpression = '', maxResults = 1) {
-    if (maxResults > 50) {
-      maxResults = 50;
-    }
-    searchExpression = searchExpression.trim();
-    // TODO: сначала использовать возможности БД foods
-    // ...
-
-    // FatSecret не поддерживает русский язык - переводим в английский
-    if (detectLang(searchExpression) !== languages.ENG) {
-      searchExpression = await translateService.translate(
-        searchExpression,
-        languages.ENG,
-      );
-    }
-
-    return fatSecret.request({
-      method: 'foods.search',
-      search_expression: searchExpression,
-      max_results: maxResults,
-    });
-  },
+  search,
 };

@@ -39,6 +39,7 @@ const getImgOpts = () => {
 };
 /**
  * TODO: перенести в service
+ *
  * @param {Array} entryRows - rows
  * @param {Array} rangeTimes - rangeTimes
  * @returns {Promise<Error|*>}
