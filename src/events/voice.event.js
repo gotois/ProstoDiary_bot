@@ -1,7 +1,7 @@
 const bot = require('../bot');
 const logger = require('../services/logger.service');
 const { voiceToText } = require('../services/voice.service');
-const { get } = require('../services/request.service');
+const { getTelegramFile } = require('../services/telegram-file.service');
 /**
  * @function
  * @param {Object} msg - msg
@@ -12,13 +12,9 @@ const { get } = require('../services/request.service');
 const getVoice = async ({ chat, voice }) => {
   logger.log('info', getVoice.name);
   const chatId = chat.id;
-  const fileInfo = await bot.getFile(voice.file_id);
-  // TODO: нужен враппер для получения файлов из телеги
-  const buffer = await get(
-    `https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`,
-  );
   try {
-    const text = await voiceToText(buffer, voice);
+    const fileBuffer = await getTelegramFile(voice.file_id);
+    const text = await voiceToText(fileBuffer, voice);
     await bot.sendMessage(chatId, 'распознано: ' + text);
   } catch (error) {
     logger.log('error', error.toString());

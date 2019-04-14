@@ -34,11 +34,12 @@ const isNormalDate = (date) => {
 /**
  * @example convertToNormalDate('YYY-MM-DD')
  * @param {string|Date} date - date
- * @returns {Date}
+ * @returns {Date|Error}
  */
 const convertToNormalDate = (date) => {
+  let normalDate;
   if (date instanceof Date) {
-    return date;
+    normalDate = date;
   } else {
     date = date.split('.').join('-');
 
@@ -53,8 +54,12 @@ const convertToNormalDate = (date) => {
     newDate.setDate(dd);
     newDate.setMonth(mm);
     newDate.setYear(yyyy);
-    return newDate;
+    normalDate = newDate;
   }
+  if (!isNormalDate(normalDate)) {
+    throw new Error('Invalid normalization Date');
+  }
+  return normalDate;
 };
 /**
  *

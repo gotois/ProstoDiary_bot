@@ -60,7 +60,7 @@ const checkKPP = async (kppParams) => {
 };
 /**
  * @param {Buffer} data - buffer data
- * @returns {Object}
+ * @returns {Object|Error}
  */
 const getKPPDocumentReceipt = (data) => {
   const formatData = data.toString('utf8');
@@ -76,14 +76,9 @@ const getKPPDocumentReceipt = (data) => {
   ) {
     throw new Error('KPP: API data is not JSON: ' + formatData);
   }
-  let formatDataObject;
-  try {
-    // TODO: что-то здесь падает. Нужно детектить ошибку и возможно делать nalogRuSignUp
-    // падает с SyntaxError: Unexpected end of JSON input
-    formatDataObject = JSON.parse(formatData);
-  } catch (error) {
-    throw new Error('KPP: JSON parse ' + error.toString());
-  }
+  // TODO: что-то здесь падает. Нужно детектить ошибку и возможно делать nalogRuSignUp
+  // падает с SyntaxError: Unexpected end of JSON input
+  const formatDataObject = JSON.parse(formatData);
   if (!formatDataObject.document || !formatDataObject.document.receipt) {
     throw new Error('KPP: document or receipt not found');
   }

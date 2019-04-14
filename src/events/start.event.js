@@ -19,9 +19,9 @@ const onStart = async ({ chat, from }) => {
     if (rowCount === 0) {
       await dbUsers.post(currentUser.id);
       await bot.sendMessage(chatId, 'Вы вошли в систему');
-    } else {
-      await bot.sendMessage(chatId, 'Повторный вход не требуется');
+      return;
     }
+    await bot.sendMessage(chatId, 'Повторный вход не требуется');
   } catch (error) {
     logger.log('error', error);
     await bot.sendMessage(chatId, 'Операция не выполнена');

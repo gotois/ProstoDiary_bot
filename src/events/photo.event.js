@@ -1,8 +1,8 @@
 const bot = require('../bot');
 const logger = require('../services/logger.service');
-const { get } = require('../services/request.service');
 const qr = require('../services/qr.service');
-const visionService = require('../services/vision.service');
+const { getTelegramFile } = require('../services/telegram-file.service');
+const { getPhotoDetection } = require('../services/photo.service');
 const {
   checkKPP,
   // nalogRuSignUp,
@@ -12,46 +12,41 @@ const {
  * @description Работа с QR
  * @param {Object} msg - message
  * @param {Object} msg.chat - chat
- * @param {Array} msg.photo - photo
+ * @param {Array<Object>} msg.photo - photo
+ * @param {string} msg.caption - caption
  * @returns {Promise<undefined>}
  */
-const onPhoto = async ({ chat, /*date, from, message_id,*/ photo }) => {
+const onPhoto = async ({ chat, photo, caption }) => {
   logger.log('info', onPhoto.name);
   const chatId = chat.id;
+  // TODO: тоже перенести в обертку для выбора файла из телеги
   const [smallPhoto, mediumPhoto, largePhoto, originalPhoto] = photo; // eslint-disable-line no-unused-vars
   if (!mediumPhoto.file_id) {
     throw new Error('Wrong file');
   }
-  const fileInfo = await bot.getFile(mediumPhoto.file_id);
-  // TODO: сделать обертку для выбора файла из телеграм
-  const buffer = await get(
-    `https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`,
-  );
-  try {
-    const visionResult = await visionService.labelDetection(buffer);
-    if (!visionService.isQR(visionResult)) {
-      await bot.sendMessage(chatId, 'QR not found');
-      return;
+  const fileBuffer = await getTelegramFile(mediumPhoto.file_id);
+  const { isQR } = await getPhotoDetection({
+    caption: caption,
+    fileBuffer: fileBuffer,
+  });
+  if (isQR) {
+    try {
+      const qrParams = await qr.readQR(fileBuffer);
+      // STEP 1 - авторизуемся
+      // TODO: uncomment this if getKPPData doesn't work
+      // await nalogRuSignUp()
+
+      // STEP 2 - проверяем чек (необходимо чтобы избежать ошибки illegal api)
+      await checkKPP(qrParams);
+
+      // STEP 3 - используем данные для получения подробного результата
+      // TODO: данные должны попадать в БД
+      const kppData = await getKPPData(qrParams);
+      await bot.sendMessage(chatId, JSON.stringify(kppData, null, 2));
+    } catch (error) {
+      logger.log('error', error.toString());
+      await bot.sendMessage(chatId, error.toString());
     }
-  } catch (error) {
-    logger.log('error', error);
-  }
-  try {
-    const qrParams = await qr.readQR(buffer);
-    // STEP 1 - авторизуемся
-    // TODO: uncomment this if getKPPData doesn't work
-    // await nalogRuSignUp()
-
-    // STEP 2 - проверяем чек (необходимо чтобы избежать ошибки illegal api)
-    await checkKPP(qrParams);
-
-    // STEP 3 - используем данные для получения подробного результата
-    // TODO: данные должны попадать в БД
-    const kppData = await getKPPData(qrParams);
-    await bot.sendMessage(chatId, JSON.stringify(kppData, null, 2));
-  } catch (error) {
-    logger.log('error', error.toString());
-    await bot.sendMessage(chatId, error.toString());
   }
 };
 

@@ -7,7 +7,7 @@ const { replaceBetween } = require('./text.service');
 const SPELLER_HOST = 'speller.yandex.net';
 /**
  * @param {string} text - text
- * @returns {Promise<Array>}
+ * @returns {Promise<Array|Error>}
  */
 const spellCheck = async (text) => {
   const res = await post(

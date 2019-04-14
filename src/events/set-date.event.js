@@ -24,9 +24,6 @@ const setDataFromDate = async ({ chat, text, from, message_id }, match) => {
   let date;
   try {
     date = datetime.convertToNormalDate(match[1]);
-    if (!datetime.isNormalDate(date)) {
-      throw new Error('Wrong date');
-    }
   } catch (e) {
     logger.log('error', e.message);
     await bot.sendMessage(chatId, e.message);
@@ -41,12 +38,13 @@ const setDataFromDate = async ({ chat, text, from, message_id }, match) => {
       new Date(),
       date,
     );
-    const prevInput = format.prevInput(input);
-    await bot.sendMessage(chatId, prevInput);
   } catch (error) {
     logger.log('error', error);
     await bot.sendMessage(chatId, 'Произошла ошибка');
+    return;
   }
+  const prevInput = format.prevInput(input);
+  await bot.sendMessage(chatId, prevInput);
 };
 
 module.exports = setDataFromDate;

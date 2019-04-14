@@ -27,7 +27,8 @@ const getVersion = async ({ chat }) => {
   if (!IS_PRODUCTION) {
     text += ' - development';
   }
-  // TODO: нужно получать чексумму всего проекта
+  // TODO: нужно получать чексумму всего проекта -
+  // для этого настроить precommit хуку и создавать чексумму всех измененных файлов на гите, учитывая пользователя
   const checksum = generateChecksum(JSON.stringify(packageJSON));
   text += ' ' + checksum;
   await bot.sendMessage(chatId, text, {});

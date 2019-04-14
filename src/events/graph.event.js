@@ -38,9 +38,10 @@ const getImgOpts = () => {
   };
 };
 /**
+ * TODO: перенести в service
  * @param {Array} entryRows - rows
  * @param {Array} rangeTimes - rangeTimes
- * @returns {Promise<undefined>}
+ * @returns {Promise<Error|*>}
  */
 const createPhotoBuffer = async (entryRows, rangeTimes) => {
   const trace = createTrace();

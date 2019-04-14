@@ -29,16 +29,10 @@ const getLocShortName = (parsedData) => {
  * @returns {Promise<{formattedAddress: {string}, currency: {code: {string}, symbol: {string}}}>}
  */
 const getAddress = async ({ latitude, longitude }) => {
-  const parsedData = await getGeoCode({ latitude, longitude });
-  if (!parsedData || !Array.isArray(parsedData.results)) {
-    throw new Error('Геокод не найден');
-  }
-  const formattedAddress = parsedData.results[0].formatted_address;
-  const locShortName = getLocShortName(parsedData);
+  const parsedDataResults = await getGeoCode({ latitude, longitude });
+  const formattedAddress = parsedDataResults[0].formatted_address;
+  const locShortName = getLocShortName(parsedDataResults);
   const parsedRestCountries = await getFullName(locShortName);
-  if (!Array.isArray(parsedRestCountries)) {
-    throw new Error('Значение страны не найдено');
-  }
   const [currency] = parsedRestCountries[0].currencies;
   return {
     formattedAddress,

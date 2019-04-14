@@ -2,7 +2,7 @@ const jsQR = require('jsqr');
 const Jimp = require('jimp');
 /**
  * @param {Buffer} buffer - buffer
- * @returns {Promise<string>}
+ * @returns {Promise<string|Error>}
  */
 const readQR = async (buffer) => {
   let image = await Jimp.read(buffer);
@@ -27,7 +27,7 @@ const readQR = async (buffer) => {
 };
 /**
  * @param {string} query - query
- * @returns {string}
+ * @returns {string|Error}
  */
 const getParams = (query) => {
   if (!query) {
