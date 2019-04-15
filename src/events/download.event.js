@@ -28,7 +28,7 @@ const onDownload = async ({ chat, from, date }) => {
   const archive = new zip();
   const currentUser = sessions.getSession(fromId);
   try {
-    const { rows } = await dbEntries.getAll(currentUser.id);
+    const rows = await dbEntries.getAll(currentUser.id);
     if (rows.length > 0) {
       const formatData = format.formatRows(rows);
       archive.add(fileName, new Buffer(formatData, 'utf8'));

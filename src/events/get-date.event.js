@@ -44,7 +44,7 @@ const getDataFromDate = async ({ chat, from }, match) => {
   }
   const currentUser = sessions.getSession(userId);
   try {
-    const { rows } = await dbEntries.get(currentUser.id, date);
+    const rows = await dbEntries.get(currentUser.id, date);
     const decodeRows = rows.map(({ entry }) => {
       return crypt.decode(entry);
     });

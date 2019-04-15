@@ -77,7 +77,7 @@ const onCount = async ({ chat, from }, match) => {
       }
     }
   };
-  const { rows } = await dbEntries.getAll(currentUser.id);
+  const rows = await dbEntries.getAll(currentUser.id);
   const objRows = decodeRows(rows);
   if (!objRows.length) {
     await bot.sendMessage(chatId, 'No data');

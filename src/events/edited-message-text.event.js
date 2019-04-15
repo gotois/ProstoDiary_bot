@@ -55,21 +55,27 @@ const onEditedMessageText = async ({ chat, from, text, message_id }) => {
       logger.log('error', error.toString());
       await bot.sendMessage(chatId, error.toLocaleString());
     }
-  } else {
-    try {
-      await dbEntries.put(
-        currentUser.id,
-        crypt.encode(input),
-        new Date(),
-        message_id,
-      );
-      await bot.sendMessage(chatId, formatResponse(input), {
-        parse_mode: 'Markdown',
-      });
-    } catch (error) {
-      logger.log('error', error.toString());
-      await bot.sendMessage(chatId, error.toLocaleString());
-    }
+    return;
+  }
+  // TODO: если записи нет - тогда что делать???
+  const isExist = await dbEntries.exist(currentUser.id, message_id);
+  if (!isExist) {
+    await bot.sendMessage(chatId, 'Message not exist');
+    return;
+  }
+  try {
+    await dbEntries.put(
+      currentUser.id,
+      crypt.encode(input),
+      new Date(),
+      message_id,
+    );
+    await bot.sendMessage(chatId, formatResponse(input), {
+      parse_mode: 'Markdown',
+    });
+  } catch (error) {
+    logger.log('error', error.toString());
+    await bot.sendMessage(chatId, error.toLocaleString());
   }
 };
 

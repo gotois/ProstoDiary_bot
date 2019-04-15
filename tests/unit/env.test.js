@@ -3,11 +3,20 @@ module.exports = (t) => {
   t.is(typeof env.DATABASE, 'object');
   t.is(typeof env.CORALOGIX, 'object');
   t.is(typeof env.TELEGRAM, 'object');
+  t.throws(() => {
+    env.TELEGRAM.WEB_HOOK_URL;
+  });
   t.is(typeof env.PLOTLY, 'object');
   t.is(typeof env.NALOGRU, 'object');
   t.is(typeof env.FAT_SECRET, 'object');
   t.is(typeof env.SENDGRID, 'object');
   t.is(typeof env.OPEN_WEATHER, 'object');
   t.is(typeof env.GOOGLE, 'object');
+  t.throws(() => {
+    env.GOOGLE.GOOGLE_CREDENTIALS_PARSED;
+  });
   t.is(typeof env.DIALOGFLOW, 'object');
+  t.throws(() => {
+    env.DIALOGFLOW.DIALOGFLOW_CREDENTIALS;
+  });
 };

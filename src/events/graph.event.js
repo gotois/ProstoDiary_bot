@@ -91,7 +91,7 @@ const getGraph = async ({ chat, from, text }) => {
     .toLowerCase();
   const regExp = createRegexInput(input);
   try {
-    const { rows } = await dbEntries.getAll(currentUser.id);
+    const rows = await dbEntries.getAll(currentUser.id);
     const entryRows = decodeRows(rows).filter(({ entry }) => {
       return regExp.test(entry.toLowerCase());
     });

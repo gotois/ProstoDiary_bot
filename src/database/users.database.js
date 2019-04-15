@@ -1,25 +1,30 @@
 const { $$ } = require('./index');
 /**
+ * TODO: сделать аналогично entities/exist
  *
  * @param {number} telegramUserId - id
+ * @returns {Promise}
  */
-const check = (telegramUserId) => {
-  return $$(
-    `SELECT 1 from users
-    WHERE telegram_user_id=$1`,
+const check = async (telegramUserId) => {
+  const res = await $$(
+    `SELECT 1 FROM users
+    WHERE telegram_user_id = $1`,
     [telegramUserId],
   );
+  return res;
 };
 /**
  *
  * @param {number} telegramUserId - id
+ * @returns {Promise}
  */
-const post = (telegramUserId) => {
-  return $$(
+const post = async (telegramUserId) => {
+  const res = await $$(
     `INSERT INTO users (telegram_user_id)
-    values ($1)`,
+    VALUES ($1)`,
     [telegramUserId],
   );
+  return res;
 };
 
 module.exports = {

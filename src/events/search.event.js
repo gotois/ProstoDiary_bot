@@ -42,7 +42,7 @@ const onSearch = async ({ chat, from }, match) => {
   const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
-  const { rows } = await dbEntries.getAll(currentUser.id);
+  const rows = await dbEntries.getAll(currentUser.id);
   const input = String(match[2]).trim();
   const regExp = createRegexInput(input);
   const matchFilterRows = decodeRows(rows).filter(({ entry }) => {
