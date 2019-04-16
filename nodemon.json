@@ -1,0 +1,8 @@
+{
+  "verbose": true,
+  "ignore": [
+    "tests/*",
+    "docs/*"
+  ],
+  "delay": "5000"
+}

@@ -7,7 +7,7 @@
   "man": [],
   "private": false,
   "bin": {
-    "prosto-diary": "./bin/index"
+    "prosto-diary": "./scripts/index"
   },
   "directories": {
     "data": "./data",
@@ -15,12 +15,11 @@
   },
   "scripts": {
     "postinstall": "npx ncu",
-    "package-upgrade": "npx ncu -u",
-    "dev": "nodemon ./bin/index",
-    "dev:debug": "nodemon --inspect ./bin/index",
-    "start": "./bin/index",
-    "start:debug": "node --inspect ./bin/index",
-    "lint": "eslint src/**/*.js tests/**/*.js",
+    "dev": "nodemon ./scripts/index",
+    "dev:debug": "nodemon --inspect ./scripts/index",
+    "start": "./scripts/index",
+    "start:debug": "node --inspect ./scripts/index",
+    "lint": "eslint src/*.js src/**/*.js tests/**/*.js",
     "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js",
     "unit": "ava tests/unit/index.js",
     "unit:watch": "npm run unit -- --watch",
@@ -95,22 +94,9 @@
     "eslint-plugin-prettier": "~3.0.1",
     "husky": "~1.3.1",
     "nodemon": "~1.18.11",
-    "npm-check-updates": "~3.1.7",
-    "nyc": "~13.3.0",
+    "npm-check-updates": "~3.1.8",
+    "nyc": "~14.0.0",
     "prettier": "~1.17.0",
     "telegram-test-api": "~2.0.2"
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "tests/*",
-      "docs/*"
-    ],
-    "delay": "5000"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint",
-      "pre-push": "npm test"
-    }
   }
 }

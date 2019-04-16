@@ -10,15 +10,15 @@
 Install
 ---
 ```bash
+chmod +x scripts/index
 npm rebuild
 npm i
-chmod +x bin/index 
 ```
 
 Package upgrade
 ---
 ```bash
-npm run package-upgrade
+npx ncu -u
 ```
 
 Usage
