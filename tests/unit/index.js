@@ -1,9 +1,12 @@
 import test from 'ava';
 
-// TODO: переделать под cross-env
-process.env.SALT_PASSWORD = '123456';
-process.env.NODE_ENV = 'production';
-process.env.TELEGRAM_TOKEN = '123456';
+test.before((t) => {
+  // TODO: переделать под cross-env?
+  process.env.SALT_PASSWORD = '123456';
+  process.env.NODE_ENV = 'production';
+  process.env.TELEGRAM_TOKEN = '123456';
+  t.pass();
+});
 
 test('database config', require('./dbconfig.test'));
 test('logger', require('./log.test'));
@@ -20,3 +23,4 @@ test('detect lang', require('./detect-lang.test'));
 test('env', require('./env.test'));
 test('bot init', require('./telegram-bot.test'));
 test('faker', require('./faker.test'));
+test('QR test', require('./qr.test'));

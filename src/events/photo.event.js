@@ -1,14 +1,9 @@
 const bot = require('../bot');
 const logger = require('../services/logger.service');
-const qr = require('../services/qr.service');
 const { getTelegramFile } = require('../services/telegram-file.service');
 const { getPhotoDetection } = require('../services/photo.service');
 const foodService = require('../services/food.service');
-const {
-  checkKPP,
-  // nalogRuSignUp,
-  getKPPData,
-} = require('../services/kpp.service');
+const kppService = require('../services/kpp.service');
 /**
  * @description Работа с QR
  * @param {Object} msg - message
@@ -32,19 +27,9 @@ const onPhoto = async ({ chat, photo, caption }) => {
   });
   if (isQR) {
     try {
-      const qrParams = await qr.readQR(fileBuffer);
-      // STEP 1 - авторизуемся
-      // TODO: uncomment this if getKPPData doesn't work
-      // await nalogRuSignUp()
-
-      // STEP 2 - проверяем чек (необходимо чтобы избежать ошибки illegal api)
-      await checkKPP(qrParams);
-
-      // STEP 3 - используем данные для получения подробного результата
-      // TODO: данные должны попадать в БД
-      const kppData = await getKPPData(qrParams);
-
-      // STEP 4 - выявляем из данных нужное
+      // TODO: данные kppData должны попадать в БД
+      const kppData = kppService(fileBuffer);
+      // выявляем из данных нужное
       let foodText = '';
       // TODO: получаем данные о еде, узнаем количество потраченных денег, время покупки, etc
       for (const item of kppData.items) {

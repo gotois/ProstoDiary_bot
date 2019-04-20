@@ -92,14 +92,13 @@ test.after.always('guaranteed cleanup', async (t) => {
   t.true(mailResult.statusCode >= 200 && mailResult.statusCode < 300);
 });
 
+// Database
 skipTestForFastOrTravis(
   'Database Foods',
   require('./database.test').databaseFoods,
 );
 
-skipTestForFast('/help', require('./help.test'));
-skipTestForFast('/version', require('./version.test'));
-skipTestForFast('QR check', require('./qr.test'));
+// API
 skipTestForFast('API: speller service', require('./speller-service.test'));
 skipTestForFast('API: request', require('./request.test'));
 skipTestForFast('API: Weather', require('./weather.test'));
@@ -108,8 +107,12 @@ skipTestForFast('API: RestContries', require('./restcountries.test'));
 skipTestForFastOrTravis('API: Fatsecret', require('./fatsecret.test'));
 skipTestForFastOrTravis('API: Google Vision', require('./vision.test'));
 skipTestForFastOrTravis('API: KPP nalog.ru', require('./kpp.test'));
-skipTestForFastOrTravis('voice', require('./voice.test'));
 skipTestForFastOrTravis('API: Translate', require('./translate.test'));
+
+// INPUT
+skipTestForFast('/help', require('./help.test'));
+skipTestForFast('/version', require('./version.test'));
+skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
 
 test.todo('/start');
 test.todo('/dbclear');

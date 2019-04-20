@@ -1,11 +1,17 @@
 const { NALOGRU } = require('../env');
 const { get, post } = require('./request.service');
 const fakeService = require('./faker.service');
+const qr = require('./qr.service');
 /**
  * NALOGRU_HOST
  * @type {string}
  */
 const NALOGRU_HOST = 'proverkacheka.nalog.ru';
+/**
+ * NALOGRU_PORT
+ * @type {string}
+ */
+const NALOGRU_PORT = '9999';
 /**
  * @param {Object} qrParams - qr params
  * @param {string} qrParams.fn - Номер ФН (Фискальный Номер) — 16-значный номер. Например 8710000101700xxx
@@ -36,7 +42,7 @@ const formatArguments = (qrParams) => {
  * @description - получаем пароль NALOGRU_KP_PASSWORD на мобильный телефон в виде СМС
  * @returns {Promise}
  */
-const nalogRuSignUp = async () => {
+const nalogRuSignUp = async () => { // eslint-disable-line
   // TODO: не ясно почему здесь отличается порт
   const res = await post(
     `https://${NALOGRU_HOST}:8888/v1/mobile/users/signup`,
@@ -52,10 +58,11 @@ const nalogRuSignUp = async () => {
  * @param {Object} kppParams - параметры KPP
  * @returns {Promise<undefined>}
  */
-const checkKPP = async (kppParams) => {
-  const { FN, FD, FDP, TYPE, DATE, SUM } = formatArguments(kppParams);
+const checkKPP = async ({ FN, FD, FDP, TYPE, DATE, SUM }) => {
+  // TODO: Если падает ошибка 406 - значит не совпадает номер телефона
+  // нужно учитывать такой кейс и давать правильную ошибку
   await get(
-    `https://${NALOGRU_HOST}:9999/v1/ofds/*/inns/*/fss/${FN}/operations/${TYPE}/tickets/${FD}?fiscalSign=${FDP}&date=${DATE}&sum=${SUM}`,
+    `https://${NALOGRU_HOST}:${NALOGRU_PORT}/v1/ofds/*/inns/*/fss/${FN}/operations/${TYPE}/tickets/${FD}?fiscalSign=${FDP}&date=${DATE}&sum=${SUM}`,
   );
 };
 /**
@@ -89,13 +96,12 @@ const getKPPDocumentReceipt = (data) => {
  * @param {Object} kppParams - параметры KPP
  * @returns {{items: *, user: *, totalSum: *, dateTime: *, retailPlaceAddress: *}}
  */
-const getKPPData = async (kppParams) => {
+const getKPPData = async ({ FN, FD, FDP }) => {
   const fakeDevice = new fakeService.Device();
-  const { FN, FD, FDP } = formatArguments(kppParams);
   const data = await get(
     `https://${NALOGRU.NALOGRU_PHONE}:${
       NALOGRU.NALOGRU_KP_PASSWORD
-    }@${NALOGRU_HOST}:9999/v1/inns/*/kkts/*/fss/${FN}/tickets/${FD}?fiscalSign=${FDP}&sendToEmail=${'no'}`,
+    }@${NALOGRU_HOST}:${NALOGRU_PORT}/v1/inns/*/kkts/*/fss/${FN}/tickets/${FD}?fiscalSign=${FDP}&sendToEmail=${'no'}`,
     {
       'Device-Id': fakeDevice.DEVICE_ID,
       'Device-OS': fakeDevice.DEVICE_OS,
@@ -104,8 +110,66 @@ const getKPPData = async (kppParams) => {
   const kppDocumentReceipt = getKPPDocumentReceipt(data);
   return kppDocumentReceipt;
 };
-module.exports = {
-  getKPPData,
-  checkKPP,
-  nalogRuSignUp,
+/**
+ * @param {string} query - query
+ * @returns {Object}
+ */
+const getQRParams = (query) => {
+  return (/^[?#]/.test(query) ? query.slice(1) : query)
+    .split('&')
+    .reduce((params, param) => {
+      const [key, value] = param.split('=');
+      params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : '';
+      return params;
+    }, {});
 };
+/**
+ * @param {Buffer|Object|string} input - input
+ * @returns {Promise<Object|Error>}
+ */
+const getKPPParams = async (input) => {
+  let qrString = '';
+  switch (typeof input) {
+    case 'string': {
+      if (!input.length) {
+        throw new Error('KPP: input is 0 length');
+      }
+      qrString = input;
+      break;
+    }
+    case 'Buffer': {
+      qrString = await qr.readQR(input);
+      break;
+    }
+    case 'object': {
+      if (input === null) {
+        throw new Error('KPP: input is null');
+      }
+      break;
+    }
+    default: {
+      throw new Error('KPP: wrong input');
+    }
+  }
+  qrString = qrString.trim();
+  const kppParams = getQRParams(qrString);
+  const normalizeKPPParams = formatArguments(kppParams);
+  return normalizeKPPParams;
+};
+/**
+ * @param {Buffer|Object|string} input - input
+ * @returns {Promise<Object>}
+ */
+const kppService = async (input) => {
+  const kppParams = await getKPPParams(input);
+  // STEP 1 - авторизуемся
+  // TODO: uncomment this if getKPPData doesn't work
+  // await nalogRuSignUp()
+  // STEP 2 - проверяем чек (необходимо чтобы избежать ошибки illegal api)
+  await checkKPP(kppParams);
+  // STEP 3 - используем данные для получения подробного результата
+  const kppData = await getKPPData(kppParams);
+  return kppData;
+};
+
+module.exports = kppService;

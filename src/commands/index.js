@@ -14,6 +14,7 @@ module.exports = {
   GRAPH: /^\/graph(\s)/,
   COUNT: /^\/count$|\/count\s(.+)/,
   SEARCH: /^\/search(\s)(.+)/,
+  KPP: /^\/kpp(\s)(.+)/,
   EDITED_MESSAGE_TEXT: 'edited_message_text',
   TEXT: 'text',
   WEBHOOK_ERROR: 'webhook_error',

@@ -13,6 +13,7 @@ bot.onText(commands.GRAPH, require('./graph.event'));
 bot.onText(commands.COUNT, require('./count.event'));
 bot.onText(commands.SEARCH, require('./search.event'));
 bot.onText(commands.VERSION, require('./version.event'));
+bot.onText(commands.KPP, require('./kpp.event'));
 bot.on(commands.EDITED_MESSAGE_TEXT, require('./edited-message-text.event'));
 bot.on(commands.TEXT, require('./text.event'));
 bot.on(commands.PHOTO, require('./photo.event'));

@@ -13,33 +13,21 @@ const readQR = async (buffer) => {
       cropSymmetric: true,
     });
   }
+  // image = image.greyscale().contrast(-0.1); // - не особо помогает :(
   const qrValue = jsQR(
     image.bitmap.data,
     image.bitmap.width,
     image.bitmap.height,
+    {
+      inversionAttempts: 'dontInvert',
+    },
   );
   if (!qrValue) {
     throw new Error('QR: not found');
   } else if (!qrValue.data) {
-    throw new Error('QR: data not found');
+    throw new Error('QR: data is null');
   }
-  return getParams(qrValue.data);
-};
-/**
- * @param {string} query - query
- * @returns {string|Error}
- */
-const getParams = (query) => {
-  if (!query) {
-    throw new Error('empty query');
-  }
-  return (/^[?#]/.test(query) ? query.slice(1) : query)
-    .split('&')
-    .reduce((params, param) => {
-      const [key, value] = param.split('=');
-      params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : '';
-      return params;
-    }, {});
+  return qrValue.data;
 };
 
 module.exports = {
