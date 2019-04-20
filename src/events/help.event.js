@@ -21,6 +21,7 @@ const getHelpData = () => {
     '/get': 'Получение данных за этот срок `/get YYYY-MM-DD`',
     '/set': 'Добавление данных за этот срок `/set YYYY-MM-DD something`',
     '/count': 'Подсчет потраченого `/count -` и полученного `/count +`',
+    '/kpp': 'Просмотр информации по своему чеку',
     '/search': 'Поиск вхождения `/search something`',
     '/version': 'Получение версии `/version`',
   };

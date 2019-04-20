@@ -18,12 +18,7 @@ const dotNumberReplacer = (match, matchIndex, text) => {
  * @returns {string}
  */
 const formatQuery = (query) => {
-  let temp;
-  if (Array.isArray(query)) {
-    [temp] = query;
-  } else {
-    temp = query;
-  }
+  let temp = query;
   temp = temp.trim();
   temp = temp.replace(/\.\d+/gm, dotNumberReplacer);
 

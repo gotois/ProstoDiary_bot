@@ -16,4 +16,5 @@ set - Добавление данных за этот срок /set YYYY-MM-DD s
 count - Подсчет потраченого /count - и полученного /count +
 search - Поиск вхождения /search something
 version - Получение версии /version
+kpp - Просмотр информации по своему чеку
 ```

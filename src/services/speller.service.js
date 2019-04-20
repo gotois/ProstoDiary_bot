@@ -18,7 +18,7 @@ const spellCheck = async (text) => {
     },
   );
   if (!Array.isArray(res)) {
-    throw new Error('spellCheck' + res);
+    throw new Error('spellCheck API changes' + res);
   }
   return res;
 };
