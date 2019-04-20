@@ -21,7 +21,6 @@ const formatQuery = (query) => {
   let temp = query;
   temp = temp.trim();
   temp = temp.replace(/\.\d+/gm, dotNumberReplacer);
-
   return temp;
 };
 /**

@@ -30,7 +30,6 @@ const getDataFromDate = async ({ chat, from }, match) => {
   } else {
     getTime = match[1].trim();
   }
-
   try {
     date = datetime.convertToNormalDate(getTime);
     if (!datetime.isNormalDate(date)) {

@@ -11,7 +11,7 @@ Server Environments
 ```
 NODE_ENV={ production|development|TRAVIS_CI|test }
 TELEGRAM_TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
-SERVER_NAME={ Your heroku server name }
+SERVER_NAME={ In DASH-CASE style }
 SALT_PASSWORD={ User salt password }
 
 # Database

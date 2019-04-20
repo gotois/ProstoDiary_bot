@@ -79,7 +79,7 @@
     "node-native-zip": "~1.1.0",
     "node-telegram-bot-api": "~0.30.0",
     "openweather-apis": "~4.0.0",
-    "pg": "~7.9.0",
+    "pg": "~7.10.0",
     "plotly": "~1.0.6",
     "winston": "~3.2.1"
   },

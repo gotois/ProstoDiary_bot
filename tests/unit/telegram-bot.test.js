@@ -1,5 +1,4 @@
-module.exports = async (t) => {
-  await t.throws(() => {
-    require('../../src/bot');
-  });
+module.exports = (t) => {
+  const bot = require('../../src/bot');
+  t.true(typeof bot === 'object');
 };
