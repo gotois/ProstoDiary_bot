@@ -137,14 +137,14 @@ const getKPPParams = async (input) => {
       qrString = input;
       break;
     }
-    case 'Buffer': {
-      qrString = await qr.readQR(input);
-      break;
-    }
     case 'object': {
       if (input === null) {
         throw new Error('KPP: input is null');
       }
+      if (!Buffer.isBuffer(input)) {
+        throw new Error('KPP: wrong buffer');
+      }
+      qrString = await qr.readQR(input);
       break;
     }
     default: {

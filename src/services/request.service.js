@@ -12,7 +12,8 @@ const get = (url, headers = {}, encoding = null) => {
         return reject(error);
       }
       if (response.statusCode >= 400) {
-        return reject(body.toString('utf8'));
+        // TODO: вероятно в таком случае нужно отдавать более подробный ответ
+        return reject(body.toString('utf8') || 'Error: ' + response.statusCode);
       }
       return resolve(body);
     });
@@ -43,6 +44,7 @@ const post = (
           return reject(error);
         }
         if (response.statusCode >= 400) {
+          // TODO: вероятно в таком случае нужно отдавать более подробный ответ
           return reject(body.toString('utf8'));
         }
         return resolve(body);
