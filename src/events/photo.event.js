@@ -27,8 +27,8 @@ const onPhoto = async ({ chat, photo, caption }) => {
   });
   if (isQR) {
     try {
+      const kppData = await kppService(fileBuffer);
       // TODO: данные kppData должны попадать в БД
-      const kppData = kppService(fileBuffer);
       // выявляем из данных нужное
       let foodText = '';
       // TODO: получаем данные о еде, узнаем количество потраченных денег, время покупки, etc

@@ -1,6 +1,5 @@
 const bot = require('../bot');
 /**
- *
  * @param  {Object} chat - chat
  * @returns {Promise<undefined>}
  */

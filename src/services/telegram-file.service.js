@@ -1,13 +1,17 @@
 const bot = require('../bot');
 const { get } = require('./request.service');
 /**
+ * @type {string}
+ */
+const TELEGRAM_HOST = 'api.telegram.org';
+/**
  * @param {string} fileId - file id
  * @returns {Promise<string|Buffer|Error|*>}
  */
 const getTelegramFile = async (fileId) => {
   const fileInfo = await bot.getFile(fileId);
   const buffer = await get(
-    `https://api.telegram.org/file/bot${bot.token}/${fileInfo.file_path}`,
+    `https://${TELEGRAM_HOST}/file/bot${bot.token}/${fileInfo.file_path}`,
   );
   return buffer;
 };
