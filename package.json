@@ -1,5 +1,5 @@
 {
-  "name": "ProstoDiary_bot",
+  "name": "prosto-diary",
   "description": "Global virtual assistant",
   "version": "1.0.0",
   "homepage": "https://prosto-diary.gotointeractive.com",
@@ -45,7 +45,7 @@
   "keywords": [
     "prostodiary",
     "prosto diary",
-    "NLP bot"
+    "virtual assistant"
   ],
   "author": {
     "name": "Denis Baskovsky",
@@ -67,11 +67,11 @@
     "@google-cloud/speech": "~2.3.1",
     "@google-cloud/translate": "~3.0.1",
     "@google-cloud/vision": "~0.25.0",
-    "@sendgrid/mail": "~6.3.1",
+    "@sendgrid/mail": "~6.4.0",
     "compromise": "~11.13.2",
     "coralogix-logger-winston": "~1.0.9",
     "dialogflow": "~0.8.2",
-    "dotenv": "~7.0.0",
+    "dotenv": "~8.0.0",
     "franc": "~4.1.0",
     "jimp": "~0.6.4",
     "jsqr": "~1.2.0",
@@ -90,12 +90,12 @@
     "eslint": "~5.16.0",
     "eslint-config-prettier": "~4.2.0",
     "eslint-plugin-jsdoc": "~4.8.3",
-    "eslint-plugin-node": "~8.0.1",
+    "eslint-plugin-node": "~9.0.1",
     "eslint-plugin-prettier": "~3.0.1",
-    "husky": "~2.1.0",
-    "nodemon": "~1.18.11",
-    "npm-check-updates": "~3.1.8",
-    "nyc": "~14.0.0",
+    "husky": "~2.2.0",
+    "nodemon": "~1.19.0",
+    "npm-check-updates": "~3.1.9",
+    "nyc": "~14.1.0",
     "prettier": "~1.17.0",
     "telegram-test-api": "~2.2.1"
   }
