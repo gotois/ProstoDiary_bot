@@ -115,6 +115,8 @@ skipTestForFast('/help', require('./help.test'));
 skipTestForFast('/version', require('./version.test'));
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
 
+test('Currency Service', require('./currency-service.test'));
+
 test.todo('/start');
 test.todo('/dbclear');
 test.todo('/download');

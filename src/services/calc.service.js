@@ -24,6 +24,7 @@ const regExpUsd = new RegExp(usdString);
 /**
  * @constant
  */
+// TODO: выделить это в отдельные сущности для использования в currency-service.test
 const [EUR, RUB, USD] = ['eur', 'rub', 'usd'];
 const defaultOut = Object.freeze({ [EUR]: 0, [RUB]: 0, [USD]: 0 });
 /**

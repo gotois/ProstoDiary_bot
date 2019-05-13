@@ -52,7 +52,34 @@ const post = (
     );
   });
 };
+/**
+ * @description Serialization
+ * @param {Object} data - data
+ * @returns {string}
+ */
+const toQueryString = (data) => {
+  const items = Object.entries(data)
+    // eslint-disable-next-line no-unused-vars
+    .filter(([key, value]) => {
+      switch (typeof value) {
+        case 'object':
+          return value !== null;
+        case 'undefined':
+          return value !== undefined;
+        case 'string':
+          return value.length > 0;
+        default:
+          return true;
+      }
+    })
+    .map(([key, value]) => {
+      return `${key}=${value}`;
+    });
+  return items.length ? `?${items.join('&')}` : '';
+};
+
 module.exports = {
   get,
   post,
+  toQueryString,
 };

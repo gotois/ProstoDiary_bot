@@ -24,3 +24,4 @@ test('env', require('./env.test'));
 test('bot init', require('./telegram-bot.test'));
 test('faker', require('./faker.test'));
 test('QR test', require('./qr.test'));
+test('request', require('./request.test'));
