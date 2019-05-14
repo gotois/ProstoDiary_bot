@@ -3,6 +3,7 @@ class Device {
    * fake device_id
    *
    * @type {string}
+   * @returns {string}
    */
   get DEVICE_ID() {
     return 'curl';
@@ -11,6 +12,7 @@ class Device {
    * face device_os
    *
    * @type {string}
+   * @returns {string}
    */
   get DEVICE_OS() {
     return 'linux';

@@ -23,7 +23,7 @@
     "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js",
     "unit": "ava tests/unit/index.js",
     "unit:watch": "npm run unit -- --watch",
-    "e2e": "ava tests/e2e/index.js",
+    "e2e": "ava tests/e2e/index.js --serial",
     "e2e:fast": "cross-env FAST_TEST=FAST_TEST npm run e2e",
     "coverage": "nyc report --reporter=lcov npm test",
     "docs:serve": "cd docs/ ; jekyll serve"
@@ -65,8 +65,8 @@
   "dependencies": {
     "@google-cloud/language": "~2.1.0",
     "@google-cloud/speech": "~2.3.1",
-    "@google-cloud/translate": "~3.0.1",
-    "@google-cloud/vision": "~0.25.0",
+    "@google-cloud/translate": "~4.0.0",
+    "@google-cloud/vision": "~1.0.0",
     "@sendgrid/mail": "~6.4.0",
     "compromise": "~11.13.2",
     "coralogix-logger-winston": "~1.0.9",
@@ -75,11 +75,11 @@
     "franc": "~4.1.0",
     "jimp": "~0.6.4",
     "jsqr": "~1.2.0",
-    "music-metadata": "~3.7.0",
+    "music-metadata": "~3.8.0",
     "node-native-zip": "~1.1.0",
     "node-telegram-bot-api": "~0.30.0",
     "openweather-apis": "~4.0.0",
-    "pg": "~7.10.0",
+    "pg": "~7.11.0",
     "plotly": "~1.0.6",
     "winston": "~3.2.1"
   },
@@ -89,14 +89,14 @@
     "cross-env": "~5.2.0",
     "eslint": "~5.16.0",
     "eslint-config-prettier": "~4.2.0",
-    "eslint-plugin-jsdoc": "~4.8.3",
+    "eslint-plugin-jsdoc": "~4.8.4",
     "eslint-plugin-node": "~9.0.1",
-    "eslint-plugin-prettier": "~3.0.1",
+    "eslint-plugin-prettier": "~3.1.0",
     "husky": "~2.2.0",
     "nodemon": "~1.19.0",
     "npm-check-updates": "~3.1.9",
-    "nyc": "~14.1.0",
-    "prettier": "~1.17.0",
+    "nyc": "~14.1.1",
+    "prettier": "~1.17.1",
     "telegram-test-api": "~2.2.1"
   }
 }

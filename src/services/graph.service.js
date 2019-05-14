@@ -78,6 +78,7 @@ const deletePlot = (plotId) => {
 };
 /**
  * @param {string|Date} date - date
+ * @returns {*}
  */
 const getDateString = (date) => {
   if (typeof date === 'string') {

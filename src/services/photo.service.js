@@ -27,8 +27,9 @@ const getTextDetection = (caption) => {
   };
 };
 /**
- * @param {string} caption - photo caption text
- * @param {Buffer} fileBuffer - fileBuffer
+ * @param {Object} obj - obj
+ * @param {string} obj.caption - photo caption text
+ * @param {Buffer} obj.fileBuffer - fileBuffer
  * @returns {Promise<Object>}
  */
 const getPhotoDetection = async ({ caption, fileBuffer }) => {

@@ -1,5 +1,6 @@
 /**
- * @example .5 -> 0.5
+ * .5 -> 0.5
+ *
  * @param {string} match - match
  * @param {number} matchIndex - index
  * @param {string} text - text

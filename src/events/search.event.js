@@ -53,8 +53,9 @@ const onSearch = async ({ chat, from }, match) => {
     return;
   }
   /**
-   * @param {*} entry - entry
-   * @param {*} date - date
+   * @param {Object} obj - obj
+   * @param {*} obj.entry - entry
+   * @param {*} obj.date - date
    * @returns {Promise<undefined>}
    */
   const botSendMessage = async ({ entry, date }) => {
@@ -69,7 +70,6 @@ const onSearch = async ({ chat, from }, match) => {
   };
   /**
    * @param {number} page - page
-   * @returns {Promise<undefined>}
    */
   function* generateEntries(page) {
     for (let i = 0; i < matchFilterRows.length; i += page) {

@@ -1,3 +1,5 @@
+const { CURRENCIES } = require('./currency.service');
+const { EUR, RUB, USD } = CURRENCIES;
 /**
  * @constant
  * @type {{allSpent: number, allReceived: number}}
@@ -21,11 +23,7 @@ const regExpEuro = new RegExp(euroString);
 const usdString =
   ' долларов|долларов|долларов | доллар|доллар|доллар | dollars|dollars|dollars |\\$';
 const regExpUsd = new RegExp(usdString);
-/**
- * @constant
- */
-// TODO: выделить это в отдельные сущности для использования в currency-service.test
-const [EUR, RUB, USD] = ['eur', 'rub', 'usd'];
+
 const defaultOut = Object.freeze({ [EUR]: 0, [RUB]: 0, [USD]: 0 });
 /**
  * @param {Object} acc - accumulator
@@ -75,8 +73,9 @@ const getFormatMoney = (money) => {
   };
 };
 /**
- * @param {Array} texts - text array
- * @param {number} type - money type
+ * @param {Object} obj - obj
+ * @param {Array} obj.texts - text array
+ * @param {number} obj.type - money type
  * @returns {Object}
  */
 const getMoney = ({ texts, type }) => {

@@ -24,8 +24,9 @@ const getLocShortName = (parsedData) => {
   }
 };
 /**
- * @param {number} latitude - lat
- * @param {number} longitude - lng
+ * @param {Object} obj - lng
+ * @param {number} obj.latitude - lat
+ * @param {number} obj.longitude - lng
  * @returns {Promise<{formattedAddress: {string}, currency: {code: {string}, symbol: {string}}}>}
  */
 const getAddress = async ({ latitude, longitude }) => {

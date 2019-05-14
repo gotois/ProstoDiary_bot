@@ -32,7 +32,8 @@ const isNormalDate = (date) => {
   return true;
 };
 /**
- * @example convertToNormalDate('YYY-MM-DD')
+ * convertToNormalDate('YYY-MM-DD')
+ *
  * @param {string|Date} date - date
  * @returns {Date|Error}
  */
@@ -98,7 +99,7 @@ const getDifferenceDays = (fromDate, untilDate) => {
  * @param {string|Date} until - until date
  * @returns {Array}
  * {@link https://gist.github.com/qertis/c1ed54a5f7cbaa9709030c0ff14d5b9e}
- * @example fillRangeTimes('2015-01-01', "2016-03-02");
+ * fillRangeTimes('2015-01-01', "2016-03-02");
  */
 const fillRangeTimes = (from, until) => {
   if (!(isDate(from) && isDate(until))) {

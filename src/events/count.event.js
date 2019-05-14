@@ -21,8 +21,8 @@ const formatResponse = ({ startTime, endTime, money }) => {
   );
 };
 /**
- * @example /count - -> выведет сколько всего потрачено
- * @example /count + -> выведет сколько всего получено
+ * /count - -> выведет сколько всего потрачено
+ * /count + -> выведет сколько всего получено
  *
  * @param {Object} msg - message
  * @param {Object} msg.chat - chat

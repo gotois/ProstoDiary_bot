@@ -7,7 +7,8 @@ const logger = require('../services/logger.service');
 /**
  * Получить все что я делал в эту дату
  *
- * @example /get 26.11.2016 or /get today
+ * /get 26.11.2016 or /get today
+ *
  * @param {Object} msg - message
  * @param {Object} msg.chat - chat
  * @param {Object} msg.from - from

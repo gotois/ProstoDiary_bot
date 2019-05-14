@@ -1,10 +1,22 @@
 // https://exchangeratesapi.io/
 const { get, toQueryString } = require('./request.service');
-
-const EXCHANGERATES_API_HOST = 'api.exchangeratesapi.io';
-
 /**
- * @example latest, 2010-01-12, latest?base=USD, latest?symbols=USD,GBP, history?start_at=2018-01-01&end_at=2018-09-01, history?start_at=2018-01-01&end_at=2018-09-01&symbols=ILS,JPY, history?start_at=2018-01-01&end_at=2018-09-01&base=USD
+ * @constant
+ * @type {string}
+ */
+const EXCHANGERATES_API_HOST = 'api.exchangeratesapi.io';
+/**
+ * @constant
+ * @type {Object}
+ */
+const CURRENCIES = {
+  EUR: 'eur',
+  RUB: 'rub',
+  USD: 'usd',
+};
+/**
+ * latest, 2010-01-12, latest?base=USD, latest?symbols=USD,GBP, history?start_at=2018-01-01&end_at=2018-09-01, history?start_at=2018-01-01&end_at=2018-09-01&symbols=ILS,JPY, history?start_at=2018-01-01&end_at=2018-09-01&base=USD
+ *
  * @param {Object} obj - obj
  * @param {string|undefined} obj.date - 2010-01-12 | history | latest
  * @param {string|undefined} obj.startAt - 2018-01-01
@@ -39,5 +51,6 @@ const exchangeratesapi = async ({
 };
 
 module.exports = {
+  CURRENCIES,
   exchangeratesapi,
 };

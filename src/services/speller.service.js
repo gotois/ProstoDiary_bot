@@ -25,7 +25,8 @@ const spellCheck = async (text) => {
 /**
  * Исправляем очевидные ошибки
  *
- * @example await spellText('рублкй') -> рублей
+ * await spellText('рублкй') -> рублей
+ *
  * @param {string} myText - user text
  * @returns {Promise<string>}
  */
