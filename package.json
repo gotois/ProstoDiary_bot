@@ -25,7 +25,7 @@
     "unit:watch": "npm run unit -- --watch",
     "e2e": "ava tests/e2e/index.js --serial",
     "e2e:fast": "cross-env FAST_TEST=FAST_TEST npm run e2e",
-    "coverage": "nyc report --reporter=lcov npm test",
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "docs:serve": "cd docs/ ; jekyll serve"
   },
   "engines": {
