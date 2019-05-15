@@ -14,6 +14,7 @@ chmod +x scripts/index
 npm rebuild
 npm i
 ```
+На Node 12 пакеты сразу могу не встать, поэтому рекомендуется установить сначала devDependencies, а затем dependencies
 
 Package upgrade
 ---
