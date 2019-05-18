@@ -10,6 +10,7 @@
 Install
 ---
 ```bash
+brew install git-lfs
 chmod +x scripts/index
 npm rebuild
 npm i
