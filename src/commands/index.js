@@ -12,6 +12,7 @@ module.exports = {
   GET_DATE: /^\/get (\d{4}-\d{1,2}-\d{1,2})$/,
   SET_DATE: /^\/set (\d{4}-\d{1,2}-\d{1,2})\s/,
   GRAPH: /^\/graph(\s)/,
+  BALANCE: /^\/balance$/,
   COUNT: /^\/count$|\/count\s(.+)/,
   SEARCH: /^\/search(\s)(.+)/,
   KPP: /^\/kpp(\s)(.+)/,

@@ -113,6 +113,7 @@ skipTestForFastOrTravis('API: Translate', require('./translate.test'));
 // INPUT
 skipTestForFast('/help', require('./help.test'));
 skipTestForFast('/version', require('./version.test'));
+skipTestForFastOrTravis('/balance', require('./balance.test'));
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
 
 test('Currency Service', require('./currency-service.test'));

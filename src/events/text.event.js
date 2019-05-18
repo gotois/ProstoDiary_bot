@@ -65,6 +65,7 @@ const onText = async ({
   } catch (error) {
     logger.log('error', error.toString());
   }
+  // todo: https://github.com/gotois/ProstoDiary_bot/issues/98
   try {
     await dbEntries.post(
       currentUser.id,
