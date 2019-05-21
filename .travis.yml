@@ -27,6 +27,9 @@ branches:
   only:
     - master
 
+before_install:
+  - git lfs pull
+
 install:
   - npm ci
 
