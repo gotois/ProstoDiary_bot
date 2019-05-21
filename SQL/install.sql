@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS Entries (
   id bigserial PRIMARY KEY,
   user_id integer REFERENCES Users (telegram_user_id),
   entry TEXT, -- каждый текст должен быть уникальным. если такой текст уже пользователь писал, то будет ссылка на него. таким образом можно достичь подсчета одинаковых действий
+  -- TODO: еще должен быть первоначальный, не обработанный текст
   telegram_entry_id integer NOT NULL UNIQUE,
   date_added timestamp default current_timestamp,
   date_modified timestamp default NULL
