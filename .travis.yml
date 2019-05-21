@@ -17,20 +17,20 @@ git:
   depth: 10
   quiet: true
   submodules: false
+  lfs_skip_smudge: true
 
 cache:
   npm: true
   directories:
     - ~/.cache
+    - .git/lfs
 
 branches:
   only:
     - master
 
-before_install:
-  - git lfs pull
-
 install:
+  - git lfs pull
   - npm ci
 
 script:
