@@ -30,7 +30,6 @@ branches:
     - master
 
 install:
-  - git lfs pull
   - npm ci
 
 script:
