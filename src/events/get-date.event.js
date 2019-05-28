@@ -55,6 +55,9 @@ const getDataFromDate = async ({ chat, from }, match) => {
     decodeRows.length
       ? await bot.sendMessage(chatId, JSON.stringify(decodeRows, null, 2))
       : await bot.sendMessage(chatId, 'Записей нет');
+    // todo: https://github.com/gotois/ProstoDiary_bot/issues/109
+    // надо получать из значений только то что является едой и это передавать в foodService
+    // ...
   } catch (error) {
     logger.log('error', error.toString());
     await bot.sendMessage(chatId, 'Произошла ошибка');
