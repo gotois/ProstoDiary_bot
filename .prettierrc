@@ -1,5 +1,10 @@
 {
   "printWidth": 80,
+  "quoteProps": "consistent",
+  "rangeStart": 0,
+  "requirePragma": false,
+  "insertPragma": false,
+  "htmlWhitespaceSensitivity": "strict",
   "useTabs": false,
   "bracketSpacing": true,
   "singleQuote": true,
@@ -7,10 +12,5 @@
   "proseWrap": "preserve",
   "arrowParens": "always",
   "semi": true,
-  "endOfLine": "lf",
-  "overrides": [{
-    "files": "*.js",
-    "options": {
-    }
-  }]
+  "endOfLine": "lf"
 }
