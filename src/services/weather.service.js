@@ -29,7 +29,7 @@ const getSmartJSON = (weather) => {
   });
 };
 /**
- * @param {Object} obj - obj
+ * @param {object} obj - obj
  * @param {number} obj.latitude - lat
  * @param {number} obj.longitude - lng
  * @returns {Promise<Error|{description: string, humidity: any, pressure: any, rain: any, temp: number, weathercode: number}>}

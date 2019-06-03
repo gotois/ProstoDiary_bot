@@ -14,9 +14,9 @@ const NOT_FOUND = 'NOT FOUND';
 /**
  * Построить график
  *
- * @param {Object} msg - message
- * @param {Object} msg.chat - message chat
- * @param {Object} msg.from - from
+ * @param {object} msg - message
+ * @param {object} msg.chat - message chat
+ * @param {object} msg.from - from
  * @param {string} msg.text - text
  * @returns {undefined}
  */

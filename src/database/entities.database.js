@@ -108,7 +108,7 @@ const _delete = async (userId, telegramEntryId) => {
  * Удаление данных из БД
  *
  * @param {number} userId - id user
- * @returns {Promise<Array<Object>>}
+ * @returns {Promise<Array<object>>}
  */
 const clear = async (userId) => {
   const res = await $$(

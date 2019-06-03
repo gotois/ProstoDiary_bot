@@ -1,6 +1,6 @@
 const bot = require('../bot');
 /**
- * @param  {Object} chat - chat
+ * @param  {object} chat - chat
  * @returns {Promise<undefined>}
  */
 const onPing = async ({ chat }) => {

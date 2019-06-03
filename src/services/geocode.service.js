@@ -6,10 +6,10 @@ const { GOOGLE } = require('../env');
  */
 const MAPS_HOST = 'maps.googleapis.com';
 /**
- * @param {Object} obj - obj
+ * @param {object} obj - obj
  * @param {number} obj.latitude - latitude
  * @param {number} obj.longitude - longitude
- * @returns {Promise<Array<Object>|Error>}
+ * @returns {Promise<Array<object>|Error>}
  */
 const getGeoCode = async ({ latitude, longitude }) => {
   const googleMapBuffer = await get(

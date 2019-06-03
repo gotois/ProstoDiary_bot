@@ -14,9 +14,9 @@ const generateName = (date) => {
 /**
  * Скачивание файла БД на устройство
  *
- * @param {Object} msg - message
- * @param {Object} msg.chat - message chat
- * @param {Object} msg.from - from
+ * @param {object} msg - message
+ * @param {object} msg.chat - message chat
+ * @param {object} msg.from - from
  * @param {string} msg.date - date
  * @returns {Promise<undefined>}
  */

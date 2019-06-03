@@ -9,10 +9,10 @@ const logger = require('../services/logger.service');
 /**
  * /set 2016-12-29 something text
  *
- * @param {Object} msg - message
- * @param {Object} msg.chat - chat
+ * @param {object} msg - message
+ * @param {object} msg.chat - chat
  * @param {string} msg.text - text
- * @param {Object} msg.from - from
+ * @param {object} msg.from - from
  * @param {number} msg.message_id - id message
  * @param {Array} match - match
  * @returns {undefined}

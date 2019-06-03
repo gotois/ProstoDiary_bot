@@ -4,9 +4,9 @@ const { voiceToText } = require('../services/voice.service');
 const { getTelegramFile } = require('../services/telegram-file.service');
 /**
  * @function
- * @param {Object} msg - msg
- * @param {Object} msg.chat - chat
- * @param {Object} msg.voice - voice
+ * @param {object} msg - msg
+ * @param {object} msg.chat - chat
+ * @param {object} msg.voice - voice
  * @returns {Promise<undefined>}
  */
 const getVoice = async ({ chat, voice }) => {

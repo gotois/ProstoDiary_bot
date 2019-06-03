@@ -17,7 +17,7 @@ const CURRENCIES = {
 /**
  * latest, 2010-01-12, latest?base=USD, latest?symbols=USD,GBP, history?start_at=2018-01-01&end_at=2018-09-01, history?start_at=2018-01-01&end_at=2018-09-01&symbols=ILS,JPY, history?start_at=2018-01-01&end_at=2018-09-01&base=USD
  *
- * @param {Object} obj - obj
+ * @param {object} obj - obj
  * @param {string|undefined} obj.date - 2010-01-12 | history | latest
  * @param {string|undefined} obj.startAt - 2018-01-01
  * @param {string|undefined} obj.endAt - 2018-09-01

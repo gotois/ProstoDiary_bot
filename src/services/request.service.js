@@ -1,7 +1,7 @@
 const request = require('request');
 /**
  * @param {string} url - url
- * @param {Object|undefined} headers - headers
+ * @param {object|undefined} headers - headers
  * @param {any} encoding - encoding
  * @returns {Promise<string|Buffer|Error>}
  */
@@ -23,8 +23,8 @@ const get = (url, headers = {}, encoding = null) => {
 };
 /**
  * @param {string} url - url
- * @param {Object} form - form
- * @param {Object|undefined} headers - headers
+ * @param {object} form - form
+ * @param {object|undefined} headers - headers
  * @returns {Promise<string|Buffer|Error>}
  */
 const post = (
@@ -58,7 +58,7 @@ const post = (
 };
 /**
  * @description Serialization
- * @param {Object} data - data
+ * @param {object} data - data
  * @returns {string}
  */
 const toQueryString = (data) => {

@@ -30,9 +30,9 @@ const isDeletedMessage = (message) => {
 /**
  * Обновление текста в БД
  *
- * @param {Object} msg - msg
- * @param {Object} msg.chat - chat
- * @param {Object} msg.from - from
+ * @param {object} msg - msg
+ * @param {object} msg.chat - chat
+ * @param {object} msg.from - from
  * @param {string} msg.text - text
  * @param {string} msg.message_id - message
  * @returns {undefined}

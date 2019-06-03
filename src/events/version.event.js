@@ -17,7 +17,7 @@ const generateChecksum = (str, algorithm = 'md5', encoding = 'hex') => {
 };
 /**
  *
- * @param  {Object} chat - chat
+ * @param  {object} chat - chat
  * @returns {Promise<undefined>}
  */
 const getVersion = async ({ chat }) => {

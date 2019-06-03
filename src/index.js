@@ -35,7 +35,7 @@ const dbConnect = async () => {
  * Start Telegram Bot
  *
  * @param {number} _reconnectCount - reconnectCount
- * @returns {Promise<Object>}
+ * @returns {Promise<object>}
  */
 const startTelegramBot = async (_reconnectCount = 0) => {
   if (_reconnectCount > 20) {

@@ -6,7 +6,7 @@ const { get } = require('./request.service');
 const RESTCOUNTRIES_HOST = 'restcountries.eu';
 /**
  * @param {string} name - text
- * @returns {Promise<Array<Object>|Error>}
+ * @returns {Promise<Array<object>|Error>}
  */
 const getFullName = async (name) => {
   const encodeName = encodeURI(name);

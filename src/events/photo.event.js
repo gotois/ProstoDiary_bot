@@ -6,9 +6,9 @@ const foodService = require('../services/food.service');
 const kppService = require('../services/kpp.service');
 /**
  * @description Работа с QR
- * @param {Object} msg - message
- * @param {Object} msg.chat - chat
- * @param {Array<Object>} msg.photo - photo
+ * @param {object} msg - message
+ * @param {object} msg.chat - chat
+ * @param {Array<object>} msg.photo - photo
  * @param {string} msg.caption - caption
  * @returns {Promise<undefined>}
  */

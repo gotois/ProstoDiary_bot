@@ -7,7 +7,7 @@ const client = new vision.ImageAnnotatorClient({
  * Performs label detection on the image file
  *
  * @param {Buffer|string} image - image file
- * @returns {Promise<Object>}
+ * @returns {Promise<object>}
  */
 const labelDetection = async (image) => {
   const [result] = await client.labelDetection(image);
@@ -15,7 +15,7 @@ const labelDetection = async (image) => {
 };
 /**
  * @param {Buffer|string} image - image file
- * @returns {Promise<Object>}
+ * @returns {Promise<object>}
  */
 const webDetection = async (image) => {
   const [result] = await client.webDetection({ image });
@@ -23,14 +23,14 @@ const webDetection = async (image) => {
 };
 /**
  * @param {Buffer|string} image - image file
- * @returns {Promise<Object>}
+ * @returns {Promise<object>}
  */
 const objectLocalization = async (image) => {
   const result = await client.objectLocalization({ image });
   return result;
 };
 /**
- * @param {Object} visionResult - google vision result
+ * @param {object} visionResult - google vision result
  * @returns {boolean}
  */
 const isQR = (visionResult) => {

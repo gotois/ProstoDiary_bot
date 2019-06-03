@@ -26,9 +26,9 @@ const regExpUsd = new RegExp(usdString);
 
 const defaultOut = Object.freeze({ [EUR]: 0, [RUB]: 0, [USD]: 0 });
 /**
- * @param {Object} acc - accumulator
- * @param {Object} money - money
- * @returns {Object}
+ * @param {object} acc - accumulator
+ * @param {object} money - money
+ * @returns {object}
  */
 const accMoney = (acc, money) => {
   acc[EUR] += money.eur;
@@ -46,8 +46,8 @@ const splitText = (text) => {
 /**
  * Локализуем
  *
- * @param {Object} money - money
- * @returns {Object}
+ * @param {object} money - money
+ * @returns {object}
  */
 const getFormatMoney = (money) => {
   const CURRENCY = 'currency';
@@ -73,10 +73,10 @@ const getFormatMoney = (money) => {
   };
 };
 /**
- * @param {Object} obj - obj
+ * @param {object} obj - obj
  * @param {Array} obj.texts - text array
  * @param {number} obj.type - money type
- * @returns {Object}
+ * @returns {object}
  */
 const getMoney = ({ texts, type }) => {
   if (!Array.isArray(texts)) {
@@ -139,7 +139,7 @@ const formatType = (str, type) => {
 };
 /**
  * @param {string} str - string
- * @returns {Object}
+ * @returns {object}
  */
 const calcMoney = (str) => {
   if (str.length <= 1) {
@@ -190,7 +190,7 @@ const cleanDirtyNumberString = (str) => {
 };
 /**
  * @param {string} numbers - number text
- * @returns {Object}
+ * @returns {object}
  */
 const getAllSum = (numbers) => {
   let out = numbers.replace(/^\D+/, '');

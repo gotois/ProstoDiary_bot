@@ -19,7 +19,7 @@ class FatSecret {
   /**
    * build the sorted key value pair string that will be used for the hmac and request
    *
-   * @param {Object} params - params
+   * @param {object} params - params
    * @returns {string}
    */
   static createQuery(params) {
@@ -40,7 +40,7 @@ class FatSecret {
   /**
    * Perform the request to fatsecret with default params merged in.
    *
-   * @param {Object} params - параметры
+   * @param {object} params - параметры
    * @returns {Promise}
    * @public
    */
@@ -63,7 +63,7 @@ class FatSecret {
   /**
    * Calculates and appends the signature hash to the query params
    *
-   * @param {Object} params - параметры
+   * @param {object} params - параметры
    * @returns {string}
    * @private
    */

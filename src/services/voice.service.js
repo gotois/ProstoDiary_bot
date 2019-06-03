@@ -20,7 +20,7 @@ const convertTelegramMIMEToGoogleMIME = (mimeType) => {
 };
 /**
  * @param {Buffer} buffer - file or buffer
- * @param {Object} obj - obj
+ * @param {object} obj - obj
  * @param {number} obj.duration - duration
  * @param {string} obj.mime_type - audio/ogg
  * @param {number} obj.file_size - file size

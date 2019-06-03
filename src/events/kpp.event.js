@@ -2,8 +2,8 @@ const bot = require('../bot');
 const logger = require('../services/logger.service');
 const kppService = require('../services/kpp.service');
 /**
- * @param {Object} msg - message
- * @param {Object} msg.chat - message chat
+ * @param {object} msg - message
+ * @param {object} msg.chat - message chat
  * @param {Array} match - matcher
  * @returns {undefined}
  */

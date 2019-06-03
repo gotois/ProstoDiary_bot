@@ -24,8 +24,8 @@ const figureOptions = {
   height: 512,
 };
 /**
- * @param {Object} figure - figure
- * @param {Object} options - options object
+ * @param {object} figure - figure
+ * @param {object} options - options object
  * @returns {Promise<Buffer>}
  */
 const getPlotlyImage = (figure, options = {}) => {
@@ -39,8 +39,8 @@ const getPlotlyImage = (figure, options = {}) => {
   });
 };
 /**
- * @param {Object} figure - object figure
- * @param {Object} options - options object
+ * @param {object} figure - object figure
+ * @param {object} options - options object
  * @returns {Promise<Buffer>}
  */
 const getImageBuffer = async (figure, options = {}) => {

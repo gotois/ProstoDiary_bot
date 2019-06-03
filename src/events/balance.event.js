@@ -2,7 +2,7 @@
 const bot = require('../bot');
 const logger = require('../services/logger.service');
 /**
- * @param {Array<Object>} items - balance items
+ * @param {Array<object>} items - balance items
  * @returns {string}
  */
 const formatBalanceText = (items) => {
@@ -10,7 +10,7 @@ const formatBalanceText = (items) => {
   const valuePadLength = 12;
   const bankPadLength = 20;
   /**
-   * @param {Object} obj - obj
+   * @param {object} obj - obj
    * @param {string} obj.currency - currency
    * @param {number} obj.value - value
    * @param {string} obj.bank - bank name
@@ -38,8 +38,8 @@ const formatBalanceText = (items) => {
 };
 /**
  * @function
- * @param {Object} msg - msg
- * @param {Object} msg.chat - chat
+ * @param {object} msg - msg
+ * @param {object} msg.chat - chat
  * @returns {Promise<undefined>}
  */
 const getBalance = async ({ chat }) => {

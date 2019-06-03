@@ -9,9 +9,9 @@ const logger = require('../services/logger.service');
  *
  * /get 26.11.2016 or /get today
  *
- * @param {Object} msg - message
- * @param {Object} msg.chat - chat
- * @param {Object} msg.from - from
+ * @param {object} msg - message
+ * @param {object} msg.chat - chat
+ * @param {object} msg.from - from
  * @param {Array} match - matcher
  * @returns {undefined}
  */

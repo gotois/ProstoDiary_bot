@@ -4,7 +4,7 @@ const { getFullName } = require('../services/restcountries.service');
 const { getGeoCode } = require('../services/geocode.service');
 const { getWeather } = require('../services/weather.service');
 /**
- * @param {Object} parsedData - geocode parsed data
+ * @param {object} parsedData - geocode parsed data
  * @returns {Error|string}
  */
 const getLocShortName = (parsedData) => {
@@ -24,7 +24,7 @@ const getLocShortName = (parsedData) => {
   }
 };
 /**
- * @param {Object} obj - lng
+ * @param {object} obj - lng
  * @param {number} obj.latitude - lat
  * @param {number} obj.longitude - lng
  * @returns {Promise<{formattedAddress: {string}, currency: {code: {string}, symbol: {string}}}>}
@@ -41,9 +41,9 @@ const getAddress = async ({ latitude, longitude }) => {
   };
 };
 /**
- * @param {Object} msg - message
- * @param {Object} msg.chat - chat
- * @param {Object} msg.location - location
+ * @param {object} msg - message
+ * @param {object} msg.chat - chat
+ * @param {object} msg.location - location
  * @returns {undefined}
  */
 const onLocation = async ({ chat, location: { latitude, longitude } }) => {

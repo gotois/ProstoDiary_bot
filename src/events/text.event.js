@@ -11,11 +11,11 @@ const { spellText } = require('../services/speller.service');
 /**
  * Все что пишешь - записывается в сегодняшний день
  *
- * @param {Object} msg - message
- * @param {Object} msg.chat - chat
- * @param {Object} msg.from - from
+ * @param {object} msg - message
+ * @param {object} msg.chat - chat
+ * @param {object} msg.from - from
  * @param {string} msg.text - text
- * @param {Object} msg.reply_to_message - message
+ * @param {object} msg.reply_to_message - message
  * @param {number} msg.message_id - id message
  * @param {Date} msg.date -date message
  * @returns {undefined}

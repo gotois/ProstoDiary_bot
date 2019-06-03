@@ -18,7 +18,7 @@ const PAGE_SKIP = 10; // default every 10 times
  */
 const NEXT_PAGE_VALUE = '__next_page';
 /**
- * @param {Object} msg - data
+ * @param {object} msg - data
  * @param {Date} msg.date - date
  * @param {string} msg.entry - entry
  * @param {string} msg.matcher - matcher string
@@ -31,9 +31,9 @@ const formatResponse = ({ date, entry, matcher }) => {
   return `${dateOut}\n${entryOut}`;
 };
 /**
- * @param {Object} msg - message
- * @param {Object} msg.chat - chat
- * @param {Object} msg.from - from
+ * @param {object} msg - message
+ * @param {object} msg.chat - chat
+ * @param {object} msg.from - from
  * @param {Array} match - match
  * @returns {undefined}
  */
@@ -53,7 +53,7 @@ const onSearch = async ({ chat, from }, match) => {
     return;
   }
   /**
-   * @param {Object} obj - obj
+   * @param {object} obj - obj
    * @param {*} obj.entry - entry
    * @param {*} obj.date - date
    * @returns {Promise<undefined>}

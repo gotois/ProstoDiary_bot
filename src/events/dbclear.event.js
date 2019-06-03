@@ -5,9 +5,9 @@ const logger = require('../services/logger.service');
 /**
  * Очистить базу данных с подтверждением
  *
- * @param {Object} msg - message
- * @param {Object} msg.chat - chat
- * @param {Object} msg.from - from
+ * @param {object} msg - message
+ * @param {object} msg.chat - chat
+ * @param {object} msg.from - from
  * @returns {undefined}
  */
 const onDBClear = async ({ chat, from }) => {

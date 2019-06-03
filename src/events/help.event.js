@@ -1,6 +1,6 @@
 const bot = require('../bot');
 /**
- * @param {Object} obj - object
+ * @param {object} obj - object
  * @param {string} obj.key - key
  * @param {string} obj.value - value
  * @returns {string}
@@ -11,7 +11,7 @@ const formatResponse = ({ key, value }) => {
 /**
  * TODO: насыщать эти данные из _pages/tutorial.md
  *
- * @returns {Object}
+ * @returns {object}
  */
 const getHelpData = () => {
   const helpData = {
@@ -30,8 +30,8 @@ const getHelpData = () => {
   return helpData;
 };
 /**
- * @param {Object} msg - message
- * @param {Object} msg.chat - chat
+ * @param {object} msg - message
+ * @param {object} msg.chat - chat
  * @returns {undefined}
  */
 const onHelp = async ({ chat }) => {
