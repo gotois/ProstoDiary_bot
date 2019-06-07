@@ -22,7 +22,7 @@ const NALOGRU_HOST = 'proverkacheka.nalog.ru';
  */
 const NALOGRU_PORT = '9999';
 /**
- * @param {Object} qrParams - qr params
+ * @param {object} qrParams - qr params
  * @param {string} qrParams.fn - Номер ФН (Фискальный Номер) — 16-значный номер. Например 8710000101700xxx
  * @param {string} qrParams.i - Номер ФД (Фискальный документ) — до 10 знаков. Например 2360xx
  * @param {string} qrParams.fp - Номер ФПД (Фискальный Признак Документа, также известный как ФП) — до 10 знаков. Например 3891955xxx
@@ -64,7 +64,7 @@ const nalogRuSignUp = async () => { // eslint-disable-line
   return res;
 };
 /**
- * @param {Object} kppParams - параметры KPP
+ * @param {object} kppParams - параметры KPP
  * @returns {Promise<undefined>}
  */
 const checkKPP = async ({ FN, FD, FDP, TYPE, DATE, SUM }) => {
@@ -76,7 +76,7 @@ const checkKPP = async ({ FN, FD, FDP, TYPE, DATE, SUM }) => {
 };
 /**
  * @param {Buffer} data - buffer data
- * @returns {Object|Error}
+ * @returns {object|Error}
  */
 const getKPPDocumentReceipt = (data) => {
   const formatData = data.toString('utf8');
@@ -102,7 +102,7 @@ const getKPPDocumentReceipt = (data) => {
   return formatDataObject.document.receipt;
 };
 /**
- * @param {Object} kppParams - параметры KPP
+ * @param {object} kppParams - параметры KPP
  * @returns {{items: *, user: *, totalSum: *, dateTime: *, retailPlaceAddress: *}}
  */
 const getKPPData = async ({ FN, FD, FDP }) => {
@@ -121,7 +121,7 @@ const getKPPData = async ({ FN, FD, FDP }) => {
 };
 /**
  * @param {string} query - query
- * @returns {Object}
+ * @returns {object}
  */
 const getQRParams = (query) => {
   return (/^[?#]/.test(query) ? query.slice(1) : query)
@@ -133,8 +133,8 @@ const getQRParams = (query) => {
     }, {});
 };
 /**
- * @param {Buffer|Object|string} input - input
- * @returns {Promise<Object|Error>}
+ * @param {Buffer|object|string} input - input
+ * @returns {Promise<object|Error>}
  */
 const getKPPParams = async (input) => {
   let qrString = '';
@@ -166,8 +166,8 @@ const getKPPParams = async (input) => {
   return normalizeKPPParams;
 };
 /**
- * @param {Buffer|Object|string} input - input
- * @returns {Promise<Object>}
+ * @param {Buffer|object|string} input - input
+ * @returns {Promise<object>}
  */
 const kppService = async (input) => {
   const kppParams = await getKPPParams(input);
