@@ -8,7 +8,7 @@ module.exports = {
   START: /^\/start$/,
   HELP: /^\/help$/,
   VERSION: /^\/version$/,
-  GET_TODAY: /^\/get today$/,
+  GET_TODAY: /^\/get today$/, // TODO: расширить до 'get yesterday'/ 'get позавчера' и т.д. -> https://github.com/gotois/ProstoDiary_bot/issues/54
   GET_DATE: /^\/get (\d{4}-\d{1,2}-\d{1,2})$/,
   SET_DATE: /^\/set (\d{4}-\d{1,2}-\d{1,2})\s/,
   GRAPH: /^\/graph(\s)/,

@@ -1,3 +1,8 @@
+const dateFns = require('date-fns');
+/* TODO: переписать функции своего велосипеда на date-fns
+  Заложить этот сервис в основу нового - SmartDate - https://github.com/gotois/ProstoDiary_bot/issues/90
+  Таким образом, все оперирование с датами внутри проекта будет происходить через него
+ */
 /**
  * @constant
  * @type {number}
@@ -12,24 +17,16 @@ const checkDateLaterThanNow = (date) => {
   return new Date().getTime() < date.getTime();
 };
 /**
- *
- * @param {Date|string} date - date
- * @returns {boolean}
- */
-const dateIsIncorrect = (date) => {
-  return isNaN(Date.parse(date));
-};
-/**
- *
+ * TODO: rename -> isValidDate
  * @param {string|Date} date - date
  * @returns {boolean}
  */
 const isNormalDate = (date) => {
-  //noinspection RedundantIfStatementJS
-  if (checkDateLaterThanNow(new Date(date)) || dateIsIncorrect(date)) {
-    return false;
-  }
-  return true;
+  return (
+    dateFns.isValid(new Date(date)) &&
+    !checkDateLaterThanNow(new Date(date)) &&
+    !isNaN(Date.parse(date))
+  );
 };
 /**
  * convertToNormalDate('YYY-MM-DD')
@@ -71,13 +68,6 @@ const convertIn2DigitFormat = (text) => {
   return `0${text}`.slice(-2);
 };
 /**
- * @param {Date|string} date - date
- * @returns {boolean}
- */
-const isDate = (date) => {
-  return date instanceof Date || typeof date === 'string';
-};
-/**
  *
  * @param {Date} fromDate - from date
  * @param {Date} untilDate - until date
@@ -102,12 +92,12 @@ const getDifferenceDays = (fromDate, untilDate) => {
  * fillRangeTimes('2015-01-01', "2016-03-02");
  */
 const fillRangeTimes = (from, until) => {
-  if (!(isDate(from) && isDate(until))) {
+  const fromDate = new Date(from);
+  const untilDate = new Date(until);
+  if (!(dateFns.isValid(fromDate) && dateFns.isValid(untilDate))) {
     throw new Error('unknown param type');
   }
   const result = [];
-  const fromDate = new Date(from);
-  const untilDate = new Date(until);
   const dayOffLength = getDifferenceDays(fromDate, untilDate);
   for (let i = 0; i < dayOffLength; i++) {
     const date = new Date(fromDate);
