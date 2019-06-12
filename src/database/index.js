@@ -6,15 +6,11 @@ const { IS_PRODUCTION, DATABASE } = require('../env');
 const dbClient = (() => {
   if (IS_PRODUCTION) {
     return new Client(
-      `postgres://${DATABASE.dbUser}:${DATABASE.password}.${DATABASE.dbHost}:${
-        DATABASE.dbPort
-      }/${DATABASE.dbName}`,
+      `postgres://${DATABASE.dbUser}:${DATABASE.password}.${DATABASE.dbHost}:${DATABASE.dbPort}/${DATABASE.dbName}`,
     );
   }
   return new Client(
-    `postgres://${DATABASE.dbUser}:${DATABASE.password}@${DATABASE.dbHost}:${
-      DATABASE.dbPort
-    }/${DATABASE.dbName}`,
+    `postgres://${DATABASE.dbUser}:${DATABASE.password}@${DATABASE.dbHost}:${DATABASE.dbPort}/${DATABASE.dbName}`,
   );
 })();
 /**
@@ -39,8 +35,10 @@ const $$ = (query, params = []) => {
           }
           break;
         }
+        default: {
+          return resolve(result);
+        }
       }
-      return resolve(result);
     });
   });
 };

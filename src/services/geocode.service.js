@@ -13,9 +13,7 @@ const MAPS_HOST = 'maps.googleapis.com';
  */
 const getGeoCode = async ({ latitude, longitude }) => {
   const googleMapBuffer = await get(
-    `https://${MAPS_HOST}/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${
-      GOOGLE.GOOGLE_MAPS_GEOCODING_API
-    }`,
+    `https://${MAPS_HOST}/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE.GOOGLE_MAPS_GEOCODING_API}`,
   );
   const googleMapBufferData = googleMapBuffer.toString('utf8');
   const googleData = JSON.parse(googleMapBufferData);

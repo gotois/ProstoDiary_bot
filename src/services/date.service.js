@@ -18,6 +18,7 @@ const checkDateLaterThanNow = (date) => {
 };
 /**
  * TODO: rename -> isValidDate
+ *
  * @param {string|Date} date - date
  * @returns {boolean}
  */
