@@ -4,20 +4,18 @@ const { getFullName } = require('../services/restcountries.service');
 const { getGeoCode } = require('../services/geocode.service');
 const { getWeather } = require('../services/weather.service');
 /**
- * @param {object} parsedData - geocode parsed data
+ * @param {Array} parsedData - geocode parsed data
  * @returns {Error|string}
  */
 const getLocShortName = (parsedData) => {
-  const resultLength = parsedData.results.length;
+  const resultLength = parsedData.length;
   if (!resultLength) {
     logger.log('error', 'No results');
     throw Error('No results');
   }
+  // TODO: без try/catch
   try {
-    if (parsedData.results[resultLength - 1]) {
-      return parsedData.results[resultLength - 1].address_components[0]
-        .short_name;
-    }
+    return parsedData[resultLength - 1].address_components[0].short_name;
   } catch (error) {
     logger.log('error', 'No address_components');
     throw Error('No address_components');

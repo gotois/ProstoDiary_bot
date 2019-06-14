@@ -105,6 +105,7 @@ skipTestForFast('API: Weather', require('./weather.test'));
 skipTestForFast('API: RestContries', require('./restcountries.test'));
 skipTestForFast('API: plotly', require('./graph-service.test'));
 
+skipTestForFastOrTravis('API: googleapis Geocode', require('./geocode.test'));
 skipTestForFastOrTravis('API: Fatsecret', require('./fatsecret.test'));
 skipTestForFastOrTravis('API: Google Vision', require('./vision.test'));
 skipTestForFastOrTravis('API: KPP nalog.ru', require('./kpp.test'));
