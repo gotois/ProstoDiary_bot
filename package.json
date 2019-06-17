@@ -23,8 +23,8 @@
     "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js --serial",
     "unit": "ava tests/unit/index.js",
     "unit:watch": "npm run unit -- --watch",
-    "e2e": "ava tests/e2e/index.js --serial",
-    "e2e:fast": "cross-env FAST_TEST=FAST_TEST npm run e2e",
+    "e2e": "ava tests/e2e/index.js --serial --reset-cache",
+    "e2e:fast": "cross-env FAST_TEST=FAST_TEST SERVER_NAME=TEST-AVA-SERVER TELEGRAM_TOKEN=123456 SALT_PASSWORD=123456 ava tests/e2e/index.js",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "docs:serve": "cd docs/ ; jekyll serve"
   },

@@ -1,14 +1,5 @@
 const test = require('ava');
 
-test.before((t) => {
-  // TODO: переделать под cross-env?
-  process.env.SALT_PASSWORD = '123456';
-  process.env.NODE_ENV = 'production';
-  process.env.TELEGRAM_TOKEN = '123456';
-  process.env.SERVER_NAME = 'TEST-AVA-SERVER';
-  t.pass();
-});
-
 test('database config', require('./dbconfig.test'));
 test('logger', require('./log.test'));
 test('crypto', require('./crypto.test'));

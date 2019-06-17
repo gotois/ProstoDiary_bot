@@ -55,6 +55,7 @@
     "jsdoc/valid-types": 2
   },
   "env": {
+    "browser": false,
     "node": true,
     "es6": true
   },
