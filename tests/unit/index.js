@@ -1,4 +1,4 @@
-import test from 'ava';
+const test = require('ava');
 
 test.before((t) => {
   // TODO: переделать под cross-env?

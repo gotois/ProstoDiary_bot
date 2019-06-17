@@ -1,4 +1,4 @@
-import test from 'ava';
+const test = require('ava');
 
 // Simple Heroku Detect
 if (!process.env.PORT || process.env.NODE_ENV !== 'TRAVIS_CI') {

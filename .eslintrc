@@ -59,8 +59,8 @@
     "es6": true
   },
   "parserOptions": {
-    "ecmaVersion": 8,
-    "sourceType": "module"
+    "ecmaVersion": 9,
+    "sourceType": "script"
   },
   "plugins": [
     "jsdoc",
