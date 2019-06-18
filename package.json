@@ -9,19 +9,25 @@
   "bin": {
     "prosto-diary": "./scripts/index"
   },
+  "files": [
+    "src/",
+    "tests/"
+  ],
   "directories": {
     "data": "./data",
     "e2e": "./tests/e2e"
   },
   "scripts": {
     "postinstall": "npx ncu",
+    "preversion": "npm run test",
+    "commit": "npx git-cz",
     "dev": "nodemon ./scripts/index",
     "dev:debug": "nodemon --inspect ./scripts/index",
     "start": "./scripts/index",
     "start:debug": "node --inspect ./scripts/index",
     "lint": "eslint src/*.js src/**/*.js tests/**/*.js",
     "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js --serial",
-    "unit": "ava tests/unit/index.js",
+    "unit": "cross-env SERVER_NAME=TEST-AVA-SERVER TELEGRAM_TOKEN=123456 SALT_PASSWORD=123456 ava tests/unit/index.js",
     "unit:watch": "npm run unit -- --watch",
     "e2e": "ava tests/e2e/index.js --serial --reset-cache",
     "e2e:fast": "cross-env FAST_TEST=FAST_TEST SERVER_NAME=TEST-AVA-SERVER TELEGRAM_TOKEN=123456 SALT_PASSWORD=123456 ava tests/e2e/index.js",
@@ -62,11 +68,16 @@
       "name": "Denis Baskovsky"
     }
   ],
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
   "dependencies": {
     "@google-cloud/language": "~3.2.1",
     "@google-cloud/speech": "~3.2.1",
     "@google-cloud/translate": "~4.1.0",
-    "@google-cloud/vision": "~1.1.1",
+    "@google-cloud/vision": "~1.1.2",
     "@sendgrid/mail": "~6.4.0",
     "compromise": "~11.13.2",
     "coralogix-logger-winston": "~1.0.10",
@@ -87,7 +98,9 @@
   "devDependencies": {
     "ava": "~2.1.0",
     "codecov": "~4.0.0-0",
+    "commitizen": "~3.1.1",
     "cross-env": "~5.2.0",
+    "cz-conventional-changelog": "~2.1.0",
     "eslint": "~5.16.0",
     "eslint-config-prettier": "~5.0.0",
     "eslint-plugin-jsdoc": "~8.1.0",
@@ -95,7 +108,7 @@
     "eslint-plugin-prettier": "~3.1.0",
     "husky": "~2.4.1",
     "nodemon": "~1.19.1",
-    "npm-check-updates": "~3.1.10",
+    "npm-check-updates": "~3.1.11",
     "nyc": "~14.1.1",
     "prettier": "~1.18.2",
     "telegram-test-api": "~2.2.1"
