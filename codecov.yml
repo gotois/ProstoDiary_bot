@@ -1,6 +1,14 @@
 codecov:
   token: 6bb966d3-db73-4e01-af23-e1a4129a0f5f
 
+coverage:
+  status:
+    project:
+      default:
+        target: 75%
+        threshold: 5%
+        base: auto
+
 ignore:
   - "tests/"
   - "ava.config.js"
