@@ -118,10 +118,11 @@ const search = async (searchExpression = '', maxResults = 1) => {
 
 module.exports = {
   get(foodId) {
-    return fatSecret.request({
+    const { food } = fatSecret.request({
       method: 'food.get',
       food_id: foodId,
     });
+    return food;
   },
   search,
 };

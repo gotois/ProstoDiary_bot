@@ -117,6 +117,7 @@ skipTestForFast('/version', require('./version.test'));
 skipTestForFastOrTravis('/balance', require('./balance.test'));
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
 
+test('bot init', require('./telegram-bot.test'));
 test('Currency Service', require('./currency-service.test'));
 
 test.todo('/start');

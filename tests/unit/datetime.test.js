@@ -43,6 +43,9 @@ module.exports = (t) => {
     t.throws(() => {
       fillRangeTimes(undefined, null);
     });
+    t.throws(() => {
+      fillRangeTimes('02.01.2001', '01.01.2001');
+    });
     t.is(fillRangeTimes('01.01.1971', '01.05.1971').length, 5);
     t.is(
       fillRangeTimes(new Date('01.01.1971'), new Date('01.05.1971')).length,
