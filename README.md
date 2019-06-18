@@ -45,6 +45,13 @@ Run production:
 npm start
 ```
 
+CI
+---
+Необходимо выставить env:
+* SALT_PASSWORD
+* SERVER_NAME
+* TELEGRAM_TOKEN
+
 Global Bot Environments
 ---
 ```
