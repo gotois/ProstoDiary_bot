@@ -45,9 +45,11 @@ const onSearch = async ({ chat, from }, match) => {
   const rows = await dbEntries.getAll(currentUser.id);
   const input = String(match[2]).trim();
   const regExp = createRegexInput(input);
-  const matchFilterRows = decodeRows(rows).filter(({ entry }) => {
-    return regExp.test(entry);
-  });
+  const matchFilterRows = decodeRows(rows)
+    .filter(({ entry }) => {
+      return regExp.test(entry);
+    })
+    .reverse();
   if (!matchFilterRows.length) {
     await bot.sendMessage(chatId, 'Not found');
     return;
