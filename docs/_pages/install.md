@@ -45,14 +45,14 @@ SENDGRID_API_KEY={ api key }
 OPEN_WEATHER_KEY={ api key }
 ```
 
-Setup PostgreSQL 11.0
----
+<details>
+	<summary>Setup PostgreSQL 11.0</summary>
 * Create database ProstoDiaryDB
-
 * Import Foods table from data/database/tables/foods.csv
+</details>
 
-Setup DialogFlow
----
+<details>
+  	<summary>Setup DialogFlow</summary>
 * Create <Food> in Entities
-
 * Upload data/dialogflow/entities/food.csv
+</details>
