@@ -1,6 +1,6 @@
 const bot = require('../bot');
-const zip = require('node-native-zip');
 const dbEntries = require('../database/entities.database');
+const { pack } = require('../services/archive.service');
 const format = require('../services/format.service');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
@@ -25,28 +25,26 @@ const onDownload = async ({ chat, from, date }) => {
   const chatId = chat.id;
   const fromId = from.id;
   const fileName = generateName(date) + '.txt';
-  const archive = new zip();
   const currentUser = sessions.getSession(fromId);
   try {
     const rows = await dbEntries.getAll(currentUser.id);
-    if (rows.length > 0) {
-      const formatData = format.formatRows(rows);
-      archive.add(fileName, new Buffer(formatData, 'utf8'));
-      const buffer = archive.toBuffer();
-      await bot.sendDocument(
-        chatId,
-        buffer,
-        {
-          caption: fileName,
-        },
-        {
-          filename: generateName(date) + '.zip',
-          contentType: 'application/zip',
-        },
-      );
-    } else {
+    if (!rows.length) {
       await bot.sendMessage(chatId, 'Нет данных');
+      return;
     }
+    const formatData = format.formatRows(rows);
+    const buffers = await pack(formatData, fileName);
+    await bot.sendDocument(
+      chatId,
+      buffers,
+      {
+        caption: fileName,
+      },
+      {
+        filename: generateName(date) + '.zip',
+        contentType: 'application/zip',
+      },
+    );
   } catch (error) {
     logger.log('error', error.toString());
     await bot.sendMessage(chatId, 'Операция не выполнена');

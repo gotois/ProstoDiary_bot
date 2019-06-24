@@ -43,9 +43,11 @@ test.before(async (t) => {
   let botOptions = { polling: true, baseApiUrl: server.ApiURL };
   const telegramBot = new TelegramBot(token, botOptions);
   new TestBot(telegramBot);
+  /*eslint-disable */
   t.context.server = server;
   t.context.client = client;
   t.context.tasks = {};
+  /*eslint-enable */
   t.pass();
 });
 

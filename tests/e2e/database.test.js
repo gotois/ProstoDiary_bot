@@ -9,11 +9,11 @@ const databaseFoods = async (t) => {
   t.true(Array.isArray(rows));
   t.true(rows.length > 0);
   const [firstRow] = rows;
-  t.true(firstRow.hasOwnProperty('title'));
-  t.true(firstRow.hasOwnProperty('fat'));
-  t.true(firstRow.hasOwnProperty('kcal'));
-  t.true(firstRow.hasOwnProperty('protein'));
-  t.true(firstRow.hasOwnProperty('carbohydrate'));
+  t.true(Object.prototype.hasOwnProperty.call(firstRow, 'title'));
+  t.true(Object.prototype.hasOwnProperty.call(firstRow, 'fat'));
+  t.true(Object.prototype.hasOwnProperty.call(firstRow, 'kcal'));
+  t.true(Object.prototype.hasOwnProperty.call(firstRow, 'protein'));
+  t.true(Object.prototype.hasOwnProperty.call(firstRow, 'carbohydrate'));
 };
 
 module.exports = {

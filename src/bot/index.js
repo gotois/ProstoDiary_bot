@@ -4,7 +4,7 @@ const { IS_PRODUCTION, IS_DEV, TELEGRAM, SERVER } = require('../env');
  * @type TelegramBot
  */
 let bot;
-if (global.hasOwnProperty('bot')) {
+if (Object.prototype.hasOwnProperty.call(global, 'bot')) {
   bot = global.bot;
 } else {
   if (IS_PRODUCTION && !IS_DEV) {

@@ -6,19 +6,21 @@ const { IS_PRODUCTION } = require('./env');
  * @returns {Promise<any>}
  */
 const initBot = () => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     // noinspection MagicNumberJS
     const DELAY = IS_PRODUCTION ? 10000 : 2500;
     const timer = setTimeout(() => {
       return reject(new Error('Network unavailable'));
     }, DELAY);
-    try {
-      const me = await bot.getMe();
-      clearTimeout(timer);
-      return resolve(me);
-    } catch (error) {
-      logger.log('info', error);
-    }
+    bot
+      .getMe()
+      .then((me) => {
+        clearTimeout(timer);
+        return resolve(me);
+      })
+      .catch((error) => {
+        logger.log('info', error);
+      });
   });
 };
 /**

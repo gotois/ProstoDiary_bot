@@ -6,12 +6,12 @@ module.exports = async (t) => {
     longitude: 20.0048731,
   });
   t.true(typeof weatherInfo === 'object');
-  t.true(weatherInfo.hasOwnProperty('description'));
-  t.true(weatherInfo.hasOwnProperty('humidity'));
-  t.true(weatherInfo.hasOwnProperty('pressure'));
-  t.true(weatherInfo.hasOwnProperty('rain'));
-  t.true(weatherInfo.hasOwnProperty('temp'));
-  t.true(weatherInfo.hasOwnProperty('weathercode'));
+  t.true(Object.prototype.hasOwnProperty.call(weatherInfo, 'description'));
+  t.true(Object.prototype.hasOwnProperty.call(weatherInfo, 'humidity'));
+  t.true(Object.prototype.hasOwnProperty.call(weatherInfo, 'pressure'));
+  t.true(Object.prototype.hasOwnProperty.call(weatherInfo, 'rain'));
+  t.true(Object.prototype.hasOwnProperty.call(weatherInfo, 'temp'));
+  t.true(Object.prototype.hasOwnProperty.call(weatherInfo, 'weathercode'));
 
   await t.throwsAsync(async () => {
     await weatherService.getWeather('wrong param');

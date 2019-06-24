@@ -7,8 +7,8 @@ module.exports = async (t) => {
   t.is(results.length, 2);
 
   const rusResult = await foodService.search('Шоколад');
-  t.true(rusResult.hasOwnProperty('food_id'));
-  t.true(rusResult.hasOwnProperty('food_name'));
+  t.true(Object.prototype.hasOwnProperty.call(rusResult, 'food_id'));
+  t.true(Object.prototype.hasOwnProperty.call(rusResult, 'food_name'));
 
   await t.throwsAsync(async () => {
     await foodService.search('SIDJFIOSDFJOSDIJOISDFJ');
