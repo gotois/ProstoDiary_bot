@@ -27,13 +27,12 @@ const $$ = (query, params = []) => {
       if (error) {
         return reject(error);
       }
-      // Check available updating
       switch (result.command) {
         case 'UPDATE': {
           if (!result.rowCount) {
             return reject('Update error');
           }
-          break;
+          return resolve(result);
         }
         default: {
           return resolve(result);
