@@ -22,4 +22,5 @@ module.exports = {
   PHOTO: 'photo',
   LOCATION: 'location',
   VOICE: 'voice',
+  DOCUMENT: 'document',
 };
