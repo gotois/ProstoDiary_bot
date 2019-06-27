@@ -8,7 +8,7 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/gotois/ProstoDiary_bot.svg?style=popout)
 ![GitHub repo size](https://img.shields.io/github/repo-size/gotois/ProstoDiary_bot.svg)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/gotois/ProstoDiary_bot.svg)
-![Website](https://img.shields.io/website/https/prosto-diary.gotointeractive.com.svg)
+![Website](https://img.shields.io/website/https/prosto-diary.gotointeractive.com.svg?link=https://prosto-diary.gotointeractive.com)
 ![GitHub](https://img.shields.io/github/license/gotois/ProstoDiary_bot.svg)
 ![Issuehunt](https://img.shields.io/badge/ProstoDiary_bot-blueviolet.svg?link=https://issuehunt.io/r/gotois/ProstoDiary_bot&style=flat&label=issuehunt.io)
 

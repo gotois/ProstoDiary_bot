@@ -22,5 +22,6 @@ bot.on(commands.PHOTO, require('./photo.event'));
 bot.on(commands.WEBHOOK_ERROR, require('./webhook-error.event'));
 bot.on(commands.LOCATION, require('./location.event'));
 bot.on(commands.VOICE, require('./voice.event'));
+bot.on(commands.DOCUMENT, require('./document.event'));
 
 module.exports = bot;
