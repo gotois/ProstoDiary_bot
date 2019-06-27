@@ -25,7 +25,7 @@ npx ncu -u
 ```
 
 Usage
----
+===
 Fix lint:
 ```bash
 npm run lint -- --fix
@@ -34,6 +34,21 @@ npm run lint -- --fix
 Checking Unit tests:
 ```bash
 npm run unit
+```
+
+E2E
+---
+#### Match files:
+npm run e2e:fast -- --match='something'
+
+Example:
+```
+npm run e2e:fast -- --match='/start'
+```
+
+Example match titles starting with API:
+```
+npm run e2e -- --match='API:*'
 ```
 
 Run development:

@@ -28,10 +28,10 @@
     "start:debug": "cross-env NODE_ENV=production node --inspect ./scripts/index",
     "lint": "eslint src/*.js src/**/*.js tests/**/*.js",
     "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js --serial",
-    "unit": "cross-env SERVER_NAME=TEST-AVA-SERVER TELEGRAM_TOKEN=123456 SALT_PASSWORD=123456 ava tests/unit/index.js",
+    "unit": "cross-env ava tests/unit/index.js",
     "unit:watch": "npm run unit -- --watch",
     "e2e": "ava tests/e2e/index.js --serial",
-    "e2e:fast": "cross-env FAST_TEST=FAST_TEST SERVER_NAME=TEST-AVA-SERVER TELEGRAM_TOKEN=123456 SALT_PASSWORD=123456 ava tests/e2e/index.js",
+    "e2e:fast": "cross-env FAST_TEST=FAST_TEST ava tests/e2e/index.js",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "docs:serve": "cd docs/ ; jekyll serve"
   },
