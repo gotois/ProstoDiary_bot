@@ -7,7 +7,7 @@ const { get, toQueryString } = require('./request.service');
 const EXCHANGERATES_API_HOST = 'api.exchangeratesapi.io';
 /**
  * @constant
- * @type {Object}
+ * @type {object}
  */
 const CURRENCIES = {
   EUR: 'eur',

@@ -1,5 +1,5 @@
 /**
- * @type {Object}
+ * @type {object}
  */
 module.exports = {
   PING: /^\/ping$/,

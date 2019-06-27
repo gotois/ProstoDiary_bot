@@ -15,7 +15,7 @@ const sessionClient = new dialogflow.SessionsClient({
 const DIALOGFLOW_INTENT_URL = 'projects/prostodiary/agent/intents/';
 /**
  * @readonly
- * @type {Object}
+ * @type {object}
  */
 const INTENTS = {
   BUY: DIALOGFLOW_INTENT_URL + '41e519b4-c864-4fe6-9096-1282259c8c91',
