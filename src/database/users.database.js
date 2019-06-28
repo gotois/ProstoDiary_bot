@@ -13,6 +13,9 @@ const check = async (telegramUserId) => {
   );
   return result;
 };
+/**
+ * @returns {Promise<Array<object>>}
+ */
 const getAllTelegramUserIds = async () => {
   const result = await $$('SELECT telegram_user_id FROM users');
   return result.rows;

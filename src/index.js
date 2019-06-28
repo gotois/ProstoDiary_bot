@@ -4,7 +4,7 @@ const logger = require('./services/logger.service');
 const { projectVersion } = require('./services/version.service');
 const { IS_PRODUCTION, IS_DEV, TELEGRAM } = require('./env');
 /**
- * @returns {Promise<any>}
+ * @returns {Promise<object>}
  */
 const initBot = () => {
   return new Promise((resolve, reject) => {
@@ -61,12 +61,11 @@ const startTelegramBot = async (_reconnectCount = 1) => {
   }
 };
 
-// TODO: в text добавить версию и ченчлог
-const sendUpdatesToUsers = async (text) => {
+const sendUpdatesToUsers = (text) => {
   const { getAllTelegramUserIds } = require('./database/users.database');
-  for (const user of await getAllTelegramUserIds()) {
-    await bot.sendMessage(user.telegram_user_id, text);
-  }
+  getAllTelegramUserIds().then((user) => {
+    bot.sendMessage(user.telegram_user_id, text);
+  });
 };
 
 (async function main() {
@@ -75,7 +74,8 @@ const sendUpdatesToUsers = async (text) => {
   require('./events');
   if (IS_PRODUCTION) {
     logger.log('info', `production bot:${botInfo.first_name} started`);
-    sendUpdatesToUsers('Bot updated: ' + projectVersion); // TODO: специально не делаем await
+    // TODO: в text добавить сгенерированный ченчлог
+    sendUpdatesToUsers(botInfo.first_name + ' updated: ' + projectVersion);
   } else {
     logger.log('info', 'dev bot started');
   }
