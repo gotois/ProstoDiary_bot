@@ -63,9 +63,14 @@ const startTelegramBot = async (_reconnectCount = 1) => {
 
 const sendUpdatesToUsers = (text) => {
   const { getAllTelegramUserIds } = require('./database/users.database');
-  getAllTelegramUserIds().then((user) => {
-    bot.sendMessage(user.telegram_user_id, text);
-  });
+  getAllTelegramUserIds()
+    .then((user) => {
+      console.log(user);
+      bot.sendMessage(user.telegram_user_id, text);
+    })
+    .catch((error) => {
+      logger.log('error', error.toString());
+    });
 };
 
 (async function main() {
