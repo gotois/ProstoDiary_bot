@@ -55,3 +55,17 @@ OPEN_WEATHER_KEY={ api key }
 * Create <Food> in Entities
 * Upload data/dialogflow/entities/food.csv
 </details>
+
+F.A.Q.
+---
+### Не получается установить зависимости
+На Node 12 пакеты сразу могу не встать, поэтому рекомендуется установить сначала devDependencies, а затем dependencies
+
+### Неработает CI
+Необходимо выставить env:
+* SALT_PASSWORD
+* SERVER_NAME
+* TELEGRAM_TOKEN
+
+### Не получается выполнить билд.
+Попробуй ```npm rebuild```

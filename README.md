@@ -12,15 +12,16 @@
 [![GitHub](https://img.shields.io/github/license/gotois/ProstoDiary_bot.svg)](https://github.com/gotois/ProstoDiary_bot/blob/master/LICENSE)
 [![Issuehunt](https://img.shields.io/badge/ProstoDiary_bot-blueviolet.svg?link=https://issuehunt.io/r/gotois/ProstoDiary_bot&style=flat&label=issuehunt.io)](https://issuehunt.io/r/gotois/ProstoDiary_bot)
 
+## About
+Virtual tracker: diary, food, health, sleep, todo, etc
+
 Install
 ---
 ```bash
 brew install git-lfs
 chmod +x scripts/index
-npm rebuild
 npm i
 ```
-На Node 12 пакеты сразу могу не встать, поэтому рекомендуется установить сначала devDependencies, а затем dependencies
 
 ## Tests
 
@@ -55,14 +56,8 @@ npm run dev
 npm start
 ```
 
-CI
+Tools
 ---
-Необходимо выставить env:
-* SALT_PASSWORD
-* SERVER_NAME
-* TELEGRAM_TOKEN
-
-### Tools
 #### Package upgrade
 ```bash
 npx ncu -u
@@ -79,20 +74,14 @@ cd docs
 bundle exec jekyll serve
 ```
 
-Global Bot Environments
----
-```
-Name: ProstoDiary
-Username: @ProstoDiary_bot
-```
-
 Run Telegram Bot
+---
 ```
 /start
 ```
 
-License:
----
-see LICENSE file
+## Communicating
+[Trello](https://trello.com/gotois)
 
+## License
 goto Interactive Software
