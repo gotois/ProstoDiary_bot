@@ -57,8 +57,11 @@ module.exports = {
   TELEGRAM: {
     TOKEN: TELEGRAM_TOKEN,
     get WEB_HOOK_URL() {
-      if (!SERVER_NAME || !TELEGRAM_TOKEN) {
-        throw new Error('Env error: SERVER_NAME or TOKEN not found');
+      if (!SERVER_NAME) {
+        return '0.0.0.0:3000';
+      }
+      if (!TELEGRAM_TOKEN) {
+        throw new Error('TELEGRAM_TOKEN not found');
       }
       return `https://${SERVER_NAME}.herokuapp.com/bot${TELEGRAM_TOKEN}`;
     },

@@ -9,7 +9,6 @@ if (Object.prototype.hasOwnProperty.call(global, 'bot')) {
 } else {
   if (IS_PRODUCTION && !IS_DEV) {
     bot = new TelegramBot(TELEGRAM.TOKEN, { webHook: { port: SERVER.PORT } });
-    bot.setWebHook(TELEGRAM.WEB_HOOK_URL);
   } else {
     bot = new TelegramBot(TELEGRAM.TOKEN, { polling: true });
   }

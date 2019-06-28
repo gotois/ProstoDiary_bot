@@ -28,7 +28,6 @@ GOOGLE_MAPS_GEOCODING_API={ geocoding key }
 GOOGLE_APPLICATION_CREDENTIALS={ one line stringify object } 
 
 DIALOGFLOW_CREDENTIALS={ one line stringify object } 
-
 DIALOGFLOW_PROJECT_ID={ project_id }
 
 NALOGRU_EMAIL={ nalog.ru email }

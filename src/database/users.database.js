@@ -13,6 +13,10 @@ const check = async (telegramUserId) => {
   );
   return result;
 };
+const getAllTelegramUserIds = async () => {
+  const result = await $$('SELECT telegram_user_id FROM users');
+  return result.rows;
+};
 /**
  *
  * @param {number} telegramUserId - id
@@ -28,6 +32,7 @@ const post = async (telegramUserId) => {
 };
 
 module.exports = {
+  getAllTelegramUserIds,
   post,
   check,
 };

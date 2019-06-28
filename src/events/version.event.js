@@ -1,36 +1,20 @@
 const bot = require('../bot');
-const crypto = require('crypto');
 const logger = require('../services/logger.service');
-const packageJSON = require('../../package');
+const { projectVersion, getCheckSum } = require('../services/version.service');
 const { IS_PRODUCTION } = require('../env');
 /**
- * @param {Buffer} buffer - file
- * @param {string} algorithm - algorithm
- * @param {string} encoding - encoding
- * @returns {string}
- */
-const generateChecksum = (buffer, algorithm = 'md5', encoding = 'hex') => {
-  return crypto
-    .createHash(algorithm)
-    .update(buffer, 'utf8')
-    .digest(encoding);
-};
-/**
- *
  * @param  {object} chat - chat
  * @returns {Promise<undefined>}
  */
 const getVersion = async ({ chat }) => {
   logger.log('info', getVersion.name);
   const chatId = chat.id;
-  let text = String(packageJSON.version);
+  let text = '';
+  text += projectVersion;
   if (!IS_PRODUCTION) {
     text += ' - development';
   }
-  // TODO: нужно получать чексумму всего проекта -
-  // для этого настроить precommit хуку и создавать чексумму всех измененных файлов на гите, учитывая пользователя
-  const checksum = generateChecksum(JSON.stringify(packageJSON));
-  text += ' ' + checksum;
+  text += ' ' + getCheckSum();
   await bot.sendMessage(chatId, text, {});
 };
 
