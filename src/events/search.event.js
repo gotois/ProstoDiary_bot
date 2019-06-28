@@ -50,7 +50,7 @@ const onSearch = async ({ chat, from }, match) => {
       return regExp.test(entry);
     })
     .reverse();
-  if (!matchFilterRows.length) {
+  if (matchFilterRows.length === 0) {
     await bot.sendMessage(chatId, 'Not found');
     return;
   }

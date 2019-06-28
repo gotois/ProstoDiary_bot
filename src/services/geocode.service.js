@@ -24,7 +24,7 @@ const getGeoCode = async ({ latitude, longitude }) => {
     throw new Error(googleData.error_message);
   }
   if (!Array.isArray(googleData.results)) {
-    throw new Error('GEO: no results');
+    throw new ReferenceError('GEO: no results');
   }
   return googleData.results;
 };

@@ -24,9 +24,9 @@ const setDataFromDate = async ({ chat, text, from, message_id }, match) => {
   let date;
   try {
     date = datetime.convertToNormalDate(match[1]);
-  } catch (e) {
-    logger.log('error', e.message);
-    await bot.sendMessage(chatId, e.message);
+  } catch (error) {
+    logger.log('error', error.message);
+    await bot.sendMessage(chatId, error.message);
     return;
   }
   const currentUser = sessions.getSession(from.id);
@@ -43,8 +43,8 @@ const setDataFromDate = async ({ chat, text, from, message_id }, match) => {
     await bot.sendMessage(chatId, 'Произошла ошибка');
     return;
   }
-  const prevInput = format.prevInput(input);
-  await bot.sendMessage(chatId, prevInput);
+  const previousInput = format.previousInput(input);
+  await bot.sendMessage(chatId, previousInput);
 };
 
 module.exports = setDataFromDate;

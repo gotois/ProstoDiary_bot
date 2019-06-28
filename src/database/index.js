@@ -3,14 +3,14 @@ const { IS_PRODUCTION, DATABASE } = require('../env');
 /**
  * @see path отличается одним символом @
  */
-const dbClient = (() => {
+const databaseClient = (() => {
   if (IS_PRODUCTION) {
     return new Client(
-      `postgres://${DATABASE.dbUser}:${DATABASE.password}.${DATABASE.dbHost}:${DATABASE.dbPort}/${DATABASE.dbName}`,
+      `postgres://${DATABASE.databaseUser}:${DATABASE.password}.${DATABASE.databaseHost}:${DATABASE.databasePort}/${DATABASE.databaseName}`,
     );
   }
   return new Client(
-    `postgres://${DATABASE.dbUser}:${DATABASE.password}@${DATABASE.dbHost}:${DATABASE.dbPort}/${DATABASE.dbName}`,
+    `postgres://${DATABASE.databaseUser}:${DATABASE.password}@${DATABASE.databaseHost}:${DATABASE.databasePort}/${DATABASE.databaseName}`,
   );
 })();
 /**
@@ -20,10 +20,10 @@ const dbClient = (() => {
  */
 const $$ = (query, params = []) => {
   return new Promise((resolve, reject) => {
-    if (!dbClient._connected) {
+    if (!databaseClient._connected) {
       return reject('Database not connected!');
     }
-    dbClient.query(query, params, (error, result) => {
+    databaseClient.query(query, params, (error, result) => {
       if (error) {
         return reject(error);
       }
@@ -43,6 +43,6 @@ const $$ = (query, params = []) => {
 };
 
 module.exports = {
-  client: dbClient,
+  client: databaseClient, // TODO: rename
   $$,
 };

@@ -1,4 +1,4 @@
-const commands = require('../../src/commands/index');
+const commands = require('../../src/commands');
 
 class TestBot {
   constructor(bot) {

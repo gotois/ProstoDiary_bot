@@ -10,17 +10,17 @@ const SPELLER_HOST = 'speller.yandex.net';
  * @returns {Promise<Array|Error>}
  */
 const spellCheck = async (text) => {
-  const res = await post(
+  const result = await post(
     `https://${SPELLER_HOST}/services/spellservice.json/checkText`,
     {
       format: 'plain',
       text: text,
     },
   );
-  if (!Array.isArray(res)) {
-    throw new Error('spellCheck API changes' + res);
+  if (!Array.isArray(result)) {
+    throw new ReferenceError('spellCheck API changes');
   }
-  return res;
+  return result;
 };
 /**
  * Исправляем очевидные ошибки

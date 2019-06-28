@@ -1,8 +1,7 @@
 const parser = require('fast-xml-parser');
-const { unpack } = require('./archive.service');
 
-const uploadToDB = (jsonObj) => {
-  console.log(jsonObj);
+const uploadToDatabase = (object) => {
+  console.log(object);
   // console.log(jsonObj.ClinicalDocument.entry)
   // console.log(jsonObj.HealthData.ExportDate)
   // console.log(jsonObj.HealthData.Me)
@@ -50,11 +49,10 @@ const uploadToDB = (jsonObj) => {
 
 /**
  * @function
- * @description пример считывания zip архива; его распаковка; нахождение export.xml и его превращение в json
- * @param {Buffer} buffer - buffer
- * @returns {Promise<undefined>}
+ * @param {Buffer} buffer - value
+ * @returns {Promise<object>}
  */
-const uploadAppleHealth = async (buffer) => {
+const uploadAppleHealthData = async (buffer) => {
   const options = {
     attributeNamePrefix: '',
     ignoreAttributes: false,
@@ -65,16 +63,12 @@ const uploadAppleHealth = async (buffer) => {
     trimValues: true,
     parseTrueNumberOnly: false,
   };
-  const zipContents = await unpack(buffer);
-  for await (const [fileName, value] of zipContents) {
-    if (fileName === 'apple_health_export/export.xml') {
-      const string = value.toString('utf8');
-      const jsonObj = parser.parse(string, options);
-      await uploadToDB(jsonObj);
-    }
-  }
+  const string = buffer.toString('utf8');
+  const jsonObject = parser.parse(string, options);
+  await uploadToDatabase(jsonObject);
+  return jsonObject;
 };
 
 module.exports = {
-  uploadAppleHealth,
+  uploadAppleHealthData,
 };

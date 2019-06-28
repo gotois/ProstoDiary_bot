@@ -80,54 +80,53 @@ const getFormatMoney = (money) => {
  */
 const getMoney = ({ texts, type }) => {
   if (!Array.isArray(texts)) {
-    throw new Error('Invalid argument');
+    throw new TypeError('Invalid argument');
   }
-  if (texts.length) {
-    return texts
-      .reduce((acc, raw) => {
-        return acc.concat(...splitText(raw));
-      }, [])
-      .map((text) => {
-        return formatType(text, type);
-      })
-      .map((text) => {
-        return calcMoney(text);
-      })
-      .reduce((acc, money) => {
-        return accMoney(acc, money);
-      }, Object.assign({}, defaultOut));
-  } else {
+  if (texts.length === 0) {
     return defaultOut;
   }
+  return texts
+    .reduce((acc, raw) => {
+      return acc.concat(...splitText(raw));
+    }, [])
+    .map((text) => {
+      return formatType(text, type);
+    })
+    .map((text) => {
+      return calcMoney(text);
+    })
+    .reduce((acc, money) => {
+      return accMoney(acc, money);
+    }, Object.assign({}, defaultOut));
 };
 /**
- * @param {string} str - text
+ * @param {string} string - text
  * @param {number} type - type
  * @returns {string}
  */
-const formatType = (str, type) => {
-  str = str.trim();
+const formatType = (string, type) => {
+  string = string.trim();
   // Находим число месяца и удаляем из поиска строчку число месяца
-  str = str.replace(regExpMonthNumber, '');
+  string = string.replace(regExpMonthNumber, '');
   // Находим год и удаляем строчку о найденном годе
-  str = str.replace(regExpYear, '');
+  string = string.replace(regExpYear, '');
   // Находим вес и удаляем строчку о своем весе
-  str = str.replace(regExpWeight, '');
+  string = string.replace(regExpWeight, '');
   // Удаляем знак + чтобы не было рекурсивного обхода регулярки
-  str = str.replace(/\+/, '');
+  string = string.replace(/\+/, '');
 
   switch (type) {
     // Удаляем строчку о зарплате и прочих получениях
     case TYPES.allSpent: {
-      if (str.match(regExpMyZP)) {
-        str = '';
+      if (string.match(regExpMyZP)) {
+        string = '';
       }
       break;
     }
     // Находим потраченное
     case TYPES.allReceived: {
-      if (!str.match(regExpMyZP)) {
-        str = '';
+      if (!string.match(regExpMyZP)) {
+        string = '';
       }
       break;
     }
@@ -135,23 +134,23 @@ const formatType = (str, type) => {
       throw new Error('formatType: Unknown type');
     }
   }
-  return str;
+  return string;
 };
 /**
- * @param {string} str - string
+ * @param {string} string - string
  * @returns {object}
  */
-const calcMoney = (str) => {
-  if (str.length <= 1) {
+const calcMoney = (string) => {
+  if (string.length <= 1) {
     return defaultOut;
   }
   // явно объявляю доллары
-  str = str.replace(/\$.+/, (str) => {
-    return str.substr(1) + 'долларов';
+  string = string.replace(/\$.+/, (subString) => {
+    return subString.substr(1) + 'долларов';
   });
   // явно объявляю евро
   // TODO: говнокод :)
-  str.replace(/€\d+/, (_str, index, text) => {
+  string.replace(/€\d+/, (subString, index, text) => {
     let currentIndex = index + 1;
     let end = text.length - 1;
     while (currentIndex !== end) {
@@ -163,12 +162,12 @@ const calcMoney = (str) => {
       break;
     }
     const textFinded = text.substr(index, currentIndex);
-    str = textFinded.replace('€', '').replace(/$/, 'евро');
-    return str;
+    string = textFinded.replace('€', '').replace(/$/, 'евро');
+    return string;
   });
 
-  const numbers = str.match(str.match(regExpNumbers));
-  if (!(numbers && numbers.length)) {
+  const numbers = string.match(string.match(regExpNumbers));
+  if (!(numbers && numbers.length > 0)) {
     return defaultOut;
   }
   return splitText(numbers.input).reduce((acc, text) => {
@@ -176,17 +175,17 @@ const calcMoney = (str) => {
   }, Object.assign({}, defaultOut));
 };
 /**
- * @param {string} str - text
+ * @param {string} string - text
  * @returns {number}
  */
-const cleanDirtyNumberString = (str) => {
-  const [val] = str
+const cleanDirtyNumberString = (string) => {
+  const [value] = string
     .replace(regExpEuro, '')
     .replace(regExpUsd, '')
     .replace(regExpRubles, '')
     .replace(/\.$/, '')
     .match(/\d+$|\d+\.\d+/, '') || [0];
-  return Number.parseFloat(val);
+  return Number.parseFloat(value);
 };
 /**
  * @param {string} numbers - number text
@@ -207,37 +206,40 @@ const getAllSum = (numbers) => {
     const outArray = out
       .replace(regexp, ',')
       // числа без знаков становятся рублями
-      .replace(/\d+\.?(\d\d)?(\s|$)/, (str, arg2, arg3, index, all) => {
-        const start = index + str.length;
-        const end = index + 6 + str.length;
-        const nextStr = all.substr(start, end);
-        if (regExpUsd.test(nextStr)) {
-          return str.trimRight() + 'долларов ';
-        } else if (regExpEuro.test(nextStr)) {
-          return str.trimRight() + 'евро ';
-        } else {
-          return str.trimRight() + 'рублей ';
-        }
-      })
+      .replace(
+        /\d+\.?(\d\d)?(\s|$)/,
+        (string, argument2, argument3, index, all) => {
+          const start = index + string.length;
+          const end = index + 6 + string.length;
+          const nextString = all.substr(start, end);
+          if (regExpUsd.test(nextString)) {
+            return string.trimRight() + 'долларов ';
+          } else if (regExpEuro.test(nextString)) {
+            return string.trimRight() + 'евро ';
+          } else {
+            return string.trimRight() + 'рублей ';
+          }
+        },
+      )
       .replace(/\s/g, ',')
       .split(',');
     return outArray
-      .filter((temp) => {
+      .filter((temporaryString) => {
         if (
-          !temp.length ||
-          !/\d/.test(temp) /*|| Number.isNaN(Number(temp))*/
+          temporaryString.length === 0 ||
+          !/\d/.test(temporaryString) /*|| Number.isNaN(Number(temp))*/
         ) {
           return false;
         }
         return true;
       })
-      .reduce((acc, str) => {
-        if (regExpUsd.test(str)) {
-          acc[USD] += cleanDirtyNumberString(str);
-        } else if (regExpEuro.test(str)) {
-          acc[EUR] += cleanDirtyNumberString(str);
+      .reduce((acc, string) => {
+        if (regExpUsd.test(string)) {
+          acc[USD] += cleanDirtyNumberString(string);
+        } else if (regExpEuro.test(string)) {
+          acc[EUR] += cleanDirtyNumberString(string);
         } else {
-          acc[RUB] += cleanDirtyNumberString(str);
+          acc[RUB] += cleanDirtyNumberString(string);
         }
         return acc;
       }, Object.assign({}, defaultOut));
@@ -259,7 +261,7 @@ const getMedian = (values) => {
   if (values.length % 2) {
     return values[half];
   }
-  return (values[half - 1] + values[half]) / 2.0;
+  return (values[half - 1] + values[half]) / 2;
 };
 
 module.exports = {

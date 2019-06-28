@@ -59,7 +59,7 @@ const onText = async ({
     const spelledText = await spellText(input);
     const intentMessage = await inputAnalyze(spelledText);
 
-    if (intentMessage.length) {
+    if (intentMessage.length > 0) {
       await bot.sendMessage(chatId, intentMessage);
     }
   } catch (error) {
@@ -73,7 +73,7 @@ const onText = async ({
       message_id,
       new Date(date * 1000),
     );
-    const okText = format.prevInput(input);
+    const okText = format.previousInput(input);
     await bot.sendMessage(chatId, okText, {
       disable_notification: true,
       disable_web_page_preview: true,

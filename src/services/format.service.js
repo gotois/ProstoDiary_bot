@@ -7,22 +7,22 @@ const { convertIn2DigitFormat } = require('./date.service');
  */
 const formatRows = (entries) => {
   let out = '';
-  let currentDateStr = '';
+  let currentDateString = '';
   entries
     .map(({ date_added, entry }) => {
       const DD = convertIn2DigitFormat(date_added.getDate());
       const MM = convertIn2DigitFormat(date_added.getMonth() + 1);
       const YYYY = date_added.getFullYear();
       return {
-        dateStr: `${DD}.${MM}.${YYYY}`,
+        dateString: `${DD}.${MM}.${YYYY}`,
         decodeEntry: crypt.decode(entry),
       };
     })
-    .forEach(({ dateStr, decodeEntry }) => {
-      if (dateStr !== currentDateStr) {
-        out += `\n${dateStr}\n`;
+    .forEach(({ dateString, decodeEntry }) => {
+      if (dateString !== currentDateString) {
+        out += `\n${dateString}\n`;
       }
-      currentDateStr = dateStr;
+      currentDateString = dateString;
       if (decodeEntry) {
         out += `${decodeEntry}\n`;
       }
@@ -35,7 +35,7 @@ const formatRows = (entries) => {
  * @param {string} input - user input text
  * @returns {string}
  */
-const prevInput = (input) => {
+const previousInput = (input) => {
   return `✓${input.replace(/\n/g, ' ').substring(0, 6)}…`;
 };
 /**
@@ -53,6 +53,6 @@ const decodeRows = (rows = []) => {
 
 module.exports = {
   formatRows,
-  prevInput,
+  previousInput,
   decodeRows,
 };

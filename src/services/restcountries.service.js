@@ -16,7 +16,7 @@ const getFullName = async (name) => {
   const restCountriesBufferData = restCountriesBuffer.toString('utf8');
   const parsedRestCountries = JSON.parse(restCountriesBufferData);
   if (!Array.isArray(parsedRestCountries)) {
-    throw new Error('GEO: country not found');
+    throw new ReferenceError('GEO: country not found');
   }
   return parsedRestCountries;
 };

@@ -79,7 +79,7 @@ const toQueryString = (data) => {
     .map(([key, value]) => {
       return `${key}=${value}`;
     });
-  return items.length ? `?${items.join('&')}` : '';
+  return items.length > 0 ? `?${items.join('&')}` : '';
 };
 
 module.exports = {

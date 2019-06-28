@@ -78,16 +78,16 @@ const onCount = async ({ chat, from }, match) => {
     }
   };
   const rows = await dbEntries.getAll(currentUser.id);
-  const objRows = decodeRows(rows);
-  if (!objRows.length) {
+  const objectRows = decodeRows(rows);
+  if (objectRows.length === 0) {
     await bot.sendMessage(chatId, 'No data');
     return;
   }
-  const entries = objRows.map((row) => {
+  const entries = objectRows.map((row) => {
     return row.entry;
   });
-  const startTime = objRows[0].date.toLocaleDateString();
-  const endTime = objRows[objRows.length - 1].date.toLocaleDateString();
+  const startTime = objectRows[0].date.toLocaleDateString();
+  const endTime = objectRows[objectRows.length - 1].date.toLocaleDateString();
   const params = {
     parse_mode: 'Markdown',
   };

@@ -12,8 +12,8 @@ const pack = (input, fileName) => {
     const archive = archiver('zip', {
       zlib: { level: 5 },
     });
-    archive.on('error', (err) => {
-      reject(err);
+    archive.on('error', (error) => {
+      reject(error);
     });
     archive.on('end', () => {
       resolve(Buffer.concat(buffers));
@@ -38,16 +38,16 @@ const readZipFiles = (zip) => {
     let entryCount = zip.entryCount;
     let out = new Map();
     zip.on('entry', (entry) => {
-      zip.openReadStream(entry, (err, readStream) => {
-        if (err) {
-          return reject(err);
+      zip.openReadStream(entry, (error, readStream) => {
+        if (error) {
+          return reject(error);
         }
         const chunks = [];
         readStream.on('data', (chunk) => {
           return chunks.push(chunk);
         });
-        readStream.on('error', (err) => {
-          reject(err);
+        readStream.on('error', (error) => {
+          reject(error);
         });
         readStream.on('end', () => {
           out.set(entry.fileName, Buffer.concat(chunks));

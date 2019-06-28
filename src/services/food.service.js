@@ -105,18 +105,23 @@ const search = async (searchExpression = '', maxResults = 1) => {
       languages.ENG,
     );
   }
-  const res = await fatSecret.request({
+  const result = await fatSecret.request({
     method: 'foods.search',
     search_expression: searchExpression,
     max_results: maxResults,
   });
-  if (!res.foods || !res.foods.food) {
+  if (!result.foods || !result.foods.food) {
     throw new Error('Food: not found');
   }
-  return res.foods.food;
+  return result.foods.food;
 };
 
 module.exports = {
+  /**
+   * @deprecated ?
+   * @param {*} foodId - food id
+   * @returns {Promise.food<any>}
+   */
   get(foodId) {
     const { food } = fatSecret.request({
       method: 'food.get',

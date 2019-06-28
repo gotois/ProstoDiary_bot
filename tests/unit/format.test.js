@@ -1,13 +1,10 @@
 module.exports = (t) => {
   const {
-    prevInput,
+    previousInput,
     formatRows,
   } = require('../../src/services/format.service');
-  // prevInput
-  {
-    t.is(prevInput('Some'), '✓Some…');
-    t.is(prevInput('123456789'), '✓123456…');
-  }
+  t.is(previousInput('Some'), '✓Some…');
+  t.is(previousInput('123456789'), '✓123456…');
   // formatRows
   {
     t.is(

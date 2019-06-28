@@ -1,7 +1,7 @@
 module.exports = (t) => {
   const crypt = require('../../src/services/crypt.service');
-  const eWord = crypt.encode('Something What?');
-  const dWord = crypt.decode(eWord);
+  const firstWord = crypt.encode('Something What?');
+  const dWord = crypt.decode(firstWord);
   t.is(dWord, 'Something What?');
   t.throws(() => {
     crypt.encode(undefined);

@@ -1,5 +1,5 @@
 const bot = require('./bot');
-const dbClient = require('./database/index');
+const dbClient = require('./database');
 const logger = require('./services/logger.service');
 const { IS_PRODUCTION } = require('./env');
 /**
@@ -28,7 +28,7 @@ const initBot = () => {
  *
  * @returns {Promise<undefined>}
  */
-const dbConnect = async () => {
+const databaseConnect = async () => {
   if (!dbClient.client._connected) {
     await dbClient.client.connect();
   }
@@ -58,7 +58,7 @@ const startTelegramBot = async (_reconnectCount = 0) => {
 };
 
 (async function main() {
-  await dbConnect();
+  await databaseConnect();
   const botInfo = await startTelegramBot(1);
   await require('./events');
   if (IS_PRODUCTION) {

@@ -41,10 +41,10 @@ const {
 
 module.exports = {
   DATABASE: {
-    dbHost: DB_HOST,
-    dbName: DB_NAME,
-    dbUser: DB_USER_NAME,
-    dbPort: DB_PORT,
+    databaseHost: DB_HOST,
+    databaseName: DB_NAME,
+    databaseUser: DB_USER_NAME,
+    databasePort: DB_PORT,
     password: DB_PASSWORD,
     get passwordSalt() {
       return SALT_PASSWORD;

@@ -9,7 +9,7 @@ const logger = require('../services/logger.service');
  * @returns {string}
  */
 const formatResponse = (input) => {
-  return format.prevInput(input) + '\n_Запись обновлена_';
+  return format.previousInput(input) + '\n_Запись обновлена_';
 };
 /**
  * Сообщение удалено?

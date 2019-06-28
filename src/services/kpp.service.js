@@ -13,14 +13,16 @@ const fakeService = require('./faker.service');
 const qr = require('./qr.service');
 /**
  * NALOGRU_HOST
+ *
  * @type {string}
  */
 const NALOGRU_HOST = 'proverkacheka.nalog.ru';
 /**
  * NALOGRU_PORT
- * @type {string}
+ *
+ * @type {number}
  */
-const NALOGRU_PORT = '9999';
+const NALOGRU_PORT = 9999;
 /**
  * @param {object} qrParams - qr params
  * @param {string} qrParams.fn - Номер ФН (Фискальный Номер) — 16-значный номер. Например 8710000101700xxx
@@ -52,16 +54,15 @@ const formatArguments = (qrParams) => {
  * @returns {Promise}
  */
 const nalogRuSignUp = async () => { // eslint-disable-line
-  // TODO: не ясно почему здесь отличается порт
-  const res = await post(
-    `https://${NALOGRU_HOST}:8888/v1/mobile/users/signup`,
+  const result = await post(
+    `https://${NALOGRU_HOST}:${NALOGRU_PORT}/v1/mobile/users/signup`,
     {
       name: NALOGRU.NALOGRU_NAME,
       email: NALOGRU.NALOGRU_EMAIL,
       phone: NALOGRU.NALOGRU_PHONE,
     },
   );
-  return res;
+  return result;
 };
 /**
  * @param {object} kppParams - параметры KPP
@@ -81,8 +82,8 @@ const checkKPP = async ({ FN, FD, FDP, TYPE, DATE, SUM }) => {
 const getKPPDocumentReceipt = (data) => {
   const formatData = data.toString('utf8');
   if (typeof formatData !== 'string') {
-    throw new Error('KPP: API unknown data');
-  } else if (formatData === '' || !formatData.length) {
+    throw new TypeError('KPP: API unknown data');
+  } else if (formatData === '' || formatData.length === 0) {
     // TODO: такое бывает когда их апи не просасывается, надо повторить запро
     throw new Error('KPP: API empty data');
   } else if (formatData === 'illegal public api usage') {
@@ -140,24 +141,24 @@ const getKPPParams = async (input) => {
   let qrString = '';
   switch (typeof input) {
     case 'string': {
-      if (!input.length) {
-        throw new Error('KPP: input is 0 length');
+      if (input.length === 0) {
+        throw new TypeError('KPP: input is 0 length');
       }
       qrString = input;
       break;
     }
     case 'object': {
       if (input === null) {
-        throw new Error('KPP: input is null');
+        throw new TypeError('KPP: input is null');
       }
       if (!Buffer.isBuffer(input)) {
-        throw new Error('KPP: wrong buffer');
+        throw new TypeError('KPP: wrong buffer');
       }
       qrString = await qr.readQR(input);
       break;
     }
     default: {
-      throw new Error('KPP: wrong input');
+      throw new TypeError('KPP: wrong input');
     }
   }
   qrString = qrString.trim();
@@ -175,7 +176,19 @@ const kppService = async (input) => {
   // TODO: uncomment this if getKPPData doesn't work
   // await nalogRuSignUp()
   // STEP 2 - проверяем чек (необходимо чтобы избежать ошибки illegal api)
-  await checkKPP(kppParams);
+  try {
+    await checkKPP(kppParams);
+  } catch (error) {
+    const { statusCode } = error;
+    if (statusCode === 406) {
+      // todo: пытаемся заново авторизоваться
+      await nalogRuSignUp();
+      await checkKPP(kppParams);
+    } else {
+      throw error;
+    }
+  }
+
   // STEP 3 - используем данные для получения подробного результата
   const kppData = await getKPPData(kppParams);
   return kppData;

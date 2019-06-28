@@ -36,8 +36,8 @@ const getHelpData = () => {
  */
 const onHelp = async ({ chat }) => {
   const helpData = getHelpData();
-  const message = Object.keys(helpData).reduce((acc, val) => {
-    acc += formatResponse({ key: val, value: helpData[val] });
+  const message = Object.keys(helpData).reduce((acc, key) => {
+    acc += formatResponse({ key: key, value: helpData[key] });
     return acc;
   }, '');
   const chatId = chat.id;

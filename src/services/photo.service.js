@@ -33,13 +33,12 @@ const getTextDetection = (caption) => {
  * @returns {Promise<object>}
  */
 const getPhotoDetection = async ({ caption, fileBuffer }) => {
-  let res = {};
   if (caption) {
-    res = getTextDetection(caption);
+    return getTextDetection(caption);
   } else if (fileBuffer) {
-    res = await getVisionDetection(fileBuffer);
+    const visionResult = await getVisionDetection(fileBuffer);
+    return visionResult;
   }
-  return res;
 };
 
 module.exports = {

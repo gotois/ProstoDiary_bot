@@ -19,10 +19,7 @@ const dotNumberReplacer = (match, matchIndex, text) => {
  * @returns {string}
  */
 const formatQuery = (query) => {
-  let temp = query;
-  temp = temp.trim();
-  temp = temp.replace(/\.\d+/gm, dotNumberReplacer);
-  return temp;
+  return query.trim().replace(/\.\d+/gm, dotNumberReplacer);
 };
 /**
  * @param {string} str - string
@@ -31,8 +28,8 @@ const formatQuery = (query) => {
  * @param {string} what - what text
  * @returns {string}
  */
-const replaceBetween = (str, start, end, what) => {
-  return str.substring(0, start) + what + str.substring(end);
+const replaceBetween = (string, start, end, what) => {
+  return string.substring(0, start) + what + string.substring(end);
 };
 
 module.exports = {

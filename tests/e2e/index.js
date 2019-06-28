@@ -8,7 +8,7 @@ const { maintainers } = require('../../package');
 const TelegramServer = require('telegram-test-api');
 const TelegramBot = require('node-telegram-bot-api');
 const sgMail = require('@sendgrid/mail');
-const TestBot = require('./TestBot');
+const TestBot = require('./test-bot');
 const { IS_CI, IS_DEV, SENDGRID } = require('../../src/env');
 // TODO: https://github.com/gotois/ProstoDiary_bot/issues/106
 // TRAVIS удалить, когда перенесу все необходимые env на Travis
@@ -23,7 +23,7 @@ test.before(async (t) => {
   }
   // TODO: для dev запускаем дев сервак. В дальнейшем включить полноценно для E2E - https://github.com/gotois/ProstoDiary_bot/issues/3
   if (IS_DEV) {
-    const dbClient = require('../../src/database/index');
+    const dbClient = require('../../src/database');
     await t.notThrowsAsync(async () => {
       await dbClient.client.connect();
     });
@@ -84,13 +84,13 @@ test.after.always('guaranteed cleanup', async (t) => {
   });
   t.log('Failed: ', failedTasks);
   sgMail.setApiKey(SENDGRID.SENDGRID_API_KEY);
-  const msg = {
+  const message = {
     to: maintainers[0].email,
     from: 'no-reply@gotointeractive.com',
     subject: 'ProstoDiary: 👾 E2E failed',
     text: `Failed test: ${JSON.stringify(failedTasks, null, 2)}`,
   };
-  const [mailResult] = await sgMail.send(msg);
+  const [mailResult] = await sgMail.send(message);
   t.true(mailResult.statusCode >= 200 && mailResult.statusCode < 300);
 });
 
@@ -118,6 +118,9 @@ skipTestForFast('/help', require('./help.test'));
 skipTestForFast('/version', require('./version.test'));
 skipTestForFastOrTravis('/balance', require('./balance.test'));
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
+
+// test('archive', require('./archive-service.test'));
+// test('AppleHealth', require('./apple-health-service.test'));
 
 test('bot init', require('./telegram-bot.test'));
 test('Currency Service', require('./currency-service.test'));

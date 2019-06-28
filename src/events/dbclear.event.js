@@ -10,8 +10,8 @@ const logger = require('../services/logger.service');
  * @param {object} msg.from - from
  * @returns {undefined}
  */
-const onDBClear = async ({ chat, from }) => {
-  logger.log('info', onDBClear.name);
+const onDatabaseClear = async ({ chat, from }) => {
+  logger.log('info', onDatabaseClear.name);
   const chatId = chat.id;
   const fromId = from.id;
   const options = {
@@ -40,4 +40,4 @@ const onDBClear = async ({ chat, from }) => {
   });
 };
 
-module.exports = onDBClear;
+module.exports = onDatabaseClear;

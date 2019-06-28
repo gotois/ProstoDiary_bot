@@ -11,14 +11,14 @@ const getLocShortName = (parsedData) => {
   const resultLength = parsedData.length;
   if (!resultLength) {
     logger.log('error', 'No results');
-    throw Error('No results');
+    throw new Error('No results');
   }
   // TODO: без try/catch
   try {
     return parsedData[resultLength - 1].address_components[0].short_name;
   } catch (error) {
     logger.log('error', 'No address_components');
-    throw Error('No address_components');
+    throw new Error('No address_components');
   }
 };
 /**

@@ -1,4 +1,4 @@
-const { $$ } = require('./index');
+const { $$ } = require('.');
 /**
  * TODO: сделать аналогично entities/exist
  *
@@ -6,12 +6,12 @@ const { $$ } = require('./index');
  * @returns {Promise}
  */
 const check = async (telegramUserId) => {
-  const res = await $$(
+  const result = await $$(
     `SELECT 1 FROM users
     WHERE telegram_user_id = $1`,
     [telegramUserId],
   );
-  return res;
+  return result;
 };
 /**
  *
@@ -19,12 +19,12 @@ const check = async (telegramUserId) => {
  * @returns {Promise}
  */
 const post = async (telegramUserId) => {
-  const res = await $$(
+  const result = await $$(
     `INSERT INTO users (telegram_user_id)
     VALUES ($1)`,
     [telegramUserId],
   );
-  return res;
+  return result;
 };
 
 module.exports = {

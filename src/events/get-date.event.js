@@ -52,7 +52,7 @@ const getDataFromDate = async ({ chat, from }, match) => {
     const decodeRows = rows.map(({ entry }) => {
       return crypt.decode(entry);
     });
-    decodeRows.length
+    decodeRows.length > 0
       ? await bot.sendMessage(chatId, JSON.stringify(decodeRows, null, 2))
       : await bot.sendMessage(chatId, 'Записей нет');
     // todo: https://github.com/gotois/ProstoDiary_bot/issues/109

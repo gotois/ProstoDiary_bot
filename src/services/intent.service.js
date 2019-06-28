@@ -48,8 +48,8 @@ const detectTextIntent = async (query) => {
       },
     },
   };
-  const res = await sessionClient.detectIntent(request);
-  return res;
+  const result = await sessionClient.detectIntent(request);
+  return result;
 };
 /**
  * TODO: получаю имя и значение Intent
@@ -60,8 +60,8 @@ const detectTextIntent = async (query) => {
  * @returns {string}
  */
 const processResponse = (responses) => {
-  for (const res of responses) {
-    const result = res.queryResult;
+  for (const response of responses) {
+    const result = response.queryResult;
 
     if (result.intent) {
       switch (result.intent.name) {
@@ -112,14 +112,14 @@ const processResponse = (responses) => {
  * @param {string} rawMsg - raw message
  * @returns {Promise<string>}
  */
-const inputAnalyze = async (rawMsg) => {
+const inputAnalyze = async (rawMessage) => {
   // TODO: на основе Intent'a делаем различные предположения и записываем в БД в структурированном виде
   // * анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
   // * await language.analyze(input);
-  const query = formatQuery(rawMsg);
+  const query = formatQuery(rawMessage);
   const responses = await detectTextIntent(query);
-  const res = await processResponse(responses);
-  return res;
+  const result = await processResponse(responses);
+  return result;
 };
 
 module.exports = {

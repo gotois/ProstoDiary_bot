@@ -1,11 +1,11 @@
-const { $$ } = require('./index');
+const { $$ } = require('.');
 /**
  *
  * @param {number} userId - user id
  * @returns {Promise<Array>}
  */
 const getAll = async (userId) => {
-  const res = await $$(
+  const result = await $$(
     `SELECT entry, date_added
     FROM entries
     WHERE user_id = $1
@@ -13,7 +13,7 @@ const getAll = async (userId) => {
     [userId],
   );
   // TODO: надо сразу декодировать
-  return res.rows;
+  return result.rows;
 };
 /**
  * TODO: фича. День начинается с рассвета и до следующего рассвета (вместо привычного дня времени)
@@ -39,14 +39,14 @@ const _get = async (userId, date) => {
   const from = `'${date} 00:00:00'::timestamp`;
   const until = `'${date} 23:59:59'::timestamp`;
 
-  const res = await $$(
+  const result = await $$(
     `SELECT entry, date_added
     FROM entries
     WHERE (user_id = $1) AND date_added BETWEEN ${from} AND ${until}`,
     [userId],
   );
   // TODO: надо сразу декодировать
-  return res.rows;
+  return result.rows;
 };
 /**
  *
@@ -64,13 +64,13 @@ const _post = async (
   dateModified,
   dateAdded = new Date(),
 ) => {
-  const res = await $$(
+  const result = await $$(
     `INSERT INTO entries (user_id, entry, telegram_entry_id, date_modified, date_added)
     VALUES ($1, $2, $3, $4, $5)`,
     [userId, entry, telegramEntryId, dateModified, dateAdded],
   );
   // TODO: надо сразу декодировать
-  return res.rows;
+  return result.rows;
 };
 /**
  *
@@ -81,14 +81,14 @@ const _post = async (
  * @returns {Promise<Array>}
  */
 const _put = async (userId, entry, dateModified, telegramEntryId) => {
-  const res = await $$(
+  const result = await $$(
     `UPDATE entries
     SET entry = $2, date_modified = $3
     WHERE (user_id = $1 AND telegram_entry_id = $4)`,
     [userId, entry, dateModified, telegramEntryId],
   );
   // TODO: надо сразу декодировать
-  return res.rows;
+  return result.rows;
 };
 /**
  * @param {number} userId - user id
@@ -96,13 +96,13 @@ const _put = async (userId, entry, dateModified, telegramEntryId) => {
  * @returns {Promise<Array>}
  */
 const _delete = async (userId, telegramEntryId) => {
-  const res = await $$(
+  const result = await $$(
     `DELETE FROM entries
     WHERE (user_id = $1 AND telegram_entry_id = $2)`,
     [userId, telegramEntryId],
   );
   // TODO: надо сразу декодировать
-  return res.rows;
+  return result.rows;
 };
 /**
  * Удаление данных из БД
@@ -111,13 +111,13 @@ const _delete = async (userId, telegramEntryId) => {
  * @returns {Promise<Array<object>>}
  */
 const clear = async (userId) => {
-  const res = await $$(
+  const result = await $$(
     `DELETE FROM entries
     WHERE user_id = $1`,
     [userId],
   );
   // TODO: отдавать boolean если все закончилось хорошо
-  return res.rows;
+  return result.rows;
 };
 /**
  * @param {number} userId - id user
@@ -125,12 +125,12 @@ const clear = async (userId) => {
  * @returns {Promise<boolean>}
  */
 const exist = async (userId, telegramEntryId) => {
-  const res = await $$(
+  const result = await $$(
     `SELECT EXISTS(SELECT 1 FROM entries
     WHERE telegram_entry_id = $1 AND user_id = $2)`,
     [telegramEntryId, userId],
   );
-  return res.rows[0].exists;
+  return result.rows[0].exists;
 };
 
 module.exports = {

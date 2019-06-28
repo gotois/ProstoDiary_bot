@@ -28,7 +28,7 @@ const onDownload = async ({ chat, from, date }) => {
   const currentUser = sessions.getSession(fromId);
   try {
     const rows = await dbEntries.getAll(currentUser.id);
-    if (!rows.length) {
+    if (rows.length === 0) {
       await bot.sendMessage(chatId, 'Нет данных');
       return;
     }

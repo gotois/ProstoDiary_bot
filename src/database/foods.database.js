@@ -1,4 +1,4 @@
-const { $$ } = require('./index');
+const { $$ } = require('.');
 const { getPostgresLangCode } = require('../services/detect-language.service');
 /**
  *
@@ -7,12 +7,12 @@ const { getPostgresLangCode } = require('../services/detect-language.service');
  */
 const _get = async (title) => {
   const lang = getPostgresLangCode(title);
-  const res = await $$(
+  const result = await $$(
     `SELECT id, title, protein, fat, carbohydrate, kcal FROM Foods
      WHERE to_tsvector($2, title) @@ plainto_tsquery($2, $1);`,
     [title, lang],
   );
-  return res.rows;
+  return result.rows;
 };
 module.exports = {
   get: _get,

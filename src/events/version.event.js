@@ -4,15 +4,15 @@ const logger = require('../services/logger.service');
 const packageJSON = require('../../package');
 const { IS_PRODUCTION } = require('../env');
 /**
- * @param {Buffer} str - file
+ * @param {Buffer} buffer - file
  * @param {string} algorithm - algorithm
  * @param {string} encoding - encoding
  * @returns {string}
  */
-const generateChecksum = (str, algorithm = 'md5', encoding = 'hex') => {
+const generateChecksum = (buffer, algorithm = 'md5', encoding = 'hex') => {
   return crypto
     .createHash(algorithm)
-    .update(str, 'utf8')
+    .update(buffer, 'utf8')
     .digest(encoding);
 };
 /**
