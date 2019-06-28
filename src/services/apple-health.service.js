@@ -1,7 +1,8 @@
 const parser = require('fast-xml-parser');
+const logger = require('./logger.service');
 
 const uploadToDatabase = (object) => {
-  console.log(object);
+  logger.log('info', object);
   // console.log(jsonObj.ClinicalDocument.entry)
   // console.log(jsonObj.HealthData.ExportDate)
   // console.log(jsonObj.HealthData.Me)

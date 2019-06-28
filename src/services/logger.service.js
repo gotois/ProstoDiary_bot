@@ -2,14 +2,7 @@ const winston = require('winston');
 const CoralogixWinston = require('coralogix-logger-winston');
 const { IS_PRODUCTION, CORALOGIX } = require('../env');
 
-const logger = winston.createLogger({
-  transports: [new winston.transports.Console()],
-  format: winston.format.combine(
-    winston.format.colorize({ all: true }),
-    winston.format.simple(),
-  ),
-  exitOnError: false,
-});
+const logger = winston.createLogger();
 
 if (IS_PRODUCTION) {
   const coralogixConfig = {
@@ -18,16 +11,25 @@ if (IS_PRODUCTION) {
     subsystemName: 'ALL SUBSYSTEM',
   };
   CoralogixWinston.CoralogixTransport.configure(coralogixConfig);
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.simple(),
-    }),
-  );
-  logger.add(
-    new CoralogixWinston.CoralogixTransport({
-      category: 'Bot',
-    }),
-  );
+  logger.configure({
+    transports: [
+      new winston.transports.Console({
+        format: winston.format.simple(),
+      }),
+      new CoralogixWinston.CoralogixTransport({
+        category: 'Bot',
+      }),
+    ],
+  });
+} else {
+  logger.configure({
+    transports: [new winston.transports.Console()],
+    format: winston.format.combine(
+      winston.format.colorize({ all: true }),
+      winston.format.simple(),
+    ),
+    exitOnError: false,
+  });
 }
 
 module.exports = logger;

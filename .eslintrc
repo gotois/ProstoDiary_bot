@@ -30,6 +30,7 @@
       "error",
       "all"
     ],
+    "no-console": "error",
     "prettier/prettier": "error",
     "jsdoc/check-alignment": "warn",
     "jsdoc/check-examples": "warn",

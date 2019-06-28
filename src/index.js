@@ -50,7 +50,7 @@ const startTelegramBot = async (_reconnectCount = 1) => {
     const botInfo = await initBot();
     return botInfo;
   } catch (error) {
-    console.error(error);
+    logger.log('warn', error);
     setTimeout(
       async () => {
         logger.log('info', `try ${_reconnectCount} reconnecting…`);
