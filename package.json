@@ -33,7 +33,9 @@
     "e2e": "ava tests/e2e/index.js --serial",
     "e2e:fast": "cross-env FAST_TEST=FAST_TEST ava tests/e2e/index.js",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "docs:serve": "cd docs/ ; jekyll serve"
+    "docs:serve": "cd docs/ ; jekyll serve",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "engines": {
     "node": "12.x",
@@ -96,7 +98,8 @@
     "pg": "~7.11.0",
     "plotly": "~1.0.6",
     "winston": "~3.2.1",
-    "yauzl": "~2.10.0"
+    "yauzl": "~2.10.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@commitlint/cli": "~8.0.0",
@@ -118,5 +121,6 @@
     "nyc": "~14.1.1",
     "prettier": "~1.18.2",
     "telegram-test-api": "~2.2.1"
-  }
+  },
+  "snyk": true
 }
