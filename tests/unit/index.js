@@ -7,7 +7,6 @@ test('commands', require('./commands.test'));
 test('datetime', require('./datetime.test'));
 test('session', require('./session.test'));
 test('money', require('./money.test'));
-test('graph controller', require('./graph-controller.test'));
 test('format', require('./format.test'));
 test('text service', require('./text-service.test'));
 test('detect lang', require('./detect-lang.test'));

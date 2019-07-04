@@ -9,7 +9,6 @@ const formatResponse = ({ key, value }) => {
   return `\n${key}: ${value}`;
 };
 /**
- * TODO: насыщать эти данные из _pages/tutorial.md
  *
  * @returns {object}
  */

@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Mission
-permalink: /mission/
+title: Гипотезы
+permalink: /supposes/
 ---
 
 Гипотеза 1: 

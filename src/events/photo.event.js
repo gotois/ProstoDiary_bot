@@ -16,7 +16,7 @@ const onPhoto = async ({ chat, photo, caption }) => {
   logger.log('info', onPhoto.name);
   const chatId = chat.id;
   // TODO: тоже перенести в обертку для выбора файла из телеги
-  const [smallPhoto, mediumPhoto, largePhoto, originalPhoto] = photo; // eslint-disable-line no-unused-vars
+  const [_, mediumPhoto, largePhoto, originalPhoto] = photo; // eslint-disable-line no-unused-vars
   if (!mediumPhoto.file_id) {
     throw new Error('Wrong file');
   }

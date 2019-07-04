@@ -3,10 +3,7 @@ const dbEntries = require('../database/entities.database');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 const { decodeRows } = require('../services/format.service');
-const {
-  createRegexInput,
-  normalizeRegexStringToString,
-} = require('../services/input.service');
+const { createRegexInput } = require('../services/input.service');
 /**
  * @constant
  * @type {number}
@@ -29,6 +26,14 @@ const formatResponse = ({ date, entry, matcher }) => {
   matcher = normalizeRegexStringToString(matcher);
   const entryOut = entry.split(matcher).join(`*${matcher}*`);
   return `${dateOut}\n${entryOut}`;
+};
+/**
+ *
+ * @param {string} regexString - regexp
+ * @returns {string}
+ */
+const normalizeRegexStringToString = (regexString) => {
+  return regexString.replace(/^\//, '').replace(/\/$/, '');
 };
 /**
  * @param {object} msg - message

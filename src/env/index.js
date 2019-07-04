@@ -39,7 +39,7 @@ const {
   OPEN_WEATHER_KEY,
 } = process.env;
 
-module.exports = {
+const ENV = {
   DATABASE: {
     databaseHost: DB_HOST,
     databaseName: DB_NAME,
@@ -103,6 +103,10 @@ module.exports = {
   },
   DIALOGFLOW: {
     DIALOGFLOW_PROJECT_ID,
+    get sessionId() {
+      // TODO: почему такое значение?
+      return 'quickstart-session-id';
+    },
     get DIALOGFLOW_CREDENTIALS() {
       if (!DIALOGFLOW_CREDENTIALS) {
         throw new Error('Env error: DIALOGFLOW_CREDENTIALS is not initialized');
@@ -117,8 +121,8 @@ module.exports = {
     return String(NODE_ENV) === 'TRAVIS_CI';
   },
   get IS_DEV() {
-    const isAvaTest = String(NODE_ENV) === 'test';
-    const isDevelopmentRun = String(NODE_ENV) === 'development';
-    return !NODE_ENV || isDevelopmentRun || isAvaTest;
+    return String(NODE_ENV) === 'development';
   },
 };
+
+module.exports = ENV;

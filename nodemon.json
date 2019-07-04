@@ -1,8 +1,12 @@
 {
-  "verbose": true,
+  "restartable": "rs",
   "ignore": [
+    "*.md",
+    "*.yml",
     "tests/*",
-    "docs/*"
+    "docs/*",
+    "node_modules/**/node_modules"
   ],
+  "ext": "js,json",
   "delay": "5000"
 }

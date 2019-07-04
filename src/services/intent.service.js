@@ -1,8 +1,7 @@
 const dialogflow = require('dialogflow');
-const { getDialogFlowLangCodeFromQuery } = require('./detect-language.service');
+const { detectLang } = require('./detect-language.service');
 const { formatQuery } = require('./text.service');
 const { DIALOGFLOW } = require('../env');
-// const language = require('../services/language.service');
 
 const sessionClient = new dialogflow.SessionsClient({
   credentials: DIALOGFLOW.DIALOGFLOW_CREDENTIALS,
@@ -33,11 +32,10 @@ const INTENTS = {
  * @returns {Promise<Array>}
  */
 const detectTextIntent = async (query) => {
-  const sessionId = 'quickstart-session-id'; // TODO: into env и почему такое значение?
-  const languageCode = getDialogFlowLangCodeFromQuery(query);
+  const languageCode = detectLang(query).dialogflow;
   const sessionPath = sessionClient.sessionPath(
     DIALOGFLOW.DIALOGFLOW_PROJECT_ID,
-    sessionId,
+    DIALOGFLOW.sessionId,
   );
   const request = {
     session: sessionPath,
@@ -107,15 +105,11 @@ const processResponse = (responses) => {
 /**
  * получаем и разбираем Intent (если есть)
  *
- * inputAnalyze('купил овощи 30 рублей')
- *
+ * @example inputAnalyze('купил овощи 30 рублей');
  * @param {string} rawMsg - raw message
  * @returns {Promise<string>}
  */
 const inputAnalyze = async (rawMessage) => {
-  // TODO: на основе Intent'a делаем различные предположения и записываем в БД в структурированном виде
-  // * анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
-  // * await language.analyze(input);
   const query = formatQuery(rawMessage);
   const responses = await detectTextIntent(query);
   const result = await processResponse(responses);

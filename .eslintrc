@@ -15,6 +15,15 @@
       "error",
       "always"
     ],
+    "no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": false,
+        "argsIgnorePattern": "^_"
+      }
+    ],
     "require-await": "error",
     "no-return-await": "error",
     "arrow-body-style": ["error", "always"],

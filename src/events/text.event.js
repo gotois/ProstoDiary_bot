@@ -1,4 +1,3 @@
-// const nlp = require('compromise');
 const bot = require('../bot');
 const sessions = require('../services/session.service');
 const crypt = require('../services/crypt.service');
@@ -6,8 +5,23 @@ const format = require('../services/format.service');
 const commands = require('../commands');
 const dbEntries = require('../database/entities.database');
 const logger = require('../services/logger.service');
-const { inputAnalyze } = require('../services/intent.service');
-const { spellText } = require('../services/speller.service');
+const { inputProcess } = require('../services/input.service');
+/**
+ * @description Проверка тексты на команды
+ * @param {string} input - input string
+ * @returns {boolean}
+ */
+const checkUnknownInput = (input) => {
+  // Пропускаем зарезервированные команды
+  for (const command of Object.keys(commands)) {
+    if (input.search(commands[command]) >= 0) {
+      return true;
+    }
+  }
+  // TODO: https://github.com/gotois/ProstoDiary_bot/issues/74
+  // ...
+  return false;
+};
 /**
  * Все что пишешь - записывается в сегодняшний день
  *
@@ -29,51 +43,42 @@ const onText = async ({
   date,
 }) => {
   logger.log('info', onText.name);
-  const chatId = chat.id;
-  const fromId = from.id;
-  const input = text.trim();
+  const originalText = text.trim();
   // Пропускаем Reply сообщений
   if (reply_to_message instanceof Object) {
     return;
   }
-  // Пропускаем зарезервированные команды
-  for (const command of Object.keys(commands)) {
-    if (input.search(commands[command]) >= 0) {
-      return;
-    }
-  }
-  if (input.startsWith('/')) {
-    await bot.sendMessage(chatId, 'Command not found. Text /help for help');
+  if (originalText.startsWith('/')) {
     return;
   }
-  // TODO: пример получения имен https://github.com/gotois/ProstoDiary_bot/issues/83
-  // пока работает только с английскими именами
-  // let xxx = nlp(input)
-  //   .people()
-  //   .data();
-  // console.log('topk', xxx);
+  const chatId = chat.id;
+  const fromId = from.id;
+  if (checkUnknownInput(originalText)) {
+    await bot.sendMessage(chatId, 'Unknown command. Enter /help');
+    return;
+  }
   const currentUser = sessions.getSession(fromId);
   try {
-    // TODO: обернуть весь pipe работы с input в отдельный сервис, где расписать подробно весь процесс
-    // ...
-    const spelledText = await spellText(input);
-    const intentMessage = await inputAnalyze(spelledText);
-
-    if (intentMessage.length > 0) {
-      await bot.sendMessage(chatId, intentMessage);
-    }
+    const story = await inputProcess(originalText);
+    const storyDefinition = await story.definition();
+    await bot.sendMessage(chatId, JSON.stringify(storyDefinition.meta));
   } catch (error) {
     logger.log('error', error.toString());
+    await bot.sendMessage(chatId, error.toString());
+    return;
   }
   // todo: https://github.com/gotois/ProstoDiary_bot/issues/98
   try {
+    // todo: в БД записывать originalText
+    // await story.save();
+    // todo: перенести этот вызов в story.save
     await dbEntries.post(
       currentUser.id,
-      crypt.encode(input),
+      crypt.encode(text),
       message_id,
       new Date(date * 1000),
     );
-    const okText = format.previousInput(input);
+    const okText = format.previousInput(text);
     await bot.sendMessage(chatId, okText, {
       disable_notification: true,
       disable_web_page_preview: true,

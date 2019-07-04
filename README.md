@@ -10,6 +10,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/gotois/ProstoDiary_bot.svg)](https://github.com/gotois/ProstoDiary_bot/commits/master)
 [![Website](https://img.shields.io/website/https/prosto-diary.gotointeractive.com.svg?link=https://prosto-diary.gotointeractive.com)](https://prosto-diary.gotointeractive.com)
 [![GitHub](https://img.shields.io/github/license/gotois/ProstoDiary_bot.svg)](https://github.com/gotois/ProstoDiary_bot/blob/master/LICENSE)
+[![sketchboard](https://img.shields.io/badge/Schemes-orange.svg?link=https://gallery.sketchboard.me/team/tm_XjeyfGQC?s=TBE23WvgfgAg&style=flat&label=sketchboard.me)](https://gallery.sketchboard.me/team/tm_XjeyfGQC?s=TBE23WvgfgAg)
 [![Issuehunt](https://img.shields.io/badge/ProstoDiary_bot-blueviolet.svg?link=https://issuehunt.io/r/gotois/ProstoDiary_bot&style=flat&label=issuehunt.io)](https://issuehunt.io/r/gotois/ProstoDiary_bot)
 
 ## About

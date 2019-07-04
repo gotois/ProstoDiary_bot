@@ -99,7 +99,7 @@ const search = async (searchExpression = '', maxResults = 1) => {
   // TODO: сначала использовать возможности БД foods
   // ...
   // FatSecret не поддерживает русский язык - переводим в английский
-  if (detectLang(searchExpression) !== languages.ENG) {
+  if (detectLang(searchExpression).language !== languages.ENG) {
     searchExpression = await translateService.translate(
       searchExpression,
       languages.ENG,

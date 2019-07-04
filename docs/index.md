@@ -12,3 +12,6 @@ Global Bot Environments
 Name: ProstoDiary
 Username: @ProstoDiary_bot
 ```
+
+Github: 
+https://github.com/gotois/ProstoDiary_bot

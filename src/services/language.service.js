@@ -1,10 +1,8 @@
-/* eslint-disable */
 const { GOOGLE } = require('../env');
 const language = require('@google-cloud/language');
 
-// Instantiates a client
 const client = new language.LanguageServiceClient({
-  credentials: GOOGLE.GOOGLE_CREDENTIALS_PARSED
+  credentials: GOOGLE.GOOGLE_CREDENTIALS_PARSED,
 });
 
 // TEST
@@ -47,23 +45,20 @@ const client = new language.LanguageServiceClient({
 
 // TESTEND
 
-// The text to analyze
-const analyze = async (text) => {
+/**
+ * @description The text to analyze
+ * @param {string} text - string text
+ * @returns {Promise<object>}
+ */
+const analyzeSyntax = async (text) => {
   const document = {
     content: text,
     type: 'PLAIN_TEXT',
   };
-  
-  const results = await client.analyzeSyntax({document: document});
-  const syntax = results[0];
-  
-  console.log('Parts of speech:');
-  syntax.tokens.forEach(part => {
-    console.log(`${part.partOfSpeech.tag}: ${part.text.content}`);
-    console.log(`Morphology:`, part.partOfSpeech);
-  });
+  const [result] = await client.analyzeSyntax({ document });
+  return result;
 };
 
 module.exports = {
-  'analyze': analyze,
+  analyzeSyntax,
 };

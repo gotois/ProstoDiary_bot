@@ -15,28 +15,31 @@ const RUS = 'rus';
  */
 const UNDEFINED = 'und';
 /**
+ * @description Получаю язык текста
+ * @todo прямо эта функция будет возвращать все доступные коды для разных систем: posgresql, dialogflow, humanLang, etc
  * @param {string} query - query
- * @returns {string}
+ * @returns {object}
  */
 const detectLang = (query) => {
-  const lang = franc(query, { whitelist: [RUS, ENG] });
-
-  if (lang === UNDEFINED) {
+  let langCode = franc(query, { whitelist: [RUS, ENG] });
+  if (langCode === UNDEFINED) {
     if (/[А-Я]/i.test(query)) {
-      return RUS;
+      langCode = RUS;
     } else if (/[A-Z]/i.test(query)) {
-      return ENG;
+      langCode = ENG;
     }
   }
-
-  return lang;
+  return {
+    language: langCode,
+    dialogflow: getDialogFlowLangCodeFromQuery(langCode),
+    postgresql: getPostgresLangCode(langCode),
+  };
 };
 /**
- * @param {string} query - query
+ * @param {string} langCode - query
  * @returns {string}
  */
-const getDialogFlowLangCodeFromQuery = (query) => {
-  const langCode = detectLang(query);
+const getDialogFlowLangCodeFromQuery = (langCode) => {
   switch (langCode) {
     case RUS: {
       return 'ru';
@@ -47,11 +50,10 @@ const getDialogFlowLangCodeFromQuery = (query) => {
   }
 };
 /**
- * @param {string} query - query
+ * @param {string} langCode - query
  * @returns {string}
  */
-const getPostgresLangCode = (query) => {
-  const langCode = detectLang(query);
+const getPostgresLangCode = (langCode) => {
   switch (langCode) {
     case RUS:
       return 'russian';
@@ -64,8 +66,6 @@ const getPostgresLangCode = (query) => {
 
 module.exports = {
   detectLang,
-  getDialogFlowLangCodeFromQuery,
-  getPostgresLangCode,
   languages: {
     ENG,
     RUS,

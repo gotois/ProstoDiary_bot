@@ -63,8 +63,7 @@ const post = (
  */
 const toQueryString = (data) => {
   const items = Object.entries(data)
-    // eslint-disable-next-line no-unused-vars
-    .filter(([key, value]) => {
+    .filter(([_, value]) => {
       switch (typeof value) {
         case 'object':
           return value !== null;
