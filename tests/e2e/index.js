@@ -118,8 +118,9 @@ skipTestForFast('/help', require('./help.test'));
 skipTestForFast('/version', require('./version.test'));
 skipTestForFastOrTravis('/balance', require('./balance.test'));
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
+test('INPUT: text', require('./input-service.test'));
 
-// test('archive', require('./archive-service.test'));
+// skipTestForFast('archive service', require('./archive-service.test'));
 // test('AppleHealth', require('./apple-health-service.test'));
 
 test('bot init', require('./telegram-bot.test'));
