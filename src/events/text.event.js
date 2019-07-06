@@ -61,7 +61,7 @@ const onText = async ({
   try {
     const story = await inputProcess(originalText);
     const storyDefinition = await story.definition();
-    await bot.sendMessage(chatId, JSON.stringify(storyDefinition.meta));
+    await bot.sendMessage(chatId, JSON.stringify(storyDefinition, null, 2));
   } catch (error) {
     logger.log('error', error.toString());
     await bot.sendMessage(chatId, error.toString());
