@@ -18,7 +18,7 @@ const features = (text, language) => {
   };
 };
 
-const encodingType = 'UTF8';
+const ENCODING_TYPE_UTF8 = 'UTF8';
 
 const document = (text, language) => {
   return {
@@ -68,7 +68,7 @@ const annotateText = async (text, language) => {
   const [result] = await client.annotateText({
     document: document(text, language),
     features: features(text, language),
-    encodingType: encodingType,
+    encodingType: ENCODING_TYPE_UTF8,
   });
   return result;
 };

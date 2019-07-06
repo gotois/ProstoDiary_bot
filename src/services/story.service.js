@@ -83,11 +83,13 @@ class Story {
   // https://github.com/gotois/ProstoDiary_bot/issues/84
   async fill() {
     // ёфикация текста
+    // TODO: это нужно только если русский текст
     const safeEyo = new Eyo();
     safeEyo.dictionary.loadSafeSync();
     this.#spelledText = safeEyo.restore(this.#text);
     
     try {
+      // TODO: добавить аргумент текущего языка для ускорения
       this.#spelledText = await spellText(this.#spelledText/*, this.#language[0]*/);
     } catch (error) {
       logger.error(error);
@@ -100,12 +102,10 @@ class Story {
       const { categories, documentSentiment, entities, language, sentences, tokens } = await languageService.annotateText(this.#spelledText, this.language[0]);
       this.#sentiment = documentSentiment;
       this.#language.unshift(language);
-      // logger.info(categories);
+      this.#category.push(categories);
+  
       // logger.info(entities);
       // logger.info(sentences);
-      // logger.info(tokens);
-      
-      this.#category.push(categories);
       
       for (let { lemma } of tokens) {
         if (validator.isEmail(lemma)) {
@@ -120,15 +120,17 @@ class Story {
       logger.error(error.message);
     }
     
-    const dialogflowResult = await inputAnalyze(this.#spelledText);
-    this.#intent.push(dialogflowResult.intent.displayName);
+    try {
+      const dialogflowResult = await inputAnalyze(this.#spelledText);
+      this.#intent.push(dialogflowResult.intent.displayName);
+      // TODO: а также использовать результат из dialogFlow
+      // ...
+      // TODO: на основе Intent'a делаем различные предположения и записываем в БД в структурированном виде
+      // ...
+    } catch (error) {
+      logger.error(error.message);
+    }
     
-    // TODO: на основе Intent'a делаем различные предположения и записываем в БД в структурированном виде
-    // ...
-    
-    // todo: заполнение
-    // Насыщение абстрактов (от Abstract к Natural)
-    // ...
     // FIXME: Разбить текст на строки через "\n" (Обработка каждой строки выполняется отдельно)
     // А еще лучше если это будет сделано через NLP
   }
@@ -137,14 +139,14 @@ class Story {
    * @description Operation Definition (Типизация абстрактов в строгий структурный вид)
    */
   async definition () {
+    // Насыщение абстрактов (от Abstract к Natural)
+    // ...
     // Связка абстракта фактами
     // ...
     // Сериализация найденных параметров (Entities)
     // ...
-  
     // Исправление кастомных типов
     // ...
-  
     // Merge - формируем Конечный состав параметров
     // включающий undefined если нигде не получилось ничего найти
     // ...
