@@ -23,11 +23,19 @@ if (IS_PRODUCTION) {
   });
 } else {
   logger.configure({
-    transports: [new winston.transports.Console()],
-    format: winston.format.combine(
-      winston.format.colorize({ all: true }),
-      winston.format.simple(),
-    ),
+    transports: [
+      new winston.transports.Console(
+        {
+          format: winston.format.combine(
+            winston.format.colorize({ all: true }),
+            winston.format.simple(),
+          ),
+        }
+      ),
+      new winston.transports.File({
+        filename: 'logs/log.log',
+      }),
+    ],
     exitOnError: false,
   });
 }

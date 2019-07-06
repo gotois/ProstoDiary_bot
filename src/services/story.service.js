@@ -1,54 +1,48 @@
 const Eyo = require('eyo-kernel');
-const nlp = require('compromise');
+const validator = require('validator');
 const { inputAnalyze } = require('./intent.service');
 const languageService = require('./language.service');
 const { detectLang } = require('./detect-language.service');
 const { spellText } = require('./speller.service');
 const logger = require('./logger.service');
 
-const getPeopleNames = async () => {
-  // FIXME: пока работает только с английскими именами
-  const peopleNames = nlpDocument.people().data();
-};
-
-const getBehavior = async () => {
-  try {
-    const syntaxResult = await languageService.analyzeSyntax(text);
-    language.googleCode = syntaxResult.language;
-    console.log(syntaxResult)
-    // syntax.tokens.forEach(part => {
-    //   console.log(`${part.partOfSpeech.tag}: ${part.text.content}`);
-    //   console.log(`Morphology:`, part.partOfSpeech);
-    // });
-  } catch (error) {
-    logger.error(error);
+const xxx = (intentName) => {
+  switch (intentName) {
+    case INTENTS.BUY: {
+      // if (result.parameters) {
+      // price: result.parameters.fields.price
+      // currency: result.parameters.fields.currency
+      // }
+      return result.fulfillmentText;
+    }
+    case INTENTS.EAT: {
+      let outMessage = result.fulfillmentText;
+      for (const eatValue of result.parameters.fields.Food.listValue
+        .values) {
+        // TODO: брать значения из database.foods;
+        // заменить stringify
+        // console.log(eatValue.stringValue)
+        outMessage += '\n' + eatValue.stringValue;
+      }
+      return outMessage;
+    }
+    case INTENTS.FINANCE: {
+      return result.fulfillmentText;
+    }
+    case INTENTS.FITNESS: {
+      return result.fulfillmentText;
+    }
+    case INTENTS.WEIGHT: {
+      return result.fulfillmentText;
+    }
+    case INTENTS.WORK: {
+      return result.fulfillmentText;
+    }
+    default: {
+      // No intent matched
+      return '';
+    }
   }
-};
-
-const textTokens = () => {
-  const nlpDocument = nlp(text);
-  // Токенизация слов
-  const document = nlpDocument.normalize().out('text');
-  logger.info(document);
-  
-  return [];
-}
-
-const getIntent = async () => {
-  // const intentAbstract = new IntentAbstract(dialogflowIntent);
-  
-  // Находим интенты
-  // TODO: refactoring inputAnalyze. KISS
-  const intentMessage = await inputAnalyze(spelledTextFact);
-  logger.info(intentMessage);
-  
-  if (intentMessage.length === 0) {
-    // генерация undefined Intent
-  } else {
-    // TODO: на основе Intent'a делаем различные предположения и записываем в БД в структурированном виде
-  }
-  
-  return '';
 }
 
 // const { Abstract } = require('./abstract.service');
@@ -60,21 +54,25 @@ const getIntent = async () => {
  */
 class Story {
   #text;
-  #language = []; // @example ['ru', rus', 'russian']
-  #emotion = []; // @example ['normal', 'angry']
   #spelledText;
+  #language = []; // @example ['ru', rus', 'russian']
+  #sentiment = []; // @example ['normal', 'angry']
   #hrefs = []; // internet links
   #names = []; // полученные имена людей
   #addresses = []; // полученные адреса из текста
   #emails = []; // полученные данные о почте
   #phones = []; // полученные телефоны
   #behavior; // анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
-  #intent; // Определяем намерения
+  #intent = []; // Определяем намерения
   #geo; // место где произошло событие
   #date; // Получение даты события (Подведение таймлайна) <SmartDate>?
-  #object; // Получение существа события - сущность события
+  #category = []; // Получение существа события - сущность события
   
-  constructor (text = '') {
+  get language() {
+    return this.#language;
+  }
+  
+  constructor(text = '') {
     this.#text = text;
     this.#language.push(detectLang(text).language);
   }
@@ -83,32 +81,56 @@ class Story {
   // Это насыщение абстракных моделей полученных внутри бота
   // Абстракт имеет в себе факты, включая ссылки на них и краткую мета
   // https://github.com/gotois/ProstoDiary_bot/issues/84
-  async fill () {
-    console.log('input text', this.#text);
-    
+  async fill() {
     // ёфикация текста
     const safeEyo = new Eyo();
     safeEyo.dictionary.loadSafeSync();
     this.#spelledText = safeEyo.restore(this.#text);
     
-    console.log('language', this.#language[0]);
     try {
       this.#spelledText = await spellText(this.#spelledText/*, this.#language[0]*/);
     } catch (error) {
       logger.error(error);
     }
     
+    // TODO: вырезаем из текста имейл, адреса, имена, телефоны и добавляем их в специальные группы.
+    // let smallText = '';
+    
+    try {
+      const { categories, documentSentiment, entities, language, sentences, tokens } = await languageService.annotateText(this.#spelledText, this.language[0]);
+      this.#sentiment = documentSentiment;
+      this.#language.unshift(language);
+      // logger.info(categories);
+      // logger.info(entities);
+      // logger.info(sentences);
+      // logger.info(tokens);
+      
+      this.#category.push(categories);
+      
+      for (let { lemma } of tokens) {
+        if (validator.isEmail(lemma)) {
+          this.#emails.push(lemma);
+        } else if (validator.isMobilePhone(lemma)) {
+          this.#phones.push(lemma);
+        } else if (validator.isURL(lemma)) {
+          this.#hrefs.push(lemma);
+        }
+      }
+    } catch (error) {
+      logger.error(error.message);
+    }
+    
+    const dialogflowResult = await inputAnalyze(this.#spelledText);
+    this.#intent.push(dialogflowResult.intent.displayName);
+    
+    // TODO: на основе Intent'a делаем различные предположения и записываем в БД в структурированном виде
+    // ...
     
     // todo: заполнение
     // Насыщение абстрактов (от Abstract к Natural)
     // ...
     // FIXME: Разбить текст на строки через "\n" (Обработка каждой строки выполняется отдельно)
     // А еще лучше если это будет сделано через NLP
-    // ...
-    // const abstract = new Abstract(text);
-    // const abstractDefinitions = await abstract.process();
-  
-    console.log('spelledText: ', this.#spelledText);
   }
   /**
    *
@@ -132,9 +154,20 @@ class Story {
     return {
       // link, // историческая ссылка
       // projects: [], // Разбиение на проекты (нужно для лучшего поиска) // https://github.com/gotois/ProstoDiary_bot/issues/79
-      // это мета данные для StoryLanguage
-      meta: {
-        resultText: this.#spelledText,
+      metadata: {
+        language: this.#language,
+        sentiment: this.#sentiment,
+        spelledText: this.#spelledText,
+        hrefs: this.#hrefs,
+        // #names,
+        // #addresses
+        emails: this.#emails,
+        phones: this.#phones,
+        // #behavior
+        intent: this.#intent,
+        // #geo
+        // #date
+        category: this.#category,
       },
     };
   }

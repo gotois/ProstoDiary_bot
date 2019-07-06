@@ -60,47 +60,10 @@ const detectTextIntent = async (query) => {
 const processResponse = (responses) => {
   for (const response of responses) {
     const result = response.queryResult;
-
-    if (result.intent) {
-      switch (result.intent.name) {
-        case INTENTS.BUY: {
-          // if (result.parameters) {
-          // price: result.parameters.fields.price
-          // currency: result.parameters.fields.currency
-          // }
-          return result.fulfillmentText;
-        }
-        case INTENTS.EAT: {
-          let outMessage = result.fulfillmentText;
-          for (const eatValue of result.parameters.fields.Food.listValue
-            .values) {
-            // TODO: брать значения из database.foods;
-            // заменить stringify
-            // console.log(eatValue.stringValue)
-            outMessage += '\n' + eatValue.stringValue;
-          }
-          return outMessage;
-        }
-        case INTENTS.FINANCE: {
-          return result.fulfillmentText;
-        }
-        case INTENTS.FITNESS: {
-          return result.fulfillmentText;
-        }
-        case INTENTS.WEIGHT: {
-          return result.fulfillmentText;
-        }
-        case INTENTS.WORK: {
-          return result.fulfillmentText;
-        }
-        default: {
-          // No intent matched
-          return '';
-        }
-      }
-    }
+    return result;
   }
-  return '';
+  // TODO: UNDEFINED INTENT? генерация undefined Intent
+  // ...
 };
 /**
  * получаем и разбираем Intent (если есть)
@@ -118,4 +81,5 @@ const inputAnalyze = async (rawMessage) => {
 
 module.exports = {
   inputAnalyze,
+  INTENTS,
 };

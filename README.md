@@ -27,13 +27,13 @@ npm i
 ## Tests
 
 ### Unit
-#### Checking Unit tests:
+#### Checking Unit tests
 ```bash
 npm run unit
 ```
 
 ### E2E
-#### Match files:
+#### Match files
 
 Example:
 ```
