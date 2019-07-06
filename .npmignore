@@ -9,3 +9,7 @@ node_modules
 # IntelliJ project files
 .idea
 *.iml
+data/
+diagrams/
+docs/
+SQL/

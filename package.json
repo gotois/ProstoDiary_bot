@@ -9,14 +9,6 @@
   "bin": {
     "prosto-diary": "./scripts/index"
   },
-  "files": [
-    "src/",
-    "tests/"
-  ],
-  "directories": {
-    "data": "./data",
-    "e2e": "./tests/e2e"
-  },
   "scripts": {
     "postinstall": "npx ncu ; npm run clean",
     "preversion": "npm run test",
@@ -28,7 +20,7 @@
     "start:debug": "cross-env NODE_ENV=production node --inspect ./scripts/index",
     "lint": "eslint src/*.js src/**/*.js tests/**/*.js",
     "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js --serial",
-    "unit": "cross-env ava tests/unit/index.js",
+    "unit": "ava tests/unit/index.js",
     "unit:watch": "npm run unit -- --watch",
     "e2e": "ava tests/e2e/index.js --serial",
     "e2e:fast": "cross-env FAST_TEST=FAST_TEST ava tests/e2e/index.js",
@@ -98,7 +90,8 @@
     "pg": "~7.11.0",
     "plotly": "~1.0.6",
     "winston": "~3.2.1",
-    "yauzl": "~2.10.0"
+    "yauzl": "~2.10.0",
+    "validator": "~11.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "~8.0.0",
@@ -116,12 +109,11 @@
     "eslint-plugin-unicorn": "~9.1.1",
     "husky": "~3.0.0",
     "nodemon": "~1.19.1",
-    "npm-check-updates": "~3.1.14",
+    "npm-check-updates": "~3.1.15",
     "nyc": "~14.1.1",
     "prettier": "~1.18.2",
     "snyk": "~1.192.3",
-    "telegram-test-api": "~2.2.1",
-    "validator": "~11.1.0"
+    "telegram-test-api": "~2.2.1"
   },
   "snyk": true
 }
