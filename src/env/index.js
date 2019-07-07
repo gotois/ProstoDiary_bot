@@ -41,6 +41,10 @@ const {
   WOLFRAM_ALPHA_APP_NAME,
   WOLFRAM_ALPHA_APPID,
   WOLRFRAM_ALPHA_USAGE_TYPE,
+  
+  TODOIST_CLIENT_ID,
+  TODOIST_CLIENT_SECRET,
+  TODOIST_ACCESS_TOKEN,
 } = process.env;
 
 const ENV = {
@@ -127,6 +131,17 @@ const ENV = {
     },
     get USAGE_TYPE() {
       return WOLRFRAM_ALPHA_USAGE_TYPE;
+    },
+  },
+  TODOIST: {
+    get CLIENT_ID() {
+      return TODOIST_CLIENT_ID;
+    },
+    get CLIENT_SECRET() {
+      return TODOIST_CLIENT_SECRET;
+    },
+    get ACCESS_TOKEN() {
+      return TODOIST_ACCESS_TOKEN;
     },
   },
   get IS_PRODUCTION() {

@@ -113,6 +113,7 @@ skipTestForFastOrTravis('API: Google Vision', require('./vision.test'));
 skipTestForFastOrTravis('API: KPP nalog.ru', require('./kpp.test'));
 skipTestForFastOrTravis('API: Translate', require('./translate.test'));
 skipTestForFastOrTravis('API: Wolfram Alpha', require('./wolfram-alpha.test'));
+skipTestForFastOrTravis('API: Todoist', require('./todoist-service.test'));
 
 // INPUT
 skipTestForFast('/help', require('./help.test'));

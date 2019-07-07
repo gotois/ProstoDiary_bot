@@ -46,6 +46,12 @@ OPEN_WEATHER_KEY={ api key }
 WOLFRAM_ALPHA_APP_NAME={ string }
 WOLFRAM_ALPHA_APPID={ string }
 WOLRFRAM_ALPHA_USAGE_TYPE={ string }
+
+# https://developer.todoist.com/appconsole.html
+TODOIST_CLIENT_ID={ string }
+TODOIST_CLIENT_SECRET={ string }
+# легко получить можно через https://todoist.com/prefs/integrations
+TODOIST_ACCESS_TOKEN={ string }
 ```
 
 <details>
