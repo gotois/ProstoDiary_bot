@@ -63,9 +63,30 @@ const getPostgresLangCode = (langCode) => {
       return 'simple';
   }
 };
+/**
+ * @param {string} languageCode - lang
+ * @returns {boolean}
+ */
+const isRUS = (languageCode) => {
+  return /ru/.test(languageCode);
+};
+/**
+ * rus -> ru; eng -> en
+ *
+ * @param {string|undefined} language - lang
+ * @returns {undefined|string}
+ */
+const langISO = (language) => {
+  if (!language) {
+    return undefined;
+  }
+  return language.slice(0, 2);
+};
 
 module.exports = {
   detectLang,
+  isRUS,
+  langISO,
   languages: {
     ENG,
     RUS,

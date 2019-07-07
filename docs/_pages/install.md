@@ -42,6 +42,10 @@ FAT_SECRET_API_SHARED_SECRET={ shared secret string }
 SENDGRID_API_KEY={ api key }
 
 OPEN_WEATHER_KEY={ api key }
+
+WOLFRAM_ALPHA_APP_NAME={ string }
+WOLFRAM_ALPHA_APPID={ string }
+WOLRFRAM_ALPHA_USAGE_TYPE={ string }
 ```
 
 <details>

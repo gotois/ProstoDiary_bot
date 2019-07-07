@@ -1,51 +1,73 @@
 const { GOOGLE } = require('../env');
 const language = require('@google-cloud/language');
+const { isRUS, langISO } = require('./detect-language.service');
 
 const client = new language.LanguageServiceClient({
   credentials: GOOGLE.GOOGLE_CREDENTIALS_PARSED,
 });
-
+/**
+ * @constant
+ * @type {string}
+ */
+const ENCODING_TYPE_UTF8 = 'UTF8';
+/**
+ * @param {string} text - text
+ * @param {string} [language] - language
+ * @returns {{extractEntities: boolean, extractSyntax: boolean, extractDocumentSentiment: boolean, extractEntitySentiment: boolean, classifyText: boolean}}
+ */
 const features = (text, language) => {
-  const isRUS = /ru/.test(language);
+  const rus = isRUS(language);
   // гипотеза - 100 достаточно чтобы считалось большим предлоением
   const classifyText = text.length > 100 ? true : false;
   return {
     extractSyntax: true,
     extractEntities: true,
-    extractDocumentSentiment: isRUS ? false : true, // не работает для русского текста
-    extractEntitySentiment: isRUS ? false : true, // не работает для русского текста
+    extractDocumentSentiment: rus ? false : true, // не работает для русского текста
+    extractEntitySentiment: rus ? false : true, // не работает для русского текста
     classifyText: classifyText, // TODO: работает только на больших предложениях
   };
 };
-
-const ENCODING_TYPE_UTF8 = 'UTF8';
-
+/**
+ *
+ * @param {string} text - text
+ * @param {string} [language] - language code
+ * @returns {{language: *, type: string, content: *}}
+ */
 const document = (text, language) => {
   return {
     content: text,
-    language: language.slice(0, 2), // rus -> ru; eng -> en
+    language: langISO(language),
     type: 'PLAIN_TEXT',
   };
 };
-
-// Detects the sentiment of the document
+/**
+ * @description Detects the sentiment of the document
+ * @param {string} text - text
+ * @returns {Promise<void>}
+ */
 const analyzeSentiment = async (text) => {
   const [result] = await client.analyzeSentiment({
-    document: document(text, language),
+    document: document(text),
   });
   return result;
 };
-
+/**
+ * @param {string} text - text
+ * @returns {Promise<void>}
+ */
 const classifyText = async (text) => {
   const [classification] = await client.classifyText({
-    document: document(text, language),
+    document: document(text),
   });
   return classification;
 };
-
+/**
+ * @param {string} text - text
+ * @returns {Promise<void>}
+ */
 const analyzeEntitySentiment = async (text) => {
   const [result] = await client.analyzeEntitySentiment({
-    document: document(text, language),
+    document: document(text),
   });
   return result;
 };
@@ -55,7 +77,7 @@ const analyzeEntitySentiment = async (text) => {
  */
 const analyzeEntities = async (text) => {
   const [result] = await client.analyzeEntities({
-    document: document(text, language),
+    document: document(text),
   });
   return result;
 };

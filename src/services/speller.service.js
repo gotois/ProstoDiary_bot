@@ -39,7 +39,7 @@ const spellCheck = async ({
  * Важно! Данные берутся относительно текущего месторасположения, включая VPN
  *
  * @param {string} myText - user text
- * @param {string|undefined} lang - text language
+ * @param {string} [lang] - text language
  * @returns {Promise<string>}
  */
 const spellText = async (myText, lang) => {

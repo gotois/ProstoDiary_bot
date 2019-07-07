@@ -2,7 +2,7 @@ const Eyo = require('eyo-kernel');
 const validator = require('validator');
 const { inputAnalyze } = require('./intent.service');
 const languageService = require('./language.service');
-const { detectLang } = require('./detect-language.service');
+const { detectLang, isRUS } = require('./detect-language.service');
 const { spellText } = require('./speller.service');
 const logger = require('./logger.service');
 
@@ -68,13 +68,16 @@ class Story {
   #date; // Получение даты события (Подведение таймлайна) <SmartDate>?
   #category = []; // Получение существа события - сущность события
   
-  get language() {
-    return this.#language;
-  }
-  
   constructor(text = '') {
     this.#text = text;
+    // TODO: Если язык неопределяемый, пока только поддерживаем EN, RU, генерируем ошибку
+    // ...
+    
     this.#language.push(detectLang(text).language);
+  }
+  
+  get language() {
+    return this.#language[0];
   }
   
   // Здесь происходит наполнение Абстрактов из полученного текста
@@ -82,21 +85,21 @@ class Story {
   // Абстракт имеет в себе факты, включая ссылки на них и краткую мета
   // https://github.com/gotois/ProstoDiary_bot/issues/84
   async fill() {
+    // TODO: сделать перевод в английский текст
+    // ...
+    
     // ёфикация текста
-    // TODO: это нужно только если русский текст
-    const safeEyo = new Eyo();
-    safeEyo.dictionary.loadSafeSync();
-    this.#spelledText = safeEyo.restore(this.#text);
+    if (isRUS(this.language)) {
+      const safeEyo = new Eyo();
+      safeEyo.dictionary.loadSafeSync();
+      this.#spelledText = safeEyo.restore(this.#text);
+    }
     
     try {
-      // TODO: добавить аргумент текущего языка для ускорения
-      this.#spelledText = await spellText(this.#spelledText/*, this.#language[0]*/);
+      this.#spelledText = await spellText(this.#spelledText, this.#language[0]);
     } catch (error) {
       logger.error(error);
     }
-    
-    // TODO: вырезаем из текста имейл, адреса, имена, телефоны и добавляем их в специальные группы.
-    // let smallText = '';
     
     try {
       const { categories, documentSentiment, entities, language, sentences, tokens } = await languageService.annotateText(this.#spelledText, this.language[0]);
@@ -115,15 +118,31 @@ class Story {
         } else if (validator.isURL(lemma)) {
           this.#hrefs.push(lemma);
         }
+        // TODO: получить имена
+        // ...
+        // TODO: получить адреса
+        // ...
+        // TODO: получить даты
+        // ...
       }
     } catch (error) {
       logger.error(error.message);
     }
     
+    // предложение нужно будет перепрочитать по умному:
+    // когда? - сегодня - получаем абстрактное время от пользователя, которое нужно перевести в более точное.
+    // что сделал? - купил сыра -> говорим что произошло действие "покупка", ищутся все предыдущие связи для актуализации этой покупке (место, время, валюта, ищется стоимость, кому была отправлена транзакция, из каких ресурсов)
+    // купил что? сыр - 100 грамм -> из БД продуктов ищется сыр 100 грамм и прикрепляется ссылка
+    
     try {
       const dialogflowResult = await inputAnalyze(this.#spelledText);
+      // TODO: проверка интента - если он задекларирован ботом - то дальше, иначе генерация ошибки
       this.#intent.push(dialogflowResult.intent.displayName);
       // TODO: а также использовать результат из dialogFlow
+      // ...
+      // TODO: Если в интентах все необходимые параметры используются они
+      // ...
+      // TODO: Постисправление найденных параметров (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
       // ...
       // TODO: на основе Intent'a делаем различные предположения и записываем в БД в структурированном виде
       // ...
@@ -146,6 +165,7 @@ class Story {
     // Сериализация найденных параметров (Entities)
     // ...
     // Исправление кастомных типов
+    // (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
     // ...
     // Merge - формируем Конечный состав параметров
     // включающий undefined если нигде не получилось ничего найти

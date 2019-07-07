@@ -37,6 +37,10 @@ const {
   SENDGRID_API_KEY,
 
   OPEN_WEATHER_KEY,
+
+  WOLFRAM_ALPHA_APP_NAME,
+  WOLFRAM_ALPHA_APPID,
+  WOLRFRAM_ALPHA_USAGE_TYPE,
 } = process.env;
 
 const ENV = {
@@ -112,6 +116,17 @@ const ENV = {
         throw new Error('Env error: DIALOGFLOW_CREDENTIALS is not initialized');
       }
       return JSON.parse(DIALOGFLOW_CREDENTIALS);
+    },
+  },
+  WOLFRAM_ALPHA: {
+    get APP_NAME() {
+      return WOLFRAM_ALPHA_APP_NAME;
+    },
+    get APP_ID() {
+      return WOLFRAM_ALPHA_APPID || 'DEMO';
+    },
+    get USAGE_TYPE() {
+      return WOLRFRAM_ALPHA_USAGE_TYPE;
     },
   },
   get IS_PRODUCTION() {

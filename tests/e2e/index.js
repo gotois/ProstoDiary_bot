@@ -112,6 +112,7 @@ skipTestForFastOrTravis('API: Fatsecret', require('./fatsecret.test'));
 skipTestForFastOrTravis('API: Google Vision', require('./vision.test'));
 skipTestForFastOrTravis('API: KPP nalog.ru', require('./kpp.test'));
 skipTestForFastOrTravis('API: Translate', require('./translate.test'));
+skipTestForFastOrTravis('API: Wolfram Alpha', require('./wolfram-alpha.test'));
 
 // INPUT
 skipTestForFast('/help', require('./help.test'));

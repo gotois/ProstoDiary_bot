@@ -3,7 +3,7 @@ const dbEntries = require('../database/entities.database');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 const { decodeRows } = require('../services/format.service');
-const { createRegexInput } = require('../services/input.service');
+const { createRegexInput } = require('../services/text.service');
 /**
  * @constant
  * @type {number}
