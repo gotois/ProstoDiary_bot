@@ -17,4 +17,7 @@ module.exports = async (t) => {
   // TODO: short output
   // const shortOutput = const result = await waApi.getShort('today');
   // t.log(fullOutput)
+
+  // TODO: Personal Health (помощь в расчитывании веса, медианы по графикам, помощь по оптимальным калориям уже съеденного, ...)
+  // TODO: Finance (Stock Data - уведомление об изменении цены акций в портфеле)
 };

@@ -121,8 +121,8 @@ skipTestForFastOrTravis('/balance', require('./balance.test'));
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
 skipTestForFastOrTravis('INPUT: text', require('./input-service.test'));
 
-// skipTestForFast('archive service', require('./archive-service.test'));
-// test('AppleHealth', require('./apple-health-service.test'));
+skipTestForFastOrTravis('archive service', require('./archive-service.test'));
+skipTestForFastOrTravis('AppleHealth', require('./apple-health-service.test'));
 
 test('bot init', require('./telegram-bot.test'));
 test('Currency Service', require('./currency-service.test'));
