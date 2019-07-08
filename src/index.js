@@ -66,7 +66,12 @@ const sendUpdatesToUsers = (text) => {
   getAllTelegramUserIds()
     .then((userIds) => {
       userIds.forEach((user) => {
-        bot.sendMessage(user.telegram_user_id, text);
+        try {
+          // TODO: если возвращает 400 ошибку тогда проверить message и блокировать пользователя
+          bot.sendMessage(user.telegram_user_id, text);
+        } catch (error) {
+          logger.warn(error);
+        }
       });
     })
     .catch((error) => {
@@ -80,6 +85,11 @@ const sendUpdatesToUsers = (text) => {
   require('./events');
   if (IS_PRODUCTION) {
     logger.log('info', `production bot:${botInfo.first_name} started`);
+
+    // TODO: обновить поля version и version_hash в таблице Bot
+    // https://github.com/gotois/ProstoDiary_bot/issues/139
+
+    // TODO: если отличается хэш в таблице Bot с тем что есть сейчас - тогда уведомляем пользователей о новой версии
     // TODO: в text добавить сгенерированный ченчлог
     sendUpdatesToUsers(botInfo.first_name + ' updated: ' + projectVersion);
   } else {
