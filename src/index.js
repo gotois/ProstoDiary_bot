@@ -4,6 +4,7 @@ const logger = require('./services/logger.service');
 const { projectVersion } = require('./services/version.service');
 const { IS_PRODUCTION, IS_DEV, TELEGRAM } = require('./env');
 /**
+ * @description initialize bot
  * @returns {Promise<object>}
  */
 const initBot = () => {
@@ -27,8 +28,7 @@ const initBot = () => {
   });
 };
 /**
- * connect DB
- *
+ * @description connect DB
  * @returns {Promise<undefined>}
  */
 const databaseConnect = async () => {
@@ -37,8 +37,7 @@ const databaseConnect = async () => {
   }
 };
 /**
- * Start Telegram Bot
- *
+ * @description Start Telegram Bot
  * @param {number} _reconnectCount - reconnectCount
  * @returns {Promise<object>}
  */

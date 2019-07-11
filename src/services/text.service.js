@@ -22,7 +22,7 @@ const formatQuery = (query) => {
   return query.trim().replace(/\.\d+/gm, dotNumberReplacer);
 };
 /**
- * @param {string} str - string
+ * @param {string} string - string
  * @param {number} start - start
  * @param {number} end - end
  * @param {string} what - what text

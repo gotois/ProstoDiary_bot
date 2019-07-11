@@ -43,7 +43,7 @@ const document = (text, language) => {
 /**
  * @description Detects the sentiment of the document
  * @param {string} text - text
- * @returns {Promise<void>}
+ * @returns {Promise<object>}
  */
 const analyzeSentiment = async (text) => {
   const [result] = await client.analyzeSentiment({
@@ -53,7 +53,7 @@ const analyzeSentiment = async (text) => {
 };
 /**
  * @param {string} text - text
- * @returns {Promise<void>}
+ * @returns {Promise<object>}
  */
 const classifyText = async (text) => {
   const [classification] = await client.classifyText({
@@ -63,7 +63,7 @@ const classifyText = async (text) => {
 };
 /**
  * @param {string} text - text
- * @returns {Promise<void>}
+ * @returns {Promise<object>}
  */
 const analyzeEntitySentiment = async (text) => {
   const [result] = await client.analyzeEntitySentiment({

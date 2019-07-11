@@ -6,10 +6,11 @@ const { replaceBetween } = require('./text.service');
  */
 const SPELLER_HOST = 'speller.yandex.net';
 /**
- * @param {string} text - Текст для проверки
- * @param {string} lang - Языки проверки
- * @param {string} format - Формат проверяемого текста
- * @param {number} options - Опции Яндекс.Спеллера. Значением параметра является сумма значений требуемых опций
+ * @param {object} obj - object
+ * @param {string} obj.text - Текст для проверки
+ * @param {string} obj.lang - Языки проверки
+ * @param {string} obj.format - Формат проверяемого текста
+ * @param {number} obj.options - Опции Яндекс.Спеллера. Значением параметра является сумма значений требуемых опций
  * @returns {Promise<Array|ReferenceError>}
  */
 const spellCheck = async ({

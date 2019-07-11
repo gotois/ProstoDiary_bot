@@ -69,7 +69,7 @@ const processResponse = (responses) => {
  * получаем и разбираем Intent (если есть)
  *
  * @example inputAnalyze('купил овощи 30 рублей');
- * @param {string} rawMsg - raw message
+ * @param {string} rawMessage - raw message
  * @returns {Promise<string>}
  */
 const inputAnalyze = async (rawMessage) => {
