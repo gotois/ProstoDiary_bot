@@ -33,7 +33,7 @@ module.exports = (t) => {
   t.false(checkDateLaterThanNow(new Date('31.12.2001')));
   t.false(checkDateLaterThanNow(new Date('32.12.2016')));
   t.false(checkDateLaterThanNow(new Date()));
-  
+
   // fillRangeTimes
   t.throws(() => {
     fillRangeTimes(undefined, null);
