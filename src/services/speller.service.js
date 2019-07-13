@@ -39,14 +39,17 @@ const spellCheck = async ({
  * await spellText('рублкй') -> рублей
  * Важно! Данные берутся относительно текущего месторасположения, включая VPN
  *
- * @param {string} myText - user text
+ * @param {string} text - user text
  * @param {string} [lang] - text language
  * @returns {Promise<string>}
  */
-const spellText = async (myText, lang) => {
-  let out = myText;
+const spellText = async (text, lang) => {
+  if (!text) {
+    throw new Error('Text is undefined');
+  }
+  let out = text;
   const array = await spellCheck({
-    text: myText,
+    text,
     lang,
   });
 

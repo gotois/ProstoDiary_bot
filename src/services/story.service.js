@@ -2,7 +2,7 @@ const Eyo = require('eyo-kernel');
 const validator = require('validator');
 const { inputAnalyze } = require('./intent.service');
 const languageService = require('./language.service');
-const { detectLang, isRUS } = require('./detect-language.service');
+const { detectLang, isRUS, isENG } = require('./detect-language.service');
 const { spellText } = require('./speller.service');
 const logger = require('./logger.service');
 
@@ -53,8 +53,8 @@ const xxx = (intentName) => {
  * @description Story управляется абстрактами. Которые насыщаются в abstract.service
  */
 class Story {
-  #text;
-  #spelledText;
+  #text = [];
+  #entities; // todo: разбить на схемы
   #language = []; // @example ['ru', rus', 'russian']
   #sentiment = []; // @example ['normal', 'angry']
   #hrefs = []; // internet links
@@ -69,15 +69,16 @@ class Story {
   #category = []; // Получение существа события - сущность события
   
   constructor(text = '') {
-    this.#text = text;
-    // TODO: Если язык неопределяемый, пока только поддерживаем EN, RU, генерируем ошибку
-    // ...
-    
+    this.#text.push(text);
     this.#language.push(detectLang(text).language);
   }
   
   get language() {
     return this.#language[0];
+  }
+  
+  get text() {
+    return this.#text[0];
   }
   
   // Здесь происходит наполнение Абстрактов из полученного текста
@@ -92,23 +93,29 @@ class Story {
     if (isRUS(this.language)) {
       const safeEyo = new Eyo();
       safeEyo.dictionary.loadSafeSync();
-      this.#spelledText = safeEyo.restore(this.#text);
-    }
+      this.#text.unshift(safeEyo.restore(this.text));
+    } else if (isENG(this.language)) {
     
+    } else {
+      // Если язык неопределяемый, пока только поддерживаем EN, RU, генерируем ошибку
+      throw new Error('Unsupported language')
+    }
     try {
-      this.#spelledText = await spellText(this.#spelledText, this.#language[0]);
+      const yandexSpellLanguageCode = this.language.slice(0, 2);
+      const spelledText = await spellText(this.text, yandexSpellLanguageCode);
+      this.#text.unshift(spelledText);
     } catch (error) {
       logger.error(error);
     }
-    
     try {
-      const { categories, documentSentiment, entities, language, sentences, tokens } = await languageService.annotateText(this.#spelledText, this.language[0]);
+      const { categories, documentSentiment, entities, language, sentences, tokens } = await languageService.annotateText(this.text, this.language);
       this.#sentiment = documentSentiment;
       this.#language.unshift(language);
       this.#category.push(categories);
-  
-      // logger.info(entities);
-      // logger.info(sentences);
+      this.#entities = entities;
+      if (sentences.length && sentences[0].text) {
+        this.#text.unshift(sentences[0].text.content);
+      }
       
       for (let { lemma } of tokens) {
         if (validator.isEmail(lemma)) {
@@ -128,14 +135,13 @@ class Story {
     } catch (error) {
       logger.error(error.message);
     }
-    
     // предложение нужно будет перепрочитать по умному:
     // когда? - сегодня - получаем абстрактное время от пользователя, которое нужно перевести в более точное.
     // что сделал? - купил сыра -> говорим что произошло действие "покупка", ищутся все предыдущие связи для актуализации этой покупке (место, время, валюта, ищется стоимость, кому была отправлена транзакция, из каких ресурсов)
     // купил что? сыр - 100 грамм -> из БД продуктов ищется сыр 100 грамм и прикрепляется ссылка
     
     try {
-      const dialogflowResult = await inputAnalyze(this.#spelledText);
+      const dialogflowResult = await inputAnalyze(this.text);
       // TODO: проверка интента - если он задекларирован ботом - то дальше, иначе генерация ошибки
       this.#intent.push(dialogflowResult.intent.displayName);
       // TODO: а также использовать результат из dialogFlow
@@ -179,8 +185,9 @@ class Story {
       metadata: {
         language: this.#language,
         sentiment: this.#sentiment,
-        spelledText: this.#spelledText,
+        text: this.#text,
         hrefs: this.#hrefs,
+        entities: this.#entities,
         // #names,
         // #addresses
         emails: this.#emails,

@@ -43,11 +43,11 @@ const onText = async ({
   date,
 }) => {
   logger.log('info', onText.name);
-  const originalText = text.trim();
   // Пропускаем Reply сообщений
   if (reply_to_message instanceof Object) {
     return;
   }
+  const originalText = text.trim();
   if (originalText.startsWith('/')) {
     return;
   }

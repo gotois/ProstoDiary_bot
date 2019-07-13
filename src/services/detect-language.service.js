@@ -70,6 +70,9 @@ const getPostgresLangCode = (langCode) => {
 const isRUS = (languageCode) => {
   return /ru/.test(languageCode);
 };
+const isENG = (languageCode) => {
+  return /en/.test(languageCode);
+};
 /**
  * rus -> ru; eng -> en
  *
@@ -86,6 +89,7 @@ const langISO = (language) => {
 module.exports = {
   detectLang,
   isRUS,
+  isENG,
   langISO,
   languages: {
     ENG,
