@@ -1,8 +1,8 @@
 module.exports = async (t) => {
   t.timeout(5000);
   const dateFns = require('date-fns');
+  const { convertToNormalDate } = require('../../src/services/date.service');
   const waApi = require('../../src/services/wolfram-alpha.service');
-
   const fullOutput = await waApi.getFull({
     input: 'today',
     output: 'json',
@@ -10,7 +10,9 @@ module.exports = async (t) => {
   });
   for (let pod of fullOutput.pods) {
     if (pod.id === 'SingleDateFormats') {
-      const date = new Date(pod.subpods[0].plaintext);
+      const normalDate = convertToNormalDate(pod.subpods[0].plaintext)
+      const date = new Date(normalDate);
+      t.log('date', normalDate)
       t.true(dateFns.isValid(date));
     }
   }

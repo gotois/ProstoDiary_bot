@@ -70,6 +70,10 @@ const getPostgresLangCode = (langCode) => {
 const isRUS = (languageCode) => {
   return /ru/.test(languageCode);
 };
+/**
+ * @param  {string} languageCode - lang
+ * @returns {boolean}
+ */
 const isENG = (languageCode) => {
   return /en/.test(languageCode);
 };

@@ -3,10 +3,13 @@ module.exports = (t) => {
     detectLang,
     languages,
     isRUS,
+    isENG,
     langISO,
   } = require('../../src/services/detect-language.service');
   t.true(isRUS('rus'));
   t.false(isRUS('eng'));
+  t.true(isENG('eng'));
+  t.false(isENG('abc'));
   t.is(langISO('rus'), 'ru');
   t.is(langISO('eng'), 'en');
 

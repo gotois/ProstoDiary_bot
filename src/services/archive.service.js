@@ -31,7 +31,7 @@ const pack = (input, fileName) => {
 };
 /**
  * @param {Buffer} zip - zipFile
- * @returns {Promise<any>}
+ * @returns {Promise<Map>}
  */
 const readZipFiles = (zip) => {
   return new Promise((resolve, reject) => {
@@ -66,7 +66,7 @@ const readZipFiles = (zip) => {
 };
 /**
  * @param {Buffer} buffer - buffer
- * @returns {Promise<any>}
+ * @returns {Promise<Map>}
  */
 const unpack = (buffer) => {
   return new Promise((resolve, reject) => {

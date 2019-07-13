@@ -23,11 +23,15 @@ const checkDateLaterThanNow = (date) => {
  * @returns {boolean}
  */
 const isNormalDate = (date) => {
-  return (
-    dateFns.isValid(new Date(date)) &&
-    !checkDateLaterThanNow(new Date(date)) &&
-    !isNaN(Date.parse(date))
-  );
+  try {
+    return (
+      dateFns.isValid(new Date(date)) &&
+      !checkDateLaterThanNow(new Date(date)) &&
+      !isNaN(Date.parse(date))
+    );
+  } catch (_) {
+    return false;
+  }
 };
 /**
  * convertToNormalDate('YYY-MM-DD')
@@ -42,12 +46,22 @@ const convertToNormalDate = (date) => {
   } else {
     date = date.split('.').join('-');
 
-    const dd = Number(date.match(/-\d+-(\d+)/)[1]);
-    const mm = Number(date.match(/-(\d+)/)[1]) - 1;
-    const yyyy = Number(date.match(/(\d+)-/)[1]);
+    let dd;
+    let mm;
+    let yyyy;
 
+    // @example: '13/07/2019'
+    if (/\d{2}\/\d{2}\/\d{4}/.test(date)) {
+      dd = date.slice(0, 2);
+      mm = date.slice(3, 5);
+      yyyy = date.slice(6, 10);
+    } else {
+      dd = Number(date.match(/-\d+-(\d+)/)[1]);
+      mm = Number(date.match(/-(\d+)/)[1]) - 1;
+      yyyy = Number(date.match(/(\d+)-/)[1]);
+    }
     if (dd > 31 || mm > 12) {
-      throw new Error('Invalid Date');
+      throw new Error('Invalid Date day or month');
     }
     const newDate = new Date();
     newDate.setDate(dd);
@@ -55,8 +69,8 @@ const convertToNormalDate = (date) => {
     newDate.setYear(yyyy);
     normalDate = newDate;
   }
-  if (!isNormalDate(normalDate)) {
-    throw new Error('Invalid normalization Date');
+  if (!dateFns.isValid(normalDate)) {
+    throw new Error('Date is invalid');
   }
   return normalDate;
 };
