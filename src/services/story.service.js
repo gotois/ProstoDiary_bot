@@ -58,33 +58,41 @@ class Story {
   #language = []; // @example ['ru', rus', 'russian']
   #sentiment = []; // @example ['normal', 'angry']
   #hrefs = []; // internet links
-  #names = []; // полученные имена людей
+  #names = []; // todo: полученные имена людей
   #addresses = []; // полученные адреса из текста
   #emails = []; // полученные данные о почте
   #phones = []; // полученные телефоны
-  #behavior; // анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
+  #behavior; // todo: анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
   #intent = []; // Определяем намерения
-  #geo; // место где произошло событие
+  #geo; // todo: rename (place?) место где произошло событие
   #date; // Получение даты события (Подведение таймлайна) <SmartDate>?
   #category = []; // Получение существа события - сущность события
-  
+  /**
+   * @param {string} text - original text
+   */
   constructor(text = '') {
     this.#text.push(text);
     this.#language.push(detectLang(text).language);
   }
-  
+  /**
+   * @returns {string}
+   */
   get language() {
     return this.#language[0];
   }
-  
+  /**
+   * @returns {string}
+   */
   get text() {
     return this.#text[0];
   }
-  
-  // Здесь происходит наполнение Абстрактов из полученного текста
-  // Это насыщение абстракных моделей полученных внутри бота
-  // Абстракт имеет в себе факты, включая ссылки на них и краткую мета
-  // https://github.com/gotois/ProstoDiary_bot/issues/84
+  /**
+   * @description Здесь происходит наполнение Абстрактов из полученного текста.
+   * Это насыщение абстракных моделей полученных внутри бота.
+   * Абстракт имеет в себе факты, включая ссылки на них и краткую мета
+   * @todo https://github.com/gotois/ProstoDiary_bot/issues/84
+   * @returns {Promise<undefined>}
+   */
   async fill() {
     // TODO: сделать перевод в английский текст
     // ...
@@ -97,8 +105,9 @@ class Story {
     } else if (isENG(this.language)) {
     
     } else {
-      // Если язык неопределяемый, пока только поддерживаем EN, RU, генерируем ошибку
-      throw new Error('Unsupported language')
+      // пока только поддерживаем EN, RU
+      logger.info('Unsupported language');
+      return;
     }
     try {
       const yandexSpellLanguageCode = this.language.slice(0, 2);
@@ -204,20 +213,20 @@ class Story {
     };
   }
   
-  // Поиск исторической ссылки  (Хэш?)
+  // @todo Поиск исторической ссылки  (Хэш?)
   static async find (abstractDefinitions) {
     return '';
   }
   
   /**
-   * Обновление/Дополнение в БД
+   * @todo Обновление/Дополнение в БД
    * @returns {Promise<void>}
    */
   async update () {
   }
   
   /**
-   * сохранение в БД
+   * @todo сохранение в БД
    * @returns {Promise<void>}
    */
   async save () {

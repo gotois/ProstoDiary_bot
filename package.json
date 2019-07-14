@@ -69,7 +69,10 @@
     }
   },
   "lint-staged": {
-    "*.js": ["npm run lint -- --fix", "git add"]
+    "*.js": [
+      "npm run lint -- --fix",
+      "git add"
+    ]
   },
   "dependencies": {
     "@google-cloud/language": "~3.2.3",
@@ -87,7 +90,7 @@
     "franc": "~4.1.0",
     "jimp": "~0.6.4",
     "jsqr": "~1.2.0",
-    "music-metadata": "~4.2.0",
+    "music-metadata": "~4.2.1",
     "node-telegram-bot-api": "~0.30.0",
     "openweather-apis": "~4.0.0",
     "pg": "~7.11.0",
@@ -108,7 +111,7 @@
     "eslint": "~6.0.1",
     "eslint-config-prettier": "~6.0.0",
     "eslint-plugin-ava": "~7.1.0",
-    "eslint-plugin-jsdoc": "~15.3.9",
+    "eslint-plugin-jsdoc": "~15.5.0",
     "eslint-plugin-node": "~9.1.0",
     "eslint-plugin-prettier": "~3.1.0",
     "eslint-plugin-unicorn": "~9.1.1",
