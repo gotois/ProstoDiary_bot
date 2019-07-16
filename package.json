@@ -68,12 +68,6 @@
       "path": "cz-conventional-changelog"
     }
   },
-  "lint-staged": {
-    "*.js": [
-      "npm run lint -- --fix",
-      "git add"
-    ]
-  },
   "dependencies": {
     "@google-cloud/language": "~3.2.3",
     "@google-cloud/speech": "~3.2.2",
