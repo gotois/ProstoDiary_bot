@@ -1,14 +1,16 @@
 {
   "name": "prosto-diary",
+  "version": "0.0.0-development",
   "description": "Global virtual assistant",
-  "version": "1.0.0",
   "homepage": "https://prosto-diary.gotointeractive.com",
   "main": "./src/index.js",
   "man": [],
   "private": false,
-  "bin": {
-    "prosto-diary": "./scripts/index"
-  },
+  "bin": "./scripts/index",
+  "files": [
+    "src",
+    "scripts"
+  ],
   "scripts": {
     "postinstall": "npx ncu ; npm run clean",
     "preversion": "npm run test",
@@ -19,6 +21,7 @@
     "start": "./scripts/index",
     "start:debug": "cross-env NODE_ENV=production node --inspect ./scripts/index",
     "lint": "eslint src/*.js src/**/*.js tests/**/*.js",
+    "pretest": "npm run lint",
     "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js --serial",
     "unit": "ava tests/unit/index.js",
     "unit:watch": "npm run unit -- --watch",
@@ -110,6 +113,7 @@
     "eslint-plugin-prettier": "~3.1.0",
     "eslint-plugin-unicorn": "~9.1.1",
     "husky": "~3.0.0",
+    "jsonlint": "~1.6.3",
     "lint-staged": "~9.2.0",
     "nodemon": "~1.19.1",
     "npm-check-updates": "~3.1.20",
