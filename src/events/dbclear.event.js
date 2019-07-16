@@ -1,7 +1,7 @@
 const bot = require('../bot');
-const dbEntries = require('../database/entities.database');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
+const dbClearAPI = require('../api/v1/db-clear');
 /**
  * Очистить базу данных с подтверждением
  *
@@ -19,7 +19,6 @@ const onDatabaseClear = async ({ chat, from }) => {
       force_reply: true,
     },
   };
-  const currentUser = sessions.getSession(fromId);
   const { message_id } = await bot.sendMessage(
     chatId,
     'Очистить ваши записи?\nНапишите: YES',
@@ -30,8 +29,9 @@ const onDatabaseClear = async ({ chat, from }) => {
       await bot.sendMessage(chat.id, 'Операция отменена');
       return;
     }
+    const currentUser = sessions.getSession(fromId);
     try {
-      await dbEntries.clear(currentUser.id);
+      await dbClearAPI(currentUser);
       await bot.sendMessage(chat.id, 'Данные очищены');
     } catch (error) {
       logger.log('error', error);

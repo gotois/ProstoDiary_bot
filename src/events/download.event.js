@@ -1,16 +1,7 @@
 const bot = require('../bot');
-const dbEntries = require('../database/entities.database');
-const { pack } = require('../services/archive.service');
-const format = require('../services/format.service');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
-/**
- * @param {string} date - date
- * @returns {string}
- */
-const generateName = (date) => {
-  return `ProstoDiary_backup_${date}`;
-};
+const backupAPI = require('../api/v1/backup');
 /**
  * Скачивание файла БД на устройство
  *
@@ -24,24 +15,17 @@ const onDownload = async ({ chat, from, date }) => {
   logger.log('info', onDownload.name);
   const chatId = chat.id;
   const fromId = from.id;
-  const fileName = generateName(date) + '.txt';
   const currentUser = sessions.getSession(fromId);
   try {
-    const rows = await dbEntries.getAll(currentUser.id);
-    if (rows.length === 0) {
-      await bot.sendMessage(chatId, 'Нет данных');
-      return;
-    }
-    const formatData = format.formatRows(rows);
-    const buffers = await pack(formatData, fileName);
+    const { filename, fileBuffer } = await backupAPI(currentUser, date);
     await bot.sendDocument(
       chatId,
-      buffers,
+      fileBuffer,
       {
-        caption: fileName,
+        caption: filename,
       },
       {
-        filename: generateName(date) + '.zip',
+        filename: filename + '.zip',
         contentType: 'application/zip',
       },
     );

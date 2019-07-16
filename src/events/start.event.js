@@ -1,7 +1,7 @@
 const bot = require('../bot');
 const sessions = require('../services/session.service');
-const dbUsers = require('../database/users.database');
 const logger = require('../services/logger.service');
+const startAPI = require('../api/v1/start');
 /**
  * При первом включении создаем в БД специальную колонку для работы
  *
@@ -15,13 +15,8 @@ const onStart = async ({ chat, from }) => {
   const chatId = chat.id;
   const currentUser = sessions.getSession(from.id);
   try {
-    const { rowCount } = await dbUsers.check(currentUser.id);
-    if (rowCount === 0) {
-      await dbUsers.post(currentUser.id);
-      await bot.sendMessage(chatId, 'Вы вошли в систему');
-      return;
-    }
-    await bot.sendMessage(chatId, 'Повторный вход не требуется');
+    const startResult = await startAPI(currentUser);
+    await bot.sendMessage(chatId, startResult);
   } catch (error) {
     logger.log('error', error);
     await bot.sendMessage(chatId, 'Операция не выполнена');

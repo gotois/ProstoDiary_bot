@@ -1,11 +1,7 @@
 const bot = require('../bot');
 const sessions = require('../services/session.service');
-const datetime = require('../services/date.service');
-const dbEntries = require('../database/entities.database');
-const crypt = require('../services/crypt.service');
-const commands = require('../commands');
-const format = require('../services/format.service');
 const logger = require('../services/logger.service');
+const setDateAPI = require('../api/v1/set-date');
 /**
  * /set 2016-12-29 something text
  *
@@ -20,31 +16,19 @@ const logger = require('../services/logger.service');
 const setDataFromDate = async ({ chat, text, from, message_id }, match) => {
   logger.log('info', setDataFromDate.name);
   const chatId = chat.id;
-  const input = text.replace(commands.SETDATE, '').trim();
-  let date;
-  try {
-    date = datetime.convertToNormalDate(match[1]);
-  } catch (error) {
-    logger.log('error', error.message);
-    await bot.sendMessage(chatId, error.message);
-    return;
-  }
   const currentUser = sessions.getSession(from.id);
   try {
-    await dbEntries.post(
-      currentUser.id,
-      crypt.encode(input),
+    const setDateResult = await setDateAPI(
+      text,
       message_id,
-      new Date(),
-      date,
+      match,
+      currentUser,
     );
+    await bot.sendMessage(chatId, setDateResult);
   } catch (error) {
     logger.log('error', error);
     await bot.sendMessage(chatId, 'Произошла ошибка');
-    return;
   }
-  const previousInput = format.previousInput(input);
-  await bot.sendMessage(chatId, previousInput);
 };
 
 module.exports = setDataFromDate;

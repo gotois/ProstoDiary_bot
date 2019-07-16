@@ -5,7 +5,7 @@ const format = require('../services/format.service');
 const commands = require('../commands');
 const dbEntries = require('../database/entities.database');
 const logger = require('../services/logger.service');
-const { inputProcess } = require('../services/input.service');
+const textAPI = require('../api/v1/text');
 /**
  * @description Проверка тексты на команды
  * @param {string} input - input string
@@ -59,13 +59,11 @@ const onText = async ({
   }
   const currentUser = sessions.getSession(fromId);
   try {
-    const story = await inputProcess(originalText);
-    const storyDefinition = await story.definition();
-    await bot.sendMessage(chatId, JSON.stringify(storyDefinition, null, 2));
+    const resultText = await textAPI(originalText);
+    await bot.sendMessage(chatId, resultText);
   } catch (error) {
     logger.log('error', error.toString());
     await bot.sendMessage(chatId, error.toString());
-    return;
   }
   // todo: https://github.com/gotois/ProstoDiary_bot/issues/98
   try {
