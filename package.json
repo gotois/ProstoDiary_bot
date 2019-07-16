@@ -4,7 +4,10 @@
   "description": "Global virtual assistant",
   "homepage": "https://prosto-diary.gotointeractive.com",
   "main": "./src/index.js",
-  "man": [],
+  "workspaces": [
+    "src/*",
+    "scripts/*"
+  ],
   "private": false,
   "bin": "./scripts/index",
   "files": [
