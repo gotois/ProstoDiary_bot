@@ -15,25 +15,22 @@
     "scripts"
   ],
   "scripts": {
-    "postinstall": "npx ncu ; npm run clean",
-    "preversion": "npm run test",
-    "commit": "npx git-cz",
+    "postinstall": "ncu ; npm run clean",
+    "commit": "git-cz",
+    "pretest": "npm run lint",
+    "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js --serial",
+    "start": "./scripts/index",
+    "start:debug": "cross-env NODE_ENV=production node --inspect ./scripts/index",
     "clean": "rm -rf .nyc_output && ava tests/e2e/index.js --serial --reset-cache",
     "dev": "cross-env NODE_ENV=development nodemon ./scripts/index",
     "dev:debug": "cross-env NODE_ENV=development nodemon --verbose --inspect ./scripts/index",
-    "start": "./scripts/index",
-    "start:debug": "cross-env NODE_ENV=production node --inspect ./scripts/index",
     "lint": "eslint src/*.js src/**/*.js tests/**/*.js",
-    "pretest": "npm run lint",
-    "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js --serial",
     "unit": "ava tests/unit/index.js",
     "unit:watch": "npm run unit -- --watch",
     "e2e": "ava tests/e2e/index.js --serial",
     "e2e:fast": "cross-env FAST_TEST=FAST_TEST ava tests/e2e/index.js",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "docs:serve": "cd docs/ ; jekyll serve",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "docs:serve": "cd docs/ ; jekyll serve"
   },
   "engines": {
     "node": "12.x",
