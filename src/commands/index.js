@@ -1,4 +1,5 @@
 /**
+ * @todo переместить в controllers
  * @type {object}
  */
 module.exports = {

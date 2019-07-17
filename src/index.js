@@ -81,7 +81,7 @@ const sendUpdatesToUsers = (text) => {
 (async function main() {
   await databaseConnect();
   const botInfo = await startTelegramBot();
-  require('./events');
+  require('./controllers');
   if (IS_PRODUCTION) {
     logger.log('info', `production bot:${botInfo.first_name} started`);
 
