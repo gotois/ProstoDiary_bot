@@ -16,13 +16,7 @@
       "always"
     ],
     "no-unused-vars": [
-      "error",
-      {
-        "vars": "all",
-        "args": "after-used",
-        "ignoreRestSiblings": false,
-        "argsIgnorePattern": "^_"
-      }
+      "warn"
     ],
     "require-await": "error",
     "no-return-await": "error",
