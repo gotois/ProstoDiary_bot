@@ -1,4 +1,4 @@
-{v
+{
   "name": "prosto-diary",
   "description": "Global virtual assistant",
   "stack": "heroku-18",

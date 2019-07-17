@@ -145,7 +145,8 @@
     "jsdoc",
     "node",
     "prettier",
-    "unicorn"
+    "unicorn",
+    "json"
   ],
   "extends": [
     "eslint:recommended",
