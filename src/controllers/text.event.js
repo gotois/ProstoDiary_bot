@@ -1,27 +1,7 @@
 const bot = require('../bot');
 const sessions = require('../services/session.service');
-const crypt = require('../services/crypt.service');
-const format = require('../services/format.service');
-const commands = require('../commands');
-const dbEntries = require('../database/entities.database');
 const logger = require('../services/logger.service');
 const textAPI = require('../api/v1/text');
-/**
- * @description Проверка тексты на команды
- * @param {string} input - input string
- * @returns {boolean}
- */
-const checkUnknownInput = (input) => {
-  // Пропускаем зарезервированные команды
-  for (const command of Object.keys(commands)) {
-    if (input.search(commands[command]) >= 0) {
-      return true;
-    }
-  }
-  // TODO: https://github.com/gotois/ProstoDiary_bot/issues/74
-  // ...
-  return false;
-};
 /**
  * Все что пишешь - записывается в сегодняшний день
  *
@@ -47,37 +27,16 @@ const onText = async ({
   if (reply_to_message instanceof Object) {
     return;
   }
-  const originalText = text.trim();
-  if (originalText.startsWith('/')) {
+  if (text.startsWith('/')) {
     return;
   }
   const chatId = chat.id;
   const fromId = from.id;
-  if (checkUnknownInput(originalText)) {
-    await bot.sendMessage(chatId, 'Unknown command. Enter /help');
-    return;
-  }
   const currentUser = sessions.getSession(fromId);
   try {
-    const resultText = await textAPI(originalText);
-    await bot.sendMessage(chatId, resultText);
-  } catch (error) {
-    logger.log('error', error.toString());
-    await bot.sendMessage(chatId, error.toString());
-  }
-  // todo: https://github.com/gotois/ProstoDiary_bot/issues/98
-  try {
-    // todo: в БД записывать originalText
-    // await story.save();
-    // todo: перенести этот вызов в story.save
-    await dbEntries.post(
-      currentUser.id,
-      crypt.encode(text),
-      message_id,
-      new Date(date * 1000),
-    );
-    const okText = format.previousInput(text);
-    await bot.sendMessage(chatId, okText, {
+    const result = await textAPI(text, message_id, date, currentUser);
+    // todo: похоже что параметры срабатывают неправильнго
+    await bot.sendMessage(chatId, result, {
       disable_notification: true,
       disable_web_page_preview: true,
     });

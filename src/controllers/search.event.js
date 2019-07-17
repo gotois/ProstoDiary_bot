@@ -14,7 +14,6 @@ const onSearch = async ({ chat, from }, match) => {
   const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
-
   try {
     await searchAPI(match, currentUser, async (result, form, endCallback) => {
       await bot.sendMessage(chatId, result, form);

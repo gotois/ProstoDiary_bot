@@ -31,8 +31,8 @@ const onDatabaseClear = async ({ chat, from }) => {
     }
     const currentUser = sessions.getSession(fromId);
     try {
-      await dbClearAPI(currentUser);
-      await bot.sendMessage(chat.id, 'Данные очищены');
+      const result = await dbClearAPI(currentUser);
+      await bot.sendMessage(chat.id, result);
     } catch (error) {
       logger.log('error', error);
       await bot.sendMessage(chat.id, 'Ошибка в операции');

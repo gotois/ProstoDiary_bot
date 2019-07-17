@@ -1,6 +1,6 @@
-const datetime = require('../services/date.service');
-const dbEntries = require('../database/entities.database');
-const crypt = require('../services/crypt.service');
+const datetime = require('../../services/date.service');
+const dbEntries = require('../../database/entities.database');
+const crypt = require('../../services/crypt.service');
 
 module.exports = async (match, currentUser) => {
   let getTime;

@@ -1,6 +1,6 @@
-const format = require('../services/format.service');
-const crypt = require('../services/crypt.service');
-const dbEntries = require('../database/entities.database');
+const format = require('../../services/format.service');
+const crypt = require('../../services/crypt.service');
+const dbEntries = require('../../database/entities.database');
 /**
  * @param {string} input - text
  * @returns {string}

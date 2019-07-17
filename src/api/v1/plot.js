@@ -1,9 +1,9 @@
-const { createPhotoBuffer } = require('../services/graph.service');
-const commands = require('../commands');
-const datetime = require('../services/date.service');
-const { createRegexInput } = require('../services/text.service');
-const { decodeRows } = require('../services/format.service');
-const dbEntries = require('../database/entities.database');
+const { createPhotoBuffer } = require('../../services/graph.service');
+const commands = require('../../commands');
+const datetime = require('../../services/date.service');
+const { createRegexInput } = require('../../services/text.service');
+const { decodeRows } = require('../../services/format.service');
+const dbEntries = require('../../database/entities.database');
 
 module.exports = async (text, currentUser) => {
   const input = text

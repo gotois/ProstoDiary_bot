@@ -1,4 +1,5 @@
 const bot = require('../bot');
+const logger = require('../services/logger.service');
 const helpAPI = require('../api/v1/help');
 /**
  * @param {object} msg - message
@@ -8,9 +9,13 @@ const helpAPI = require('../api/v1/help');
 const onHelp = async ({ chat }) => {
   const chatId = chat.id;
   const helpResult = await helpAPI();
-  await bot.sendMessage(chatId, helpResult, {
-    parse_mode: 'Markdown',
-  });
+  try {
+    await bot.sendMessage(chatId, helpResult, {
+      parse_mode: 'Markdown',
+    });
+  } catch (error) {
+    logger.error(error);
+  }
 };
 
 module.exports = onHelp;
