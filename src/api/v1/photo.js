@@ -1,7 +1,7 @@
-const { getTelegramFile } = require('../services/telegram-file.service');
-const { getPhotoDetection } = require('../services/photo.service');
-const foodService = require('../services/food.service');
-const kppService = require('../services/kpp.service');
+const { getTelegramFile } = require('../../services/telegram-file.service');
+const { getPhotoDetection } = require('../../services/photo.service');
+const foodService = require('../../services/food.service');
+const kppService = require('../../services/kpp.service');
 
 module.exports = async (photo, caption) => {
   const fileBuffer = await getTelegramFile(photo.file_id);

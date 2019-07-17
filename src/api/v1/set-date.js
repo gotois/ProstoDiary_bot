@@ -1,8 +1,8 @@
-const dbEntries = require('../database/entities.database');
-const crypt = require('../services/crypt.service');
-const format = require('../services/format.service');
-const datetime = require('../services/date.service');
-const commands = require('../commands');
+const dbEntries = require('../../database/entities.database');
+const crypt = require('../../services/crypt.service');
+const format = require('../../services/format.service');
+const datetime = require('../../services/date.service');
+const commands = require('../../commands');
 
 module.exports = async (text, message_id, match, currentUser) => {
   const input = text.replace(commands.SETDATE, '').trim();

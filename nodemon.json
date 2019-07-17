@@ -3,10 +3,11 @@
   "ignore": [
     "*.md",
     "*.yml",
+    "*.csv",
     "tests/*",
     "docs/*",
-    "node_modules/**/node_modules"
+    "node_modules/*"
   ],
   "ext": "js,json",
-  "delay": "5000"
+  "delay": "3000"
 }

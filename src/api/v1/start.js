@@ -1,4 +1,4 @@
-const dbUsers = require('../database/users.database');
+const dbUsers = require('../../database/users.database');
 
 module.exports = async (currentUser) => {
   const { rowCount } = await dbUsers.check(currentUser.id);

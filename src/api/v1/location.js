@@ -1,6 +1,7 @@
 const { getWeather } = require('../../services/weather.service');
 const { getFullName } = require('../../services/restcountries.service');
 const { getGeoCode } = require('../../services/geocode.service');
+const logger = require('../../services/logger.service');
 /**
  * @param {object} obj - lng
  * @param {number} obj.latitude - lat
@@ -40,10 +41,14 @@ module.exports = async (location) => {
     formattedAddress = addressInfo.formattedAddress;
     currencySymbol = addressInfo.currency.symbol;
     currencyCode = addressInfo.currency.code;
-  } catch (error) {}
+  } catch (error) {
+    logger.log(error);
+  }
   try {
     const weatherInfo = await getWeather(location);
     weatherDescription = weatherInfo.description;
-  } catch (error) {}
+  } catch (error) {
+    logger.log(error);
+  }
   return `${formattedAddress} ; валюта: ${currencySymbol} ; code: ${currencyCode} ; погода: ${weatherDescription}`;
 };

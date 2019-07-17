@@ -1,32 +1,7 @@
 const bot = require('../bot');
-const dbEntries = require('../database/entities.database');
 const sessions = require('../services/session.service');
-const crypt = require('../services/crypt.service');
-const format = require('../services/format.service');
 const logger = require('../services/logger.service');
-/**
- * @param {string} input - text
- * @returns {string}
- */
-const formatResponse = (input) => {
-  return format.previousInput(input) + '\n_Запись обновлена_';
-};
-/**
- * Сообщение удалено?
- *
- * @param {string} message - message
- * @returns {boolean}
- */
-const isDeletedMessage = (message) => {
-  /**
-   * @constant
-   * @type {string[]}
-   */
-  const DELETE_VARIABLES = ['del', 'delete'];
-  return DELETE_VARIABLES.some((del) => {
-    return message.toLowerCase() === del.toLowerCase();
-  });
-};
+const editedMessageTextAPI = require('../api/v1/edited-message-text');
 /**
  * Обновление текста в БД
  *
@@ -40,41 +15,18 @@ const isDeletedMessage = (message) => {
 const onEditedMessageText = async ({ chat, from, text, message_id }) => {
   logger.log('info', onEditedMessageText.name);
   const chatId = chat.id;
-  const input = text.trim();
-  if (input.startsWith('/')) {
-    await bot.sendMessage(chatId, 'Редактирование этой записи невозможно');
-    return;
-  }
   const currentUser = sessions.getSession(from.id);
-  // TODO: https://github.com/gotois/ProstoDiary_bot/issues/34
-  if (isDeletedMessage(input)) {
-    try {
-      await dbEntries.delete(currentUser.id, message_id);
-      await bot.sendMessage(chatId, 'Message removed');
-    } catch (error) {
-      logger.log('error', error.toString());
-      await bot.sendMessage(chatId, error.toLocaleString());
-    }
-    return;
-  }
-  // TODO: если записи нет - тогда что делать???
-  const isExist = await dbEntries.exist(currentUser.id, message_id);
-  if (!isExist) {
-    await bot.sendMessage(chatId, 'Message not exist');
-    return;
-  }
   try {
-    await dbEntries.put(
-      currentUser.id,
-      crypt.encode(input),
-      new Date(),
+    const textResult = await editedMessageTextAPI(
+      text,
       message_id,
+      currentUser,
     );
-    await bot.sendMessage(chatId, formatResponse(input), {
+    await bot.sendMessage(chatId, textResult, {
       parse_mode: 'Markdown',
     });
   } catch (error) {
-    logger.log('error', error.toString());
+    logger.error(error);
     await bot.sendMessage(chatId, error.toLocaleString());
   }
 };

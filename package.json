@@ -24,13 +24,14 @@
     "clean": "rm -rf .nyc_output && ava tests/e2e/index.js --serial --reset-cache",
     "dev": "cross-env NODE_ENV=development nodemon ./scripts/index",
     "dev:debug": "cross-env NODE_ENV=development nodemon --verbose --inspect ./scripts/index",
-    "lint": "eslint src/*.js src/**/*.js tests/**/*.js",
+    "lint": "eslint src/*.js src/**/*.js src/**/**/*.js tests/**/*.js",
     "unit": "ava tests/unit/index.js",
     "unit:watch": "npm run unit -- --watch",
     "e2e": "ava tests/e2e/index.js --serial",
     "e2e:fast": "cross-env FAST_TEST=FAST_TEST ava tests/e2e/index.js",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "docs:serve": "cd docs/ ; jekyll serve"
+    "docs:serve": "cd docs/ ; jekyll serve",
+    "prepare": "snyk protect"
   },
   "engines": {
     "node": "12.x",

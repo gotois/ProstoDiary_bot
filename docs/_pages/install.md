@@ -9,6 +9,8 @@ Server Environments
 * Create ```.env``` file in root project for dev test
 > You can find your project ID in your Dialogflow agent settings https://dialogflow.com/docs/agents#settings
 
+* Create ```keys``` directory in root. Create google-natural-lang.json (example from Google API)
+
 ```
 NODE_ENV={ production|development|TRAVIS_CI|test }
 TELEGRAM_TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }

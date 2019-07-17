@@ -20,6 +20,7 @@ Install
 ---
 ```bash
 brew install git-lfs
+git lfs clone git@github.com:gotois/ProstoDiary_bot.git
 chmod +x scripts/index
 npm i
 ```
