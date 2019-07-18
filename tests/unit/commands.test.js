@@ -1,7 +1,7 @@
 module.exports = (t) => {
   const commands = require('../../src/commands');
   const {
-    DOWNLOAD,
+    BACKUP,
     DB_CLEAR,
     START,
     HELP,
@@ -17,7 +17,7 @@ module.exports = (t) => {
     VERSION,
   } = commands;
 
-  t.true(DOWNLOAD instanceof RegExp);
+  t.true(BACKUP instanceof RegExp);
   t.true(DB_CLEAR instanceof RegExp);
   t.true(GET_TODAY instanceof RegExp);
   t.true(START instanceof RegExp);
@@ -45,8 +45,8 @@ module.exports = (t) => {
     t.false(GET_DATE.test('/get something'));
   }
   {
-    t.true(DOWNLOAD.test('/download'));
-    t.false(DOWNLOAD.test('/download 1'));
+    t.true(BACKUP.test('/backup'));
+    t.false(BACKUP.test('/backup 1'));
   }
   {
     t.true(DB_CLEAR.test('/dbclear'));

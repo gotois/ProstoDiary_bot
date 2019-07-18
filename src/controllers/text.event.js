@@ -27,9 +27,6 @@ const onText = async ({
   if (reply_to_message instanceof Object) {
     return;
   }
-  if (text.startsWith('/')) {
-    return;
-  }
   const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);

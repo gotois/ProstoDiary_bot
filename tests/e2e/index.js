@@ -130,7 +130,7 @@ test('Currency Service', require('./currency-service.test'));
 
 test.todo('/start');
 test.todo('/dbclear');
-test.todo('/download');
+test.todo('/backup');
 test.todo('/search');
 test.todo('авторизация');
 test.todo('Создать отдельного пользователя в БД'); // TODO: используя https://github.com/marak/Faker.js/

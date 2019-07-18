@@ -21,9 +21,12 @@ const checkUnknownInput = (input) => {
 };
 
 module.exports = async (text, message_id, date, currentUser) => {
+  if (text.startsWith('/')) {
+    throw new TypeError('Unknown command. Enter /help');
+  }
   const originalText = text.trim();
   if (checkUnknownInput(originalText)) {
-    throw new Error('Unknown command. Enter /help');
+    throw new TypeError('Unknown command. Enter /help');
   }
   const story = await inputProcess(originalText);
   const storyDefinition = await story.definition();

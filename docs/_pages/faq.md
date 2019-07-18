@@ -7,7 +7,7 @@ permalink: /faq/
 ## Telegram commands
 ```
 help - Помощь по командам
-download - Загрузка файла с данными /download
+backup - Загрузка файла с данными /backup
 dbclear - Удаление БД /dbclear YES
 graph - Построение графиков /graph String|RegExp
 get - Получение данных за этот срок /get YYYY-MM-DD | /get today

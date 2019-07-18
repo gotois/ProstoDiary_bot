@@ -7,7 +7,7 @@ const dbEntries = require('../../database/entities.database');
 
 module.exports = async (text, currentUser) => {
   const input = text
-    .replace(commands.GRAPH, '')
+    .replace(commands.GRAPH.alias, '')
     .trim()
     .toLowerCase();
   const regExp = createRegexInput(input);

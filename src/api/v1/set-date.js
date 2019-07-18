@@ -5,7 +5,7 @@ const datetime = require('../../services/date.service');
 const commands = require('../../commands');
 
 module.exports = async (text, message_id, match, currentUser) => {
-  const input = text.replace(commands.SETDATE, '').trim();
+  const input = text.replace(commands.SETDATE.alias, '').trim();
   const date = datetime.convertToNormalDate(match[1]);
   await dbEntries.post(
     currentUser.id,

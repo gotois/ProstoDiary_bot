@@ -11,8 +11,8 @@ const backupAPI = require('../api/v1/backup');
  * @param {string} msg.date - date
  * @returns {Promise<undefined>}
  */
-const onDownload = async ({ chat, from, date }) => {
-  logger.log('info', onDownload.name);
+const onBackup = async ({ chat, from, date }) => {
+  logger.log('info', onBackup.name);
   const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
@@ -35,4 +35,4 @@ const onDownload = async ({ chat, from, date }) => {
   }
 };
 
-module.exports = onDownload;
+module.exports = onBackup;
