@@ -4,11 +4,11 @@
  */
 module.exports = {
   PING: {
-    alias: /^\/ping|пинг$/,
+    alias: /^\/(ping|пинг)$/,
     description: '',
   },
   BACKUP: {
-    alias: /^\/backup|бэкап$/,
+    alias: /^\/(backup|бэкап)$/,
     description: 'Загрузка файла с данными',
   },
   DB_CLEAR: {

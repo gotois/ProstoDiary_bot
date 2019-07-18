@@ -1,5 +1,7 @@
 * text=auto
 
+*.pdf  diff=astextplain
+
 # sketch
 *.sketch filter=lfs diff=lfs merge=lfs -text
 
@@ -9,3 +11,6 @@
 *.jpeg filter=lfs diff=lfs merge=lfs -text
 *.png filter=lfs diff=lfs merge=lfs -text
 *.ogg filter=lfs diff=lfs merge=lfs -text
+
+# Other data
+*.csv filter=lfs diff=lfs merge=lfs -text
