@@ -1,7 +1,7 @@
 module.exports = async (t) => {
   const { client } = t.context;
-  let message = client.makeMessage('/version');
-  await client.sendMessage(message);
+  let message = client.makeCommand('/version');
+  await client.sendCommand(message);
   let updates = await client.getUpdates();
   t.true(updates.ok);
   const { version } = require('../../package');

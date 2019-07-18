@@ -26,8 +26,8 @@ const setDataFromDate = async ({ chat, text, from, message_id }, match) => {
     );
     await bot.sendMessage(chatId, setDateResult);
   } catch (error) {
-    logger.log('error', error);
-    await bot.sendMessage(chatId, 'Произошла ошибка');
+    logger.error(error);
+    await bot.sendMessage(chatId, error.message);
   }
 };
 

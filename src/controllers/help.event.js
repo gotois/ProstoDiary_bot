@@ -15,6 +15,7 @@ const onHelp = async ({ chat }) => {
     });
   } catch (error) {
     logger.error(error);
+    // await bot.sendMessage(chatId, error.message);
   }
 };
 

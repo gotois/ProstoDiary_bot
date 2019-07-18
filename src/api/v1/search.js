@@ -35,7 +35,7 @@ const normalizeRegexStringToString = (regexString) => {
 
 module.exports = async (match, currentUser, callback) => {
   const rows = await dbEntries.getAll(currentUser.id);
-  const input = String(match[2]).trim();
+  const input = String(match[3]).trim();
   const regExp = createRegexInput(input);
   const matchFilterRows = decodeRows(rows)
     .filter(({ entry }) => {

@@ -23,6 +23,7 @@ const onSearch = async ({ chat, from }, match) => {
     });
   } catch (error) {
     logger.error(error);
+    await bot.sendMessage(chatId, error.message);
   }
 };
 

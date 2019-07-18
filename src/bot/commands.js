@@ -1,5 +1,4 @@
 /**
- * @todo переместить в controllers
  * @type {object}
  */
 module.exports = {
@@ -9,41 +8,41 @@ module.exports = {
   },
   BACKUP: {
     alias: /^\/(backup|бэкап)$/,
-    description: 'Загрузка файла с данными',
+    description: 'Выгрузка бэкапа',
   },
-  DB_CLEAR: {
+  DBCLEAR: {
     alias: /^\/dbclear$/,
-    description: 'Удаление БД `/dbclear YES`',
+    description: 'Очищение БД',
   },
   START: {
     alias: /^\/start|начать$/,
     description: '',
   },
   HELP: {
-    alias: /^\/help|помощь$/,
+    alias: /^\/help|man|помощь$/,
     description: '',
   },
   VERSION: {
     alias: /^\/version|версия$/,
     description:
-      'Получение версии `/version` (для взаимодействия ботов нужна одинаковая версия)',
+      'Получение версии (для взаимодействия ботов нужна одинаковая версия)',
   },
   // TODO: расширить до 'get yesterday'/ 'get позавчера' и т.д. -> https://github.com/gotois/ProstoDiary_bot/issues/54
-  GET_TODAY: {
+  GETTODAY: {
     alias: /^\/get today$/,
     description: '',
   },
-  GET_DATE: {
+  GET: {
     alias: /^\/get (\d{4}-\d{1,2}-\d{1,2})$/,
-    description: 'Получение данных за этот срок `/get YYYY-MM-DD`',
+    description: 'Получение данных за этот срок `YYYY-MM-DD`',
   },
-  SET_DATE: {
+  SET: {
     alias: /^\/set (\d{4}-\d{1,2}-\d{1,2})\s/,
-    description: 'Добавление данных за этот срок `/set YYYY-MM-DD something`',
+    description: 'Добавление данных за этот срок `YYYY-MM-DD`',
   },
   GRAPH: {
     alias: /^\/graph(\s)/,
-    description: 'Построение графиков `/graph String|RegExp`',
+    description: 'Построение графиков `String | RegExp`',
   },
   BALANCE: {
     alias: /^\/balance$/,
@@ -51,15 +50,15 @@ module.exports = {
   },
   COUNT: {
     alias: /^\/count$|\/count\s(.+)/,
-    description: 'Подсчет потраченого `/count -` и полученного `/count +`',
+    description: 'Подсчет потраченого `- | +`',
   },
   SEARCH: {
     alias: /^\/(search|найти)(\s)(.+)/,
-    description: 'Поиск вхождения `/search something`',
+    description: 'Поиск вхождения `String`',
   },
   KPP: {
     alias: /^\/kpp(\s)(.+)/,
-    description: 'Просмотр информации по своему чеку',
+    description: 'Просмотр информации по своему кассовому чеку `String`',
   },
   EDITED_MESSAGE_TEXT: {
     alias: 'edited_message_text',

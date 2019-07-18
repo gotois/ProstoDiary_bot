@@ -7,9 +7,9 @@ const { IS_PRODUCTION } = require('../../env');
 module.exports = () => {
   let text = '';
   text += projectVersion;
-  if (!IS_PRODUCTION) {
-    text += ' - development';
+  if (IS_PRODUCTION) {
+    text += ' - production\n';
   }
-  text += ' ' + getCheckSum();
+  text += getCheckSum();
   return text;
 };

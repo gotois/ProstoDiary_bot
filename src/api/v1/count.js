@@ -22,7 +22,7 @@ const formatResponse = ({ startTime, endTime, money }) => {
   );
 };
 
-module.exports = async (data, params, currentUser) => {
+module.exports = async (data, currentUser) => {
   const rows = await dbEntries.getAll(currentUser.id);
   const objectRows = decodeRows(rows);
   if (objectRows.length === 0) {

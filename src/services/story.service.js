@@ -96,14 +96,12 @@ class Story {
   async fill() {
     // TODO: сделать перевод в английский текст
     // ...
-    
     // ёфикация текста
     if (isRUS(this.language)) {
       const safeEyo = new Eyo();
       safeEyo.dictionary.loadSafeSync();
       this.#text.unshift(safeEyo.restore(this.text));
     } else if (isENG(this.language)) {
-    
     } else {
       // пока только поддерживаем EN, RU
       logger.info('Unsupported language');
@@ -117,6 +115,7 @@ class Story {
       logger.error(error);
     }
     try {
+      // todo: не работает в окружении telegram-test-api
       const { categories, documentSentiment, entities, language, sentences, tokens } = await languageService.annotateText(this.text, this.language);
       this.#sentiment = documentSentiment;
       this.#language.unshift(language);
@@ -151,7 +150,7 @@ class Story {
     
     // todo: вырезать конфиденциальную информацию и не отправлять ее на серверы анализов
     // ...
-    
+  
     try {
       const dialogflowResult = await inputAnalyze(this.text);
       // TODO: проверка интента - если он задекларирован ботом - то дальше, иначе генерация ошибки

@@ -1,3 +1,3 @@
 module.exports = () => {
-  return 'pong v1';
+  return 'pong\nAPI v1';
 };

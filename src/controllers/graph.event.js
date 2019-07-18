@@ -20,8 +20,8 @@ const getGraph = async ({ chat, from, text }) => {
     const { photoBuffer, options } = await plotAPI(text, currentUser);
     await bot.sendPhoto(chatId, photoBuffer, options);
   } catch (error) {
-    logger.log('error', error.toString());
-    await bot.sendMessage(chatId, error);
+    logger.error('error', error);
+    await bot.sendMessage(chatId, error.toString());
   }
 };
 

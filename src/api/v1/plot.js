@@ -1,5 +1,5 @@
 const { createPhotoBuffer } = require('../../services/graph.service');
-const commands = require('../../commands');
+const commands = require('../../bot/commands');
 const datetime = require('../../services/date.service');
 const { createRegexInput } = require('../../services/text.service');
 const { decodeRows } = require('../../services/format.service');
@@ -16,6 +16,9 @@ module.exports = async (text, currentUser) => {
   const entryRows = decodeRows(rows).filter(({ entry }) => {
     return regExp.test(entry.toLowerCase());
   });
+  if (entryRows.length === 0) {
+    throw new Error('Empty row data');
+  }
   const firstDate = rows[0].date_added;
   const latestDate = rows[rows.length - 1].date_added;
   const rangeTimes = datetime.fillRangeTimes(firstDate, latestDate);

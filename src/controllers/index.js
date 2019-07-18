@@ -1,14 +1,15 @@
+// TODO: это перенести в /src/bot/listeners.js
 const bot = require('../bot');
-const commands = require('../commands');
+const commands = require('../bot/commands');
 
 bot.onText(commands.PING.alias, require('./ping.event'));
 bot.onText(commands.BACKUP.alias, require('./backup.event'));
-bot.onText(commands.DB_CLEAR.alias, require('./dbclear.event'));
+bot.onText(commands.DBCLEAR.alias, require('./dbclear.event'));
 bot.onText(commands.START.alias, require('./start.event'));
 bot.onText(commands.HELP.alias, require('./help.event'));
-bot.onText(commands.GET_DATE.alias, require('./get-date.event'));
-bot.onText(commands.GET_TODAY.alias, require('./get-date.event'));
-bot.onText(commands.SET_DATE.alias, require('./set-date.event'));
+bot.onText(commands.GET.alias, require('./get-date.event'));
+bot.onText(commands.GETTODAY.alias, require('./get-date.event'));
+bot.onText(commands.SET.alias, require('./set-date.event'));
 bot.onText(commands.GRAPH.alias, require('./graph.event'));
 bot.onText(commands.COUNT.alias, require('./count.event'));
 bot.onText(commands.SEARCH.alias, require('./search.event'));

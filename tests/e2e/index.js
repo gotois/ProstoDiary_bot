@@ -29,18 +29,17 @@ test.before(async (t) => {
     });
     t.true(dbClient.client._connected);
   }
-  const token = 'sampleToken';
+  const token = 'sample-token';
   const server = new TelegramServer({
-    port: 9000,
-    host: 'localhost',
+    port: 9001,
+    host: '0.0.0.0',
     storage: 'RAM',
     storeTimeout: 60,
   });
 
   await server.start();
   const client = server.getClient(token);
-
-  let botOptions = { polling: true, baseApiUrl: server.ApiURL };
+  const botOptions = { polling: true, baseApiUrl: server.ApiURL };
   const telegramBot = new TelegramBot(token, botOptions);
   new TestBot(telegramBot);
   /*eslint-disable */
@@ -120,7 +119,7 @@ skipTestForFast('/help', require('./help.test'));
 skipTestForFast('/version', require('./version.test'));
 skipTestForFastOrTravis('/balance', require('./balance.test'));
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
-skipTestForFastOrTravis('INPUT: text', require('./input-service.test'));
+skipTestForFastOrTravis('/text', require('./text.test'));
 
 skipTestForFastOrTravis('archive service', require('./archive-service.test'));
 skipTestForFastOrTravis('AppleHealth', require('./apple-health-service.test'));

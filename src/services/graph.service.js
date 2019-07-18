@@ -93,9 +93,6 @@ const getDateString = (date) => {
  * @returns {Promise<Error|Buffer>}
  */
 const createPhotoBuffer = async (entryRows, rangeTimes) => {
-  if (entryRows.length === 0) {
-    throw new Error('Нет данных для построения графика');
-  }
   const trace = createTrace();
   rangeTimes.forEach((_date) => {
     const traceX = getDateString(_date);

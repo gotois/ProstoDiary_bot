@@ -1,14 +1,15 @@
+// TODO: это перевести в e2e тесты
 module.exports = (t) => {
-  const commands = require('../../src/commands');
+  const commands = require('../../src/bot/commands');
   const {
     PING,
     BACKUP,
-    DB_CLEAR,
+    DBCLEAR,
     START,
     HELP,
-    GET_DATE,
-    GET_TODAY,
-    SET_DATE,
+    GET,
+    GETTODAY,
+    SET,
     GRAPH,
     COUNT,
     SEARCH,
@@ -19,12 +20,12 @@ module.exports = (t) => {
   } = commands;
 
   t.true(BACKUP.alias instanceof RegExp);
-  t.true(DB_CLEAR.alias instanceof RegExp);
-  t.true(GET_TODAY.alias instanceof RegExp);
+  t.true(DBCLEAR.alias instanceof RegExp);
+  t.true(GETTODAY.alias instanceof RegExp);
   t.true(START.alias instanceof RegExp);
   t.true(HELP.alias instanceof RegExp);
-  t.true(GET_DATE.alias instanceof RegExp);
-  t.true(SET_DATE.alias instanceof RegExp);
+  t.true(GET.alias instanceof RegExp);
+  t.true(SET.alias instanceof RegExp);
   t.true(GRAPH.alias instanceof RegExp);
   t.true(COUNT.alias instanceof RegExp);
   t.true(SEARCH.alias instanceof RegExp);
@@ -33,20 +34,20 @@ module.exports = (t) => {
   t.true(typeof TEXT.alias === 'string');
   t.true(typeof LOCATION.alias === 'string');
 
-  t.true(SET_DATE.alias.test('/set 2018-03-18 something'));
-  t.false(SET_DATE.alias.test('/set something'));
+  t.true(SET.alias.test('/set 2018-03-18 something'));
+  t.false(SET.alias.test('/set something'));
 
-  t.true(GET_TODAY.alias.test('/get today'));
-  t.false(GET_TODAY.alias.test('/get тудей'));
+  t.true(GETTODAY.alias.test('/get today'));
+  t.false(GETTODAY.alias.test('/get тудей'));
 
-  t.true(GET_DATE.alias.test('/get 2018-03-18'));
-  t.false(GET_DATE.alias.test('/get something'));
+  t.true(GET.alias.test('/get 2018-03-18'));
+  t.false(GET.alias.test('/get something'));
 
   t.true(BACKUP.alias.test('/backup'));
   t.false(BACKUP.alias.test('/backup 1'));
 
-  t.true(DB_CLEAR.alias.test('/dbclear'));
-  t.false(DB_CLEAR.alias.test('/dbclear/'));
+  t.true(DBCLEAR.alias.test('/dbclear'));
+  t.false(DBCLEAR.alias.test('/dbclear/'));
 
   t.true(COUNT.alias.test('/count'));
   t.true(COUNT.alias.test('/count +'));

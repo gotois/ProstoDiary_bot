@@ -22,12 +22,8 @@ const onCount = async ({ chat, from }, match) => {
   };
   if (match[1]) {
     try {
-      const countResult = await countAPI(
-        match[1].toUpperCase(),
-        params,
-        currentUser,
-      );
-      await bot.sendMessage(chatId, countResult);
+      const countResult = await countAPI(match[1].toUpperCase(), currentUser);
+      await bot.sendMessage(chatId, countResult, params);
     } catch (error) {
       await bot.sendMessage(chatId, error.message);
       logger.error(error);
@@ -46,7 +42,7 @@ const onCount = async ({ chat, from }, match) => {
     await bot.sendMessage(chatId, 'Финансы', replyParams);
     // TODO: возможна утечка, если не уничтожать слушатель
     bot.once('callback_query', async ({ data }) => {
-      const countResult = await countAPI(data, params, currentUser);
+      const countResult = await countAPI(data, currentUser);
       await bot.sendMessage(chatId, countResult, params);
     });
   }

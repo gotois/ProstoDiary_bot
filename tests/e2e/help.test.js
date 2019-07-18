@@ -1,8 +1,8 @@
 module.exports = async (t) => {
   const { client } = t.context;
-  let message = client.makeMessage('/help');
-  await client.sendMessage(message);
+  let message = client.makeCommand('/help');
+  await client.sendCommand(message);
   let updates = await client.getUpdates();
   t.true(updates.ok);
-  // message = client.makeMessage(keyboard[0][0].text);
+  t.true(updates.result[0].message.text.length > 0);
 };
