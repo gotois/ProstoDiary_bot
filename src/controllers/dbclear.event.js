@@ -1,7 +1,6 @@
 const bot = require('../bot');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
-const dbClearAPI = require('../api/v1/db-clear');
 /**
  * Очистить базу данных с подтверждением
  *
@@ -24,6 +23,7 @@ const onDatabaseClear = async ({ chat, from }) => {
     'Очистить ваши записи?\nНапишите: YES',
     options,
   );
+  const dbClearAPI = require('../api/v1/db-clear');
   await bot.onReplyToMessage(chat.id, message_id, async ({ text }) => {
     if (text !== 'YES') {
       await bot.sendMessage(chat.id, 'Операция отменена');

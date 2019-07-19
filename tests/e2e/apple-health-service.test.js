@@ -1,6 +1,7 @@
+const fs = require('fs');
+
 module.exports = async (t) => {
   t.timeout(4000);
-  const fs = require('fs');
   const {
     uploadAppleHealthData,
   } = require('../../src/services/apple-health.service');

@@ -6,6 +6,7 @@ const { detectLang } = require('../services/detect-language.service');
  * @returns {Promise<Array>}
  */
 const _get = async (title) => {
+  title = title.trim();
   const lang = detectLang(title).postgresql;
   const result = await $$(
     `SELECT id, title, protein, fat, carbohydrate, kcal FROM Foods

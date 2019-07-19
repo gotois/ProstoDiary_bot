@@ -1,6 +1,5 @@
 const bot = require('../bot');
 const logger = require('../services/logger.service');
-const voiceAPI = require('../api/v1/voice');
 /**
  * @function
  * @param {object} msg - msg
@@ -11,6 +10,7 @@ const voiceAPI = require('../api/v1/voice');
 const getVoice = async ({ chat, voice }) => {
   logger.log('info', getVoice.name);
   const chatId = chat.id;
+  const voiceAPI = require('../api/v1/voice');
   try {
     const voiceResult = await voiceAPI(voice);
     await bot.sendMessage(chatId, voiceResult);

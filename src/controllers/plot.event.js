@@ -1,21 +1,20 @@
 const bot = require('../bot');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
-const plotAPI = require('../api/v1/plot');
 /**
  * Построить график
  *
- * @todo rename -> getPlot
  * @param {object} msg - message
  * @param {object} msg.chat - message chat
  * @param {object} msg.from - from
  * @param {string} msg.text - text
  * @returns {undefined}
  */
-const getGraph = async ({ chat, from, text }) => {
-  logger.log('info', getGraph.name);
+const getPlot = async ({ chat, from, text }) => {
+  logger.log('info', getPlot.name);
   const chatId = chat.id;
   const currentUser = sessions.getSession(from.id);
+  const plotAPI = require('../api/v1/plot');
   try {
     const { photoBuffer, options } = await plotAPI(text, currentUser);
     await bot.sendPhoto(chatId, photoBuffer, options);
@@ -25,4 +24,4 @@ const getGraph = async ({ chat, from, text }) => {
   }
 };
 
-module.exports = getGraph;
+module.exports = getPlot;

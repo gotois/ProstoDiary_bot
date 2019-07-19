@@ -65,12 +65,8 @@ const sendUpdatesToUsers = (text) => {
   getAllTelegramUserIds()
     .then((userIds) => {
       userIds.forEach((user) => {
-        try {
-          // TODO: если возвращает 400 ошибку тогда проверить message и блокировать пользователя
-          bot.sendMessage(user.telegram_user_id, text);
-        } catch (error) {
-          logger.warn(error);
-        }
+        // TODO: если возвращает 400 ошибку тогда проверить message и блокировать пользователя
+        bot.sendMessage(user.telegram_user_id, text);
       });
     })
     .catch((error) => {
@@ -81,7 +77,7 @@ const sendUpdatesToUsers = (text) => {
 (async function main() {
   await databaseConnect();
   const botInfo = await startTelegramBot();
-  require('./controllers');
+  require('./bot/handlers')(bot);
   if (IS_PRODUCTION) {
     logger.log('info', `production bot:${botInfo.first_name} started`);
 

@@ -1,7 +1,6 @@
 const bot = require('../bot');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
-const countAPI = require('../api/v1/count');
 /**
  * /count - -> выведет сколько всего потрачено
  * /count + -> выведет сколько всего получено
@@ -20,6 +19,7 @@ const onCount = async ({ chat, from }, match) => {
   const params = {
     parse_mode: 'Markdown',
   };
+  const countAPI = require('../api/v1/count');
   if (match[1]) {
     try {
       const countResult = await countAPI(match[1].toUpperCase(), currentUser);

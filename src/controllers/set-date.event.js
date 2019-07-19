@@ -1,7 +1,6 @@
 const bot = require('../bot');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
-const setDateAPI = require('../api/v1/set-date');
 /**
  * /set 2016-12-29 something text
  *
@@ -17,6 +16,7 @@ const setDataFromDate = async ({ chat, text, from, message_id }, match) => {
   logger.log('info', setDataFromDate.name);
   const chatId = chat.id;
   const currentUser = sessions.getSession(from.id);
+  const setDateAPI = require('../api/v1/set-date');
   try {
     const setDateResult = await setDateAPI(
       text,

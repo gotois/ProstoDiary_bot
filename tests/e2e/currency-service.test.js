@@ -1,5 +1,5 @@
 module.exports = async (t) => {
-  t.timeout(2500);
+  t.timeout(5000);
   const currencyService = require('../../src/services/currency.service');
   const usdBaseCurrency = await currencyService.exchangeratesapi({
     base: 'USD',

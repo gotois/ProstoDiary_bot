@@ -8,7 +8,6 @@ const { maintainers } = require('../../package');
 const TelegramServer = require('telegram-test-api');
 const TelegramBot = require('node-telegram-bot-api');
 const sgMail = require('@sendgrid/mail');
-const TestBot = require('./test-bot');
 const { IS_CI, IS_DEV, SENDGRID } = require('../../src/env');
 // TODO: https://github.com/gotois/ProstoDiary_bot/issues/106
 // TRAVIS удалить, когда перенесу все необходимые env на Travis
@@ -21,27 +20,27 @@ test.before(async (t) => {
   if (IS_FAST_TEST) {
     t.log('IS FAST TEST');
   }
-  // TODO: для dev запускаем дев сервак. В дальнейшем включить полноценно для E2E - https://github.com/gotois/ProstoDiary_bot/issues/3
-  if (IS_DEV) {
+  // TODO: для dev запускаем БД сервак. В дальнейшем включить полноценно для E2E - https://github.com/gotois/ProstoDiary_bot/issues/3
+  if (IS_DEV || process.env.NODE_ENV === 'test') {
     const dbClient = require('../../src/database');
     await t.notThrowsAsync(async () => {
       await dbClient.client.connect();
     });
     t.true(dbClient.client._connected);
   }
-  const token = 'sample-token';
+  const token = 'fake-token';
   const server = new TelegramServer({
-    port: 9001,
-    host: '0.0.0.0',
+    port: 9000,
+    host: 'localhost',
     storage: 'RAM',
     storeTimeout: 60,
   });
-
   await server.start();
+
   const client = server.getClient(token);
   const botOptions = { polling: true, baseApiUrl: server.ApiURL };
   const telegramBot = new TelegramBot(token, botOptions);
-  new TestBot(telegramBot);
+  global.bot = require('../../src/bot/handlers')(telegramBot);
   /*eslint-disable */
   t.context.server = server;
   t.context.client = client;
@@ -94,10 +93,7 @@ test.after.always('guaranteed cleanup', async (t) => {
 });
 
 // Database
-skipTestForFastOrTravis(
-  'Database Foods',
-  require('./database.test').databaseFoods,
-);
+skipTestForFastOrTravis('DB: Foods', require('./database.test').databaseFoods);
 
 // API
 skipTestForFast('API: speller service', require('./speller-service.test'));
@@ -105,7 +101,6 @@ skipTestForFast('API: request', require('./request.test'));
 skipTestForFast('API: Weather', require('./weather.test'));
 skipTestForFast('API: RestContries', require('./restcountries.test'));
 skipTestForFast('API: plotly', require('./graph-service.test'));
-
 skipTestForFastOrTravis('API: googleapis Geocode', require('./geocode.test'));
 skipTestForFastOrTravis('API: Fatsecret', require('./fatsecret.test'));
 skipTestForFastOrTravis('API: Google Vision', require('./vision.test'));
@@ -113,25 +108,24 @@ skipTestForFastOrTravis('API: KPP nalog.ru', require('./kpp.test'));
 skipTestForFastOrTravis('API: Translate', require('./translate.test'));
 skipTestForFastOrTravis('API: Wolfram Alpha', require('./wolfram-alpha.test'));
 skipTestForFastOrTravis('API: Todoist', require('./todoist-service.test'));
+skipTestForFastOrTravis('API: Currency', require('./currency-service.test'));
 
 // INPUT
-skipTestForFast('/help', require('./help.test'));
-skipTestForFast('/version', require('./version.test'));
+skipTestForFastOrTravis('/help', require('./help.test'));
+skipTestForFastOrTravis('/version', require('./version.test'));
+// test('/backup', require('./backup.test'));
+// test('/text', require('./text.test'));
 skipTestForFastOrTravis('/balance', require('./balance.test'));
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
-skipTestForFastOrTravis('/text', require('./text.test'));
 
 skipTestForFastOrTravis('archive service', require('./archive-service.test'));
 skipTestForFastOrTravis('AppleHealth', require('./apple-health-service.test'));
 
 test('bot init', require('./telegram-bot.test'));
-test('Currency Service', require('./currency-service.test'));
 
-test.todo('/start');
+test.todo('/start'); // + авторизация;
 test.todo('/dbclear');
-test.todo('/backup');
 test.todo('/search');
-test.todo('авторизация');
 test.todo('Создать отдельного пользователя в БД'); // TODO: используя https://github.com/marak/Faker.js/
 test.todo('Проверка удаления своей записи');
 test.todo('Запись энтри');

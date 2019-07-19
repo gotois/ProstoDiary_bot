@@ -1,7 +1,6 @@
 const bot = require('../bot');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
-const searchAPI = require('../api/v1/search');
 /**
  * @param {object} msg - message
  * @param {object} msg.chat - chat
@@ -14,6 +13,7 @@ const onSearch = async ({ chat, from }, match) => {
   const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
+  const searchAPI = require('../api/v1/search');
   try {
     await searchAPI(match, currentUser, async (result, form, endCallback) => {
       await bot.sendMessage(chatId, result, form);

@@ -1,7 +1,6 @@
 const bot = require('../bot');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
-const startAPI = require('../api/v1/start');
 /**
  * При первом включении создаем в БД специальную колонку для работы
  *
@@ -14,6 +13,7 @@ const onStart = async ({ chat, from }) => {
   logger.log('info', onStart.name);
   const chatId = chat.id;
   const currentUser = sessions.getSession(from.id);
+  const startAPI = require('../api/v1/start');
   try {
     const startResult = await startAPI(currentUser);
     await bot.sendMessage(chatId, startResult);

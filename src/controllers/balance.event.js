@@ -1,7 +1,6 @@
 // todo: https://github.com/gotois/ProstoDiary_bot/issues/39
 const bot = require('../bot');
 const logger = require('../services/logger.service');
-const balanceAPI = require('../api/v1/balance');
 /**
  * @function
  * @param {object} msg - msg
@@ -11,6 +10,7 @@ const balanceAPI = require('../api/v1/balance');
 const getBalance = async ({ chat }) => {
   logger.log('info', getBalance.name);
   const chatId = chat.id;
+  const balanceAPI = require('../api/v1/balance');
   try {
     const balanceResult = await balanceAPI();
     await bot.sendMessage(chatId, balanceResult, {

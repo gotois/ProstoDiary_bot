@@ -1,3 +1,5 @@
+const validator = require('validator');
+
 const {
   NODE_ENV,
 
@@ -101,12 +103,15 @@ const ENV = {
   GOOGLE: {
     GOOGLE_MAPS_GEOCODING_API,
     get GOOGLE_CREDENTIALS_PARSED() {
-      if (!GOOGLE_APPLICATION_CREDENTIALS) {
-        throw new Error(
-          'Env error: GOOGLE_APPLICATION_CREDENTIALS is not initialized',
-        );
+      if (validator.isJSON(GOOGLE_APPLICATION_CREDENTIALS)) {
+        return JSON.parse(GOOGLE_APPLICATION_CREDENTIALS);
       }
-      return JSON.parse(GOOGLE_APPLICATION_CREDENTIALS);
+      // if (!GOOGLE_APPLICATION_CREDENTIALS) {
+      //   throw new Error(
+      //     'Env error: GOOGLE_APPLICATION_CREDENTIALS is not initialized',
+      //   );
+      // }
+      return GOOGLE_APPLICATION_CREDENTIALS;
     },
   },
   DIALOGFLOW: {
@@ -116,10 +121,13 @@ const ENV = {
       return 'quickstart-session-id';
     },
     get DIALOGFLOW_CREDENTIALS() {
-      if (!DIALOGFLOW_CREDENTIALS) {
-        throw new Error('Env error: DIALOGFLOW_CREDENTIALS is not initialized');
+      if (validator.isJSON(DIALOGFLOW_CREDENTIALS)) {
+        return JSON.parse(DIALOGFLOW_CREDENTIALS);
       }
-      return JSON.parse(DIALOGFLOW_CREDENTIALS);
+      // if (!DIALOGFLOW_CREDENTIALS) {
+      //   throw new Error('Env error: DIALOGFLOW_CREDENTIALS is not initialized');
+      // }
+      return DIALOGFLOW_CREDENTIALS;
     },
   },
   WOLFRAM_ALPHA: {

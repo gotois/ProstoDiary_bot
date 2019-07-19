@@ -2,7 +2,6 @@ const bot = require('../bot');
 const commands = require('../bot/commands');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
-const textAPI = require('../api/v1/text');
 /**
  * @description Проверка тексты на команды
  * @param {string} input - input string
@@ -64,9 +63,9 @@ const onText = async ({
   if (text.startsWith('/')) {
     return;
   }
+  const textAPI = require('../api/v1/text');
   try {
     const result = await textAPI(text, message_id, date, currentUser);
-    // todo: похоже что параметры срабатывают неправильнго
     await bot.sendMessage(chatId, result, {
       disable_notification: true,
       disable_web_page_preview: true,

@@ -1,8 +1,8 @@
+const { IS_PRODUCTION } = require('../../env');
 const { inputProcess } = require('../../services/input.service');
 const crypt = require('../../services/crypt.service');
 const format = require('../../services/format.service');
 const dbEntries = require('../../database/entities.database');
-const { IS_PRODUCTION } = require('../../env');
 
 module.exports = async (text, message_id, date, currentUser) => {
   const originalText = text.trim();

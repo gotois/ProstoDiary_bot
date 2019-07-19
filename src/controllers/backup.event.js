@@ -1,7 +1,6 @@
 const bot = require('../bot');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
-const backupAPI = require('../api/v1/backup');
 /**
  * Скачивание файла БД на устройство
  *
@@ -16,6 +15,7 @@ const onBackup = async ({ chat, from, date }) => {
   const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
+  const backupAPI = require('../api/v1/backup');
   try {
     const { filename, fileBuffer } = await backupAPI(currentUser, date);
     await bot.sendDocument(
