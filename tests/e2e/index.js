@@ -6,7 +6,6 @@ if (!process.env.PORT || process.env.NODE_ENV !== 'TRAVIS_CI') {
 }
 const { maintainers } = require('../../package');
 const TelegramServer = require('telegram-test-api');
-const TelegramBot = require('node-telegram-bot-api');
 const sgMail = require('@sendgrid/mail');
 const { IS_CI, IS_DEV, SENDGRID } = require('../../src/env');
 // TODO: https://github.com/gotois/ProstoDiary_bot/issues/106
@@ -28,19 +27,16 @@ test.before(async (t) => {
     });
     t.true(dbClient.client._connected);
   }
-  const token = 'fake-token';
   const server = new TelegramServer({
-    port: 9000,
+    port: process.env.TELEGRAM_SERVER_PORT,
     host: 'localhost',
     storage: 'RAM',
     storeTimeout: 60,
   });
   await server.start();
-
-  const client = server.getClient(token);
-  const botOptions = { polling: true, baseApiUrl: server.ApiURL };
-  const telegramBot = new TelegramBot(token, botOptions);
-  global.bot = require('../../src/bot/handlers')(telegramBot);
+  const bot = require('../../src/bot');
+  const client = server.getClient(process.env.TELEGRAM_TOKEN);
+  require('../../src/bot/handlers')(bot);
   /*eslint-disable */
   t.context.server = server;
   t.context.client = client;
@@ -106,16 +102,16 @@ skipTestForFastOrTravis('API: Fatsecret', require('./fatsecret.test'));
 skipTestForFastOrTravis('API: Google Vision', require('./vision.test'));
 skipTestForFastOrTravis('API: KPP nalog.ru', require('./kpp.test'));
 skipTestForFastOrTravis('API: Translate', require('./translate.test'));
-skipTestForFastOrTravis('API: Wolfram Alpha', require('./wolfram-alpha.test'));
+skipTestForFast('API: Wolfram Alpha', require('./wolfram-alpha.test'));
 skipTestForFastOrTravis('API: Todoist', require('./todoist-service.test'));
 skipTestForFastOrTravis('API: Currency', require('./currency-service.test'));
 
 // INPUT
-skipTestForFastOrTravis('/help', require('./help.test'));
-skipTestForFastOrTravis('/version', require('./version.test'));
-// test('/backup', require('./backup.test'));
-// test('/text', require('./text.test'));
-skipTestForFastOrTravis('/balance', require('./balance.test'));
+skipTestForFast('/help', require('./help.test'));
+skipTestForFast('/version', require('./version.test'));
+skipTestForFast('/backup', require('./backup.test'));
+skipTestForFastOrTravis('/text', require('./text.test'));
+skipTestForFast('/balance', require('./balance.test'));
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
 
 skipTestForFastOrTravis('archive service', require('./archive-service.test'));

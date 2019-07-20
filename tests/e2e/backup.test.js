@@ -4,6 +4,5 @@ module.exports = async (t) => {
   let message = client.makeCommand('/backup');
   await client.sendCommand(message);
   let updates = await client.getUpdates();
-  // t.true(updates.ok);
-  // t.true(updates.result[0].message.text.length > 0);
+  t.true(updates.ok);
 };

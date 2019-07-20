@@ -13,7 +13,7 @@ module.exports = async (currentUser, date) => {
   const filename = generateName(date) + '.txt';
   const rows = await dbEntries.getAll(currentUser.id);
   if (rows.length === 0) {
-    throw new Error('No data');
+    throw new Error('Backup data is empty');
   }
   const formatData = format.formatRows(rows);
   const fileBuffer = await pack(formatData, filename);

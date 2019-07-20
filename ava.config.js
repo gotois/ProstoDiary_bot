@@ -15,7 +15,8 @@ export default () => {
     'environmentVariables': {
       'SERVER_NAME': 'TEST-AVA-SERVER',
       'TELEGRAM_TOKEN': '123456',
-      'SALT_PASSWORD': '123456'
+      'SALT_PASSWORD': '123456',
+      'TELEGRAM_SERVER_PORT': '9001',
     },
     'compileEnhancements': false,
   };
