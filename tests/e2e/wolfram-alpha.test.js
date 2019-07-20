@@ -10,6 +10,7 @@ module.exports = async (t) => {
   });
   for (let pod of fullOutput.pods) {
     if (pod.id === 'SingleDateFormats') {
+      t.log(pod.subpods[0].plaintext);
       const normalDate = convertToNormalDate(pod.subpods[0].plaintext);
       const date = new Date(normalDate);
       t.log('date', normalDate);

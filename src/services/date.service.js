@@ -50,11 +50,11 @@ const convertToNormalDate = (date) => {
     let mm;
     let yyyy;
 
-    // @example: '13/07/2019'
+    // @example: '07/20/2019'
     if (/\d{2}\/\d{2}\/\d{4}/.test(date)) {
-      dd = date.slice(0, 2);
-      mm = date.slice(3, 5);
-      yyyy = date.slice(6, 10);
+      dd = Number(date.slice(3, 5));
+      mm = Number(date.slice(0, 2));
+      yyyy = Number(date.slice(6, 10));
     } else {
       dd = Number(date.match(/-\d+-(\d+)/)[1]);
       mm = Number(date.match(/-(\d+)/)[1]) - 1;

@@ -1,24 +1,15 @@
-const test = require('ava');
-
-// Simple Heroku Detect
-if (!process.env.PORT || process.env.NODE_ENV !== 'TRAVIS_CI') {
-  require('dotenv').config();
-}
+const {
+  test,
+  skipTestForFastOrTravis,
+  skipTestForFast,
+} = require('../helpers');
 const { maintainers } = require('../../package');
 const TelegramServer = require('telegram-test-api');
 const sgMail = require('@sendgrid/mail');
 const { IS_CI, IS_DEV, SENDGRID } = require('../../src/env');
-// TODO: https://github.com/gotois/ProstoDiary_bot/issues/106
-// TRAVIS удалить, когда перенесу все необходимые env на Travis
-const IS_FAST_TEST = Boolean(process.env.FAST_TEST);
-const skipTestForFastOrTravis = IS_FAST_TEST || IS_CI ? test.skip : test;
-const skipTestForFast = IS_FAST_TEST ? test.skip : test;
 
 // This runs before all tests
 test.before(async (t) => {
-  if (IS_FAST_TEST) {
-    t.log('IS FAST TEST');
-  }
   // TODO: для dev запускаем БД сервак. В дальнейшем включить полноценно для E2E - https://github.com/gotois/ProstoDiary_bot/issues/3
   if (IS_DEV || process.env.NODE_ENV === 'test') {
     const dbClient = require('../../src/database');
@@ -61,9 +52,6 @@ test.after('cleanup', (t) => {
 });
 
 test.after.always('guaranteed cleanup', async (t) => {
-  if (IS_FAST_TEST) {
-    return;
-  }
   if (IS_CI) {
     return;
   }

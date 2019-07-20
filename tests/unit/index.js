@@ -1,10 +1,4 @@
-const test = require('ava');
-
-if (!process.env.PORT || process.env.NODE_ENV !== 'TRAVIS_CI') {
-  require('dotenv').config();
-}
-const { IS_CI } = require('../../src/env');
-const skipTestForFastOrTravis = IS_CI ? test.skip : test;
+const { test, skipTestForFastOrTravis } = require('../helpers');
 
 test('database config', require('./dbconfig.test'));
 test('logger', require('./log.test'));
