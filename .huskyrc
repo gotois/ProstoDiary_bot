@@ -2,7 +2,11 @@
   "hooks": {
     "pre-commit": "lint-staged",
     "post-commit": "git update-index --again",
-    "pre-push": "npm run unit && npm run e2e:fast",
+    "pre-push": [
+      "npm run lint",
+      "npm run unit",
+      "npm run e2e:fast"
+    ],
     "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
     "prepare-commit-msg": "exec < /dev/tty && git cz --hook"
   }

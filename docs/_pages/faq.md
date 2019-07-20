@@ -4,16 +4,24 @@ title: F.A.Q.
 permalink: /faq/
 ---
 
-## Telegram commands
+### Не получается установить зависимости
+На Node 12 пакеты сразу могу не встать, поэтому рекомендуется установить сначала devDependencies, а затем dependencies
+
+### Неработает CI
+Необходимо выставить env:
+* `SALT_PASSWORD`
+* `SERVER_NAME`
+* `TELEGRAM_TOKEN`
+
+### Падает CI с неизвестной ошибкой
+* Проверить логи CI
+* На TravisCI нельзя указывать пробелы в env
+> "END PRIVATE KEY" для `DIALOGFLOW_CREDENTIALS` и `GOOGLE_APPLICATION_CREDENTIALS` надо заменить такие пробелы на `\ `
+
+### Не получается выполнить билд.
+Попробуй ```npm rebuild```
+
+### Telegram commands
 ```
-help - Помощь по командам
-backup - Загрузка файла с данными /backup
-dbclear - Удаление БД /dbclear YES
-graph - Построение графиков /graph String|RegExp
-get - Получение данных за этот срок /get YYYY-MM-DD | /get today
-set - Добавление данных за этот срок /set YYYY-MM-DD something
-count - Подсчет потраченого /count - и полученного /count +
-search - Поиск вхождения /search something
-version - Получение версии /version
-kpp - Просмотр информации по своему чеку
+/help
 ```
