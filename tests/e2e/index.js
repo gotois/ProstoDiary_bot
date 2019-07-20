@@ -52,6 +52,9 @@ test.after('cleanup', (t) => {
 });
 
 test.after.always('guaranteed cleanup', async (t) => {
+  if (process.env.FAST_TEST) {
+    return;
+  }
   if (IS_CI) {
     return;
   }
@@ -64,6 +67,9 @@ test.after.always('guaranteed cleanup', async (t) => {
   const failedTasks = Object.entries(t.context.tasks).map(([taskName]) => {
     return taskName;
   });
+  if (failedTasks.length === 0) {
+    return;
+  }
   t.log('Failed: ', failedTasks);
   sgMail.setApiKey(SENDGRID.SENDGRID_API_KEY);
   const message = {

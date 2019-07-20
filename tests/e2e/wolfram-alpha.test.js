@@ -8,6 +8,7 @@ module.exports = async (t) => {
     output: 'json',
     format: 'plaintext',
   });
+  t.true(fullOutput.success);
   for (let pod of fullOutput.pods) {
     if (pod.id === 'SingleDateFormats') {
       t.log(pod.subpods[0].plaintext);
