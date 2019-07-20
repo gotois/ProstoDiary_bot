@@ -8,8 +8,8 @@ module.exports = async (t) => {
   // t.log(updates.result)
   // END
 
-  const { inputProcess } = require('../../src/services/input.service');
-  const resultStoryRus = await inputProcess('поел салат с сыром');
-  const resultStoryRusDefinition = await resultStoryRus.definition();
-  t.log(resultStoryRusDefinition);
+  const textAPI = require('../../src/api/v1/text');
+  const result = await textAPI('поел салат с сыром');
+  t.log(result);
+  t.pass();
 };

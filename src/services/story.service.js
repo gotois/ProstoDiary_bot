@@ -1,5 +1,7 @@
 const Eyo = require('eyo-kernel');
 const validator = require('validator');
+const crypt = require('./crypt.service');
+const dbEntries = require('../database/entities.database');
 const { inputAnalyze } = require('./intent.service');
 const languageService = require('./language.service');
 const { detectLang, isRUS, isENG } = require('./detect-language.service');
@@ -71,7 +73,7 @@ class Story {
    * @param {string} text - original text
    */
   constructor(text = '') {
-    this.text = text;
+    this.text = text.trim();
     this.language = detectLang(text).language;
   }
   set language(langCode) {
@@ -235,10 +237,18 @@ class Story {
   }
   
   /**
-   * @todo сохранение в БД
+   * @todo аргументы нужно брать из класса
+   * @todo в БД записывать originalText
+   * @todo https://github.com/gotois/ProstoDiary_bot/issues/98
    * @returns {Promise<void>}
    */
-  async save () {
+  async save (currentUser, message_id, date) {
+    await dbEntries.post(
+      currentUser.id,
+      crypt.encode(this.text),
+      message_id,
+      new Date(date * 1000),
+    );
   }
 }
 

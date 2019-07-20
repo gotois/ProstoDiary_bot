@@ -1,25 +1,21 @@
 const { IS_PRODUCTION } = require('../../env');
-const { inputProcess } = require('../../services/input.service');
-const crypt = require('../../services/crypt.service');
+const Story = require('../../services/story.service');
 const format = require('../../services/format.service');
-const dbEntries = require('../../database/entities.database');
-
+/**
+ * @description весь pipe работы с input
+ * @param {string} text - text
+ * @param {*} message_id - *
+ * @param {*} date - *
+ * @param {*} currentUser - *
+ * @returns {Promise<string>}
+ */
 module.exports = async (text, message_id, date, currentUser) => {
-  const originalText = text.trim();
-  const story = await inputProcess(originalText);
+  const story = new Story(text);
+  await story.fill();
   const storyDefinition = await story.definition();
-  // todo: https://github.com/gotois/ProstoDiary_bot/issues/98
   const storyResult = JSON.stringify(storyDefinition, null, 2);
-  // todo: в БД записывать originalText
-  // await story.save();
   if (IS_PRODUCTION) {
-    // todo: перенести этот вызов в story.save
-    await dbEntries.post(
-      currentUser.id,
-      crypt.encode(text),
-      message_id,
-      new Date(date * 1000),
-    );
+    await story.save(currentUser, message_id, date);
   }
   // ограничиваем 1000 символами из-за ошибки "ETELEGRAM: 400 Bad Request: message is too long"
   return storyResult.slice(0, 1000) + format.previousInput(text);
