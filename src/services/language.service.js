@@ -18,7 +18,7 @@ const ENCODING_TYPE_UTF8 = 'UTF8';
 const features = (text, language) => {
   const rus = isRUS(language);
   // гипотеза - 100 достаточно чтобы считалось большим предлоением
-  const classifyText = text.length > 100 ? true : false;
+  const classifyText = !rus && text.length > 100 ? true : false;
   return {
     extractSyntax: true,
     extractEntities: true,

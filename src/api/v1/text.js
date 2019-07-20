@@ -21,6 +21,6 @@ module.exports = async (text, message_id, date, currentUser) => {
       new Date(date * 1000),
     );
   }
-  const okText = format.previousInput(text);
-  return storyResult + okText;
+  // ограничиваем 1000 символами из-за ошибки "ETELEGRAM: 400 Bad Request: message is too long"
+  return storyResult.slice(0, 1000) + format.previousInput(text);
 };

@@ -71,14 +71,24 @@ class Story {
    * @param {string} text - original text
    */
   constructor(text = '') {
-    this.#text.push(text);
-    this.#language.push(detectLang(text).language);
+    this.text = text;
+    this.language = detectLang(text).language;
+  }
+  set language(langCode) {
+    if (!this.#language.includes(langCode)) {
+      this.#language.unshift(langCode);
+    }
   }
   /**
    * @returns {string}
    */
   get language() {
     return this.#language[0];
+  }
+  set text(text) {
+    if (!this.#text.includes(text)) {
+      this.#text.unshift(text);
+    }
   }
   /**
    * @returns {string}
@@ -100,7 +110,7 @@ class Story {
     if (isRUS(this.language)) {
       const safeEyo = new Eyo();
       safeEyo.dictionary.loadSafeSync();
-      this.#text.unshift(safeEyo.restore(this.text));
+      this.text = safeEyo.restore(this.text);
     } else if (isENG(this.language)) {
     } else {
       // пока только поддерживаем EN, RU
@@ -109,20 +119,18 @@ class Story {
     }
     try {
       const yandexSpellLanguageCode = this.language.slice(0, 2);
-      const spelledText = await spellText(this.text, yandexSpellLanguageCode);
-      this.#text.unshift(spelledText);
+      this.text = await spellText(this.text, yandexSpellLanguageCode);
     } catch (error) {
       logger.error(error);
     }
     try {
-      // todo: не работает в окружении telegram-test-api
       const { categories, documentSentiment, entities, language, sentences, tokens } = await languageService.annotateText(this.text, this.language);
       this.#sentiment = documentSentiment;
-      this.#language.unshift(language);
+      this.language = language;
       this.#category.push(categories);
       this.#entities = entities;
       if (sentences.length && sentences[0].text) {
-        this.#text.unshift(sentences[0].text.content);
+        this.text = sentences[0].text.content;
       }
       
       for (let { lemma } of tokens) {
@@ -150,21 +158,23 @@ class Story {
     
     // todo: вырезать конфиденциальную информацию и не отправлять ее на серверы анализов
     // ...
-  
-    try {
-      const dialogflowResult = await inputAnalyze(this.text);
-      // TODO: проверка интента - если он задекларирован ботом - то дальше, иначе генерация ошибки
-      this.#intent.push(dialogflowResult.intent.displayName);
-      // TODO: а также использовать результат из dialogFlow
-      // ...
-      // TODO: Если в интентах все необходимые параметры используются они
-      // ...
-      // TODO: Постисправление найденных параметров (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
-      // ...
-      // TODO: на основе Intent'a делаем различные предположения и записываем в БД в структурированном виде
-      // ...
-    } catch (error) {
-      logger.error(error.message);
+    
+    if (this.text.length <= 256) {
+      try {
+        const dialogflowResult = await inputAnalyze(this.text);
+        // TODO: проверка интента - если он задекларирован ботом - то дальше, иначе генерация ошибки
+        this.#intent.push(dialogflowResult.intent.displayName);
+        // TODO: а также использовать результат из dialogFlow
+        // ...
+        // TODO: Если в интентах все необходимые параметры используются они
+        // ...
+        // TODO: Постисправление найденных параметров (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
+        // ...
+        // TODO: на основе Intent'a делаем различные предположения и записываем в БД в структурированном виде
+        // ...
+      } catch (error) {
+        logger.error(error.message);
+      }
     }
     
     // FIXME: Разбить текст на строки через "\n" (Обработка каждой строки выполняется отдельно)

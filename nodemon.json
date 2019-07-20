@@ -4,9 +4,11 @@
     "*.md",
     "*.yml",
     "*.csv",
-    "tests/*",
-    "docs/*",
-    "node_modules/*"
+    "tests/",
+    "data/",
+    "logs/",
+    "docs/",
+    "node_modules/"
   ],
   "ext": "js,json",
   "delay": "3000"
