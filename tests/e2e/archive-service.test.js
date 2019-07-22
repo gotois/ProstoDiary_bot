@@ -6,4 +6,7 @@ module.exports = async (t) => {
   const fileZip = fs.readFileSync('tests/data/apple-health/export.zip');
   const mapBuffer = await unpack(fileZip);
   t.is(mapBuffer.size, 2);
+  mapBuffer.forEach((value) => {
+    t.true(Buffer.isBuffer(value));
+  });
 };

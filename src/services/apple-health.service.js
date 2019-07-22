@@ -1,4 +1,5 @@
 const parser = require('fast-xml-parser');
+const { unpack } = require('./archive.service');
 const logger = require('./logger.service');
 
 const uploadToDatabase = (object) => {
@@ -54,7 +55,11 @@ const uploadToDatabase = (object) => {
  * @returns {Promise<object>}
  */
 const uploadAppleHealthData = async (buffer) => {
-  const options = {
+  const mapBuffer = await unpack(buffer);
+  if (mapBuffer.size === 0) {
+    throw new Error('Empty file');
+  }
+  const parserOptions = {
     attributeNamePrefix: '',
     ignoreAttributes: false,
     ignoreNameSpace: false,
@@ -64,10 +69,11 @@ const uploadAppleHealthData = async (buffer) => {
     trimValues: true,
     parseTrueNumberOnly: false,
   };
-  const string = buffer.toString('utf8');
-  const jsonObject = parser.parse(string, options);
-  await uploadToDatabase(jsonObject);
-  return jsonObject;
+  mapBuffer.forEach((buffer) => {
+    const string = buffer.toString('utf8');
+    const jsonObject = parser.parse(string, parserOptions);
+    uploadToDatabase(jsonObject);
+  });
 };
 
 module.exports = {

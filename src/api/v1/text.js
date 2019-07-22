@@ -12,7 +12,7 @@ const format = require('../../services/format.service');
 module.exports = async (text, message_id, date, currentUser) => {
   const story = new Story(text);
   await story.fill();
-  const storyDefinition = await story.definition();
+  const storyDefinition = story.toJSON();
   const storyResult = JSON.stringify(storyDefinition, null, 2);
   if (IS_PRODUCTION) {
     await story.save(currentUser, message_id, date);

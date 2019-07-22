@@ -98,7 +98,7 @@ skipTestForFastOrTravis('API: KPP nalog.ru', require('./kpp.test'));
 skipTestForFastOrTravis('API: Translate', require('./translate.test'));
 skipTestForFast('API: Wolfram Alpha', require('./wolfram-alpha.test'));
 skipTestForFastOrTravis('API: Todoist', require('./todoist-service.test'));
-skipTestForFastOrTravis('API: Currency', require('./currency-service.test'));
+skipTestForFast('API: Currency', require('./currency-service.test'));
 
 // INPUT
 skipTestForFast('/help', require('./help.test'));
@@ -107,17 +107,16 @@ skipTestForFast('/backup', require('./backup.test'));
 skipTestForFastOrTravis('/text', require('./text.test'));
 skipTestForFast('/balance', require('./balance.test'));
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
+test.todo('/start'); // + авторизация;
+test.todo('/dbclear');
+test.todo('/search');
 
 skipTestForFastOrTravis('archive service', require('./archive-service.test'));
 skipTestForFastOrTravis('AppleHealth', require('./apple-health-service.test'));
 
 test('bot init', require('./telegram-bot.test'));
 
-test.todo('/start'); // + авторизация;
-test.todo('/dbclear');
-test.todo('/search');
 test.todo('Создать отдельного пользователя в БД'); // TODO: используя https://github.com/marak/Faker.js/
 test.todo('Проверка удаления своей записи');
 test.todo('Запись энтри');
 test.todo('Проверека построения графика');
-test.todo('проверка скачивания архива');

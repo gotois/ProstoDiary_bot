@@ -181,12 +181,7 @@ class Story {
     
     // FIXME: Разбить текст на строки через "\n" (Обработка каждой строки выполняется отдельно)
     // А еще лучше если это будет сделано через NLP
-  }
-  /**
-   *
-   * @description Operation Definition (Типизация абстрактов в строгий структурный вид)
-   */
-  async definition () {
+  
     // Насыщение абстрактов (от Abstract к Natural)
     // ...
     // Связка абстракта фактами
@@ -196,17 +191,94 @@ class Story {
     // Исправление кастомных типов
     // (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
     // ...
-    // Merge - формируем Конечный состав параметров
-    // включающий undefined если нигде не получилось ничего найти
-    // ...
     
-    // const link = await Story.find(this.abstractDefinitions);
+    // todo проверяем что текст поправил туду в todoist - если так то спрашиваем у пользователя прав ли бот
+    // ...
+  }
+  /**
+   *
+   * @description Operation Definition (Типизация абстрактов в строгий структурный вид)
+   * Merge - формируем Конечный состав параметров, включающий undefined если нигде не получилось ничего найти
+   * @returns {JSON}
+   */
+  toJSON () {
+    // todo если начинается с _ - то это генерирует БД
+    return ({
+      // new
+      "_id": 'example', // GUID ссылки на историю (историческая ссылка)
+      "_created_at": "2015-08-04", // Первая сформированной очереди
+      "_updated_at": "2019-08-04", // Последняя дата апдейта очереди
+      "_status": "draft", // draft | active | retired | unknown
   
-    return {
-      // link, // историческая ссылка
-      // projects: [], // Разбиение на проекты (нужно для лучшего поиска) // https://github.com/gotois/ProstoDiary_bot/issues/79
-      metadata: {
-        language: this.#language,
+      // Разбиение на проекты (нужно для лучшего поиска) // https://github.com/gotois/ProstoDiary_bot/issues/79
+      // type: 'OperationCollection', // #behavior
+      // "name": "Populate Questionnaire", // Name for this operation definition (computer friendly)
+      
+      "url": "http://h7.org/fhir/OperationDefinition/example", // Canonical identifier for this operation definition, represented as a URI (globally unique)
+      "version": "0.0.0", // bot Version (see package.json). отсюда же можно узнать и api version
+      // "kind": "operation", // operation | query
+      // "experimental" : true, // For testing purposes, not real usage
+  
+      // (подпись) выполняет роль публичного ключа.Затем чтобы дешифровать данные нужно выполнить дешифровку этой подписи telegram_id + SALT_PASSWORD
+      "sign": "", // подпись сгенерированная ботом, которая подтверждает что бот не был скомпроментирован
+      
+      // вместо этого использовать json-ld - "https://me.baskovsky.ru"
+      // вероятно будет так: "publisher": "https://me.baskovsky.ru"
+      // "publisher": "goto Interactive Software", // название организации которые курируют разработку бота
+      // "contact": [ // Contact details for the publisher, основого мейнтейнера бота
+      //   {
+      //     "name": "Denis Baskovsky",
+      //     "telecom": [
+      //       {
+      //         "system": "email",
+      //         "value": "denis@baskovsky.ru"
+      //       }
+      //     ]
+      //   }
+      // ],
+      
+      
+      "jurisdiction": [ // Intended jurisdiction for operation definition (if applicable)
+        {
+          "coding": [
+            {
+              "system": "urn:iso:std:iso:3166",
+              "code": "GB",
+              // "display": "United Kingdom of Great Britain and Northern Ireland (the)"
+            }
+          ]
+        }
+      ],
+      // "affectsState" : <boolean>, // Whether content is changed by the operation
+      // "code": "populate", //  Name used to invoke the operation
+      // "resource": [ // Types this operation applies to
+      //   "Questionnaire"
+      // ],
+      // new end
+  
+      context: {
+        queryText: this.#text[this.#text.length - 1], // originalText
+  
+        parameters: {
+          Health: {
+            // Вес
+            // Рост
+          },
+          Food: {
+            'салат': {
+              id: 0,
+              protein: 0,
+              fat: 0,
+              carbohydrate: 0,
+              kcal: 0,
+              // title
+            }
+          }
+        },
+  
+        // https://github.com/gotois/ProstoDiary_bot/issues/146
+  
+        languageCode: this.#language,
         sentiment: this.#sentiment,
         text: this.#text,
         hrefs: this.#hrefs,
@@ -215,13 +287,14 @@ class Story {
         // #addresses
         emails: this.#emails,
         phones: this.#phones,
-        // #behavior
+        
         intent: this.#intent,
-        // #geo
-        // #date
+        // #date - smart date
         category: this.#category,
+  
+        // geo: // место где была сделана запись
       },
-    };
+    });
   }
   
   // @todo Поиск исторической ссылки  (Хэш?)
@@ -237,7 +310,7 @@ class Story {
   }
   
   /**
-   * @todo аргументы нужно брать из класса
+   * @todo аргументы нужно брать из definition
    * @todo в БД записывать originalText
    * @todo https://github.com/gotois/ProstoDiary_bot/issues/98
    * @returns {Promise<void>}

@@ -17,12 +17,10 @@ const checkDateLaterThanNow = (date) => {
   return new Date().getTime() < date.getTime();
 };
 /**
- * TODO: rename -> isValidDate
- *
  * @param {string|Date} date - date
  * @returns {boolean}
  */
-const isNormalDate = (date) => {
+const isValidDate = (date) => {
   try {
     return (
       dateFns.isValid(new Date(date)) &&
@@ -34,9 +32,7 @@ const isNormalDate = (date) => {
   }
 };
 /**
- * convertToNormalDate('YYY-MM-DD')
- *
- * @param {string|Date} date - date
+ * @param {string|Date} date - 'YYY-MM-DD'
  * @returns {Date|Error}
  */
 const convertToNormalDate = (date) => {
@@ -127,7 +123,7 @@ const fillRangeTimes = (from, until) => {
 };
 
 module.exports = {
-  isNormalDate,
+  isValidDate,
   fillRangeTimes,
   convertToNormalDate,
   convertIn2DigitFormat,

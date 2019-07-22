@@ -18,7 +18,7 @@ module.exports = async (match, currentUser) => {
     getTime = match[1].trim();
   }
   date = datetime.convertToNormalDate(getTime);
-  if (!datetime.isNormalDate(date)) {
+  if (!datetime.isValidDate(date)) {
     throw new Error('Wrong date');
   }
   const rows = await dbEntries.get(currentUser.id, date);

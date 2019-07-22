@@ -1,16 +1,16 @@
 module.exports = (t) => {
   const {
-    isNormalDate,
+    isValidDate,
     convertToNormalDate,
     checkDateLaterThanNow,
     fillRangeTimes,
   } = require('../../src/services/date.service');
-  // isNormalDate
-  t.true(isNormalDate('1.1.2016'));
-  t.true(isNormalDate('01.01.2016'));
-  t.false(isNormalDate('13.13.2016'));
-  t.false(isNormalDate('31.13.2017'));
-  t.false(isNormalDate('32.12.2017'));
+  // isValidDate
+  t.true(isValidDate('1.1.2016'));
+  t.true(isValidDate('01.01.2016'));
+  t.false(isValidDate('13.13.2016'));
+  t.false(isValidDate('31.13.2017'));
+  t.false(isValidDate('32.12.2017'));
 
   // convertToNormalDate
   t.is(typeof convertToNormalDate('2016-12-3'), 'object');

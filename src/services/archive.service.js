@@ -2,8 +2,7 @@ const archiver = require('archiver');
 const yauzl = require('yauzl');
 const { Writable } = require('stream');
 /**
- * @todo нужно настроить на передачу Buffer, а не только string
- * @param {string} input - input
+ * @param {string|Buffer} input - input
  * @param {string} fileName - file name
  * @returns {Promise<any>}
  */
@@ -25,7 +24,11 @@ const pack = (input, fileName) => {
       next();
     };
     archive.pipe(ws);
-    archive.append(Buffer.from(input, 'utf8'), { name: fileName });
+    if (typeof input === 'string') {
+      archive.append(Buffer.from(input, 'utf8'), { name: fileName });
+    } else {
+      archive.append(input, { name: fileName });
+    }
     archive.finalize();
   });
 };
@@ -35,9 +38,14 @@ const pack = (input, fileName) => {
  */
 const readZipFiles = (zip) => {
   return new Promise((resolve, reject) => {
-    let entryCount = zip.entryCount;
     let out = new Map();
+    zip.readEntry();
     zip.on('entry', (entry) => {
+      // Directory file names end with '/'.
+      if (entry.fileName.endsWith('/')) {
+        zip.readEntry();
+        return;
+      }
       zip.openReadStream(entry, (error, readStream) => {
         if (error) {
           return reject(error);
@@ -51,17 +59,13 @@ const readZipFiles = (zip) => {
         });
         readStream.on('end', () => {
           out.set(entry.fileName, Buffer.concat(chunks));
-          if (--entryCount === 0) {
+          zip.readEntry();
+          if (zip.entryCount === zip.entriesRead) {
             resolve(out);
           }
         });
-        zip.readEntry();
       });
     });
-    zip.readEntry();
-    // zipfile.on('end', () => {
-    //   console.log("end of entries");
-    // });
   });
 };
 /**
@@ -70,7 +74,12 @@ const readZipFiles = (zip) => {
  */
 const unpack = (buffer) => {
   return new Promise((resolve, reject) => {
-    yauzl.fromBuffer(buffer, { lazyEntries: true }, async (error, zipfile) => {
+    const yauzlOptions = {
+      lazyEntries: true,
+      decodeStrings: true,
+      validateEntrySizes: true,
+    };
+    yauzl.fromBuffer(buffer, yauzlOptions, async (error, zipfile) => {
       if (error) {
         return reject(error);
       }

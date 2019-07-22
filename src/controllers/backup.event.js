@@ -2,8 +2,7 @@ const bot = require('../bot');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 /**
- * Скачивание файла БД на устройство
- *
+ * @description Скачивание файла БД на устройство
  * @param {object} msg - message
  * @param {object} msg.chat - message chat
  * @param {object} msg.from - from
