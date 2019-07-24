@@ -10,7 +10,7 @@ const logger = require('../services/logger.service');
 const onPhoto = async ({ chat, photo, caption }) => {
   logger.log('info', onPhoto.name);
   const chatId = chat.id;
-  const [_, mediumPhoto] = photo;
+  const [_smallPhoto, mediumPhoto] = photo;
   if (!mediumPhoto.file_id) {
     throw new Error('Wrong file');
   }

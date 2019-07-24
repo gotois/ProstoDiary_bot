@@ -28,7 +28,7 @@ test.before(async (t) => {
   const bot = require('../../src/bot');
   const client = server.getClient(process.env.TELEGRAM_TOKEN);
   require('../../src/bot/handlers')(bot);
-  /*eslint-disable */
+  /*eslint-disable require-atomic-updates */
   t.context.server = server;
   t.context.client = client;
   t.context.tasks = {};

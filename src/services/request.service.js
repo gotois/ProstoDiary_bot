@@ -63,7 +63,7 @@ const post = (
  */
 const toQueryString = (data) => {
   const items = Object.entries(data)
-    .filter(([_, value]) => {
+    .filter(([_key, value]) => {
       switch (typeof value) {
         case 'object':
           return value !== null;

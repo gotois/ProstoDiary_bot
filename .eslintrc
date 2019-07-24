@@ -16,7 +16,11 @@
       "always"
     ],
     "no-unused-vars": [
-      "warn"
+      "warn",
+      {
+        "varsIgnorePattern": "^_",
+        "argsIgnorePattern": "^_"
+      }
     ],
     "require-await": "error",
     "no-return-await": "error",
