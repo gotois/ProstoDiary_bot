@@ -1,7 +1,7 @@
 const dialogflow = require('dialogflow');
 const { detectLang } = require('./detect-language.service');
 const { formatQuery } = require('./text.service');
-const { DIALOGFLOW } = require('../env');
+const { DIALOGFLOW } = require('../environment');
 
 const sessionClient = new dialogflow.SessionsClient({
   credentials: DIALOGFLOW.DIALOGFLOW_CREDENTIALS,
@@ -68,7 +68,7 @@ const processResponse = (responses) => {
 /**
  * получаем и разбираем Intent (если есть)
  *
- * @example inputAnalyze('купил овощи 30 рублей');
+ * inputAnalyze('купил овощи 30 рублей');
  *
  * @param {string} rawMessage - raw message
  * @returns {Promise<string>}

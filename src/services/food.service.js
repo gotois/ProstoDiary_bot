@@ -2,7 +2,7 @@
 // docs - https://platform.fatsecret.com/api/Default.aspx?screen=rapih
 const crypto = require('crypto');
 const request = require('request');
-const { FAT_SECRET } = require('../env');
+const { FAT_SECRET } = require('../environment');
 const API_BASE = 'https://platform.fatsecret.com/rest/server.api';
 const { detectLang, languages } = require('./detect-language.service');
 const translateService = require('./translate.service');

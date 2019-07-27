@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { DATABASE } = require('../env');
+const { DATABASE } = require('../environment');
 /**
  * @constant {string}
  */

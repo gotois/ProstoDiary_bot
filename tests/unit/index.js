@@ -10,7 +10,7 @@ test('money', require('./money.test'));
 test('format', require('./format.test'));
 test('text service', require('./text-service.test'));
 test('detect lang', require('./detect-lang.test'));
-test('env', require('./env.test'));
+test('env', require('./environment.test'));
 test('faker', require('./faker.test'));
 skipTestForFastOrTravis('QR test', require('./qr.test'));
 test('request', require('./request.test'));

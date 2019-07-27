@@ -1,5 +1,5 @@
 const databaseFoods = async (t) => {
-  const { IS_DEV } = require('../../src/env');
+  const { IS_DEV } = require('../../src/environment');
   const dbFoods = require('../../src/database/foods.database');
   const rows = await dbFoods.get('actimel ');
   if (IS_DEV) {

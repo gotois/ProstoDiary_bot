@@ -3,7 +3,7 @@ const test = require('ava');
 if (!process.env.PORT || process.env.NODE_ENV !== 'TRAVIS_CI') {
   require('dotenv').config();
 }
-const { IS_CI } = require('../../src/env');
+const { IS_CI } = require('../../src/environment');
 // TODO: https://github.com/gotois/ProstoDiary_bot/issues/106
 // TRAVIS удалить, когда перенесу все необходимые env на Travis
 const IS_FAST_TEST = Boolean(process.env.FAST_TEST);

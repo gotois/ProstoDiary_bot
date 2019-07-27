@@ -1,5 +1,5 @@
 const TodoistAPI = require('todoist-js').default;
-const { TODOIST } = require('../env');
+const { TODOIST } = require('../environment');
 
 const todoist = new TodoistAPI(TODOIST.ACCESS_TOKEN);
 

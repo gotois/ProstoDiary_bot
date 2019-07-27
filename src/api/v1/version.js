@@ -2,7 +2,7 @@ const {
   projectVersion,
   getCheckSum,
 } = require('../../services/version.service');
-const { IS_PRODUCTION } = require('../../env');
+const { IS_PRODUCTION } = require('../../environment');
 
 module.exports = () => {
   let text = '';

@@ -23,7 +23,7 @@ const onDatabaseClear = async ({ chat, from }) => {
     'Очистить ваши записи?\nНапишите: YES',
     options,
   );
-  const dbClearAPI = require('../api/v1/db-clear');
+  const dbClearAPI = require('../api/v1/database-clear');
   await bot.onReplyToMessage(chat.id, message_id, async ({ text }) => {
     if (text !== 'YES') {
       await bot.sendMessage(chat.id, 'Операция отменена');

@@ -1,5 +1,5 @@
 const { Client } = require('pg');
-const { IS_PRODUCTION, DATABASE } = require('../env');
+const { IS_PRODUCTION, DATABASE } = require('../environment');
 /**
  * @see path отличается одним символом @
  */

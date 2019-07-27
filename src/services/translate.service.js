@@ -1,5 +1,5 @@
 const { Translate } = require('@google-cloud/translate');
-const { GOOGLE } = require('../env');
+const { GOOGLE } = require('../environment');
 const client = new Translate({
   credentials: GOOGLE.GOOGLE_CREDENTIALS_PARSED,
 });

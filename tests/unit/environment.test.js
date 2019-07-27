@@ -1,5 +1,5 @@
 module.exports = (t) => {
-  const env = require('../../src/env');
+  const env = require('../../src/environment');
   t.is(typeof env.DATABASE, 'object');
   t.is(typeof env.CORALOGIX, 'object');
   t.is(typeof env.TELEGRAM, 'object');

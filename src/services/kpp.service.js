@@ -7,7 +7,7 @@
 эта информация используется для дневника (поиск съеденного, учет калорий, привязка геокоординат к магазинам)
 эта информация используется для обучения бота
  */
-const { NALOGRU } = require('../env');
+const { NALOGRU } = require('../environment');
 const { get, post } = require('./request.service');
 const fakeService = require('./faker.service');
 const qr = require('./qr.service');

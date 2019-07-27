@@ -1,5 +1,5 @@
 const { get } = require('./request.service');
-const { GOOGLE } = require('../env');
+const { GOOGLE } = require('../environment');
 /**
  * @constant
  * @type {string}

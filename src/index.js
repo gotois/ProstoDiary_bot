@@ -2,7 +2,7 @@ const bot = require('./bot');
 const dbClient = require('./database');
 const logger = require('./services/logger.service');
 const { projectVersion } = require('./services/version.service');
-const { IS_PRODUCTION, IS_DEV, TELEGRAM } = require('./env');
+const { IS_PRODUCTION, IS_DEV, TELEGRAM } = require('./environment');
 /**
  * @description initialize bot
  * @returns {Promise<object>}

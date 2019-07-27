@@ -1,6 +1,6 @@
 const winston = require('winston');
 const CoralogixWinston = require('coralogix-logger-winston');
-const { IS_PRODUCTION, CORALOGIX } = require('../env');
+const { IS_PRODUCTION, CORALOGIX } = require('../environment');
 
 const logger = winston.createLogger();
 

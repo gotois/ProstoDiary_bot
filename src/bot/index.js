@@ -1,5 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
-const { IS_PRODUCTION, IS_DEV, TELEGRAM, SERVER } = require('../env');
+const { IS_PRODUCTION, IS_DEV, TELEGRAM, SERVER } = require('../environment');
 let bot;
 if (Object.prototype.hasOwnProperty.call(global, 'bot')) {
   bot = global.bot;

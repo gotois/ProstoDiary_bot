@@ -1,4 +1,5 @@
 const Eyo = require('eyo-kernel');
+const { version } = require('../../package');
 const validator = require('validator');
 const crypt = require('./crypt.service');
 const dbEntries = require('../database/entities.database');
@@ -203,41 +204,25 @@ class Story {
    */
   toJSON () {
     // todo если начинается с _ - то это генерирует БД
-    return ({
+    return {
       // new
       "_id": 'example', // GUID ссылки на историю (историческая ссылка)
       "_created_at": "2015-08-04", // Первая сформированной очереди
       "_updated_at": "2019-08-04", // Последняя дата апдейта очереди
-      "_status": "draft", // draft | active | retired | unknown
+      "_status": "draft", // это статус транзакции (нужен в дальнейшем) // draft | active | retired | unknown
   
-      // Разбиение на проекты (нужно для лучшего поиска) // https://github.com/gotois/ProstoDiary_bot/issues/79
-      // type: 'OperationCollection', // #behavior
+      "type": this.#intent,
       // "name": "Populate Questionnaire", // Name for this operation definition (computer friendly)
       
-      "url": "http://h7.org/fhir/OperationDefinition/example", // Canonical identifier for this operation definition, represented as a URI (globally unique)
-      "version": "0.0.0", // bot Version (see package.json). отсюда же можно узнать и api version
+      // "url": "https://gotointeractive.com/storylang/OperationDefinition/example", // Canonical identifier for this operation definition, represented as a URI (globally unique)
+      "version": version, // bot Version. отсюда же можно узнать и api version
       // "kind": "operation", // operation | query
       // "experimental" : true, // For testing purposes, not real usage
   
       // (подпись) выполняет роль публичного ключа.Затем чтобы дешифровать данные нужно выполнить дешифровку этой подписи telegram_id + SALT_PASSWORD
       "sign": "", // подпись сгенерированная ботом, которая подтверждает что бот не был скомпроментирован
-      
-      // вместо этого использовать json-ld - "https://me.baskovsky.ru"
-      // вероятно будет так: "publisher": "https://me.baskovsky.ru"
-      // "publisher": "goto Interactive Software", // название организации которые курируют разработку бота
-      // "contact": [ // Contact details for the publisher, основого мейнтейнера бота
-      //   {
-      //     "name": "Denis Baskovsky",
-      //     "telecom": [
-      //       {
-      //         "system": "email",
-      //         "value": "denis@baskovsky.ru"
-      //       }
-      //     ]
-      //   }
-      // ],
-      
-      
+      "contact": "https://me.baskovsky.ru", // {json-ld|url}
+      "publisher": "goto Interactive Software", // название организации которые курируют разработку бота
       "jurisdiction": [ // Intended jurisdiction for operation definition (if applicable)
         {
           "coding": [
@@ -256,9 +241,10 @@ class Story {
       // ],
       // new end
   
+      telegram_entry_id: 111, //integer
       context: {
         queryText: this.#text[this.#text.length - 1], // originalText
-  
+        // todo параметры проставляются в зависимости от интента
         parameters: {
           Health: {
             // Вес
@@ -287,14 +273,13 @@ class Story {
         // #addresses
         emails: this.#emails,
         phones: this.#phones,
-        
-        intent: this.#intent,
+        // #behavior
         // #date - smart date
         category: this.#category,
   
-        // geo: // место где была сделана запись
+        // geo: // {geoJSON} - место где была сделана запись
       },
-    });
+    };
   }
   
   // @todo Поиск исторической ссылки  (Хэш?)

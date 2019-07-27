@@ -1,4 +1,4 @@
-const { GOOGLE } = require('../env');
+const { GOOGLE } = require('../environment');
 const language = require('@google-cloud/language');
 const { isRUS, langISO } = require('./detect-language.service');
 

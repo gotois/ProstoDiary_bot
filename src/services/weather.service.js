@@ -1,5 +1,5 @@
 const weather = require('openweather-apis');
-const { OPEN_WEATHER } = require('../env');
+const { OPEN_WEATHER } = require('../environment');
 /**
  * @constant
  * @type {string}

@@ -6,7 +6,7 @@ const {
 const { maintainers } = require('../../package');
 const TelegramServer = require('telegram-test-api');
 const sgMail = require('@sendgrid/mail');
-const { IS_CI, IS_DEV, SENDGRID } = require('../../src/env');
+const { IS_CI, IS_DEV, SENDGRID } = require('../../src/environment');
 
 // This runs before all tests
 test.before(async (t) => {
