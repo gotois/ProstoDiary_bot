@@ -144,6 +144,12 @@ const getKPPParams = async (input) => {
       if (input.length === 0) {
         throw new TypeError('KPP: input is 0 length');
       }
+      ['t=', 's=', 'fn=', 'i='].every((value) => {
+        if (!input.includes(value)) {
+          throw new TypeError(`${value} key not found`);
+        }
+        return true;
+      });
       qrString = input;
       break;
     }
