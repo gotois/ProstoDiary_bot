@@ -24,6 +24,9 @@ const initBot = () => {
       })
       .catch((error) => {
         logger.log('info', error);
+        if (error.code === 'EFATAL') {
+          throw error;
+        }
       });
   });
 };

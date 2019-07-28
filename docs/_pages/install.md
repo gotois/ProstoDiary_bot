@@ -17,11 +17,11 @@ TELEGRAM_TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjkl
 SERVER_NAME={ In DASH-CASE style }
 SALT_PASSWORD={ User salt password }
 
-DB_HOST={ database host }
-DB_NAME={ database name }
-DB_USER_NAME={ database username }
-DB_PORT={ database port }
-DB_PASSWORD={ database password }
+PGUSER={ database username }
+PGHOST={ database host }
+PGPASSWORD={ database password }
+PGDATABASE={ database name }
+PGPORT={ database port }
 
 PLOTLY_LOGIN={ plotly login }
 PLOTLY_TOKEN={ plotly token }

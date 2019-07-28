@@ -1,18 +1,16 @@
-const { Client } = require('pg');
+const { Client, Pool } = require('pg');
 const { IS_PRODUCTION, DATABASE } = require('../environment');
+let connectionString;
 /**
  * @see path отличается одним символом @
  */
-const databaseClient = (() => {
-  if (IS_PRODUCTION) {
-    return new Client(
-      `postgres://${DATABASE.databaseUser}:${DATABASE.password}.${DATABASE.databaseHost}:${DATABASE.databasePort}/${DATABASE.databaseName}`,
-    );
-  }
-  return new Client(
-    `postgres://${DATABASE.databaseUser}:${DATABASE.password}@${DATABASE.databaseHost}:${DATABASE.databasePort}/${DATABASE.databaseName}`,
-  );
-})();
+if (IS_PRODUCTION) {
+  connectionString = `postgres://${DATABASE.databaseUser}:${DATABASE.password}.${DATABASE.databaseHost}:${DATABASE.databasePort}/${DATABASE.databaseName}`;
+} else {
+  connectionString = `postgres://${DATABASE.databaseUser}:${DATABASE.password}@${DATABASE.databaseHost}:${DATABASE.databasePort}/${DATABASE.databaseName}`;
+}
+const client = new Client({ connectionString });
+const pool = new Pool({ connectionString });
 /**
  * @param {string} query - query
  * @param {Array|undefined} params - params
@@ -20,10 +18,10 @@ const databaseClient = (() => {
  */
 const $$ = (query, params = []) => {
   return new Promise((resolve, reject) => {
-    if (!databaseClient._connected) {
+    if (!client._connected) {
       return reject('Database not connected!');
     }
-    databaseClient.query(query, params, (error, result) => {
+    client.query(query, params, (error, result) => {
       if (error) {
         return reject(error);
       }
@@ -43,6 +41,7 @@ const $$ = (query, params = []) => {
 };
 
 module.exports = {
-  client: databaseClient, // TODO: rename
+  client,
   $$,
+  pool,
 };

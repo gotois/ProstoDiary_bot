@@ -3,11 +3,12 @@ const validator = require('validator');
 const {
   NODE_ENV,
 
-  DB_HOST,
-  DB_NAME,
-  DB_USER_NAME,
-  DB_PORT,
-  DB_PASSWORD,
+  PGHOST,
+  PGDATABASE,
+  PGUSER,
+  PGPORT,
+  PGPASSWORD,
+
   SALT_PASSWORD,
 
   CORALOGIX_WINSTON_PRIVATE_KEY,
@@ -51,11 +52,12 @@ const {
 
 const ENV = {
   DATABASE: {
-    databaseHost: DB_HOST,
-    databaseName: DB_NAME,
-    databaseUser: DB_USER_NAME,
-    databasePort: DB_PORT,
-    password: DB_PASSWORD,
+    databaseHost: PGHOST,
+    databaseName: PGDATABASE,
+    databaseUser: PGUSER,
+    databasePort: PGPORT,
+    password: PGPASSWORD,
+    // todo: переместить отсюда
     get passwordSalt() {
       return SALT_PASSWORD;
     },
