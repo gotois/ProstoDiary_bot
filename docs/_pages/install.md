@@ -54,6 +54,12 @@ TODOIST_CLIENT_ID={ string }
 TODOIST_CLIENT_SECRET={ string }
 # легко получить можно через https://todoist.com/prefs/integrations
 TODOIST_ACCESS_TOKEN={ string }
+
+FOURSQUARE_CLIEND_ID={ string }
+FOURSQUARE_CLIENT_SECRET={ string }
+FOURSQUARE_PUSH_SECRET={ string }
+FOURSQUARE_REDIRECT_URI=http://localhost
+FOURSQUARE_ACCESS_TOKEN={ string } # Чтобы получить token перейдите по ссылке и подтвердите привязку приложения. (В хэше открытого попапа будет  access token)
 ```
 
 <details>

@@ -115,6 +115,7 @@ skipTestForFastOrTravis('archive service', require('./archive-service.test'));
 skipTestForFastOrTravis('AppleHealth', require('./apple-health-service.test'));
 
 test('bot init', require('./telegram-bot.test'));
+test('foursquare', require('./foursquare-service.test'));
 
 test.todo('Создать отдельного пользователя в БД'); // TODO: используя https://github.com/marak/Faker.js/
 test.todo('Проверка удаления своей записи');

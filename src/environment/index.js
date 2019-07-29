@@ -48,6 +48,9 @@ const {
   TODOIST_CLIENT_ID,
   TODOIST_CLIENT_SECRET,
   TODOIST_ACCESS_TOKEN,
+
+  FOURSQUARE_CLIEND_ID,
+  FOURSQUARE_CLIENT_SECRET,
 } = process.env;
 
 const ENV = {
@@ -152,6 +155,14 @@ const ENV = {
     },
     get ACCESS_TOKEN() {
       return TODOIST_ACCESS_TOKEN;
+    },
+  },
+  FOURSQUARE: {
+    get CLIEND_ID() {
+      return FOURSQUARE_CLIEND_ID;
+    },
+    get CLIENT_SECRET() {
+      return FOURSQUARE_CLIENT_SECRET;
     },
   },
   get IS_PRODUCTION() {
