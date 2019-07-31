@@ -1,10 +1,57 @@
 {
   "rules": {
+    "linebreak-style": ["error", "unix"],
+    "dot-location": ["error", "property"],
+    "array-bracket-spacing": ["error", "never"],
+    "block-spacing": ["error", "always"],
+    "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+    "comma-spacing": "error",
+    "comma-style": "error",
+    "computed-property-spacing": "error",
+    "consistent-this": ["error", "self"],
+    "eol-last": "error",
+    "func-call-spacing": "error",
+    "key-spacing": "error",
+    "keyword-spacing": "error",
+    "max-depth": "error",
+    "max-len": ["warn", 80],
+    "new-parens": "error",
+    "no-lonely-if": "error",
+    "no-multiple-empty-lines": "error",
+    "no-nested-ternary": "error",
+    "no-unneeded-ternary": "error",
+    "no-whitespace-before-property": "error",
+    "object-property-newline": ["error", { "allowMultiplePropertiesPerLine": true }],
+    "semi-spacing": "error",
+    "space-before-blocks": "error",
+    "space-in-parens": "error",
+    "space-unary-ops": "error",
+    "unicode-bom": "error",
+    "arrow-spacing": "error",
+    "no-duplicate-imports": "error",
+    "constructor-super": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "no-eq-null": "error",
+    "no-global-assign": "error",
+    "no-invalid-this": "error",
+    "no-loop-func": "error",
+    "no-multi-spaces": "error",
+    "no-return-assign": ["error", "always"],
+    "no-self-compare": "error",
+    "no-sequences": "error",
+    "no-throw-literal": "error",
+    "no-unmodified-loop-condition": "error",
+    "no-useless-escape": "error",
+    "no-undef-init": "error",
+    "one-var": ["error", "never"],
     "indent": [
-      2,
+      "error",
       2,
       {
-        "SwitchCase": 1
+        "SwitchCase": 1,
+        "VariableDeclarator": 0,
+        "MemberExpression": 1
       }
     ],
     "quotes": [
@@ -149,7 +196,7 @@
   "extends": [
     "eslint:recommended",
     "plugin:prettier/recommended",
-    "plugin:unicorn/recommended",
-    "prettier/standard"
+    "prettier/standard",
+    "plugin:unicorn/recommended"
   ]
 }
