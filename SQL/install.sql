@@ -43,7 +43,8 @@ CREATE INDEX idx_gin_foods ON Foods USING GIN (to_tsvector_multilang(title));
 
 -- История пользователя будет представлена как "процесс"
 CREATE TYPE intent AS ENUM (
-  'undefined'
+  'undefined',
+  'install',
   'buy',
   'eat',
   'finance',
@@ -55,19 +56,20 @@ CREATE TYPE intent AS ENUM (
   'weight',
   'work'
 );
--- update:
--- `ALTER TYPE intent ADD VALUE 'undefined';`
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- TODO: переделать схему под приватную и доступную для редактирования только роли бот
 --create schema private;
 CREATE TABLE IF NOT EXISTS bot_story (
   id BIGSERIAL PRIMARY KEY,
+--  todo: вместо id использовать sign - выполняет роль публичного ключа.Затем чтобы дешифровать данные нужно выполнить дешифровку этой подписи telegram_id + SALT_PASSWORD
+--  sign SOMEHASH PRIMARY KEY, -- подпись сгенерированная ботом, которая подтверждает что бот не был скомпроментирован. todo: попробвать через `MD5('string');`?
   version VARCHAR(20) NOT NULL, -- аналогична в package.json -нужна для проверки необходимости обновить историю бота
-  contact JSONB NOT NULL,
-  publisher VARCHAR(100) NOT NULL, -- ссылка на репозиторий аналогична в package.json
-  jurisdiction JSONB,
+  author JSONB NOT NULL, -- JSON-LD; todo: нужна отдельная приватная таблица для этого
+  publisher VARCHAR(100) NOT NULL, -- todo: нужна отдельная таблица для этого
+  jurisdiction JSONB, -- todo: нужна отдельная таблица для этого
   telegram_user_id INTEGER NOT NULL
-  --  sign -- подпись бота. todo: попробвать через `MD5('string');`?
 );
 --
 -- TODO: переделать схему под приватную и доступную для ...?
@@ -75,17 +77,16 @@ CREATE TABLE IF NOT EXISTS bot_story (
 CREATE TABLE IF NOT EXISTS user_story (
   id BIGSERIAL PRIMARY KEY,
   type INTENT NOT NULL,
-  telegram_message_id INTEGER NOT NULL,
+  telegram_message_id INTEGER NOT NULL UNIQUE,
   context JSONB NOT NULL
 );
 -- FIXME: нужен индекс для типа
 --CREATE INDEX idx_intent ON user_story USING GIN (type);
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS history (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4() NOT NULL, -- историческая ссылка
-  bot_story_id BIGSERIAL REFERENCES bot_story (id) NOT NULL,
-  user_story_id BIGSERIAL REFERENCES user_story (id) NOT NULL,
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), -- глобальная историческая ссылка
+  bot_story_id BIGSERIAL REFERENCES bot_story ON UPDATE CASCADE ON DELETE CASCADE,
+  user_story_id BIGSERIAL REFERENCES user_story  ON UPDATE CASCADE ON DELETE CASCADE,
   created_at timestamp default current_timestamp, -- Первая сформированной очереди
   updated_at timestamp default NULL -- Последняя дата апдейта очереди
-  --  status TEXT,
+  --  status TEXT, -- это статус транзакции (нужен в дальнейшем) // draft | active | retired | unknown
 );
