@@ -19,9 +19,14 @@ permalink: /faq/
 > "END PRIVATE KEY" для `DIALOGFLOW_CREDENTIALS` и `GOOGLE_APPLICATION_CREDENTIALS` надо заменить такие пробелы на `\ `
 
 ### Не получается выполнить билд.
-Попробуй ```npm rebuild```
+Попробуй `npm rebuild`
 
 ### Telegram commands
 ```
 /help
+```
+
+### Как добавить новый интент в SQL?
+```sqlite-psql
+ALTER TYPE intent ADD VALUE 'intent_name';
 ```
