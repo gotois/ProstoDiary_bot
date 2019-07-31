@@ -9,13 +9,18 @@ const logger = require('../services/logger.service');
  * @param {object} msg.from - from
  * @returns {undefined}
  */
-const onStart = async ({ chat, from }) => {
+const onStart = async ({ chat, from, message_id }) => {
   logger.log('info', onStart.name);
   const chatId = chat.id;
   const currentUser = sessions.getSession(from.id);
   const startAPI = require('../api/v1/start');
   try {
-    const startResult = await startAPI(currentUser);
+    const startResult = await startAPI(
+      from.language_code,
+      from.first_name,
+      currentUser,
+      message_id,
+    );
     await bot.sendMessage(chatId, startResult);
   } catch (error) {
     logger.log('error', error);

@@ -1,28 +1,29 @@
-const { $$ } = require('.');
+const crypt = require('../services/crypt.service');
+const { $$, pool } = require('.');
 /**
- *
- * @param {number} userId - user id
+ * @todo от запроса вида getAll надо уходить, такой запрос очень тяжелый
+ * @param {number} telegram_user_id - user id
  * @returns {Promise<Array>}
  */
-const getAll = async (userId) => {
+const getAll = async (telegram_user_id, sorting = 'ASC') => {
   const result = await $$(
-    `SELECT entry, date_added
-    FROM entries
-    WHERE user_id = $1
-    ORDER BY date_added ASC`,
-    [userId],
+    `SELECT DISTINCT user_t.context->>'queryText' AS TEXT, history.created_at AS DATE
+     FROM bot_story AS bot_t, user_story AS user_t
+     JOIN history
+     ON history.user_story_id = user_t.id
+     WHERE bot_t.telegram_user_id = $1
+     ORDER BY history.created_at ASC`,
+    [telegram_user_id],
   );
   // TODO: надо сразу декодировать
   return result.rows;
 };
 /**
- * TODO: фича. День начинается с рассвета и до следующего рассвета (вместо привычного дня времени)
- *
- * @param {number} userId - user id
+ * @param {number} telegram_user_id - user id
  * @param {string|Date} date - like 2016-12-01
  * @returns {Promise<Array>}
  */
-const _get = async (userId, date) => {
+const _get = async (telegram_user_id, date) => {
   switch (date.constructor) {
     case Date: {
       date = date.toJSON().substr(0, 10);
@@ -32,105 +33,160 @@ const _get = async (userId, date) => {
       break;
     }
     default: {
-      throw new Error('Wrong date type');
+      throw new TypeError('Wrong type');
     }
   }
-
+  // todo: День начинается с рассвета и до следующего рассвета (вместо привычного дня времени)
+  // fixme: лучше сделать -12 часов и +12 часов
   const from = `'${date} 00:00:00'::timestamp`;
   const until = `'${date} 23:59:59'::timestamp`;
 
   const result = await $$(
-    `SELECT entry, date_added
-    FROM entries
-    WHERE (user_id = $1) AND date_added BETWEEN ${from} AND ${until}`,
-    [userId],
+    `SELECT DISTINCT user_t.context
+     FROM user_story as user_t, history as history_t, bot_story as bot_t
+     WHERE bot_t.telegram_user_id = $1 AND history_t.created_at BETWEEN $2 AND $3`,
+    [telegram_user_id, from, until],
   );
   // TODO: надо сразу декодировать
+  // const decodeRows = rows.map(({ entry }) => {
+  //   return crypt.decode(entry);
+  // });
   return result.rows;
 };
 /**
- *
- * @param {number} userId - user id
- * @param {string} entry - entry
- * @param {number} telegramEntryId - telegram entry id
- * @param {Date} dateModified - date
- * @param {Date|undefined} dateAdded - date
+ * @param {object} storyJSON - story JSON
  * @returns {Promise<Array>}
  */
-const _post = async (
-  userId,
-  entry,
-  telegramEntryId,
-  dateModified,
-  dateAdded = new Date(),
-) => {
-  const result = await $$(
-    `INSERT INTO entries (user_id, entry, telegram_entry_id, date_modified, date_added)
-    VALUES ($1, $2, $3, $4, $5)`,
-    [userId, entry, telegramEntryId, dateModified, dateAdded],
-  );
-  // TODO: надо сразу декодировать
-  return result.rows;
+const _post = async (storyJSON) => {
+  const {
+    version,
+    author,
+    publisher,
+    jurisdiction,
+    telegram_user_id,
+    telegram_message_id,
+    type,
+    context,
+  } = storyJSON;
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const botStoryResult = await client.query({
+      name: 'create-bot-story',
+      text: `INSERT INTO bot_story (version, author, publisher, jurisdiction, telegram_user_id)
+             VALUES ($1, $2, $3, $4, $5)
+             RETURNING id`,
+      values: [version, author, publisher, jurisdiction, telegram_user_id],
+    });
+    const userStoryResult = await client.query({
+      name: 'create-user-story',
+      text: `INSERT INTO user_story (type, telegram_message_id, context)
+             VALUES ($1, $2, $3)
+             RETURNING id`,
+      values: [type, telegram_message_id, context],
+    });
+    const historyResult = await client.query({
+      name: 'create-history',
+      text: `INSERT INTO history (bot_story_id, user_story_id)
+             VALUES ($1, $2)
+             RETURNING *`,
+      values: [botStoryResult.rows[0].id, userStoryResult.rows[0].id],
+    });
+    await client.query('COMMIT');
+    return historyResult.rows;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 /**
- *
+ * @todo так же нужно обновлять version bot_story и прочее
+ * @returns {Promise<undefined>}
+ */
+const _put = async (storyJSON) => {
+  const { type, context, telegram_message_id } = storyJSON;
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query({
+      name: 'update-user-story',
+      text: `UPDATE user_story
+             SET type = $1, context = $2
+             WHERE (telegram_message_id = $3)`,
+      values: [type, context, telegram_message_id],
+    });
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+/**
+ * @todo сейчас удаляется только user_story, а надо еще и bot_story и history
  * @param {number} userId - user id
- * @param {string} entry - entry
- * @param {Date} dateModified - date
- * @param {number} telegramEntryId - date
- * @returns {Promise<Array>}
+ * @param {number} telegram_message_id - telegram entry id
+ * @returns {Promise<undefined>}
  */
-const _put = async (userId, entry, dateModified, telegramEntryId) => {
-  const result = await $$(
-    `UPDATE entries
-    SET entry = $2, date_modified = $3
-    WHERE (user_id = $1 AND telegram_entry_id = $4)`,
-    [userId, entry, dateModified, telegramEntryId],
-  );
-  // TODO: надо сразу декодировать
-  return result.rows;
+const _delete = async (userId, telegram_message_id) => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query({
+      name: 'delete-user-story',
+      text: `DELETE FROM user_story
+             WHERE (telegram_message_id = $1)
+             RETURNING id`,
+      values: [telegram_message_id],
+    });
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 /**
- * @param {number} userId - user id
- * @param {number} telegramEntryId - telegram entry id
- * @returns {Promise<Array>}
- */
-const _delete = async (userId, telegramEntryId) => {
-  const result = await $$(
-    `DELETE FROM entries
-    WHERE (user_id = $1 AND telegram_entry_id = $2)`,
-    [userId, telegramEntryId],
-  );
-  // TODO: надо сразу декодировать
-  return result.rows;
-};
-/**
- * Удаление данных из БД
+ * Удаление всей истории пользователя целиком
  *
- * @param {number} userId - id user
- * @returns {Promise<Array<object>>}
+ * @param {number} telegram_user_id - id user
+ * @returns {Promise<undefined>}
  */
-const clear = async (userId) => {
-  const result = await $$(
-    `DELETE FROM entries
-    WHERE user_id = $1`,
-    [userId],
-  );
-  // TODO: отдавать boolean если все закончилось хорошо
-  return result.rows;
-};
-/**
- * @param {number} userId - id user
- * @param {number} telegramEntryId - telegram id
- * @returns {Promise<boolean>}
- */
-const exist = async (userId, telegramEntryId) => {
-  const result = await $$(
-    `SELECT EXISTS(SELECT 1 FROM entries
-    WHERE telegram_entry_id = $1 AND user_id = $2)`,
-    [telegramEntryId, userId],
-  );
-  return result.rows[0].exists;
+const clear = async (telegram_user_id) => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const botStoryResult = await client.query({
+      name: 'delete-bot-story',
+      text: `DELETE FROM bot_story
+             WHERE telegram_user_id = $1
+             RETURNING id`,
+      values: [telegram_user_id],
+    });
+    const userStoryResult = await client.query({
+      name: 'delete-user-story',
+      text: `DELETE FROM user_story
+             WHERE id = $1
+             RETURNING id`,
+      values: [botStoryResult.rows[0].id],
+    });
+    await client.query({
+      name: 'delete-history',
+      text: `DELETE FROM history
+             WHERE bot_story_id = $1 AND user_story_id = $2`,
+      values: [botStoryResult.rows[0].id, userStoryResult.rows[0].id],
+    });
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
 module.exports = {
@@ -140,5 +196,4 @@ module.exports = {
   delete: _delete,
   getAll,
   clear,
-  exist,
 };

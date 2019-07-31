@@ -51,6 +51,8 @@ const {
 
   FOURSQUARE_CLIEND_ID,
   FOURSQUARE_CLIENT_SECRET,
+
+  PERSON,
 } = process.env;
 
 const ENV = {
@@ -84,6 +86,7 @@ const ENV = {
   SERVER: {
     PORT,
   },
+  PERSON,
   PLOTLY: {
     PLOTLY_LOGIN,
     PLOTLY_TOKEN,

@@ -1,16 +1,10 @@
 const dbEntries = require('../../database/entities.database');
 const { pack } = require('../../services/archive.service');
 const format = require('../../services/format.service');
-/**
- * @param {string} date - date
- * @returns {string}
- */
-const generateName = (date) => {
-  return `ProstoDiary_backup_${date}`;
-};
 
+// todo: должен в том числе содержать StoryJSON в полном объеме и храниться в отдельном файле: story.json
 module.exports = async (currentUser, date) => {
-  const filename = generateName(date) + '.txt';
+  const filename = `ProstoDiary_backup_${date}.txt`;
   const rows = await dbEntries.getAll(currentUser.id);
   if (rows.length === 0) {
     throw new Error('Backup data is empty');

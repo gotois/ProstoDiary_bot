@@ -65,10 +65,10 @@ CREATE TABLE IF NOT EXISTS bot_story (
   id BIGSERIAL PRIMARY KEY,
 --  todo: вместо id использовать sign - выполняет роль публичного ключа.Затем чтобы дешифровать данные нужно выполнить дешифровку этой подписи telegram_id + SALT_PASSWORD
 --  sign SOMEHASH PRIMARY KEY, -- подпись сгенерированная ботом, которая подтверждает что бот не был скомпроментирован. todo: попробвать через `MD5('string');`?
-  version VARCHAR(20) NOT NULL, -- аналогична в package.json -нужна для проверки необходимости обновить историю бота
+  version VARCHAR(20) NOT NULL, -- bot Version. отсюда же можно узнать и api version аналогична в package.json -нужна для проверки необходимости обновить историю бота
   author JSONB NOT NULL, -- JSON-LD; todo: нужна отдельная приватная таблица для этого
-  publisher VARCHAR(100) NOT NULL, -- todo: нужна отдельная таблица для этого
-  jurisdiction JSONB, -- todo: нужна отдельная таблица для этого
+  publisher VARCHAR(100) NOT NULL, -- название организации которые курируют разработку бота. todo: нужна отдельная таблица для этого
+  jurisdiction JSONB, -- Intended jurisdiction for operation definition (if applicable); todo: нужна отдельная таблица для этого
   telegram_user_id INTEGER NOT NULL
 );
 --
@@ -89,4 +89,15 @@ CREATE TABLE IF NOT EXISTS history (
   created_at timestamp default current_timestamp, -- Первая сформированной очереди
   updated_at timestamp default NULL -- Последняя дата апдейта очереди
   --  status TEXT, -- это статус транзакции (нужен в дальнейшем) // draft | active | retired | unknown
+  -- url: "https://gotointeractive.com/storylang/OperationDefinition/example", // Canonical identifier for this operation definition, represented as a URI (globally unique)
+
+  -- ниже под вопросом
+  --  "name": "Populate Questionnaire", // Name for this operation definition (computer friendly)
+--        // "experimental" : true, // For testing purposes, not real usage
+--      // "kind": "operation", // operation | query
+--      // "affectsState" : <boolean>, // Whether content is changed by the operation
+--      // "code": "populate", //  Name used to invoke the operation
+--      // "resource": [ // Types this operation applies to
+--      //   "Questionnaire"
+--      // ],
 );

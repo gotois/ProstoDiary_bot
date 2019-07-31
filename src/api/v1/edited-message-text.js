@@ -1,5 +1,6 @@
 const format = require('../../services/format.service');
 const crypt = require('../../services/crypt.service');
+const Story = require('../../services/story.service');
 const dbEntries = require('../../database/entities.database');
 /**
  * @param {string} input - text
@@ -25,7 +26,7 @@ const isDeletedMessage = (message) => {
   });
 };
 
-module.exports = async (text, message_id, currentUser) => {
+module.exports = async (text, date, message_id, currentUser) => {
   const input = text.trim();
   if (input.startsWith('/')) {
     return 'Редактирование этой записи невозможно';
@@ -35,16 +36,19 @@ module.exports = async (text, message_id, currentUser) => {
     await dbEntries.delete(currentUser.id, message_id);
     return 'Message removed';
   }
-  // TODO: если записи нет - тогда что делать???
-  const isExist = await dbEntries.exist(currentUser.id, message_id);
-  if (!isExist) {
-    throw new Error('Message not exist');
-  }
-  await dbEntries.put(
-    currentUser.id,
-    crypt.encode(input),
-    new Date(),
-    message_id,
-  );
+  // TODO: если записи нет - тогда спрашиваем пользователя, создавать ли новую запись?
+  // const isExist = await dbEntries.exist(currentUser.id, message_id);
+  // if (!isExist) {
+  //   throw new Error('Message not exist');
+  // }
+  // ...
+  const story = new Story({
+    text,
+    date,
+    currentUser,
+    telegram_message_id: message_id,
+  });
+  await story.fill();
+  await story.update();
   return formatResponse(input);
 };

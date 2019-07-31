@@ -8,6 +8,8 @@ const languageService = require('./language.service');
 const { detectLang, isRUS, isENG } = require('./detect-language.service');
 const { spellText } = require('./speller.service');
 const logger = require('./logger.service');
+const foursquare = require('./foursquare.service');
+const { PERSON } = require('../environment');
 
 const xxx = (intentName) => {
   switch (intentName) {
@@ -67,15 +69,23 @@ class Story {
   #phones = []; // полученные телефоны
   #behavior; // todo: анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
   #intent = []; // Определяем намерения
-  #geo; // todo: rename (place?) место где произошло событие
-  #date; // Получение даты события (Подведение таймлайна) <SmartDate>?
+  #place; // // {geoJSON} - место где была сделана запись.
+  #date = []; // Получение даты события (Подведение таймлайна) <SmartDate>? // по умолчанию заполняем время с шагом в один день
   #category = []; // Получение существа события - сущность события
   /**
    * @param {string} text - original text
    */
-  constructor(text = '') {
+  constructor({ text, date, currentUser, telegram_message_id }) {
     this.text = text.trim();
-    this.language = detectLang(text).language;
+    this.telegram_user_id = currentUser.id;
+    this.telegram_message_id = telegram_message_id;
+    this.language = detectLang(this.text).language;
+    if (date) {
+      this.#date.push(date);
+    }
+  }
+  get intent() {
+    return this.#intent[0].replace('Intent', '').toLowerCase();
   }
   set language(langCode) {
     if (!this.#language.includes(langCode)) {
@@ -98,6 +108,46 @@ class Story {
    */
   get text() {
     return this.#text[0];
+  }
+  // todo: crypt.encode(context)
+  get context() {
+    return {
+      queryText: this.#text[this.#text.length - 1], // originalText
+        // todo параметры проставляются в зависимости от интента
+        parameters: {
+        Health: {
+          // Вес
+          // Рост
+        },
+        Food: {
+          'салат': {
+            id: 0,
+              protein: 0,
+              fat: 0,
+              carbohydrate: 0,
+              kcal: 0,
+            // title
+          }
+        }
+      },
+    
+      // https://github.com/gotois/ProstoDiary_bot/issues/146
+    
+      languageCode: this.#language,
+        sentiment: this.#sentiment,
+        text: this.#text,
+        hrefs: this.#hrefs,
+        entities: this.#entities,
+        // #names,
+        // #addresses
+        emails: this.#emails,
+        phones: this.#phones,
+        // #behavior
+        // #date - smart date
+        category: this.#category,
+    
+      // #place
+    };
   }
   /**
    * @description Здесь происходит наполнение Абстрактов из полученного текста.
@@ -179,6 +229,8 @@ class Story {
         logger.error(error.message);
       }
     }
+    // todo: использовать foursquare API
+    // this.#place = ...
     
     // FIXME: Разбить текст на строки через "\n" (Обработка каждой строки выполняется отдельно)
     // А еще лучше если это будет сделано через NLP
@@ -197,33 +249,17 @@ class Story {
     // ...
   }
   /**
-   *
    * @description Operation Definition (Типизация абстрактов в строгий структурный вид)
    * Merge - формируем Конечный состав параметров, включающий undefined если нигде не получилось ничего найти
    * @returns {JSON}
    */
   toJSON () {
-    // todo если начинается с _ - то это генерирует БД
     return {
-      // new
-      "_id": 'example', // GUID ссылки на историю (историческая ссылка)
-      "_created_at": "2015-08-04", // Первая сформированной очереди
-      "_updated_at": "2019-08-04", // Последняя дата апдейта очереди
-      "_status": "draft", // это статус транзакции (нужен в дальнейшем) // draft | active | retired | unknown
-  
-      "type": this.#intent,
-      // "name": "Populate Questionnaire", // Name for this operation definition (computer friendly)
-      
-      // "url": "https://gotointeractive.com/storylang/OperationDefinition/example", // Canonical identifier for this operation definition, represented as a URI (globally unique)
-      "version": version, // bot Version. отсюда же можно узнать и api version
-      // "kind": "operation", // operation | query
-      // "experimental" : true, // For testing purposes, not real usage
-  
-      // (подпись) выполняет роль публичного ключа.Затем чтобы дешифровать данные нужно выполнить дешифровку этой подписи telegram_id + SALT_PASSWORD
-      "sign": "", // подпись сгенерированная ботом, которая подтверждает что бот не был скомпроментирован
-      "contact": "https://me.baskovsky.ru", // {json-ld|url}
-      "publisher": "goto Interactive Software", // название организации которые курируют разработку бота
-      "jurisdiction": [ // Intended jurisdiction for operation definition (if applicable)
+      type: this.intent,
+      version: version,
+      author: JSON.stringify(PERSON),
+      publisher: "goto Interactive Software",
+      jurisdiction: JSON.stringify([
         {
           "coding": [
             {
@@ -233,80 +269,24 @@ class Story {
             }
           ]
         }
-      ],
-      // "affectsState" : <boolean>, // Whether content is changed by the operation
-      // "code": "populate", //  Name used to invoke the operation
-      // "resource": [ // Types this operation applies to
-      //   "Questionnaire"
-      // ],
-      // new end
-  
-      telegram_entry_id: 111, //integer
-      context: {
-        queryText: this.#text[this.#text.length - 1], // originalText
-        // todo параметры проставляются в зависимости от интента
-        parameters: {
-          Health: {
-            // Вес
-            // Рост
-          },
-          Food: {
-            'салат': {
-              id: 0,
-              protein: 0,
-              fat: 0,
-              carbohydrate: 0,
-              kcal: 0,
-              // title
-            }
-          }
-        },
-  
-        // https://github.com/gotois/ProstoDiary_bot/issues/146
-  
-        languageCode: this.#language,
-        sentiment: this.#sentiment,
-        text: this.#text,
-        hrefs: this.#hrefs,
-        entities: this.#entities,
-        // #names,
-        // #addresses
-        emails: this.#emails,
-        phones: this.#phones,
-        // #behavior
-        // #date - smart date
-        category: this.#category,
-  
-        // geo: // {geoJSON} - место где была сделана запись
-      },
+      ]),
+      telegram_user_id: this.telegram_user_id,
+      telegram_message_id: this.telegram_message_id,
+      context: this.context,
     };
   }
-  
-  // @todo Поиск исторической ссылки  (Хэш?)
-  static async find (abstractDefinitions) {
-    return '';
-  }
-  
   /**
-   * @todo Обновление/Дополнение в БД
-   * @returns {Promise<void>}
+   * @returns {undefined}
    */
   async update () {
+    await dbEntries.put(this.toJSON());
   }
-  
   /**
-   * @todo аргументы нужно брать из definition
-   * @todo в БД записывать originalText
    * @todo https://github.com/gotois/ProstoDiary_bot/issues/98
-   * @returns {Promise<void>}
+   * @returns {undefined}
    */
-  async save (currentUser, message_id, date) {
-    await dbEntries.post(
-      currentUser.id,
-      crypt.encode(this.text),
-      message_id,
-      new Date(date * 1000),
-    );
+  async save () {
+    await dbEntries.post(this.toJSON());
   }
 }
 

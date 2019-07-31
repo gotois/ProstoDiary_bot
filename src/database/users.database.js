@@ -1,11 +1,9 @@
 const { $$ } = require('.');
 /**
- * TODO: сделать аналогично entities/exist
- *
  * @param {number} telegramUserId - id
  * @returns {Promise}
  */
-const check = async (telegramUserId) => {
+const exist = async (telegramUserId) => {
   const result = await $$(
     `SELECT 1 FROM users
     WHERE telegram_user_id = $1`,
@@ -14,28 +12,15 @@ const check = async (telegramUserId) => {
   return result;
 };
 /**
+ * @todo отдавать только те, что активные
  * @returns {Promise<Array<object>>}
  */
 const getAllTelegramUserIds = async () => {
-  const result = await $$('SELECT telegram_user_id FROM users');
+  const result = await $$('SELECT DISTINCT telegram_user_id FROM bot_story');
   return result.rows;
-};
-/**
- *
- * @param {number} telegramUserId - id
- * @returns {Promise}
- */
-const post = async (telegramUserId) => {
-  const result = await $$(
-    `INSERT INTO users (telegram_user_id)
-    VALUES ($1)`,
-    [telegramUserId],
-  );
-  return result;
 };
 
 module.exports = {
   getAllTelegramUserIds,
-  post,
-  check,
+  exist,
 };
