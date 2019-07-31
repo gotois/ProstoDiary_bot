@@ -53,7 +53,7 @@ const spellText = async (text, lang) => {
     lang,
   });
 
-  for (let a of array) {
+  for (const a of array) {
     const [replacedWord] = a.s;
     out = replaceBetween(out, a.pos, a.pos + a.len, replacedWord);
   }

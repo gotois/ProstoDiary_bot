@@ -38,7 +38,7 @@ const pack = (input, fileName) => {
  */
 const readZipFiles = (zip) => {
   return new Promise((resolve, reject) => {
-    let out = new Map();
+    const out = new Map();
     zip.readEntry();
     zip.on('entry', (entry) => {
       // Directory file names end with '/'.

@@ -152,7 +152,7 @@ const calcMoney = (string) => {
   // TODO: говнокод :)
   string.replace(/€\d+/, (subString, index, text) => {
     let currentIndex = index + 1;
-    let end = text.length - 1;
+    const end = text.length - 1;
     while (currentIndex !== end) {
       const currentText = text[currentIndex];
       if (currentText === '.' || /\d/.test(currentText)) {

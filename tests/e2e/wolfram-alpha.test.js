@@ -9,7 +9,7 @@ module.exports = async (t) => {
     format: 'plaintext',
   });
   t.true(fullOutput.success);
-  for (let pod of fullOutput.pods) {
+  for (const pod of fullOutput.pods) {
     if (pod.id === 'SingleDateFormats') {
       t.log(pod.subpods[0].plaintext);
       const normalDate = convertToNormalDate(pod.subpods[0].plaintext);

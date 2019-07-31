@@ -18,12 +18,14 @@ const ENCODING_TYPE_UTF8 = 'UTF8';
 const features = (text, language) => {
   const rus = isRUS(language);
   // гипотеза - 100 достаточно чтобы считалось большим предлоением
-  const classifyText = !rus && text.length > 100 ? true : false;
+  const classifyText = !rus && text.length > 100;
+  const extractDocumentSentiment = !rus;
+  const extractEntitySentiment = !rus;
   return {
     extractSyntax: true,
     extractEntities: true,
-    extractDocumentSentiment: rus ? false : true, // не работает для русского текста
-    extractEntitySentiment: rus ? false : true, // не работает для русского текста
+    extractDocumentSentiment, // не работает для русского текста
+    extractEntitySentiment, // не работает для русского текста
     classifyText: classifyText, // TODO: работает только на больших предложениях
   };
 };
