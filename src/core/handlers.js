@@ -1,18 +1,25 @@
 const commands = require('./commands');
-
+/**
+ * @param {TelegramBot} bot - bot
+ */
 module.exports = (bot) => {
   bot.onText(commands.PING.alias, require('../controllers/ping.event'));
   bot.onText(commands.BACKUP.alias, require('../controllers/backup.event'));
   bot.onText(commands.DBCLEAR.alias, require('../controllers/dbclear.event'));
   bot.onText(commands.START.alias, require('../controllers/start.event'));
   bot.onText(commands.HELP.alias, require('../controllers/help.event'));
+  // todo: переместить в SEARCH
   bot.onText(commands.GET.alias, require('../controllers/get-date.event'));
+  // todo: переместить в SEARCH
   bot.onText(commands.GETTODAY.alias, require('../controllers/get-date.event'));
   bot.onText(commands.SET.alias, require('../controllers/set-date.event'));
+  // todo: переместить в SEARCH
   bot.onText(commands.GRAPH.alias, require('../controllers/plot.event'));
+  // todo: переместить в SEARCH
   bot.onText(commands.COUNT.alias, require('../controllers/count.event'));
   bot.onText(commands.SEARCH.alias, require('../controllers/search.event'));
   bot.onText(commands.VERSION.alias, require('../controllers/version.event'));
+  // todo: переместить в TEXT
   bot.onText(commands.KPP.alias, require('../controllers/kpp.event'));
   bot.onText(commands.BALANCE.alias, require('../controllers/balance.event'));
 

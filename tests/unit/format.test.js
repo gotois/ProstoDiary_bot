@@ -10,8 +10,8 @@ module.exports = (t) => {
     t.is(
       formatRows([
         {
-          date_added: new Date(0),
-          entry: 'qqq',
+          date: new Date(0),
+          text: 'qqq',
         },
       ]),
       '01.01.1970\nqqq',
@@ -19,8 +19,8 @@ module.exports = (t) => {
     t.is(
       formatRows([
         {
-          date_added: new Date(0),
-          entry: '+++',
+          date: new Date(0),
+          text: '+++',
         },
       ]),
       '01.01.1970\n+++',
@@ -28,12 +28,12 @@ module.exports = (t) => {
     t.is(
       formatRows([
         {
-          date_added: new Date('01.01.1991'),
-          entry: 'some1',
+          date: new Date('01.01.1991'),
+          text: 'some1',
         },
         {
-          date_added: new Date('01.01.1992'),
-          entry: 'some2',
+          date: new Date('01.01.1992'),
+          text: 'some2',
         },
       ]),
       '01.01.1991\nsome1\n\n01.01.1992\nsome2',

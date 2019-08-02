@@ -20,7 +20,10 @@ const getAll = async (telegram_user_id, sorting = 'ASC') => {
 };
 /**
  * @param {number} telegram_user_id - user id
- * @param {string|Date} date - like 2016-12-01
+ * @param {string|Date} date - date
+ * @example
+ * get(111, '2016-12-01');
+ *
  * @returns {Promise<Array>}
  */
 const _get = async (telegram_user_id, date) => {
@@ -38,11 +41,10 @@ const _get = async (telegram_user_id, date) => {
   }
   // todo: День начинается с рассвета и до следующего рассвета (вместо привычного дня времени)
   // fixme: лучше сделать -12 часов и +12 часов
-  const from = `'${date} 00:00:00'::timestamp`;
-  const until = `'${date} 23:59:59'::timestamp`;
-
+  const from = `${date} 00:00:00`;
+  const until = `${date} 23:59:59`;
   const result = await $$(
-    `SELECT DISTINCT user_t.context
+    `SELECT DISTINCT user_t.context->>'queryText' AS TEXT, user_t.telegram_message_id
      FROM user_story as user_t, history as history_t, bot_story as bot_t
      WHERE bot_t.telegram_user_id = $1 AND history_t.created_at BETWEEN $2 AND $3`,
     [telegram_user_id, from, until],

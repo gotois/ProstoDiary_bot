@@ -180,17 +180,19 @@
     "jsdoc": {
       "overrideReplacesDocs": true,
       "augmentsExtendsReplacesDocs": true,
-      "implementsReplacesDocs": true,
+      "implementsReplacesDocs": true
     }
   },
   "env": {
     "browser": false,
-    "node": true,
-    "es6": true
+    "node": true
   },
   "parserOptions": {
     "ecmaVersion": 9,
-    "sourceType": "script"
+    "sourceType": "script",
+    "ecmaFeatures": {
+      "impliedStrict": true
+    }
   },
   "plugins": [
     "ava",

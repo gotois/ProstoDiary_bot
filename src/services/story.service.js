@@ -1,56 +1,18 @@
 const Eyo = require('eyo-kernel');
 const { version } = require('../../package');
 const validator = require('validator');
-const crypt = require('./crypt.service');
 const dbEntries = require('../database/entities.database');
 const { inputAnalyze } = require('./intent.service');
 const languageService = require('./language.service');
 const { detectLang, isRUS, isENG } = require('./detect-language.service');
 const { spellText } = require('./speller.service');
+const foodService = require('./food.service');
 const logger = require('./logger.service');
-const foursquare = require('./foursquare.service');
 const { PERSON } = require('../environment');
-
-const xxx = (intentName) => {
-  switch (intentName) {
-    case INTENTS.BUY: {
-      // if (result.parameters) {
-      // price: result.parameters.fields.price
-      // currency: result.parameters.fields.currency
-      // }
-      return result.fulfillmentText;
-    }
-    case INTENTS.EAT: {
-      let outMessage = result.fulfillmentText;
-      for (const eatValue of result.parameters.fields.Food.listValue
-        .values) {
-        // TODO: брать значения из database.foods;
-        // заменить stringify
-        // console.log(eatValue.stringValue)
-        outMessage += '\n' + eatValue.stringValue;
-      }
-      return outMessage;
-    }
-    case INTENTS.FINANCE: {
-      return result.fulfillmentText;
-    }
-    case INTENTS.FITNESS: {
-      return result.fulfillmentText;
-    }
-    case INTENTS.WEIGHT: {
-      return result.fulfillmentText;
-    }
-    case INTENTS.WORK: {
-      return result.fulfillmentText;
-    }
-    default: {
-      // No intent matched
-      return '';
-    }
-  }
-}
-
+// const crypt = require('./crypt.service');
+// const foursquare = require('./foursquare.service');
 // const { Abstract } = require('./abstract.service');
+
 /**
  * ВАЖНО! Это не StoryLanguage!
  * Создание единой (общей) истории деятельности абстрактов
@@ -59,6 +21,7 @@ const xxx = (intentName) => {
  */
 class Story {
   #text = [];
+  #parameters = []; // найденные параметры интента
   #entities; // todo: разбить на схемы
   #language = []; // @example ['ru', rus', 'russian']
   #sentiment = []; // @example ['normal', 'angry']
@@ -114,41 +77,26 @@ class Story {
   }
   // todo: crypt.encode(context)
   get context() {
+    // параметры проставляются в зависимости от интента
     return {
       queryText: this.#text[this.#text.length - 1], // originalText
-        // todo параметры проставляются в зависимости от интента
-        parameters: {
-        Health: {
-          // Вес
-          // Рост
-        },
-        Food: {
-          'салат': {
-            id: 0,
-              protein: 0,
-              fat: 0,
-              carbohydrate: 0,
-              kcal: 0,
-            // title
-          }
-        }
-      },
+      parameters: this.#parameters[0],
+      foodResults: this.foodResults, // todo: тестово, нужно иное насыщение
     
       // https://github.com/gotois/ProstoDiary_bot/issues/146
     
       languageCode: this.#language,
-        sentiment: this.#sentiment,
-        text: this.#text,
-        hrefs: this.#hrefs,
-        entities: this.#entities,
-        // #names,
-        // #addresses
-        emails: this.#emails,
-        phones: this.#phones,
-        // #behavior
-        // #date - smart date
-        category: this.#category,
-    
+      sentiment: this.#sentiment,
+      text: this.#text,
+      hrefs: this.#hrefs,
+      entities: this.#entities,
+      emails: this.#emails,
+      phones: this.#phones,
+      category: this.#category,
+      // #names,
+      // #addresses
+      // #behavior
+      // #date - smart date
       // #place
     };
   }
@@ -218,8 +166,9 @@ class Story {
     if (this.text.length <= 256) {
       try {
         const dialogflowResult = await inputAnalyze(this.text);
-        // TODO: проверка интента - если он задекларирован ботом - то дальше, иначе генерация ошибки
-        this.#intent.push(dialogflowResult.intent.displayName);
+        this.language = dialogflowResult.languageCode;
+        this.#parameters.unshift(dialogflowResult.parameters.fields);
+        this.#intent.unshift(dialogflowResult.intent.displayName);
         // TODO: а также использовать результат из dialogFlow
         // ...
         // TODO: Если в интентах все необходимые параметры используются они
@@ -236,7 +185,7 @@ class Story {
     // this.#place = ...
     
     // FIXME: Разбить текст на строки через "\n" (Обработка каждой строки выполняется отдельно)
-    // А еще лучше если это будет сделано через NLP
+    // И еще лучше если это дополнительно прогнать через NLP
   
     // Насыщение абстрактов (от Abstract к Natural)
     // ...
@@ -247,6 +196,20 @@ class Story {
     // Исправление кастомных типов
     // (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
     // ...
+    
+    // дополняем данными из FatSecret
+    try {
+      for (const parameter of this.#parameters) {
+        if (parameter.Food) {
+          for (const food of parameter.Food.listValue.values) {
+            const results = await foodService.search(food.stringValue, 2);
+            this.foodResults = results;
+          }
+        }
+      }
+    } catch (error) {
+      logger.error(error.message);
+    }
     
     // todo проверяем что текст поправил туду в todoist - если так то спрашиваем у пользователя прав ли бот
     // ...
@@ -262,17 +225,17 @@ class Story {
       version: version,
       author: JSON.stringify(PERSON),
       publisher: "goto Interactive Software",
-      jurisdiction: JSON.stringify([
-        {
-          "coding": [
-            {
-              "system": "urn:iso:std:iso:3166",
-              "code": "GB",
-              // "display": "United Kingdom of Great Britain and Northern Ireland (the)"
-            }
-          ]
-        }
-      ]),
+      // jurisdiction: JSON.stringify([
+      //   {
+      //     "coding": [
+      //       {
+      //         "system": "urn:iso:std:iso:3166",
+      //         "code": "GB",
+      //         // "display": "United Kingdom of Great Britain and Northern Ireland (the)"
+      //       }
+      //     ]
+      //   }
+      // ]),
       telegram_user_id: this.telegram_user_id,
       telegram_message_id: this.telegram_message_id,
       context: this.context,

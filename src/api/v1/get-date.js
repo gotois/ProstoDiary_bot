@@ -22,11 +22,8 @@ module.exports = async (match, currentUser) => {
     throw new Error('Wrong date');
   }
   const rows = await dbEntries.get(currentUser.id, date);
-  if (rows.length === 0) {
-    return 'Записей нет';
-  }
   // todo: https://github.com/gotois/ProstoDiary_bot/issues/109
   // надо получать из значений только то что является едой и это передавать в foodService
   // ...
-  return JSON.stringify(rows, null, 2);
+  return rows;
 };

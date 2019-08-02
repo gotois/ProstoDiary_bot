@@ -19,11 +19,17 @@ const getDataFromDate = async ({ chat, from }, match) => {
   const currentUser = sessions.getSession(userId);
   const getDateAPI = require('../api/v1/get-date');
   try {
-    const dateResult = await getDateAPI(match, currentUser);
-    await bot.sendMessage(chatId, dateResult);
+    const rows = await getDateAPI(match, currentUser);
+    if (rows.length === 0) {
+      await bot.sendMessage(chatId, 'Записей нет');
+      return;
+    }
+    for (const row of rows) {
+      await bot.forwardMessage(chatId, userId, row.telegram_message_id);
+    }
   } catch (error) {
     logger.log('error', error.toString());
-    await bot.sendMessage(chatId, 'Произошла ошибка');
+    await bot.sendMessage(chatId, error.message || 'Произошла ошибка');
   }
 };
 

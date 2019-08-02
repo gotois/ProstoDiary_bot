@@ -40,11 +40,11 @@ const onText = async ({
   entities,
 }) => {
   logger.log('info', onText.name);
-  // Пропускаем Reply сообщений
+  const chatId = chat.id;
   if (reply_to_message instanceof Object) {
+    await bot.sendMessage(chatId, 'Reply message not supported');
     return;
   }
-  const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
   // Пропускаем команды бота

@@ -18,14 +18,15 @@ const initBot = () => {
     Promise.all([
       IS_DEV ? bot.deleteWebHook() : bot.setWebHook(TELEGRAM.WEB_HOOK_URL),
       bot.getMe(),
-    ]) // eslint-disable-next-line no-unused-vars
-      .then(([webhookResult, botInfo]) => {
+    ])
+      .then(([_webhookResult, botInfo]) => {
         clearTimeout(timer);
         resolve(botInfo);
       })
       .catch((error) => {
         logger.log('info', error);
         if (error.code === 'EFATAL') {
+          clearTimeout(timer);
           throw error;
         }
       });

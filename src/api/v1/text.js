@@ -21,7 +21,7 @@ module.exports = async (text, date, currentUser, telegram_message_id) => {
     await story.save();
   }
   const storyDefinition = story.toJSON();
-  const storyResult = JSON.stringify(storyDefinition, null, 2);
+  const storyResult = JSON.stringify(storyDefinition.context, null, 2);
   // ограничиваем 1000 символами из-за ошибки "ETELEGRAM: 400 Bad Request: message is too long"
   return storyResult.slice(0, 1000) + format.previousInput(text);
 };

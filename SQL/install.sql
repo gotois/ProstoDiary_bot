@@ -22,7 +22,7 @@ COMMENT ON DATABASE "ProstoDiaryDB"
 --
 
 -- Все на 100 гр. продукта
-CREATE TABLE IF NOT EXISTS foods (
+CREATE UNLOGGED TABLE IF NOT EXISTS foods (
   id SERIAL PRIMARY KEY,
   title TEXT UNIQUE, -- нужен индекс по этому
   protein NUMERIC (5, 2) default NULL,
@@ -63,9 +63,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 --create schema private;
 CREATE TABLE IF NOT EXISTS bot_story (
   id BIGSERIAL PRIMARY KEY,
---  todo: вместо id использовать sign - выполняет роль публичного ключа.Затем чтобы дешифровать данные нужно выполнить дешифровку этой подписи telegram_id + SALT_PASSWORD
---  sign SOMEHASH PRIMARY KEY, -- подпись сгенерированная ботом, которая подтверждает что бот не был скомпроментирован. todo: попробвать через `MD5('string');`?
-  version VARCHAR(20) NOT NULL, -- bot Version. отсюда же можно узнать и api version аналогична в package.json -нужна для проверки необходимости обновить историю бота
+--  sign SOMEHASH PRIMARY KEY UNIQUE, -- электронная подпись сгенерированная ботом, которая подтверждает что бот не был скомпроментирован. todo: попробвать через `MD5('string');`?
+  version VARCHAR(20) NOT NULL CHECK (version <> ''), -- bot Version. отсюда же можно узнать и api version аналогична в package.json -нужна для проверки необходимости обновить историю бота
   author JSONB NOT NULL, -- JSON-LD; todo: нужна отдельная приватная таблица для этого
   publisher VARCHAR(100) NOT NULL, -- название организации которые курируют разработку бота. todo: нужна отдельная таблица для этого
   jurisdiction JSONB, -- Intended jurisdiction for operation definition (if applicable); todo: нужна отдельная таблица для этого
@@ -78,10 +77,10 @@ CREATE TABLE IF NOT EXISTS user_story (
   id BIGSERIAL PRIMARY KEY,
   type INTENT NOT NULL,
   telegram_message_id INTEGER NOT NULL UNIQUE,
-  context JSONB NOT NULL
+  context JSONB NOT NULL -- TEXT чтобы дешифровать данные нужно выполнить дешифровку этой подписи telegram_id + SALT_PASSWORD
 );
--- FIXME: нужен индекс для типа
---CREATE INDEX idx_intent ON user_story USING GIN (type);
+CREATE INDEX IF NOT EXISTS idx_intent ON user_story (type);
+
 CREATE TABLE IF NOT EXISTS history (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), -- глобальная историческая ссылка
   bot_story_id BIGSERIAL REFERENCES bot_story ON UPDATE CASCADE ON DELETE CASCADE,
@@ -93,11 +92,11 @@ CREATE TABLE IF NOT EXISTS history (
 
   -- ниже под вопросом
   --  "name": "Populate Questionnaire", // Name for this operation definition (computer friendly)
---        // "experimental" : true, // For testing purposes, not real usage
---      // "kind": "operation", // operation | query
---      // "affectsState" : <boolean>, // Whether content is changed by the operation
---      // "code": "populate", //  Name used to invoke the operation
---      // "resource": [ // Types this operation applies to
---      //   "Questionnaire"
---      // ],
+  --"experimental" : true, // For testing purposes, not real usage
+  -- "kind": "operation", // operation | query
+  -- "affectsState" : <boolean>, // Whether content is changed by the operation
+  -- "code": "populate", //  Name used to invoke the operation
+  -- "resource": [ // Types this operation applies to
+  --   "Questionnaire"
+  -- ],
 );
