@@ -1,4 +1,4 @@
-const bot = require('../bot');
+const bot = require('../core');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 /**

@@ -1,4 +1,4 @@
-const bot = require('../bot');
+const bot = require('../core');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 /**
@@ -9,7 +9,7 @@ const logger = require('../services/logger.service');
  * @param {object} msg.from - from
  * @returns {undefined}
  */
-const onStart = async ({ chat, from, message_id }) => {
+const onStart = async ({ chat, from, date, message_id }) => {
   logger.log('info', onStart.name);
   const chatId = chat.id;
   const currentUser = sessions.getSession(from.id);
@@ -19,6 +19,7 @@ const onStart = async ({ chat, from, message_id }) => {
       from.language_code,
       from.first_name,
       currentUser,
+      date,
       message_id,
     );
     await bot.sendMessage(chatId, startResult);

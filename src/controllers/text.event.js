@@ -1,5 +1,5 @@
-const bot = require('../bot');
-const commands = require('../bot/commands');
+const bot = require('../core');
+const commands = require('../core/commands');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 /**

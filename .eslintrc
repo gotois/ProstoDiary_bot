@@ -103,7 +103,7 @@
     "jsdoc/newline-after-description": "warn",
     "jsdoc/check-tag-names": "error",
     "jsdoc/check-types": "error",
-    "jsdoc/no-undefined-types": "error",
+    "jsdoc/no-undefined-types": "warn",
     "jsdoc/require-param-description": "warn",
     "jsdoc/require-param-name": "error",
     "jsdoc/require-returns-type": "error",
@@ -175,6 +175,13 @@
     "unicorn/prevent-abbreviations": "error",
     "unicorn/regex-shorthand": "error",
     "unicorn/throw-new-error": "error"
+  },
+  "settings": {
+    "jsdoc": {
+      "overrideReplacesDocs": true,
+      "augmentsExtendsReplacesDocs": true,
+      "implementsReplacesDocs": true,
+    }
   },
   "env": {
     "browser": false,

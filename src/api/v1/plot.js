@@ -1,5 +1,5 @@
 const { createPhotoBuffer } = require('../../services/graph.service');
-const commands = require('../../bot/commands');
+const commands = require('../../core/commands');
 const datetime = require('../../services/date.service');
 const { createRegexInput } = require('../../services/text.service');
 const { decodeRows } = require('../../services/format.service');

@@ -75,11 +75,14 @@ class Story {
   /**
    * @param {string} text - original text
    */
-  constructor({ text, date, currentUser, telegram_message_id }) {
+  constructor({ text, date, currentUser, intent, telegram_message_id }) {
     this.text = text.trim();
     this.telegram_user_id = currentUser.id;
     this.telegram_message_id = telegram_message_id;
     this.language = detectLang(this.text).language;
+    if (intent) {
+      this.#intent.push(intent);
+    }
     if (date) {
       this.#date.push(date);
     }

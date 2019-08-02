@@ -1,7 +1,7 @@
 const crypt = require('../services/crypt.service');
 const { $$, pool } = require('.');
+require('../../types');
 /**
- * @todo от запроса вида getAll надо уходить, такой запрос очень тяжелый
  * @param {number} telegram_user_id - user id
  * @returns {Promise<Array>}
  */
@@ -54,7 +54,7 @@ const _get = async (telegram_user_id, date) => {
   return result.rows;
 };
 /**
- * @param {object} storyJSON - story JSON
+ * @param {storyJSON} storyJSON - story JSON
  * @returns {Promise<Array>}
  */
 const _post = async (storyJSON) => {
@@ -102,7 +102,7 @@ const _post = async (storyJSON) => {
   }
 };
 /**
- * @todo так же нужно обновлять version bot_story и прочее
+ * @param {storyJSON} storyJSON - story
  * @returns {Promise<undefined>}
  */
 const _put = async (storyJSON) => {
@@ -110,6 +110,8 @@ const _put = async (storyJSON) => {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    // TODO: нужна процедура, которая поверяет соответствие переданной версии текущего бота и привязанной версии бота к bot_story.
+    //  В случае несовпадения UPDATE не срабатывает
     await client.query({
       name: 'update-user-story',
       text: `UPDATE user_story
@@ -151,7 +153,7 @@ const _delete = async (userId, telegram_message_id) => {
   }
 };
 /**
- * Удаление всей истории пользователя целиком
+ * Удаление целиком всей истории пользователя целиком
  *
  * @param {number} telegram_user_id - id user
  * @returns {Promise<undefined>}

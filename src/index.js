@@ -1,4 +1,5 @@
-const bot = require('./bot');
+// todo: move to -> core/index.js
+const bot = require('./core');
 const dbClient = require('./database');
 const logger = require('./services/logger.service');
 const { projectVersion } = require('./services/version.service');
@@ -73,6 +74,7 @@ const sendUpdatesToUsers = (text) => {
       });
     })
     .catch((error) => {
+      // todo https://github.com/gotois/ProstoDiary_bot/issues/134
       logger.log('error', error.toString());
     });
 };
@@ -80,7 +82,7 @@ const sendUpdatesToUsers = (text) => {
 (async function main() {
   await databaseConnect();
   const botInfo = await startTelegramBot();
-  require('./bot/handlers')(bot);
+  require('./core/handlers')(bot);
   if (IS_PRODUCTION) {
     logger.log('info', `production bot:${botInfo.first_name} started`);
 

@@ -1,6 +1,6 @@
 // TODO: это перевести в e2e тесты
 module.exports = (t) => {
-  const commands = require('../../src/bot/commands');
+  const commands = require('../../src/core/commands');
   const {
     PING,
     BACKUP,

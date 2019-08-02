@@ -1,4 +1,4 @@
-const commands = require('../../bot/commands');
+const commands = require('../../core/commands');
 /**
  * @todo поддержать еще вариант /help something, где будет происходить поиск по something
  * @returns {string}

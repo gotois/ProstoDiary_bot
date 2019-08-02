@@ -5,14 +5,14 @@ module.exports = async (
   langCode,
   first_name,
   currentUser,
+  date,
   telegram_message_id,
 ) => {
   let startMessage;
-  // todo: этот текст должне быть в интенте - InstallIntent
   if (langCode === 'en') {
-    startMessage = 'INSTALL_EN_BOT ' + first_name;
+    startMessage = 'INSTALL EN Bot for ' + first_name;
   } else if (langCode === 'ru') {
-    startMessage = 'INSTALL_RU_BOT ' + first_name;
+    startMessage = 'INSTALL RU Bot for ' + first_name;
   } else {
     throw new TypeError('Wrong langCode');
   }
@@ -22,13 +22,11 @@ module.exports = async (
   }
   const story = new Story({
     text: startMessage,
-    date: null, // todo: вставлять время telegram
+    date,
     currentUser,
     telegram_message_id,
+    intent: 'install',
   });
-  await story.fill();
-  // todo: здесь должна быть проверка на валидность введенных данных
-  // ...
   await story.save();
   return 'Вы вошли в систему';
 };

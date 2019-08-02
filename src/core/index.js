@@ -1,3 +1,4 @@
+// todo: rename -> bot.js
 const TelegramBot = require('node-telegram-bot-api');
 const { IS_PRODUCTION, IS_DEV, TELEGRAM, SERVER } = require('../environment');
 let bot;

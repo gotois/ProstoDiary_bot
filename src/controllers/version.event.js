@@ -1,4 +1,4 @@
-const bot = require('../bot');
+const bot = require('../core');
 const logger = require('../services/logger.service');
 /**
  * @param  {object} chat - chat
