@@ -14,19 +14,19 @@ const onStart = async ({ chat, from, date, message_id }) => {
   const chatId = chat.id;
   const currentUser = sessions.getSession(from.id);
   const startAPI = require('../api/v1/start');
-  try {
-    const startResult = await startAPI(
-      from.language_code,
-      from.first_name,
-      currentUser,
-      date,
-      message_id,
-    );
-    await bot.sendMessage(chatId, startResult);
-  } catch (error) {
+  const { error, result } = await startAPI(
+    from.language_code,
+    from.first_name,
+    currentUser,
+    date,
+    message_id,
+  );
+  if (error) {
     logger.log('error', error);
     await bot.sendMessage(chatId, 'Операция не выполнена');
+    return;
   }
+  await bot.sendMessage(chatId, result);
 };
 
 module.exports = onStart;

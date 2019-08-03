@@ -2,20 +2,19 @@ module.exports = async (t) => {
   t.timeout(3000);
   const foursquareService = require('../../src/services/foursquare.service');
   // ll example
-  const data = await foursquareService.search({
+  const llData = await foursquareService.search({
     ll: '40.7,-74',
     query: 'sushi',
     limit: 10,
   });
-  t.log(data);
+  t.true(Array.isArray(llData.venues));
 
   // near example
-  // const data = await foursquareService.search({
-  //   near: 'Москва',
-  //   query: 'tacos',
-  //   limit: 10,
-  // });
-  // t.log(data);
+  const nearData = await foursquareService.search({
+    near: 'Москва',
+    limit: 1,
+  });
+  t.true(Array.isArray(nearData.venues));
 
   // const venue = await foursquareService.venueDetail({
   //   type: "venueDetail",

@@ -4,7 +4,7 @@ const dbEntries = require('../../database/entities.database');
 // @deprecated: надо объединить с search.js
 module.exports = async (match, currentUser) => {
   let getTime;
-  // todo: должно быть естественным языком вида: /get покажи все покупки за прошлую неделю
+  // todo: должно быть естественным языком вида: /search покажи все покупки за прошлую неделю
   if (match[0] === '/get today') {
     getTime = new Date();
   } else if (match[0] === '/get week') {

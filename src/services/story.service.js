@@ -9,8 +9,8 @@ const { spellText } = require('./speller.service');
 const foodService = require('./food.service');
 const logger = require('./logger.service');
 const { PERSON } = require('../environment');
+const foursquare = require('./foursquare.service');
 // const crypt = require('./crypt.service');
-// const foursquare = require('./foursquare.service');
 // const { Abstract } = require('./abstract.service');
 
 /**
@@ -32,7 +32,7 @@ class Story {
   #phones = []; // полученные телефоны
   #behavior; // todo: анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
   #intent = []; // Определяем намерения
-  #place; // // {geoJSON} - место где была сделана запись.
+  #place = []; // {geoJSON} - место где была сделана запись.
   #date = []; // Получение даты события (Подведение таймлайна) <SmartDate>? // по умолчанию заполняем время с шагом в один день
   #category = []; // Получение существа события - сущность события
   /**
@@ -97,7 +97,7 @@ class Story {
       // #addresses
       // #behavior
       // #date - smart date
-      // #place
+      place: this.#place,
     };
   }
   /**
@@ -181,8 +181,6 @@ class Story {
         logger.error(error.message);
       }
     }
-    // todo: использовать foursquare API
-    // this.#place = ...
     
     // FIXME: Разбить текст на строки через "\n" (Обработка каждой строки выполняется отдельно)
     // И еще лучше если это дополнительно прогнать через NLP
@@ -195,6 +193,7 @@ class Story {
     // ...
     // Исправление кастомных типов
     // (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
+    // 	.9 -> 0.9
     // ...
     
     // дополняем данными из FatSecret
@@ -205,6 +204,29 @@ class Story {
             const results = await foodService.search(food.stringValue, 2);
             this.foodResults = results;
           }
+        }
+      }
+    } catch (error) {
+      logger.error(error.message);
+    }
+    // насыщаем foursquare
+    try {
+      for (let entity of this.#entities) {
+        if (entity.type === 'LOCATION') {
+          const data = await foursquare.search({
+            near: entity.name,
+            limit: 1,
+          });
+          this.#place.push({
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [data.geocode.feature.geometry.center.lat, data.geocode.feature.geometry.center.lng]
+            },
+            "properties": {
+              "name": data.geocode.feature.name
+            }
+          });
         }
       }
     } catch (error) {

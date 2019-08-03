@@ -3,7 +3,9 @@ const {
   getCheckSum,
 } = require('../../services/version.service');
 const { IS_PRODUCTION } = require('../../environment');
-
+/**
+ * @returns {jsonrpc}
+ */
 module.exports = () => {
   let text = '';
   text += projectVersion;
@@ -11,5 +13,8 @@ module.exports = () => {
     text += ' - production\n';
   }
   text += getCheckSum();
-  return text;
+  return {
+    jsonrpc: '2.0',
+    result: text,
+  };
 };

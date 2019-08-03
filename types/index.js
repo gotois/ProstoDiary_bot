@@ -12,3 +12,12 @@
  * @property {string} publisher - The publisher
  * @property {JSON} jurisdiction - The jurisdiction
  */
+/**
+ * @module types
+ */
+/**
+ * @typedef {object} jsonrpc
+ * @property {string} jsonrpc - jsonrpc version
+ * @property {*|undefined} result - result
+ * @property {object|undefined} error - error
+ */

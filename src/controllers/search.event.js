@@ -2,6 +2,7 @@ const bot = require('../core');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 /**
+ * @todo использовать этот контроллер для понимания что отображать пользователю
  * @param {object} msg - message
  * @param {object} msg.chat - chat
  * @param {object} msg.from - from

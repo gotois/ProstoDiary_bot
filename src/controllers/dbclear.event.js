@@ -2,8 +2,7 @@ const bot = require('../core');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 /**
- * Очистить базу данных с подтверждением
- *
+ * @description Очистить базу данных с подтверждением
  * @param {object} msg - message
  * @param {object} msg.chat - chat
  * @param {object} msg.from - from
@@ -30,13 +29,13 @@ const onDatabaseClear = async ({ chat, from }) => {
       return;
     }
     const currentUser = sessions.getSession(fromId);
-    try {
-      const result = await dbClearAPI(currentUser);
-      await bot.sendMessage(chat.id, result);
-    } catch (error) {
+    const { error, result } = await dbClearAPI(currentUser);
+    if (error) {
       logger.log('error', error);
       await bot.sendMessage(chat.id, 'Ошибка в операции');
+      return;
     }
+    await bot.sendMessage(chat.id, result);
   });
 };
 

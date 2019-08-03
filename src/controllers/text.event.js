@@ -64,16 +64,16 @@ const onText = async ({
     return;
   }
   const textAPI = require('../api/v1/text');
-  try {
-    const result = await textAPI(text, date, currentUser, message_id);
-    await bot.sendMessage(chatId, result, {
-      disable_notification: true,
-      disable_web_page_preview: true,
-    });
-  } catch (error) {
+  const { error, result } = await textAPI(text, date, currentUser, message_id);
+  if (error) {
     logger.log('error', error.toString());
     await bot.sendMessage(chatId, error.toString());
+    return;
   }
+  await bot.sendMessage(chatId, result, {
+    disable_notification: true,
+    disable_web_page_preview: true,
+  });
 };
 
 module.exports = onText;

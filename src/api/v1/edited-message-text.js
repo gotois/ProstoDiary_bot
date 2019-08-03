@@ -1,5 +1,4 @@
 const format = require('../../services/format.service');
-const crypt = require('../../services/crypt.service');
 const Story = require('../../services/story.service');
 const dbEntries = require('../../database/entities.database');
 /**

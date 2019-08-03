@@ -1,6 +1,7 @@
 const bot = require('../core');
 const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
+const backupAPI = require('../api/v1/backup');
 /**
  * @description Скачивание файла БД на устройство
  * @param {object} msg - message
@@ -14,24 +15,24 @@ const onBackup = async ({ chat, from, date }) => {
   const chatId = chat.id;
   const fromId = from.id;
   const currentUser = sessions.getSession(fromId);
-  const backupAPI = require('../api/v1/backup');
-  try {
-    const { filename, fileBuffer } = await backupAPI(currentUser, date);
-    await bot.sendDocument(
-      chatId,
-      fileBuffer,
-      {
-        caption: filename,
-      },
-      {
-        filename: filename + '.zip',
-        contentType: 'application/zip',
-      },
-    );
-  } catch (error) {
+  const { error, result } = await backupAPI(currentUser, date);
+  if (error) {
     logger.log('error', error.toString());
-    await bot.sendMessage(chatId, 'Операция не выполнена');
+    await bot.sendMessage(chatId, error);
+    return;
   }
+  const { filename, fileBuffer } = result;
+  await bot.sendDocument(
+    chatId,
+    fileBuffer,
+    {
+      caption: filename,
+    },
+    {
+      filename: filename + '.zip',
+      contentType: 'application/zip',
+    },
+  );
 };
 
 module.exports = onBackup;

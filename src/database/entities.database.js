@@ -72,14 +72,26 @@ const _post = async (storyJSON) => {
   } = storyJSON;
   const client = await pool.connect();
   try {
+    const result = await $$(
+      `SELECT id FROM bot_story
+    WHERE version = $1 AND telegram_user_id = $2
+    LIMIT 1`,
+      [version, telegram_user_id],
+    );
     await client.query('BEGIN');
-    const botStoryResult = await client.query({
-      name: 'create-bot-story',
-      text: `INSERT INTO bot_story (version, author, publisher, jurisdiction, telegram_user_id)
+    let botStoryId;
+    if (result.rows.length > 0) {
+      botStoryId = result.rows[0].id;
+    } else {
+      const botStoryResult = await client.query({
+        name: 'create-bot-story',
+        text: `INSERT INTO bot_story (version, author, publisher, jurisdiction, telegram_user_id)
              VALUES ($1, $2, $3, $4, $5)
              RETURNING id`,
-      values: [version, author, publisher, jurisdiction, telegram_user_id],
-    });
+        values: [version, author, publisher, jurisdiction, telegram_user_id],
+      });
+      botStoryId = botStoryResult.rows[0].id;
+    }
     const userStoryResult = await client.query({
       name: 'create-user-story',
       text: `INSERT INTO user_story (type, telegram_message_id, context)
@@ -92,7 +104,7 @@ const _post = async (storyJSON) => {
       text: `INSERT INTO history (bot_story_id, user_story_id)
              VALUES ($1, $2)
              RETURNING *`,
-      values: [botStoryResult.rows[0].id, userStoryResult.rows[0].id],
+      values: [botStoryId, userStoryResult.rows[0].id],
     });
     await client.query('COMMIT');
     return historyResult.rows;

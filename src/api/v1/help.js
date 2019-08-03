@@ -1,7 +1,7 @@
 const commands = require('../../core/commands');
 /**
  * @todo поддержать еще вариант /help something, где будет происходить поиск по something
- * @returns {string}
+ * @returns {jsonrpc}
  */
 module.exports = () => {
   const helpData = Object.entries(commands).reduce((acc, [command, object]) => {
@@ -16,7 +16,11 @@ module.exports = () => {
     acc += result;
     return acc;
   }, '');
-  return (
-    message + '\n\nF.A.Q.: ' + 'https://prosto-diary.gotointeractive.com/faq/'
-  );
+  return {
+    jsonrpc: '2.0',
+    result:
+      message +
+      '\n\nF.A.Q.: ' +
+      'https://prosto-diary.gotointeractive.com/faq/',
+  };
 };

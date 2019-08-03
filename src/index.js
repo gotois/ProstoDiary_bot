@@ -75,8 +75,10 @@ const sendUpdatesToUsers = (text) => {
       });
     })
     .catch((error) => {
-      // todo https://github.com/gotois/ProstoDiary_bot/issues/134
       logger.log('error', error.toString());
+      if (error.statusCode === 403) {
+        // todo https://github.com/gotois/ProstoDiary_bot/issues/134
+      }
     });
 };
 

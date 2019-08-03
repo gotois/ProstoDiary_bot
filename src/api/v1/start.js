@@ -18,7 +18,10 @@ module.exports = async (
   }
   const { rowCount } = await dbUsers.exist(currentUser.id);
   if (rowCount > 0) {
-    return 'Повторная установка не требуется';
+    return {
+      jsonrpc: '2.0',
+      result: 'Повторная установка не требуется',
+    };
   }
   const story = new Story({
     text: startMessage,
@@ -28,5 +31,12 @@ module.exports = async (
     intent: 'install',
   });
   await story.save();
-  return 'Вы вошли в систему';
+  // todo: выводить оферту
+  // ...
+  // todo: задавать пароль, который будет нужен для crypto
+  // ...
+  return {
+    jsonrpc: '2.0',
+    result: 'Вы вошли в систему',
+  };
 };

@@ -8,15 +8,15 @@ const helpAPI = require('../api/v1/help');
  */
 const onHelp = async ({ chat }) => {
   const chatId = chat.id;
-  const helpResult = await helpAPI();
-  try {
-    await bot.sendMessage(chatId, helpResult, {
-      parse_mode: 'Markdown',
-    });
-  } catch (error) {
+  const { error, result } = await helpAPI();
+  if (error) {
     logger.error(error);
-    // await bot.sendMessage(chatId, error.message);
+    await bot.sendMessage(chatId, error.message);
+    return;
   }
+  await bot.sendMessage(chatId, result, {
+    parse_mode: 'Markdown',
+  });
 };
 
 module.exports = onHelp;

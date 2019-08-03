@@ -1,3 +1,9 @@
+/**
+ * @returns {jsonrpc}
+ */
 module.exports = () => {
-  return 'pong\nAPI v1';
+  return {
+    jsonrpc: '2.0',
+    result: 'pong\nAPI v1',
+  };
 };

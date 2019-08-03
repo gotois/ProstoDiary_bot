@@ -6,8 +6,8 @@ const pingAPI = require('../api/v1/ping');
  */
 const onPing = async ({ chat }) => {
   const chatId = chat.id;
-  const pingResult = pingAPI();
-  await bot.sendMessage(chatId, pingResult);
+  const { result } = pingAPI();
+  await bot.sendMessage(chatId, result);
 };
 
 module.exports = onPing;
