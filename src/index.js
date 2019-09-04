@@ -4,6 +4,7 @@ const dbClient = require('./database');
 const logger = require('./services/logger.service');
 const { projectVersion } = require('./services/version.service');
 const { IS_PRODUCTION, IS_DEV, TELEGRAM } = require('./environment');
+const emailNotifier = require('./services/email-notifier.service');
 /**
  * @description initialize bot
  * @returns {Promise<object>}
@@ -95,6 +96,9 @@ const sendUpdatesToUsers = (text) => {
     // TODO: если отличается хэш в таблице Bot с тем что есть сейчас - тогда уведомляем пользователей о новой версии
     // TODO: в text добавить сгенерированный ченчлог
     sendUpdatesToUsers(botInfo.first_name + ' updated: ' + projectVersion);
+
+    // запускаем считыватель писем
+    emailNotifier.start();
   } else {
     logger.log('info', 'dev bot started');
   }

@@ -53,9 +53,20 @@ const {
   FOURSQUARE_CLIENT_SECRET,
 
   PERSON,
+
+  MAIL_USER,
+  MAIL_PASSWORD,
+  MAIL_HOST,
+  MAIL_PORT,
 } = process.env;
 
 const ENV = {
+  MAIL: {
+    USER: MAIL_USER,
+    PASSWORD: MAIL_PASSWORD,
+    HOST: MAIL_HOST,
+    PORT: MAIL_PORT,
+  },
   DATABASE: {
     databaseHost: PGHOST,
     databaseName: PGDATABASE,
