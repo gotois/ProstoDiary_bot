@@ -113,6 +113,7 @@ test.todo('/search');
 
 skipTestForFastOrTravis('archive service', require('./archive-service.test'));
 skipTestForFastOrTravis('AppleHealth', require('./apple-health-service.test'));
+skipTestForFastOrTravis('Tinkoff', require('./tinkoff-service.test'));
 
 test('bot init', require('./telegram-bot.test'));
 test('foursquare', require('./foursquare-service.test'));

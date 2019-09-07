@@ -1,5 +1,6 @@
 const dbUsers = require('../../database/users.database');
 const Story = require('../../services/story.service');
+const auth = require('../../services/auth.service');
 
 module.exports = async (
   langCode,
@@ -35,6 +36,12 @@ module.exports = async (
   // ...
   // todo: задавать пароль, который будет нужен для crypto
   // ...
+  
+  // todo задать вопрос об почте
+  const email = 'bot@gotointeractive.com'; // todo: это нужн получать из ввода
+  // todo: генерация auth
+  await auth.genereateGoogleAuth(email);
+  
   return {
     jsonrpc: '2.0',
     result: 'Вы вошли в систему',
