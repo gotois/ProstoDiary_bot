@@ -33,6 +33,10 @@ const normalizeRegexStringToString = (regexString) => {
   return regexString.replace(/^\//, '').replace(/\/$/, '');
 };
 
+/**
+ * @deprecated - объединить с v2/search
+ * @returns {Promise<void>}
+ */
 module.exports = async (match, currentUser, callback) => {
   const input = String(match[3]).trim();
   const rows = await dbEntries.getAll(currentUser.id);

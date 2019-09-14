@@ -5,6 +5,10 @@ const { createRegexInput } = require('../../services/text.service');
 const { decodeRows } = require('../../services/format.service');
 const dbEntries = require('../../database/entities.database');
 
+/**
+ * @deprecated - объединить с v2/search
+ * @returns {Promise<{options: {parse_mode: string, caption: string}, photoBuffer: (Error|Buffer|*)}>}
+ */
 module.exports = async (text, currentUser) => {
   const input = text
     .replace(commands.GRAPH.alias, '')

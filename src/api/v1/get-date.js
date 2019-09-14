@@ -1,7 +1,10 @@
 const datetime = require('../../services/date.service');
 const dbEntries = require('../../database/entities.database');
 
-// @deprecated: надо объединить с search.js
+/**
+ * @deprecated надо объединить с v2/search.js
+ * @returns {Promise<Array>}
+ */
 module.exports = async (match, currentUser) => {
   let getTime;
   // todo: должно быть естественным языком вида: /search покажи все покупки за прошлую неделю

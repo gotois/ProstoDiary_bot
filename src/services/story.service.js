@@ -1,8 +1,7 @@
 const Eyo = require('eyo-kernel');
-const { version } = require('../../package');
 const validator = require('validator');
+const { version } = require('../../package');
 const dbEntries = require('../database/entities.database');
-const { inputAnalyze } = require('./intent.service');
 const languageService = require('./language.service');
 const { detectLang, isRUS, isENG } = require('./detect-language.service');
 const { spellText } = require('./speller.service');
@@ -10,7 +9,8 @@ const foodService = require('./food.service');
 const logger = require('./logger.service');
 const { PERSON } = require('../environment');
 const foursquare = require('./foursquare.service');
-// const crypt = require('./crypt.service');
+const dialogflowService = require('./dialogflow.service');
+const crypt = require('./crypt.service');
 // const { Abstract } = require('./abstract.service');
 
 /**
@@ -20,6 +20,7 @@ const foursquare = require('./foursquare.service');
  * @description Story управляется абстрактами. Которые насыщаются в abstract.service
  */
 class Story {
+  #source = null;
   #text = [];
   #parameters = []; // найденные параметры интента
   #entities; // todo: разбить на схемы
@@ -32,13 +33,17 @@ class Story {
   #phones = []; // полученные телефоны
   #behavior; // todo: анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
   #intent = []; // Определяем намерения
-  #place = []; // {geoJSON} - место где была сделана запись.
+  #place = []; // {geoJSON} - место где была сделана запись. // todo rename location
   #date = []; // Получение даты события (Подведение таймлайна) <SmartDate>? // по умолчанию заполняем время с шагом в один день
   #category = []; // Получение существа события - сущность события
   /**
    * @param {string} text - original text
+   * @param {string} type - bor or user
    */
-  constructor({ text, date, currentUser, intent, telegram_message_id }) {
+  // @todo https://github.com/gotois/ProstoDiary_bot/issues/152#issuecomment-527747303
+  constructor({ text, type = 'user', date, currentUser, intent, telegram_message_id }) {
+    // TODO: вместо text использовать source и уже затем понимать что это text, video, audio
+    
     this.text = text.trim();
     this.telegram_user_id = currentUser.id;
     this.telegram_message_id = telegram_message_id;
@@ -51,7 +56,10 @@ class Story {
     }
   }
   get intent() {
-    return this.#intent[0].replace('Intent', '').toLowerCase();
+    if (this.#intent.length) {
+      return this.#intent[0].replace('Intent', '').toLowerCase();
+    }
+    return null;
   }
   set language(langCode) {
     if (!this.#language.includes(langCode)) {
@@ -79,7 +87,7 @@ class Story {
   get context() {
     // параметры проставляются в зависимости от интента
     return {
-      queryText: this.#text[this.#text.length - 1], // originalText
+      queryText: this.#text[this.#text.length - 1], // originalText // todo rename
       parameters: this.#parameters[0],
       foodResults: this.foodResults, // todo: тестово, нужно иное насыщение
     
@@ -165,7 +173,7 @@ class Story {
     
     if (this.text.length <= 256) {
       try {
-        const dialogflowResult = await inputAnalyze(this.text);
+        const dialogflowResult = await dialogflowService.inputAnalyze(this.text);
         this.language = dialogflowResult.languageCode;
         this.#parameters.unshift(dialogflowResult.parameters.fields);
         this.#intent.unshift(dialogflowResult.intent.displayName);

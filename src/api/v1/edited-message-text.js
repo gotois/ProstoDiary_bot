@@ -19,7 +19,7 @@ const isDeletedMessage = (message) => {
    * @constant
    * @type {string[]}
    */
-  const DELETE_VARIABLES = ['del', 'delete'];
+  const DELETE_VARIABLES = ['del', 'remove.js'];
   return DELETE_VARIABLES.some((del) => {
     return message.toLowerCase() === del.toLowerCase();
   });

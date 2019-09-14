@@ -1,5 +1,7 @@
 const bot = require('../core');
 const logger = require('../services/logger.service');
+const { getTelegramFile } = require('../services/telegram-file.service');
+const APIv2 = require('../api/v2');
 /**
  * @param {object} msg - message
  * @param {object} msg.chat - chat
@@ -11,12 +13,12 @@ const onPhoto = async ({ chat, photo, caption }) => {
   logger.log('info', onPhoto.name);
   const chatId = chat.id;
   const [_smallPhoto, mediumPhoto] = photo;
-  if (!mediumPhoto.file_id) {
-    throw new Error('Wrong file');
+  if (!mediumPhoto.file_id || mediumPhoto.file_size === 0) {
+    throw new Error('Wrong photo');
   }
-  const photoAPI = require('../api/v1/photo');
+  const fileBuffer = await getTelegramFile(mediumPhoto.file_id);
   try {
-    const photoResult = await photoAPI(mediumPhoto, caption);
+    const photoResult = await APIv2.insert(fileBuffer, { caption });
     await bot.sendMessage(chatId, photoResult, {
       parse_mode: 'Markdown',
     });

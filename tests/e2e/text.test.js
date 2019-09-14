@@ -8,8 +8,9 @@ module.exports = async (t) => {
   // t.log(updates.result)
   // END
 
-  const textAPI = require('../../src/api/v1/text');
-  const result = await textAPI('поел салат с сыром');
+  const APIv2 = require('../../src/api/v2');
+  const textBuffer = Buffer.from('поел салат с сыром');
+  const result = await APIv2.insert(textBuffer, {});
   t.log(result);
   t.pass();
 };

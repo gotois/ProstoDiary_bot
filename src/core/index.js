@@ -15,6 +15,6 @@ if (Object.prototype.hasOwnProperty.call(global, 'bot')) {
   bot = new TelegramBot(TELEGRAM.TOKEN, { polling: true });
 }
 /**
- * @type TelegramBot
+ * @type {TelegramBot}
  */
 module.exports = bot;

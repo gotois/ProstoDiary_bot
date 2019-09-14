@@ -1,9 +1,10 @@
 const parser = require('fast-xml-parser');
 /**
  * @param {Buffer} buffer - buffer XML
+ * @returns {object}
  */
 const readOFX = (buffer) => {
-  let string = ''
+  let string = '';
   if (Buffer.isBuffer(buffer)) {
     string = buffer.toString('utf8');
   }
@@ -17,20 +18,19 @@ const readOFX = (buffer) => {
     trimValues: true,
     parseTrueNumberOnly: false,
   };
-  
+
   const jsonObject = parser.parse(string, parserOptions);
-  console.log(jsonObject)
-  
+
   const { BANKTRANLIST } = jsonObject.OFX.BANKMSGSRSV1.STMTTRNRS.STMTRS;
   BANKTRANLIST.STMTTRN.forEach((stmttrn) => {
     // TODO: эти данные нужно сохранять в History
-    stmttrn.TRNTYPE
-    stmttrn.DTPOSTED
-    stmttrn.TRNAMT
-    stmttrn.FITID
-    stmttrn.NAME
-    stmttrn.MEMO
-    stmttrn.CURRENCY
+    stmttrn.TRNTYPE;
+    stmttrn.DTPOSTED;
+    stmttrn.TRNAMT;
+    stmttrn.FITID;
+    stmttrn.NAME;
+    stmttrn.MEMO;
+    stmttrn.CURRENCY;
   });
   return jsonObject.OFX;
 };
