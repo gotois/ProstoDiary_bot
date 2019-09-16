@@ -1,7 +1,6 @@
 const fileType = require('file-type');
 const { IS_CI } = require('../../environment');
 const Story = require('../../services/story.service');
-const format = require('../../services/format.service');
 const { unpack } = require('../../services/archive.service');
 
 // todo: поместить в middleware
@@ -14,7 +13,7 @@ const { readOFX } = require('../../services/tinkoff.service');
 // endtodo
 
 /**
- * @todo добавить легкую возможность расширять сохранение используя сторонние мидлвары (QR, etc)
+ * @todo добавить легкую возможность расширять сохранение используя сторонние мидлвары (QR, etc). Мидлвары сразу напрямую добавляют данные в историю
  * @param {Buffer} buffer - buffer text or photo or document
  * @param {string|undefined} caption - caption
  * @returns {Promise<Story>}
@@ -27,22 +26,18 @@ const inputSaver = async (
   telegram_message_id,
 ) => {
   if (Buffer.byteLength(buffer) === 0) {
-    throw new Error('empty buffer');
+    throw new Error('Empty buffer');
   }
+  const story = new Story(buffer, {
+    date,
+    telegram_user_id: currentUser.id,
+    telegram_message_id,
+  });
   const type = fileType(buffer);
-  // это текст текст
-  if (!type) {
-    const text = buffer.toString();
-    return new Story({
-      text,
-      date,
-      currentUser,
-      telegram_message_id,
-    });
-  }
-  switch (type.mime) {
+  switch (type && type.mime) {
     case 'image/png':
     case 'image/jpeg': {
+      story.type = 'HARD';
       const { getPhotoDetection } = require('../../services/photo.service');
       const { isQR } = await getPhotoDetection({
         caption: caption,
@@ -62,32 +57,23 @@ const inputSaver = async (
           // item.quantity // здесь как количество, так и граммы могут быть
           foodText += `\n${item.name}_${food_name}_: ${food_description}`;
         }
-        return new Story({
-          text: buffer,
-          date,
-          currentUser,
-          telegram_message_id,
-        });
-      } else {
-        return new Story({
-          text: buffer,
-          date,
-          currentUser,
-          telegram_message_id,
-        });
       }
+      break;
     }
     case 'application/xml': {
+      story.type = 'HARD';
       // todo: парсинг ofx
       const ofxResult = await readOFX(buffer);
       // ofxResult.BANKMSGSRSV1.STMTTRNRS.STMTRS.BANKACCTFROM
       throw new Error('XML in progress');
     }
     case 'application/pdf': {
+      story.type = 'HARD';
       throw new Error('PDF in progress');
     }
     case 'application/zip':
     case 'multipart/x-zip': {
+      story.type = 'HARD';
       const zipContents = await unpack(buffer);
       // todo: перенести в middleware
       for await (const [fileName, zipBuffer] of zipContents) {
@@ -109,15 +95,16 @@ const inputSaver = async (
       throw new Error('unknown format format');
     }
   }
+  return story;
 };
 /**
  * @description весь pipe работы с input - вставка и разбор логики voice, text, photo, document
- * @param {Buffer} input - input
+ * @param {Buffer} buffer - input
  * @param {object} options - options
  * @returns {jsonrpc}
  */
 module.exports = async (
-  input,
+  buffer,
   {
     date,
     currentUser,
@@ -126,22 +113,19 @@ module.exports = async (
   } = {},
 ) => {
   try {
-    const story = await inputSaver(
-      input,
+    const inputStory = await inputSaver(
+      buffer,
       caption,
       date,
       currentUser,
       telegram_message_id,
     );
     if (!IS_CI) {
-      await story.save();
+      await inputStory.save();
     }
-    // const storyDefinition = story.toJSON();
-    // const storyResult = JSON.stringify(storyDefinition.context, null, 2);
-    // ограничиваем 1000 символами из-за ошибки "ETELEGRAM: 400 Bad Request: message is too long"
     return {
       jsonrpc: '2.0',
-      result: format.previousInput(input.toString()),
+      result: 'SAVED',
     };
   } catch (error) {
     return {

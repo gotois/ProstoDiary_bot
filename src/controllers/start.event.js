@@ -1,4 +1,5 @@
 const fs = require('fs');
+const pkg = require('../../package');
 const bot = require('../core');
 const sgMail = require('../services/sendgridmail.service');
 const dbUsers = require('../database/users.database');
@@ -24,11 +25,13 @@ function* messageIterator(chatId) {
     },
   });
   // Step 2: получать соль
-  yield bot.sendMessage(chatId, 'Введите соль для шифрования', {
+  yield bot.sendMessage(chatId, 'Введите соль для шифрования\n' +
+    '*Используйте специальные непечатные символы с помощью NumLock', {
     reply_markup: {
       force_reply: true,
     },
   });
+  // Step 3: генерируем Auth token
   const secret = auth.genereateGoogleAuth(PERSON.email);
   yield bot.sendMessage(
     chatId,
@@ -44,14 +47,17 @@ function* messageIterator(chatId) {
       },
     },
   );
-  yield bot.sendMessage(chatId, 'Введите код из почты', {
+  yield bot.sendMessage(chatId, 'Введите сгенерированный код из почты', {
     reply_markup: {
       force_reply: true,
     },
   });
   yield bot.sendMessage(
     chatId,
-    'Добро пожаловать в ProstoDiary!\nНе забудьте настроить двухфакторную аутентификацию!',
+    `Привет __${PERSON.name}__!\nЯ твой бот __${pkg.description}__ ${pkg.version}!\nНе забудь настроить двухфакторную аутентификацию.`,
+    {
+      parse_mode: 'Markdown',
+    },
   );
 }
 /**
@@ -66,13 +72,12 @@ const onStart = async ({ chat, from, date, message_id }) => {
   logger.log('info', onStart.name);
   const chatId = chat.id;
   const { rowCount } = await dbUsers.exist(from.id);
-  if (false) {
-    // todo: test
-    if (rowCount > 0) {
-      await bot.sendMessage(chatId, 'Повторная установка не требуется');
-      return;
-    }
+  // if (false) { // todo: test
+  if (rowCount > 0) {
+    await bot.sendMessage(chatId, 'Повторная установка не требуется');
+    return;
   }
+  // }
   const messageListener = async (query) => {
     const installKey = '123456'; // todo сгенерированный ключ подтверждающий вход
     switch (query.data) {
