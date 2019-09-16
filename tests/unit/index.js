@@ -5,7 +5,6 @@ test('logger', require('./log.test'));
 test('crypto', require('./crypto.test'));
 test('commands', require('./commands.test'));
 test('datetime', require('./datetime.test'));
-test('session', require('./session.test'));
 test('money', require('./money.test'));
 test('format', require('./format.test'));
 test('text service', require('./text-service.test'));

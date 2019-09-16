@@ -1,4 +1,3 @@
-// todo: move to -> core/index.js
 const bot = require('./core');
 const dbClient = require('./database');
 const logger = require('./services/logger.service');
@@ -70,9 +69,9 @@ const sendUpdatesToUsers = (text) => {
   const { getAllTelegramUserIds } = require('./database/users.database');
   getAllTelegramUserIds()
     .then((userIds) => {
-      userIds.forEach((user) => {
+      return userIds.map((user) => {
         // TODO: если возвращает 400 ошибку тогда проверить message и блокировать пользователя
-        bot.sendMessage(user.telegram_user_id, text);
+        return bot.sendMessage(user.telegram_user_id, text);
       });
     })
     .catch((error) => {

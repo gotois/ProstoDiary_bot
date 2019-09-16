@@ -97,7 +97,12 @@ const ENV = {
   SERVER: {
     PORT,
   },
-  PERSON,
+  /**
+   * @returns {jsonld}
+   */
+  get PERSON() {
+    return JSON.parse(PERSON);
+  },
   PLOTLY: {
     PLOTLY_LOGIN,
     PLOTLY_TOKEN,

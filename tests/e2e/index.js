@@ -6,7 +6,7 @@ const {
 const { maintainers } = require('../../package');
 const TelegramServer = require('telegram-test-api');
 const sgMail = require('@sendgrid/mail');
-const { IS_CI, IS_DEV, SENDGRID } = require('../../src/environment');
+const { IS_CI, IS_DEV } = require('../../src/environment');
 
 // This runs before all tests
 test.before(async (t) => {
@@ -52,15 +52,6 @@ test.after('cleanup', (t) => {
 });
 
 test.after.always('guaranteed cleanup', async (t) => {
-  if (process.env.FAST_TEST) {
-    return;
-  }
-  if (IS_CI) {
-    return;
-  }
-  if (IS_DEV) {
-    return;
-  }
   if (t.context.testPassed) {
     return;
   }
@@ -71,7 +62,15 @@ test.after.always('guaranteed cleanup', async (t) => {
     return;
   }
   t.log('Failed: ', failedTasks);
-  sgMail.setApiKey(SENDGRID.SENDGRID_API_KEY);
+  if (process.env.FAST_TEST) {
+    return;
+  }
+  if (IS_CI) {
+    return;
+  }
+  if (IS_DEV) {
+    return;
+  }
   const message = {
     to: maintainers[0].email,
     from: 'no-reply@gotointeractive.com',

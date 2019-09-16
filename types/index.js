@@ -41,3 +41,11 @@
  * @property {*|undefined} result - result
  * @property {object|undefined} error - error
  */
+/**
+ * @module types
+ */
+/**
+ * @typedef {object} jsonld
+ * @property {string} name - name
+ * @property {string} email - email
+ */
