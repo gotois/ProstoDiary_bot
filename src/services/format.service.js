@@ -30,7 +30,7 @@ const formatRows = (rows) => {
  * @param {string} input - user input text
  * @returns {string}
  */
-const previousInput = (input) => {
+const formatterText = (input) => {
   return `${input.replace(/\n/g, ' ').substring(0, 6)}…✓`;
 };
 /**
@@ -48,6 +48,6 @@ const decodeRows = (rows = []) => {
 
 module.exports = {
   formatRows,
-  previousInput,
+  previousInput: formatterText,
   decodeRows,
 };

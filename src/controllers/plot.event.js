@@ -1,5 +1,4 @@
 const bot = require('../core');
-const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 /**
  * Построить график
@@ -13,10 +12,9 @@ const logger = require('../services/logger.service');
 const getPlot = async ({ chat, from, text }) => {
   logger.log('info', getPlot.name);
   const chatId = chat.id;
-  const currentUser = sessions.getSession(from.id);
   const plotAPI = require('../api/v1/plot');
   try {
-    const { photoBuffer, options } = await plotAPI(text, currentUser);
+    const { photoBuffer, options } = await plotAPI(text, from.id);
     await bot.sendPhoto(chatId, photoBuffer, options);
   } catch (error) {
     logger.error('error', error);

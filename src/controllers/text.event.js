@@ -1,6 +1,6 @@
 const bot = require('../core');
 const commands = require('../core/commands');
-const sessions = require('../services/session.service');
+const format = require('../services/format.service');
 const logger = require('../services/logger.service');
 const APIv2 = require('../api/v2');
 /**
@@ -50,7 +50,6 @@ const onText = async (message) => {
   }
   logger.log('info', onText.name);
   const fromId = from.id;
-  const currentUser = sessions.getSession(fromId);
   // Пропускаем команды бота
   if (entities) {
     if (
@@ -67,9 +66,9 @@ const onText = async (message) => {
   if (text.startsWith('/')) {
     return;
   }
-  const { error, result } = await APIv2.insert(Buffer.from(text), {
+  const { error } = await APIv2.insert(Buffer.from(text), {
     date,
-    currentUser,
+    currentUser: fromId,
     telegram_message_id: message_id,
   });
   if (error) {
@@ -77,7 +76,7 @@ const onText = async (message) => {
     await bot.sendMessage(chatId, error.message.toString());
     return;
   }
-  await bot.sendMessage(chatId, result, {
+  await bot.sendMessage(chatId, format.previousInput(text), {
     disable_notification: true,
     disable_web_page_preview: true,
   });

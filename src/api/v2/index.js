@@ -4,4 +4,5 @@ module.exports = {
   remove: require('./remove'),
   search: require('./search'),
   train: require('./train'),
+  editedMessageTextAPI: require('./edited-message-text'),
 };

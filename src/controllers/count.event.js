@@ -1,5 +1,4 @@
 const bot = require('../core');
-const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 /**
  * /count - -> выведет сколько всего потрачено
@@ -15,14 +14,13 @@ const onCount = async ({ chat, from }, match) => {
   logger.log('info', onCount.name);
   const chatId = chat.id;
   const fromId = from.id;
-  const currentUser = sessions.getSession(fromId);
   const params = {
     parse_mode: 'Markdown',
   };
   const countAPI = require('../api/v1/count');
   if (match[1]) {
     try {
-      const countResult = await countAPI(match[1].toUpperCase(), currentUser);
+      const countResult = await countAPI(match[1].toUpperCase(), fromId);
       await bot.sendMessage(chatId, countResult, params);
     } catch (error) {
       await bot.sendMessage(chatId, error.message);
@@ -42,7 +40,7 @@ const onCount = async ({ chat, from }, match) => {
     await bot.sendMessage(chatId, 'Финансы', replyParams);
     // TODO: возможна утечка, если не уничтожать слушатель
     bot.once('callback_query', async ({ data }) => {
-      const countResult = await countAPI(data, currentUser);
+      const countResult = await countAPI(data, fromId);
       await bot.sendMessage(chatId, countResult, params);
     });
   }

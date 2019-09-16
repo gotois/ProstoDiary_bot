@@ -1,5 +1,4 @@
 const bot = require('../core');
-const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 const backupAPI = require('../api/v1/backup');
 /**
@@ -14,8 +13,10 @@ const onBackup = async ({ chat, from, date }) => {
   logger.log('info', onBackup.name);
   const chatId = chat.id;
   const fromId = from.id;
-  const currentUser = sessions.getSession(fromId);
-  const { error, result } = await backupAPI(currentUser, date);
+
+  // todo: https://github.com/gotois/ProstoDiary_bot/issues/162
+
+  const { error, result } = await backupAPI(fromId, date);
   if (error) {
     logger.log('error', error.toString());
     await bot.sendMessage(chatId, error);

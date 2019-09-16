@@ -1,5 +1,5 @@
 const bot = require('../core');
-const sessions = require('../services/session.service');
+const getDateAPI = require('../api/v1/get-date');
 const logger = require('../services/logger.service');
 /**
  * Получить все что я делал в эту дату
@@ -16,10 +16,8 @@ const getDataFromDate = async ({ chat, from }, match) => {
   logger.log('info', getDataFromDate.name);
   const chatId = chat.id;
   const userId = from.id;
-  const currentUser = sessions.getSession(userId);
-  const getDateAPI = require('../api/v1/get-date');
   try {
-    const rows = await getDateAPI(match, currentUser);
+    const rows = await getDateAPI(match, userId);
     if (rows.length === 0) {
       await bot.sendMessage(chatId, 'Записей нет');
       return;

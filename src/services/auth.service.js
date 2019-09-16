@@ -11,7 +11,7 @@ module.exports = {
    * @param {string} account - email name
    * @returns {GeneratedSecret}
    */
-  async genereateGoogleAuth(account) {
+  genereateGoogleAuth(account) {
     const secret = speakeasy.generateSecret({
       name: account,
       length: 20,
@@ -20,11 +20,7 @@ module.exports = {
     // Account: account - 'bot@gotointeractive.com'
     // Key: secret.base32
     // Time-based flag: true
-  
-    // secret.base32 // todo: это нужно сохранять в БД в историю с интентом SYSTEM. И типом CORE
-    // new Story({
-    //   intent: 'system'
-    // })
+    return secret;
   },
   /**
    * показать токен который привязан к устройству

@@ -9,14 +9,14 @@ const dbEntries = require('../../database/entities.database');
  * @deprecated - объединить с v2/search
  * @returns {Promise<{options: {parse_mode: string, caption: string}, photoBuffer: (Error|Buffer|*)}>}
  */
-module.exports = async (text, currentUser) => {
+module.exports = async (text, userId) => {
   const input = text
     .replace(commands.GRAPH.alias, '')
     .trim()
     .toLowerCase();
   const regExp = createRegexInput(input);
 
-  const rows = await dbEntries.getAll(currentUser.id);
+  const rows = await dbEntries.getAll(userId);
   const entryRows = decodeRows(rows).filter(({ entry }) => {
     return regExp.test(entry.toLowerCase());
   });

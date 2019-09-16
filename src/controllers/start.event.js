@@ -81,7 +81,9 @@ const onStart = async ({ chat, from, date, message_id }) => {
           to: PERSON.email,
           from: 'no-reply@gotointeractive.com',
           subject: 'ProstoDiary Auth👾',
-          text: 'Welcome to ProstoDiary.\nДля подтверждения пришлите боту сообщение' + installKey,
+          text:
+            'Welcome to ProstoDiary.\nДля подтверждения пришлите боту сообщение' +
+            installKey,
         });
         const checkMessageValue = await iterator.next().value;
         bot.onReplyToMessage(
@@ -130,13 +132,11 @@ const onStart = async ({ chat, from, date, message_id }) => {
           async ({ text }) => {
             // todo: сохранять в БД соль для crypto
             console.log('your salt', text);
-            
             // secret.base32 // todo: это нужно сохранять в БД
             // new Story({
             //   intent: 'system',
             //   type: 'CORE',
             // })
-            
             iterator.next();
           },
         );

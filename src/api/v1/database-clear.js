@@ -2,9 +2,9 @@ const dbEntries = require('../../database/entities.database');
 /**
  * @returns {jsonrpc}
  */
-module.exports = async (currentUser) => {
+module.exports = async (userId) => {
   try {
-    await dbEntries.clear(currentUser.id);
+    await dbEntries.clear(userId);
     return {
       jsonrpc: '2.0',
       result: 'Данные очищены',

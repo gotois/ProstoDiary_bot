@@ -204,8 +204,18 @@ const clear = async (telegram_user_id) => {
     client.release();
   }
 };
+//* @todo проверить правильность написания telegram_message_id
+const exist = async (telegramUserId, message_id) => {
+  const result = await $$(
+    `SELECT 1 FROM bot_story
+    WHERE telegram_user_id = $1 AND telegram_message_id = $2`,
+    [telegramUserId, message_id],
+  );
+  return result;
+};
 
 module.exports = {
+  exist,
   post: _post,
   get: _get,
   put: _put,

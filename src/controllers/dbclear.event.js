@@ -1,5 +1,4 @@
 const bot = require('../core');
-const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 /**
  * @description Очистить базу данных с подтверждением
@@ -23,13 +22,13 @@ const onDatabaseClear = async ({ chat, from }) => {
     options,
   );
   const dbClearAPI = require('../api/v1/database-clear');
+  // todo: проверять выгружен ли был бэкап, и если нет - предупреждать пользователя
   await bot.onReplyToMessage(chat.id, message_id, async ({ text }) => {
     if (text !== 'YES') {
       await bot.sendMessage(chat.id, 'Операция отменена');
       return;
     }
-    const currentUser = sessions.getSession(fromId);
-    const { error, result } = await dbClearAPI(currentUser);
+    const { error, result } = await dbClearAPI(fromId);
     if (error) {
       logger.log('error', error);
       await bot.sendMessage(chat.id, 'Ошибка в операции');

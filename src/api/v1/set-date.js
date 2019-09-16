@@ -4,11 +4,11 @@ const format = require('../../services/format.service');
 const datetime = require('../../services/date.service');
 const commands = require('../../core/commands');
 
-module.exports = async (text, message_id, match, currentUser) => {
+module.exports = async (text, message_id, match, userId) => {
   const input = text.replace(commands.SET.alias, '').trim();
   const date = datetime.convertToNormalDate(match[1]);
   await dbEntries.post(
-    currentUser.id,
+    userId,
     crypt.encode(input),
     message_id,
     new Date(),

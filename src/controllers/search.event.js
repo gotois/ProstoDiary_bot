@@ -1,5 +1,4 @@
 const bot = require('../core');
-const sessions = require('../services/session.service');
 const logger = require('../services/logger.service');
 /**
  * @todo использовать этот контроллер для понимания что отображать пользователю
@@ -13,10 +12,9 @@ const onSearch = async ({ chat, from }, match) => {
   logger.log('info', onSearch.name);
   const chatId = chat.id;
   const fromId = from.id;
-  const currentUser = sessions.getSession(fromId);
   const searchAPI = require('../api/v1/search');
   try {
-    await searchAPI(match, currentUser, async (result, form, endCallback) => {
+    await searchAPI(match, fromId, async (result, form, endCallback) => {
       await bot.sendMessage(chatId, result, form);
       if (endCallback) {
         bot.once('callback_query', endCallback);

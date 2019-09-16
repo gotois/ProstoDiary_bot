@@ -5,10 +5,10 @@ const format = require('../../services/format.service');
  * @todo должен в том числе содержать StoryJSON в полном объеме и храниться в отдельном файле: story.json
  * @returns {jsonrpc}
  */
-module.exports = async (currentUser, date) => {
+module.exports = async (userId, date) => {
   const filename = `ProstoDiary_backup_${date}.txt`;
   try {
-    const rows = await dbEntries.getAll(currentUser.id);
+    const rows = await dbEntries.getAll(userId);
     if (rows.length === 0) {
       throw new Error('Backup data is empty');
     }

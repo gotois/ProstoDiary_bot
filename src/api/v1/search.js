@@ -37,9 +37,9 @@ const normalizeRegexStringToString = (regexString) => {
  * @deprecated - объединить с v2/search
  * @returns {Promise<void>}
  */
-module.exports = async (match, currentUser, callback) => {
+module.exports = async (match, userId, callback) => {
   const input = String(match[3]).trim();
-  const rows = await dbEntries.getAll(currentUser.id);
+  const rows = await dbEntries.getAll(userId);
   const regExp = createRegexInput(input);
   const matchFilterRows = decodeRows(rows)
     .filter(({ entry }) => {

@@ -22,8 +22,8 @@ const formatResponse = ({ startTime, endTime, money }) => {
   );
 };
 
-module.exports = async (data, currentUser) => {
-  const rows = await dbEntries.getAll(currentUser.id);
+module.exports = async (data, fromId) => {
+  const rows = await dbEntries.getAll(fromId);
   const objectRows = decodeRows(rows);
   if (objectRows.length === 0) {
     throw new Error('No data');
