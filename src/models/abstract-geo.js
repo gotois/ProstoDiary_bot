@@ -7,6 +7,7 @@ class AbstractGeo extends Abstract {
   async fill () {
     // насыщаем foursquare
     try {
+      // todo: entities - смотри abstract-text
       for (let entity of this.#entities) {
         if (entity.type === 'LOCATION') {
           const data = await foursquare.search({

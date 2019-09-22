@@ -1,6 +1,5 @@
 const bot = require('../core');
 const commands = require('../core/commands');
-const format = require('../services/format.service');
 const logger = require('../services/logger.service');
 const APIv2 = require('../api/v2');
 /**
@@ -66,6 +65,11 @@ const onText = async (message) => {
   if (text.startsWith('/')) {
     return;
   }
+  const botMessage = await bot.sendMessage(chatId, 'Saving... ' + `_${text}_`, {
+    parse_mode: 'Markdown',
+    disable_notification: true,
+    disable_web_page_preview: true,
+  });
   const { error, result } = await APIv2.insert(Buffer.from(text), {
     type: 'plain/text',
     date,
@@ -74,13 +78,15 @@ const onText = async (message) => {
   });
   if (error) {
     logger.log('error', error.message.toString());
-    await bot.sendMessage(chatId, error.message.toString());
+    await bot.editMessageText(error.message, {
+      chat_id: botMessage.chat.id,
+      message_id: botMessage.message_id,
+    });
     return;
   }
-  await bot.forwardMessage(chatId, from.id, message_id);
-  await bot.sendMessage(chatId, result, {
-    disable_notification: true,
-    disable_web_page_preview: true,
+  await bot.editMessageText(result, {
+    chat_id: botMessage.chat.id,
+    message_id: botMessage.message_id,
   });
 };
 

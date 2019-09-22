@@ -1,17 +1,23 @@
 const Abstract = require('./abstract');
+// const { getPhotoDetection } = require('../services/photo.service');
+const kppService = require('../services/kpp.service');
+const foodService = require('../services/food.service');
 
 class AbstractPhoto extends Abstract {
-  #image;
+  #caption;
+  
+  constructor(buffer, caption) {
+    super(buffer);
+    this.#caption = caption;
+  }
   
   async fill () {
-    const { getPhotoDetection } = require('../../services/photo.service');
-    
     const { isQR } = await getPhotoDetection({
-      caption: caption,
-      fileBuffer: buffer,
+      caption: this.#caption,
+      fileBuffer: this.buffer,
     });
     if (isQR) {
-      const kppData = await kppService(buffer);
+      const kppData = await kppService(this.buffer);
       // это мидлваре для изображений
       // TODO: данные kppData должны попадать в БД
       // выявляем из данных нужное

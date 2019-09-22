@@ -35,15 +35,16 @@ const mailListener = async (mail) => {
     attachments,
   } = mail;
   // console.log(mail); // eslint-disable-line
-
-  // todo это если письмо было отправлено ботом. в противном случае нужно разбирать адреса и прочее самостоятельно
+  
+  // todo это если письмо было отправлено ботом.
   if (from[0].address === 'no-reply@gotointeractive.com') {
     console.log('from bot');
 
     const botName = headers['x-bot']; // todo: название бота с которого пришло письмо. Может быть сторонним
     const botTelegramMessageId = headers['x-bot-telegram-message-id'];
     const botTelegramUserId = headers['x-bot-telegram-user-id'];
-
+    let abstract;
+    
     if (attachments) {
       for (const attachment of attachments) {
         const {
@@ -57,15 +58,18 @@ const mailListener = async (mail) => {
           // fileName,
           // transferEncoding,
         } = attachment;
-        let abstract;
         switch (contentType) {
           case 'plain/text': {
             abstract = new AbstractText(content);
             break;
           }
+          // todo: add content video
+          // case 'video': {
+          //   break;
+          // }
           case 'image/png':
           case 'image/jpeg': {
-            abstract = new AbstractPhoto(content);
+            abstract = new AbstractPhoto(content, text);
             break;
           }
           case 'application/pdf':
@@ -84,19 +88,23 @@ const mailListener = async (mail) => {
             break;
           }
           default: {
+            // todo: тогда нужен разбора html и text самостоятельно из письма
             throw new Error('Unknown mime type');
           }
         }
-
-        await abstract.fill();
-        const story = new Story(abstract, {
-          date: date,
-          telegram_user_id: botTelegramUserId,
-          telegram_message_id: botTelegramMessageId,
-        });
-        //   await story.save();
       }
     }
+    await abstract.fill();
+    const story = new Story(abstract, {
+      date: date,
+      publisher: from[0].addresses,
+      telegram_user_id: botTelegramUserId,
+      telegram_message_id: botTelegramMessageId,
+    });
+    // xxx
+    await story.save();
+  } else {
+    // todo нужно разбирать адреса и прочее самостоятельно
   }
 };
 

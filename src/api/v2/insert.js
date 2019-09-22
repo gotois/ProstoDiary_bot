@@ -33,7 +33,6 @@ const createAttachment = (buffer, type) => {
     content_id,
   };
 };
-
 /**
  * @description весь pipe работы с input - вставка и разбор логики voice, text, photo, document
  * @param {Buffer} buffer - input
@@ -75,7 +74,7 @@ module.exports = async (
     }
     return {
       jsonrpc: '2.0',
-      result: 'Saved',
+      result: '✅',
     };
   } catch (error) {
     return {
