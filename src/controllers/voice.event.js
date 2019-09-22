@@ -15,7 +15,9 @@ const getVoice = async ({ chat, voice }) => {
   const fileBuffer = await getTelegramFile(voice.file_id);
   const text = await voiceToText(fileBuffer, voice);
   // todo: вычлинять команды из текста
-  const { error, result } = await APIv2.insert(Buffer.from(text), {});
+  const { error, result } = await APIv2.insert(Buffer.from(text), {
+    type: 'plain/text',
+  });
   if (error) {
     logger.log('error', error.toString());
     await bot.sendMessage(chatId, 'Распознавание голоса неудачно');

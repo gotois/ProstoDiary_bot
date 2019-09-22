@@ -4,14 +4,14 @@ const Story = require('../../services/story.service');
  * @param {string} text - text
  * @param {Date} date - date
  * @param {number} message_id - message_id
- * @param {object} currentUser - currentUser
+ * @param {number} telegram_user_id - telegram_user_id
  * @returns {jsonrpc}
  */
-module.exports = async (text, date, message_id, currentUser) => {
+module.exports = async (text, date, message_id, telegram_user_id) => {
   const story = new Story({
     source: Buffer.from(text),
     date,
-    telegram_user_id: currentUser.id,
+    telegram_user_id: telegram_user_id,
     telegram_message_id: message_id,
   });
   try {

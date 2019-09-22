@@ -46,7 +46,7 @@ const onEditedMessageText = async ({ chat, from, text, date, message_id }) => {
     await bot.sendMessage(chatId, result);
     return;
   }
-  const isExist = await dbEntries.exist(currentUser.id, message_id);
+  const isExist = await dbEntries.exist(from.id, message_id);
   if (!isExist) {
     // TODO: если записи нет - тогда спрашиваем пользователя, создавать ли новую запись?
     await bot.sendMessage(chatId, 'Запись не найдена');
@@ -57,7 +57,7 @@ const onEditedMessageText = async ({ chat, from, text, date, message_id }) => {
     text,
     date,
     message_id,
-    currentUser,
+    chat.id,
   );
   if (error) {
     logger.error(error);

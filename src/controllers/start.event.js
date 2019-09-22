@@ -25,12 +25,16 @@ function* messageIterator(chatId) {
     },
   });
   // Step 2: получать соль
-  yield bot.sendMessage(chatId, 'Введите соль для шифрования\n' +
-    '*Используйте специальные непечатные символы с помощью NumLock', {
-    reply_markup: {
-      force_reply: true,
+  yield bot.sendMessage(
+    chatId,
+    'Введите соль для шифрования\n' +
+      '*Используйте специальные непечатные символы с помощью NumLock',
+    {
+      reply_markup: {
+        force_reply: true,
+      },
     },
-  });
+  );
   // Step 3: генерируем Auth token
   const secret = auth.genereateGoogleAuth(PERSON.email);
   yield bot.sendMessage(

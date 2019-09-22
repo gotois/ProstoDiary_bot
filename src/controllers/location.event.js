@@ -12,6 +12,7 @@ const onLocation = async ({ chat, location: { latitude, longitude } }) => {
   const chatId = chat.id;
   try {
     const locationResult = await locationAPI({ latitude, longitude });
+    // todo: сохранять это в историю
     await bot.sendMessage(chatId, locationResult, {});
   } catch (error) {
     logger.log('error', error);

@@ -62,7 +62,7 @@ module.exports = async (
       attachments: [createAttachment(buffer, type)],
       sendAt: date,
       headers: {
-        'x-bot-version': pkg.version,
+        'x-bot': pkg.name,
         'x-bot-telegram-message-id': String(telegram_message_id),
         'x-bot-telegram-user-id': String(telegram_user_id),
       },

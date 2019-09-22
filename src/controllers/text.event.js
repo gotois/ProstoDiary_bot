@@ -28,7 +28,7 @@ const unknownCommand = (input) => {
  * @param {string} message.text - text
  * @param {object} message.reply_to_message - message
  * @param {number} message.message_id - id message
- * @param {Date} message.date -date message
+ * @param {number} message.date - unix time
  * @returns {undefined}
  */
 const onText = async (message) => {
@@ -66,9 +66,10 @@ const onText = async (message) => {
   if (text.startsWith('/')) {
     return;
   }
-  const { error } = await APIv2.insert(Buffer.from(text), {
+  const { error, result } = await APIv2.insert(Buffer.from(text), {
+    type: 'plain/text',
     date,
-    currentUser: fromId,
+    telegram_user_id: fromId,
     telegram_message_id: message_id,
   });
   if (error) {
@@ -76,7 +77,8 @@ const onText = async (message) => {
     await bot.sendMessage(chatId, error.message.toString());
     return;
   }
-  await bot.sendMessage(chatId, format.previousInput(text), {
+  await bot.forwardMessage(chatId, from.id, message_id);
+  await bot.sendMessage(chatId, result, {
     disable_notification: true,
     disable_web_page_preview: true,
   });
