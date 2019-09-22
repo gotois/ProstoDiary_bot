@@ -19,36 +19,37 @@ class FatSecret {
   /**
    * build the sorted key value pair string that will be used for the hmac and request
    *
-   * @param {object} params - params
+   * @param {object} parameters - params
    * @returns {string}
    */
-  static createQuery(params) {
-    params['format'] = 'json';
-    params['oauth_version'] = '1.0';
-    params['oauth_signature_method'] = 'HMAC-SHA1';
-    params['oauth_nonce'] = crypto.randomBytes(10).toString('HEX');
-    params['oauth_timestamp'] = Math.floor(new Date().getTime() / 1000);
-    params['oauth_consumer_key'] = FAT_SECRET.FAT_SECRET_API_ACCESS_KEY;
-    return Object.keys(params)
+  static createQuery(parameters) {
+    parameters['format'] = 'json';
+    parameters['oauth_version'] = '1.0';
+    parameters['oauth_signature_method'] = 'HMAC-SHA1';
+    parameters['oauth_nonce'] = crypto.randomBytes(10).toString('HEX');
+    parameters['oauth_timestamp'] = Math.floor(new Date().getTime() / 1000);
+    parameters['oauth_consumer_key'] = FAT_SECRET.FAT_SECRET_API_ACCESS_KEY;
+    return Object.keys(parameters)
       .sort()
-      .reduce((acc, param) => {
-        acc += '&' + param + '=' + encodeURIComponent(params[param]);
-        return acc;
+      .reduce((accumulator, parameter) => {
+        accumulator +=
+          '&' + parameter + '=' + encodeURIComponent(parameters[parameter]);
+        return accumulator;
       }, '')
       .substr(1); // remove first &
   }
   /**
    * Perform the request to fatsecret with default params merged in.
    *
-   * @param {object} params - параметры
+   * @param {object} parameters - параметры
    * @returns {Promise}
    * @public
    */
-  request(params) {
+  request(parameters) {
     return new Promise((resolve, reject) => {
       request(
         {
-          uri: this._signRequest(params),
+          uri: this._signRequest(parameters),
           json: true,
         },
         (error, response, body) => {
@@ -63,12 +64,12 @@ class FatSecret {
   /**
    * Calculates and appends the signature hash to the query params
    *
-   * @param {object} params - параметры
+   * @param {object} parameters - параметры
    * @returns {string}
    * @private
    */
-  _signRequest(params) {
-    const query = FatSecret.createQuery(params);
+  _signRequest(parameters) {
+    const query = FatSecret.createQuery(parameters);
     // generate the hmac
     const mac = crypto.createHmac(
       'sha1',

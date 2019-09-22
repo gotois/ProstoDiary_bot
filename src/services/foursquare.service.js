@@ -4,36 +4,39 @@
  */
 const request = require('request');
 const { FOURSQUARE } = require('../environment');
-const host = 'api.foursquare.com';
+const FOURSQUARE_HOST = 'api.foursquare.com';
 /**
- * @param {object} params - ll, query, limit, etc
+ * @param {object} parameters - params
+ * @param {object} parameters.ll - ll
+ * @param {object} parameters.query - query
+ * @param {object} parameters.limit - limit
  * @returns {Promise}
  */
-const search = (params) => {
+const search = (parameters) => {
   return new Promise((resolve, reject) => {
     request(
       {
-        url: `https://${host}/v2/venues/search`,
+        url: `https://${FOURSQUARE_HOST}/v2/venues/search`,
         method: 'GET',
         qs: {
           client_id: FOURSQUARE.CLIEND_ID,
           client_secret: FOURSQUARE.CLIENT_SECRET,
-          ll: params.ll,
-          near: params.near,
-          query: params.query,
-          intent: params.intent,
-          radius: params.radius,
-          sw: params.sw,
-          ne: params.ne,
+          ll: parameters.ll,
+          near: parameters.near,
+          query: parameters.query,
+          intent: parameters.intent,
+          radius: parameters.radius,
+          sw: parameters.sw,
+          ne: parameters.ne,
           v: '20150401',
-          categoryId: params.categoryId,
-          llAcc: params.llAcc,
-          alt: params.alt,
-          altAcc: params.altAcc,
-          url: params.url,
-          providerId: params.providerId,
-          linkedId: params.linkedId,
-          limit: params.limit || 1,
+          categoryId: parameters.categoryId,
+          llAcc: parameters.llAcc,// eslint-disable-line
+          altAcc: parameters.altAcc,// eslint-disable-line
+          alt: parameters.alt,
+          url: parameters.url,
+          providerId: parameters.providerId,
+          linkedId: parameters.linkedId,
+          limit: parameters.limit || 1,
         },
       },
       (error, response, body) => {

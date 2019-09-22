@@ -11,7 +11,7 @@ module.exports = async (t) => {
   const APIv2 = require('../../src/api/v2');
   const textBuffer = Buffer.from('поел салат с сыром');
   const result = await APIv2.insert(textBuffer, {
-    type: 'plain/text'
+    type: 'plain/text',
   });
   t.log(result);
   t.pass();

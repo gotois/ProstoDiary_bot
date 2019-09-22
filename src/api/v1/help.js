@@ -4,17 +4,20 @@ const commands = require('../../core/commands');
  * @returns {jsonrpc}
  */
 module.exports = () => {
-  const helpData = Object.entries(commands).reduce((acc, [command, object]) => {
-    if (object.description.length === 0) {
-      return acc;
-    }
-    acc['/' + command.toLowerCase()] = object.description;
-    return acc;
-  }, {});
-  const message = Object.keys(helpData).reduce((acc, key) => {
+  const helpData = Object.entries(commands).reduce(
+    (accumulator, [command, object]) => {
+      if (object.description.length === 0) {
+        return accumulator;
+      }
+      accumulator['/' + command.toLowerCase()] = object.description;
+      return accumulator;
+    },
+    {},
+  );
+  const message = Object.keys(helpData).reduce((accumulator, key) => {
     const result = `${key}: ${helpData[key]}\n`;
-    acc += result;
-    return acc;
+    accumulator += result;
+    return accumulator;
   }, '');
   return {
     jsonrpc: '2.0',

@@ -8,7 +8,7 @@ const client = new speech.SpeechClient({
  * @param {string} mimeType - mime type
  * @returns {string}
  */
-const convertTelegramMIMEToGoogleMIME = (mimeType) => {
+const convertTelegramMimeToGoogleMime = (mimeType) => {
   switch (mimeType) {
     case 'audio/ogg': {
       return 'OGG_OPUS';
@@ -34,7 +34,7 @@ const voiceToText = async (buffer, { duration, mime_type, file_size }) => {
     throw new Error('Недостаточно данных для получения текста');
   }
   const config = {
-    encoding: convertTelegramMIMEToGoogleMIME(mime_type), // raw 16-bit signed LE samples
+    encoding: convertTelegramMimeToGoogleMime(mime_type), // raw 16-bit signed LE samples
     sampleRateHertz: metadata.format.sampleRate,
     languageCode: 'ru-RU', // a BCP-47 language tag
   };

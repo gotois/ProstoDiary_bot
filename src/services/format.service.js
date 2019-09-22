@@ -7,20 +7,20 @@ const { convertIn2DigitFormat } = require('./date.service');
 const formatRows = (rows) => {
   let currentDateString = '';
   return rows
-    .reduce((acc, { date, text }) => {
+    .reduce((accumulator, { date, text }) => {
       const DD = convertIn2DigitFormat(date.getDate());
       const MM = convertIn2DigitFormat(date.getMonth() + 1);
       const YYYY = date.getFullYear();
       const dateString = `${DD}.${MM}.${YYYY}`;
       const decodeEntry = crypt.decode(text);
       if (dateString !== currentDateString) {
-        acc += `\n${dateString}\n`;
+        accumulator += `\n${dateString}\n`;
       }
       currentDateString = dateString;
       if (decodeEntry) {
-        acc += `${decodeEntry}\n`;
+        accumulator += `${decodeEntry}\n`;
       }
-      return acc;
+      return accumulator;
     }, '')
     .trim();
 };

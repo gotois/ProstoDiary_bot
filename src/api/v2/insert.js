@@ -55,10 +55,10 @@ module.exports = async (
     // step 1 получаем ввод, переводим его в текстовый формат или буфер (raw)
     // Отправляем переведенный текстовый формат или буфер из созданного бота письмом на специально сгенерированный ящик @gotointeractive.com (абстракт)
     const message = {
-      to: 'denis@baskovsky.ru',// todo: специальный имейл созданный для бота
-      from: 'no-reply@gotointeractive.com',// todo: специальный имейл бота от телеграм
-      subject: 'prosto-diary',// todo: ?
-      text: 'required text',// todo возможно сюда стоит добавлять caption
+      to: 'denis@baskovsky.ru', // todo: специальный имейл созданный для бота
+      from: 'no-reply@gotointeractive.com', // todo: специальный имейл бота от телеграм
+      subject: 'prosto-diary', // todo: ?
+      text: 'required text', // todo возможно сюда стоит добавлять caption
       attachments: [createAttachment(buffer, type)],
       sendAt: date,
       headers: {

@@ -14,20 +14,20 @@ const onCount = async ({ chat, from }, match) => {
   logger.log('info', onCount.name);
   const chatId = chat.id;
   const fromId = from.id;
-  const params = {
+  const parameters = {
     parse_mode: 'Markdown',
   };
   const countAPI = require('../api/v1/count');
   if (match[1]) {
     try {
       const countResult = await countAPI(match[1].toUpperCase(), fromId);
-      await bot.sendMessage(chatId, countResult, params);
+      await bot.sendMessage(chatId, countResult, parameters);
     } catch (error) {
       await bot.sendMessage(chatId, error.message);
       logger.error(error);
     }
   } else {
-    const replyParams = Object.assign({}, params, {
+    const replyParameters = Object.assign({}, parameters, {
       reply_markup: {
         inline_keyboard: [
           [
@@ -37,11 +37,11 @@ const onCount = async ({ chat, from }, match) => {
         ],
       },
     });
-    await bot.sendMessage(chatId, 'Финансы', replyParams);
+    await bot.sendMessage(chatId, 'Финансы', replyParameters);
     // TODO: возможна утечка, если не уничтожать слушатель
     bot.once('callback_query', async ({ data }) => {
       const countResult = await countAPI(data, fromId);
-      await bot.sendMessage(chatId, countResult, params);
+      await bot.sendMessage(chatId, countResult, parameters);
     });
   }
 };

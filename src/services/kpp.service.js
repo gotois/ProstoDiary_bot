@@ -24,22 +24,22 @@ const NALOGRU_HOST = 'proverkacheka.nalog.ru';
  */
 const NALOGRU_PORT = 9999;
 /**
- * @param {object} qrParams - qr params
- * @param {string} qrParams.fn - Номер ФН (Фискальный Номер) — 16-значный номер. Например 8710000101700xxx
- * @param {string} qrParams.i - Номер ФД (Фискальный документ) — до 10 знаков. Например 2360xx
- * @param {string} qrParams.fp - Номер ФПД (Фискальный Признак Документа, также известный как ФП) — до 10 знаков. Например 3891955xxx
- * @param {string} qrParams.n - Вид кассового чека. В чеке помечается как n=1 (приход) и n=2 (возврат прихода)
- * @param {string} qrParams.t - Дата — дата с чека. Формат может отличаться. Я пробовал переворачивать дату (т.е. 17-05-2018), ставить вместо Т пробел, удалять секунды
- * @param {string} qrParams.s - Сумма — сумма с чека в копейках - 3900
+ * @param {object} parameters - qr params
+ * @param {string} parameters.fn - Номер ФН (Фискальный Номер) — 16-значный номер. Например 8710000101700xxx
+ * @param {string} parameters.i - Номер ФД (Фискальный документ) — до 10 знаков. Например 2360xx
+ * @param {string} parameters.fp - Номер ФПД (Фискальный Признак Документа, также известный как ФП) — до 10 знаков. Например 3891955xxx
+ * @param {string} parameters.n - Вид кассового чека. В чеке помечается как n=1 (приход) и n=2 (возврат прихода)
+ * @param {string} parameters.t - Дата — дата с чека. Формат может отличаться. Я пробовал переворачивать дату (т.е. 17-05-2018), ставить вместо Т пробел, удалять секунды
+ * @param {string} parameters.s - Сумма — сумма с чека в копейках - 3900
  * @returns {{DATE: string, SUM: string, FN: number, FD: number, FDP: number, TYPE: number}}
  */
-const formatArguments = (qrParams) => {
-  const DATE = String(qrParams.t);
-  const SUM = String(qrParams.s).replace('.', '');
-  const FN = Number(qrParams.fn);
-  const FD = Number(qrParams.i);
-  const FDP = Number(qrParams.fp);
-  const TYPE = Number(qrParams.n);
+const formatArguments = (parameters) => {
+  const DATE = String(parameters.t);
+  const SUM = String(parameters.s).replace('.', '');
+  const FN = Number(parameters.fn);
+  const FD = Number(parameters.i);
+  const FDP = Number(parameters.fp);
+  const TYPE = Number(parameters.n);
   return {
     DATE,
     SUM,
@@ -124,20 +124,22 @@ const getKPPData = async ({ FN, FD, FDP }) => {
  * @param {string} query - query
  * @returns {object}
  */
-const getQRParams = (query) => {
+const getQRParameters = (query) => {
   return (/^[?#]/.test(query) ? query.slice(1) : query)
     .split('&')
-    .reduce((params, param) => {
-      const [key, value] = param.split('=');
-      params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : '';
-      return params;
+    .reduce((parameters, parameter) => {
+      const [key, value] = parameter.split('=');
+      parameters[key] = value
+        ? decodeURIComponent(value.replace(/\+/g, ' '))
+        : '';
+      return parameters;
     }, {});
 };
 /**
  * @param {Buffer|object|string} input - input
  * @returns {Promise<object|Error>}
  */
-const getKPPParams = async (input) => {
+const getKPPParameters = async (input) => {
   let qrString = '';
   switch (typeof input) {
     case 'string': {
@@ -168,35 +170,35 @@ const getKPPParams = async (input) => {
     }
   }
   qrString = qrString.trim();
-  const kppParams = getQRParams(qrString);
-  const normalizeKPPParams = formatArguments(kppParams);
-  return normalizeKPPParams;
+  const kppParameters = getQRParameters(qrString);
+  const normalizeKPPParameters = formatArguments(kppParameters);
+  return normalizeKPPParameters;
 };
 /**
  * @param {Buffer|object|string} input - input
  * @returns {Promise<object>}
  */
 const kppService = async (input) => {
-  const kppParams = await getKPPParams(input);
+  const kppParameters = await getKPPParameters(input);
   // STEP 1 - авторизуемся
   // TODO: uncomment this if getKPPData doesn't work
   // await nalogRuSignUp()
   // STEP 2 - проверяем чек (необходимо чтобы избежать ошибки illegal api)
   try {
-    await checkKPP(kppParams);
+    await checkKPP(kppParameters);
   } catch (error) {
     const { statusCode } = error;
     if (statusCode === 406) {
       // todo: пытаемся заново авторизоваться
       await nalogRuSignUp();
-      await checkKPP(kppParams);
+      await checkKPP(kppParameters);
     } else {
       throw error;
     }
   }
 
   // STEP 3 - используем данные для получения подробного результата
-  const kppData = await getKPPData(kppParams);
+  const kppData = await getKPPData(kppParameters);
   return kppData;
 };
 

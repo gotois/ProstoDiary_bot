@@ -38,13 +38,13 @@ const exchangeratesapi = async ({
       date = 'latest';
     }
   }
-  const params = toQueryString({
+  const parameters = toQueryString({
     base,
     start_at: startAt,
     end_at: endAt,
     symbols: symbols.toString(),
   });
-  const url = `https://${EXCHANGERATES_API_HOST}/${date}` + params;
+  const url = `https://${EXCHANGERATES_API_HOST}/${date}` + parameters;
   const siteBuffer = await get(url);
   const html = siteBuffer.toString('utf8');
   return JSON.parse(html);

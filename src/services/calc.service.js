@@ -30,11 +30,11 @@ const defaultOut = Object.freeze({ [EUR]: 0, [RUB]: 0, [USD]: 0 });
  * @param {object} money - money
  * @returns {object}
  */
-const accMoney = (acc, money) => {
-  acc[EUR] += money.eur;
-  acc[RUB] += money.rub;
-  acc[USD] += money.usd;
-  return acc;
+const accumulatorMoney = (accumulator, money) => {
+  accumulator[EUR] += money.eur;
+  accumulator[RUB] += money.rub;
+  accumulator[USD] += money.usd;
+  return accumulator;
 };
 /**
  * @param {string} text - text
@@ -86,8 +86,8 @@ const getMoney = ({ texts, type }) => {
     return defaultOut;
   }
   return texts
-    .reduce((acc, raw) => {
-      return acc.concat(...splitText(raw));
+    .reduce((accumulator, raw) => {
+      return accumulator.concat(...splitText(raw));
     }, [])
     .map((text) => {
       return formatType(text, type);
@@ -95,8 +95,8 @@ const getMoney = ({ texts, type }) => {
     .map((text) => {
       return calcMoney(text);
     })
-    .reduce((acc, money) => {
-      return accMoney(acc, money);
+    .reduce((accumulator, money) => {
+      return accumulatorMoney(accumulator, money);
     }, Object.assign({}, defaultOut));
 };
 /**
@@ -170,8 +170,8 @@ const calcMoney = (string) => {
   if (!(numbers && numbers.length > 0)) {
     return defaultOut;
   }
-  return splitText(numbers.input).reduce((acc, text) => {
-    return accMoney(acc, getAllSum(text));
+  return splitText(numbers.input).reduce((accumulator, text) => {
+    return accumulatorMoney(accumulator, getAllSum(text));
   }, Object.assign({}, defaultOut));
 };
 /**
@@ -233,15 +233,15 @@ const getAllSum = (numbers) => {
         }
         return true;
       })
-      .reduce((acc, string) => {
+      .reduce((accumulator, string) => {
         if (regExpUsd.test(string)) {
-          acc[USD] += cleanDirtyNumberString(string);
+          accumulator[USD] += cleanDirtyNumberString(string);
         } else if (regExpEuro.test(string)) {
-          acc[EUR] += cleanDirtyNumberString(string);
+          accumulator[EUR] += cleanDirtyNumberString(string);
         } else {
-          acc[RUB] += cleanDirtyNumberString(string);
+          accumulator[RUB] += cleanDirtyNumberString(string);
         }
-        return acc;
+        return accumulator;
       }, Object.assign({}, defaultOut));
   } else {
     return defaultOut;
