@@ -41,6 +41,7 @@ const getPhotoDetection = async ({ caption, fileBuffer }) => {
   }
 };
 
+// todo: перенести это в Abstract-Photo.js
 module.exports = {
   getPhotoDetection,
 };

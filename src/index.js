@@ -86,6 +86,9 @@ const sendUpdatesToUsers = (text) => {
   await databaseConnect();
   const botInfo = await startTelegramBot();
   require('./core/handlers')(bot);
+  // запускаем считыватель писем
+  // emailNotifier.start();
+
   if (IS_PRODUCTION) {
     logger.log('info', `production bot:${botInfo.first_name} started`);
 
@@ -95,9 +98,6 @@ const sendUpdatesToUsers = (text) => {
     // TODO: если отличается хэш в таблице Bot с тем что есть сейчас - тогда уведомляем пользователей о новой версии
     // TODO: в text добавить сгенерированный ченчлог
     sendUpdatesToUsers(botInfo.first_name + ' updated: ' + projectVersion);
-
-    // запускаем считыватель писем
-    emailNotifier.start();
   } else {
     logger.log('info', 'dev bot started');
   }

@@ -44,7 +44,7 @@ CREATE INDEX idx_gin_foods ON Foods USING GIN (to_tsvector_multilang(title));
 -- История пользователя будет представлена как "процесс"
 CREATE TYPE intent AS ENUM (
   'undefined',
-  'install',
+  'install', -- rename -> system
   'buy',
   'eat',
   'finance',
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS bot_story (
   id BIGSERIAL PRIMARY KEY,
 --  sign SOMEHASH PRIMARY KEY UNIQUE, -- электронная подпись сгенерированная ботом, которая подтверждает что бот не был скомпроментирован. todo: попробвать через `MD5('string');`?
   version VARCHAR(20) NOT NULL CHECK (version <> ''), -- bot Version. отсюда же можно узнать и api version аналогична в package.json -нужна для проверки необходимости обновить историю бота
-  author JSONB NOT NULL, -- JSON-LD; todo: нужна отдельная приватная таблица для этого
+  author JSONB NOT NULL, -- JSON-LD; todo: нужна отдельная приватная таблица для этого; также более правильнее если это будет перенесено в user_story
   publisher VARCHAR(100) NOT NULL, -- название организации которые курируют разработку бота. todo: нужна отдельная таблица для этого
   jurisdiction JSONB, -- Intended jurisdiction for operation definition (if applicable); todo: нужна отдельная таблица для этого
   telegram_user_id INTEGER NOT NULL
@@ -76,13 +76,15 @@ CREATE TABLE IF NOT EXISTS bot_story (
 CREATE TABLE IF NOT EXISTS user_story (
   id BIGSERIAL PRIMARY KEY,
   type INTENT NOT NULL,
-  telegram_message_id INTEGER NOT NULL UNIQUE,
+  telegram_message_id INTEGER NOT NULL UNIQUE, -- todo: думаю это тоже нужно перенести в bot_story table
   context JSONB NOT NULL -- TEXT чтобы дешифровать данные нужно выполнить дешифровку этой подписи telegram_id + SALT_PASSWORD
 );
 CREATE INDEX IF NOT EXISTS idx_intent ON user_story (type);
 
 CREATE TABLE IF NOT EXISTS history (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), -- глобальная историческая ссылка
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), -- глобальная историческая ссылка. в идеале - blockchain ID
+  -- todo raw source text, video, photo, document, etc
+  -- ...
   bot_story_id BIGSERIAL REFERENCES bot_story ON UPDATE CASCADE ON DELETE CASCADE,
   user_story_id BIGSERIAL REFERENCES user_story  ON UPDATE CASCADE ON DELETE CASCADE,
   created_at timestamp default current_timestamp, -- Первая сформированной очереди
