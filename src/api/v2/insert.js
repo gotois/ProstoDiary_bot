@@ -74,7 +74,7 @@ module.exports = async (
     }
     return {
       jsonrpc: '2.0',
-      result: '✅',
+      result: '✅', // ✓
     };
   } catch (error) {
     return {

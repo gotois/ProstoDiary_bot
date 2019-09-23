@@ -3,8 +3,8 @@ module.exports = (t) => {
     previousInput,
     formatRows,
   } = require('../../src/services/format.service');
-  t.is(previousInput('Some'), 'Some…✓');
-  t.is(previousInput('123456789'), '123456…✓');
+  t.is(previousInput('Some'), 'Some…');
+  t.is(previousInput('123456789'), '123456…');
   // formatRows
   {
     t.is(

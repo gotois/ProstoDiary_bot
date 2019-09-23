@@ -82,6 +82,7 @@ const onStart = async ({ chat, from, date, message_id }) => {
     return;
   }
   // }
+  // eslint-disable-next-line
   const messageListener = async (query) => {
     const installKey = '123456'; // todo сгенерированный ключ подтверждающий вход
     switch (query.data) {
@@ -100,6 +101,7 @@ const onStart = async ({ chat, from, date, message_id }) => {
           checkMessageValue.message_id,
           async ({ text }) => {
             if (text !== installKey) {
+              // eslint-disable-next-line
               console.log('wrong key');
               return;
             }
@@ -138,8 +140,10 @@ const onStart = async ({ chat, from, date, message_id }) => {
         bot.onReplyToMessage(
           chatId,
           cryptoMessageValue.message_id,
+          // eslint-disable-next-line
           async ({ text }) => {
             // todo: сохранять в БД соль для crypto
+            // eslint-disable-next-line
             console.log('your salt', text);
             // secret.base32 // todo: это нужно сохранять в БД
             // new Story({

@@ -32,7 +32,11 @@ const formatResponse = ({ date, entry, matcher }) => {
 const normalizeRegexStringToString = (regexString) => {
   return regexString.replace(/^\//, '').replace(/\/$/, '');
 };
-
+function* generateEntries(matchFilterRows) {
+  for (let i = 0; i < matchFilterRows.length; i += PAGE_SKIP) {
+    yield matchFilterRows.slice(i, i + PAGE_SKIP);
+  }
+}
 /**
  * @deprecated - объединить с v2/search
  * @returns {Promise<void>}
@@ -48,14 +52,6 @@ module.exports = async (match, userId, callback) => {
     .reverse();
   if (matchFilterRows.length === 0) {
     throw new Error('Not found');
-  }
-  /**
-   * @param {number} page - page
-   */
-  function* generateEntries(page) {
-    for (let i = 0; i < matchFilterRows.length; i += page) {
-      yield matchFilterRows.slice(i, i + page);
-    }
   }
   /**
    *
@@ -94,6 +90,6 @@ module.exports = async (match, userId, callback) => {
       );
     }
   };
-  const generator = generateEntries(PAGE_SKIP);
+  const generator = generateEntries(matchFilterRows);
   await showNextEntries();
 };

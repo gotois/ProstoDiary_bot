@@ -7,7 +7,7 @@ const kppService = require('../services/kpp.service');
 
 // todo: ofx|pdf|json|xml|AppleHealth(export.xml)
 class AbstractDocument extends Abstract {
-  #document;
+  #document = null;
   
   async fill () {
     // todo: парсинг ofx

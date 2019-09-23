@@ -26,7 +26,7 @@ const regExpUsd = new RegExp(usdString);
 
 const defaultOut = Object.freeze({ [EUR]: 0, [RUB]: 0, [USD]: 0 });
 /**
- * @param {object} acc - accumulator
+ * @param {object} accumulator - accumulator
  * @param {object} money - money
  * @returns {object}
  */

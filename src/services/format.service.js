@@ -31,7 +31,7 @@ const formatRows = (rows) => {
  * @returns {string}
  */
 const formatterText = (input) => {
-  return `${input.replace(/\n/g, ' ').substring(0, 6)}…✓`;
+  return `${input.replace(/\n/g, ' ').substring(0, 6)}…`;
 };
 /**
  * @param {Array} rows - array rows

@@ -74,6 +74,7 @@ const isRUS = (languageCode) => {
  * @param  {string} languageCode - lang
  * @returns {boolean}
  */
+// eslint-disable-next-line
 const isENG = (languageCode) => {
   return /en/.test(languageCode);
 };

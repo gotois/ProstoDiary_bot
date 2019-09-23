@@ -2,7 +2,6 @@ const { $$ } = require('.');
 const pkg = require('../../package');
 /**
  * @param {number} telegramUserId - id
- * @param {number} message_id - id
  * @returns {Promise}
  */
 const exist = async (telegramUserId) => {

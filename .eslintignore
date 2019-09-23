@@ -5,4 +5,6 @@
 /bin
 /SQL
 src/services/story.service.js
+src/services/auth.service.js
+src/models/
 ava.config.js

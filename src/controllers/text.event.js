@@ -1,5 +1,6 @@
 const bot = require('../core');
 const commands = require('../core/commands');
+const format = require('../services/format.service');
 const logger = require('../services/logger.service');
 const APIv2 = require('../api/v2');
 /**
@@ -65,11 +66,15 @@ const onText = async (message) => {
   if (text.startsWith('/')) {
     return;
   }
-  const botMessage = await bot.sendMessage(chatId, 'Saving... ' + `_${text}_`, {
-    parse_mode: 'Markdown',
-    disable_notification: true,
-    disable_web_page_preview: true,
-  });
+  const botMessage = await bot.sendMessage(
+    chatId,
+    'Saving: ' + `_${format.previousInput(text)}_`,
+    {
+      parse_mode: 'Markdown',
+      disable_notification: true,
+      disable_web_page_preview: true,
+    },
+  );
   const { error, result } = await APIv2.insert(Buffer.from(text), {
     type: 'plain/text',
     date,

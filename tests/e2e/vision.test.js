@@ -1,6 +1,7 @@
 const fs = require('fs');
 
 module.exports = async (t) => {
+  t.timeout(10000);
   const visionService = require('../../src/services/vision.service');
   const buffer = fs.readFileSync('tests/data/photo/receipt-example-1.jpg');
   const result = await visionService.labelDetection(buffer);
