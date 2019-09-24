@@ -1,11 +1,9 @@
-const { version } = require('../../package');
-const INTENTS = require('../core/intents');
-const AbstractText = require('../models/abstract-text');
-const AbstractPhoto = require('../models/abstract-photo');
-const AbstractDocument = require('../models/abstract-document');
-const dbEntries = require('../database/entities.database');
-const logger = require('./logger.service');
-const { PERSON } = require('../environment');
+const { version } = require('../../../package');
+const INTENTS = require('../../core/intents');
+const AbstractText = require('../../models/abstract/abstract-text');
+const AbstractPhoto = require('../../models/abstract/abstract-photo');
+const AbstractDocument = require('../../models/abstract/abstract-document');
+const { PERSON } = require('../../environment');
 /**
  * @constant
  * @type {{CORE: string, HARD: string, SOFT: string}}
@@ -24,10 +22,9 @@ const STORY_TYPES = {
 class Story {
   #abstract = null;
   #intent = null;
+  #type = null;
   #publisher = undefined;
-  #type = [];
-  #date = []; // Получение даты события (Подведение таймлайна) <SmartDate>? // по умолчанию заполняем время с шагом в один день
-  
+  #date = []; // Получение даты события (Подведение таймлайна) <SmartDate>?
   /**
    * @param {Abstract} abstract - original
    * @param {object} parameters - params
@@ -39,7 +36,7 @@ class Story {
    */
   // @todo https://github.com/gotois/ProstoDiary_bot/issues/152#issuecomment-527747303
   constructor(abstract, {
-    publisher = 'goto Interactive Software', // todo: брать эти данные по-умолчанию из package.json
+    publisher,
     intent = INTENTS.UNDEFINED,
     type = STORY_TYPES.SOFT,
     date = Date.now(),
@@ -56,18 +53,14 @@ class Story {
       this.#intent = intent;
     }
   }
-  get jurisdiction() {
-    return [
-      {
-        "coding": [
-          {
-            "system": "urn:iso:std:iso:3166",
-            "code": "GB",
-            // "display": "United Kingdom of Great Britain and Northern Ireland (the)"
-          }
-        ]
-      }
-    ];
+
+  // todo: [TIMESTAMP_START, TIMESTAMP_END]
+  get date() {
+    // fixme: по умолчанию заполняем время с шагом в один час
+    return [this.#date].flat().sort();
+  }
+  get intent() {
+    return this.#abstract.intent || this.#intent;
   }
   /**
    * @param {STORY_TYPES} storyType - STORY_TYPES
@@ -76,7 +69,11 @@ class Story {
     if (!Object.values(STORY_TYPES).includes(storyType)) {
       throw new TypeError('Unknown story type');
     }
-    this.#type.unshift(storyType)
+    // todo: если приходит более очевидный тип Hard или Core, то это заменяет прежний тип
+    this.#type = storyType;
+  }
+  get type() {
+    return this.#type;
   }
   /**
    * @todo: добавить криптование контента crypt.encode(context)
@@ -89,17 +86,16 @@ class Story {
         abstract: 'text',
         languageCode: this.#abstract.language,
         text: this.#abstract.text,
-        // sentiment: this.#sentiment,
-        // hrefs: this.#hrefs,
-        // entities: this.#entities,
-        // emails: this.#emails,
-        // phones: this.#phones,
-        // category: this.#category,
-        // #names,
-        // #addresses
-        // #behavior
-        // foodResults: this.foodResults, // todo: тестово, нужно иное насыщение
-        // parameters: this.#parameters[0],
+        sentiment: this.#abstract.sentiment,
+        hrefs: this.#abstract.hrefs,
+        entities: this.#abstract.entities,
+        emails: this.#abstract.emails,
+        phones: this.#abstract.phones,
+        category: this.#abstract.category,
+        names: this.#abstract.names,
+        parameters: this.#abstract.parameters,
+        // geo: this.#abstract.geo // todo: geoJSON доступен из текста
+        // wiki: todo: {topologyLink} ?краткое описание из вики?
       }
     } else if (this.#abstract instanceof AbstractPhoto) {
       return {
@@ -122,27 +118,20 @@ class Story {
     return {
       telegram_user_id: this.telegram_user_id,
       telegram_message_id: this.telegram_message_id,
-      intent: this.#abstract.intent || this.#intent,
-      date: this.#date,
+      // todo: сюда же добавляется subject из письма
+      // todo: сюда же добавляется raw - ссылка на исходик (в письме аттача или типо того)
+      // todo: канонический урл - url
+      // todo: bot blockchain sign
+      
+      intent: this.intent,
+      type: this.type, // https://github.com/gotois/ProstoDiary_bot/issues/152#issuecomment-527747303
+      date: this.date, // SmartDate
       version: version, // API ver
       author: JSON.stringify(PERSON),
-      publisher: this.#publisher,
+      publisher: this.publisher,
       context: this.context,
       jurisdiction: this.jurisdiction,
     };
-  }
-  /**
-   * @returns {undefined}
-   */
-  async update () {
-    await dbEntries.put(this.toJSON());
-  }
-  /**
-   * @todo https://github.com/gotois/ProstoDiary_bot/issues/98
-   * @returns {undefined}
-   */
-  async save () {
-    await dbEntries.post(this.toJSON());
   }
 }
 

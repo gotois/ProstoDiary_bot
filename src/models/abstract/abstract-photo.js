@@ -1,7 +1,7 @@
-const Abstract = require('./abstract');
+const Abstract = require('./');
 // const { getPhotoDetection } = require('../services/photo.service');
-const kppService = require('../services/kpp.service');
-const foodService = require('../services/food.service');
+const kppService = require('../../services/kpp.service');
+const foodService = require('../../services/food.service');
 
 class AbstractPhoto extends Abstract {
   #caption;

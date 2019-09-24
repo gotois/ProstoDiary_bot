@@ -1,5 +1,5 @@
-const Abstract = require('./abstract');
-const foursquare = require('../services/foursquare.service');
+const Abstract = require('./');
+const foursquare = require('../../services/foursquare.service');
 
 class AbstractGeo extends Abstract {
   #place = []; // {geoJSON} - место где была сделана запись. // todo rename location

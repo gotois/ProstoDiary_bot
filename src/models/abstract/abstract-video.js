@@ -1,4 +1,4 @@
-const Abstract = require('./abstract');
+const Abstract = require('./');
 
 class AbstractVideo extends Abstract {
   constructor(buffer) {

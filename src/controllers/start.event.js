@@ -5,7 +5,7 @@ const sgMail = require('../services/sendgridmail.service');
 const dbUsers = require('../database/users.database');
 const logger = require('../services/logger.service');
 const auth = require('../services/auth.service');
-const Story = require('../services/story.service');
+const BotStory = require('../models/story/bot-story');
 const { PERSON } = require('../environment');
 /**
  * @param {number} chatId - chatId
@@ -105,7 +105,7 @@ const onStart = async ({ chat, from, date, message_id }) => {
               console.log('wrong key');
               return;
             }
-            const story = new Story(
+            const story = new BotStory(
               Buffer.from(
                 `INSTALL ${from.language_code} Bot for ${from.first_name}`,
               ),

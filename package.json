@@ -2,6 +2,7 @@
   "name": "prosto-diary",
   "version": "0.0.0-development",
   "description": "ProstoDiary: Global virtual assistant",
+  "publisher": "goto Interactive Software",
   "homepage": "https://prosto-diary.gotointeractive.com",
   "main": "./src/index.js",
   "workspaces": [

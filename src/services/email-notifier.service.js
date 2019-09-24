@@ -3,10 +3,10 @@ const notifier = require('mail-notifier');
 const logger = require('./logger.service');
 const { MAIL } = require('../environment');
 const { unpack } = require('./archive.service');
-const AbstractText = require('../models/abstract-text');
-const AbstractPhoto = require('../models/abstract-photo');
-const AbstractDocument = require('../models/abstract-document');
-const Story = require('./story.service');
+const AbstractText = require('../models/abstract/abstract-text');
+const AbstractPhoto = require('../models/abstract/abstract-photo');
+const AbstractDocument = require('../models/abstract/abstract-document');
+const UserStory = require('../models/story/user-story');
 
 const imap = {
   user: MAIL.USER,
@@ -91,7 +91,7 @@ const mailListener = async (mail) => {
     if (attachments) {
       for (const abstract of readAttachments(attachments)) {
         await abstract.fill();
-        const story = new Story(abstract, {
+        const story = new UserStory(abstract, {
           date: date,
           publisher: from[0].addresses,
           telegram_user_id: botTelegramUserId,

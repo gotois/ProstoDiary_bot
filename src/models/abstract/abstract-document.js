@@ -1,9 +1,9 @@
-const Abstract = require('./abstract');
+const Abstract = require('./');
 const {
   uploadAppleHealthData,
-} = require('../services/apple-health.service');
-const { readOFX } = require('../services/tinkoff.service');
-const kppService = require('../services/kpp.service');
+} = require('../../services/apple-health.service');
+const { readOFX } = require('../../services/tinkoff.service');
+const kppService = require('../../services/kpp.service');
 
 // todo: ofx|pdf|json|xml|AppleHealth(export.xml)
 class AbstractDocument extends Abstract {

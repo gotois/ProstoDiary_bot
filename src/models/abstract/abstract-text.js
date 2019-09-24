@@ -1,13 +1,13 @@
 const validator = require('validator');
 const Eyo = require('eyo-kernel');
-const Abstract = require('./abstract');
-const logger = require('../services/logger.service');
-const dialogflowService = require('../services/dialogflow.service');
-const { spellText } = require('../services/speller.service');
-const { detectLang, isRUS, isENG } = require('../services/detect-language.service');
-const languageService = require('../services/language.service');
-const crypt = require('../services/crypt.service');
-const foodService = require('../services/food.service');
+const Abstract = require('./');
+const logger = require('../../services/logger.service');
+const dialogflowService = require('../../services/dialogflow.service');
+const { spellText } = require('../../services/speller.service');
+const { detectLang, isRUS, isENG } = require('../../services/detect-language.service');
+const languageService = require('../../services/language.service');
+const crypt = require('../../services/crypt.service');
+const foodService = require('../../services/food.service');
 
 class AbstractText extends Abstract {
   #text = [];
@@ -16,19 +16,44 @@ class AbstractText extends Abstract {
    * @type {Array}
    */
   #language = [];
-  #entities; // todo: разбить на схемы
+  #entities;
   #parameters = []; // найденные параметры интента
   #category = []; // Получение существа события - сущность события
   #sentiment = []; // @example ['normal', 'angry']
   #hrefs = []; // internet links
   #names = []; // todo: полученные имена людей
-  #addresses = []; // полученные адреса из текста
   #emails = []; // полученные данные о почте
   #phones = []; // полученные телефоны
-  #behavior; // todo: анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
+  // #addresses = []; // полученные адреса из текста
+  // #behavior; // todo: анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
   
   constructor(buffer) {
     super(buffer);
+  }
+  
+  get sentiment() {
+    return this.#sentiment;
+  }
+  get hrefs() {
+    return this.#hrefs;
+  }
+  get entities() {
+    return this.#entities; // todo: разбить на схемы
+  }
+  get emails() {
+    return this.#emails;
+  }
+  get phones() {
+    return this.#phones;
+  }
+  get category() {
+    return this.#category;
+  }
+  get names() {
+    return this.#names;
+  }
+  get parameters() {
+    return this.#parameters;
   }
   
   set language(langCode) {
@@ -125,7 +150,7 @@ class AbstractText extends Abstract {
         const dialogflowResult = await dialogflowService.inputAnalyze(this.text);
         this.language = dialogflowResult.languageCode;
         this.intent = dialogflowResult.intent.displayName;
-        // использовать результат из dialogFlow
+        // todo: как-то использовать результат из dialogFlow
         this.#parameters.unshift(dialogflowResult.parameters.fields);
 
         // TODO: Если в интентах все необходимые параметры используются они
