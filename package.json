@@ -125,7 +125,7 @@
     "npm-check-updates": "3.1.23",
     "nyc": "14.1.1",
     "prettier": "1.18.2",
-    "snyk": "1.228.3",
+    "snyk": "1.228.5",
     "telegram-test-api": "2.3.1"
   },
   "snyk": true
