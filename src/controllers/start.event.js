@@ -9,9 +9,10 @@ const BotStory = require('../models/story/bot-story');
 const { PERSON } = require('../environment');
 /**
  * @param {number} chatId - chatId
+ * @param {jsonld} personData - personData
  * @returns {IterableIterator<*|void|PromiseLike<Promise | never>|Promise<Promise | never>|Promise>}
  */
-function* messageIterator(chatId) {
+function* messageIterator(chatId, personData) {
   // Step 1: выводить оферту
   const offerta = fs.readFileSync('docs/_pages/offerta.md').toString();
   yield bot.sendMessage(chatId, offerta, {
@@ -36,10 +37,10 @@ function* messageIterator(chatId) {
     },
   );
   // Step 3: генерируем Auth token
-  const secret = auth.genereateGoogleAuth(PERSON.email);
+  const secret = auth.genereateGoogleAuth(personData.email);
   yield bot.sendMessage(
     chatId,
-    `**Check your data:**\n\nAuth key: ${secret.base32}\nMail: ${PERSON.email}`,
+    `**Check your data:**\n\nAuth key: ${secret.base32}\nMail: ${personData.email}`,
     {
       parse_mode: 'Markdown',
       reply_markup: {
@@ -58,7 +59,7 @@ function* messageIterator(chatId) {
   });
   yield bot.sendMessage(
     chatId,
-    `Привет __${PERSON.name}__!\nЯ твой бот __${pkg.description}__ ${pkg.version}!\nНе забудь настроить двухфакторную аутентификацию.`,
+    `Привет __${personData.name}__!\nЯ твой бот __${pkg.description}__ ${pkg.version}!\nНе забудь настроить двухфакторную аутентификацию.`,
     {
       parse_mode: 'Markdown',
     },
@@ -82,13 +83,14 @@ const onStart = async ({ chat, from, date, message_id }) => {
     return;
   }
   // }
+  const personData = await PERSON;
   // eslint-disable-next-line
   const messageListener = async (query) => {
     const installKey = '123456'; // todo сгенерированный ключ подтверждающий вход
     switch (query.data) {
       case 'CHECK': {
         await sgMail.send({
-          to: PERSON.email,
+          to: personData.email,
           from: 'no-reply@gotointeractive.com',
           subject: 'ProstoDiary Auth👾',
           text:
@@ -160,7 +162,7 @@ const onStart = async ({ chat, from, date, message_id }) => {
       }
     }
   };
-  const iterator = messageIterator(chatId);
+  const iterator = messageIterator(chatId, personData);
   await iterator.next();
   bot.on('callback_query', messageListener);
 };

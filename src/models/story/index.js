@@ -127,7 +127,7 @@ class Story {
       type: this.type, // https://github.com/gotois/ProstoDiary_bot/issues/152#issuecomment-527747303
       date: this.date, // SmartDate
       version: version, // API ver
-      author: JSON.stringify(PERSON),
+      author: JSON.stringify(PERSON), // todo: change person type
       publisher: this.publisher,
       context: this.context,
       jurisdiction: this.jurisdiction,

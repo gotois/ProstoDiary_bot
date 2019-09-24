@@ -1,4 +1,5 @@
 const validator = require('validator');
+const { get } = require('../services/request.service');
 
 const {
   NODE_ENV,
@@ -98,13 +99,20 @@ const ENV = {
     PORT,
   },
   /**
-   * @returns {jsonld|Error}
+   * @returns {Promise<jsonld>|Error}
    */
   get PERSON() {
     if (typeof PERSON === 'object') {
-      return PERSON;
+      return Promise.resolve(PERSON);
     } else if (typeof PERSON === 'string') {
-      return JSON.parse(PERSON);
+      if (validator.isURL(PERSON)) {
+        return (async () => {
+          const personData = await get(PERSON);
+          return JSON.parse(personData.toString('utf8'));
+        })();
+      } else if (validator.isJSON(PERSON)) {
+        return Promise.resolve(JSON.parse(PERSON));
+      }
     }
     throw new Error('Env error: PERSON typeof');
   },
@@ -190,6 +198,7 @@ const ENV = {
     },
   },
   get IS_PRODUCTION() {
+    // todo: использовать !this.IS_DEV
     return String(NODE_ENV) === 'production';
   },
   get IS_CI() {

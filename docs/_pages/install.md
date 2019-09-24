@@ -61,7 +61,7 @@ FOURSQUARE_PUSH_SECRET={ string }
 FOURSQUARE_REDIRECT_URI=http://localhost
 FOURSQUARE_ACCESS_TOKEN={ string } # Чтобы получить token перейдите по ссылке и подтвердите привязку приложения. (В хэше открытого попапа будет  access token)
 
-PERSON={ JSON-LD} 
+PERSON={JSON-LD|Url}  # example https://me.baskovsky.ru/
 
 MAIL_USER={ string }
 MAIL_PASSWORD={ string }
