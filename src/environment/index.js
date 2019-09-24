@@ -98,10 +98,15 @@ const ENV = {
     PORT,
   },
   /**
-   * @returns {jsonld}
+   * @returns {jsonld|Error}
    */
   get PERSON() {
-    return JSON.parse(PERSON);
+    if (typeof PERSON === 'object') {
+      return PERSON;
+    } else if (typeof PERSON === 'string') {
+      return JSON.parse(PERSON);
+    }
+    throw new Error('Env error: PERSON typeof');
   },
   PLOTLY: {
     PLOTLY_LOGIN,
