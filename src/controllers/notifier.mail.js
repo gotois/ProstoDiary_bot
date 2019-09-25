@@ -1,8 +1,8 @@
 require('dotenv').config();
 const notifier = require('mail-notifier');
-const logger = require('./logger.service');
+const logger = require('../services/logger.service');
 const { MAIL } = require('../environment');
-const { unpack } = require('./archive.service');
+const { unpack } = require('../services/archive.service');
 const AbstractText = require('../models/abstract/abstract-text');
 const AbstractPhoto = require('../models/abstract/abstract-photo');
 const AbstractDocument = require('../models/abstract/abstract-document');
@@ -18,8 +18,14 @@ const imap = {
   markSeen: false,
   search: ['ALL'], // todo: нужна функциональнось которая игнорирует те письма, которые уже были обработы ботом
 };
-
-const readAttachments = async (attachments) => {
+/**
+ * @param {object} mail - mail
+ * @param {Array} mail.attachments - email attachments
+ * @returns {Promise<Array>}
+ */
+const readAttachments = async ({ attachments, from }) => {
+  const publisher = from[0].addresses;
+  const abstracts = [];
   for (const attachment of attachments) {
     const {
       content,
@@ -34,7 +40,8 @@ const readAttachments = async (attachments) => {
     } = attachment;
     switch (contentType) {
       case 'plain/text': {
-        return [new AbstractText(content)];
+        abstracts.push(new AbstractText(content, publisher));
+        break;
       }
       // todo: add content video
       // case 'video': {
@@ -42,19 +49,20 @@ const readAttachments = async (attachments) => {
       // }
       case 'image/png':
       case 'image/jpeg': {
-        return [new AbstractPhoto(content)];
+        abstracts.push(new AbstractPhoto(content, publisher));
+        break;
       }
       case 'application/pdf':
       case 'application/xml': {
-        return [new AbstractDocument(content)];
+        abstracts.push(new AbstractDocument(content, publisher));
+        break;
       }
       case 'application/zip':
       case 'multipart/x-zip': {
-        const out = [];
         for await (const [fileName, zipBuffer] of unpack(content)) {
-          out.push(new AbstractDocument(zipBuffer));
+          abstracts.push(new AbstractDocument(zipBuffer, publisher));
         }
-        return out;
+        break;
       }
       default: {
         // todo: тогда нужен разбора html и text самостоятельно из письма
@@ -62,23 +70,28 @@ const readAttachments = async (attachments) => {
       }
     }
   }
+  for (const a of abstracts) {
+    await a.fill();
+  }
+  return abstracts;
 };
 
+/**
+ * @param {object} mail - mail
+ * @param {any} mail.html - html
+ * @param {any} mail.attachments - attachments
+ * @param {any} mail.text - text
+ * @param {any} mail.subject - subject
+ * @param {any} mail.to - to
+ * @param {any} mail.receivedData - receivedData
+ * @param {any} mail.messageId - messageId
+ * @param {any} mail.priority - priority
+ * @param {any} mail.flags - flags
+ * @param {any} mail.receivedData - receivedData
+ * @returns {Promise<undefined>}
+ */
 const mailListener = async (mail) => {
-  const {
-    html,
-    text,
-    headers,
-    subject,
-    from,
-    to,
-    date,
-    receivedData,
-    // messageId,
-    // priority,
-    // flags,
-    attachments,
-  } = mail;
+  const { headers, from, date, attachments } = mail;
   // console.log(mail); // eslint-disable-line
 
   // todo это если письмо было отправлено ботом.
@@ -89,11 +102,9 @@ const mailListener = async (mail) => {
     const botTelegramMessageId = headers['x-bot-telegram-message-id'];
     const botTelegramUserId = headers['x-bot-telegram-user-id'];
     if (attachments) {
-      for (const abstract of readAttachments(attachments)) {
-        await abstract.fill();
+      for await (const abstract of readAttachments(mail)) {
         const story = new UserStory(abstract, {
           date: date,
-          publisher: from[0].addresses,
           telegram_user_id: botTelegramUserId,
           telegram_message_id: botTelegramMessageId,
         });

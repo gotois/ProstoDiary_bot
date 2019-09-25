@@ -3,7 +3,7 @@ const dbClient = require('./database');
 const logger = require('./services/logger.service');
 const { projectVersion } = require('./services/version.service');
 const { IS_PRODUCTION, IS_DEV, TELEGRAM } = require('./environment');
-const emailNotifier = require('./services/email-notifier.service');
+const emailNotifier = require('./controllers/notifier.mail');
 /**
  * @description initialize bot
  * @returns {Promise<object>}
