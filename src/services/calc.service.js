@@ -146,7 +146,7 @@ const calcMoney = (string) => {
   }
   // явно объявляю доллары
   string = string.replace(/\$.+/, (subString) => {
-    return subString.substr(1) + 'долларов';
+    return subString.slice(1) + 'долларов';
   });
   // явно объявляю евро
   // TODO: говнокод :)
@@ -161,7 +161,7 @@ const calcMoney = (string) => {
       }
       break;
     }
-    const textFinded = text.substr(index, currentIndex);
+    const textFinded = text.slice(index, currentIndex);
     string = textFinded.replace('€', '').replace(/$/, 'евро');
     return string;
   });
@@ -211,7 +211,7 @@ const getAllSum = (numbers) => {
         (string, argument2, argument3, index, all) => {
           const start = index + string.length;
           const end = index + 6 + string.length;
-          const nextString = all.substr(start, end);
+          const nextString = all.slice(start, end);
           if (regExpUsd.test(nextString)) {
             return string.trimRight() + 'долларов ';
           } else if (regExpEuro.test(nextString)) {

@@ -29,7 +29,7 @@ const formatQuery = (query) => {
  * @returns {string}
  */
 const replaceBetween = (string, start, end, what) => {
-  return string.substring(0, start) + what + string.substring(end);
+  return string.slice(0, start) + what + string.slice(end);
 };
 /**
  *

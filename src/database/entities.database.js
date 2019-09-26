@@ -29,7 +29,7 @@ const getAll = async (telegram_user_id, sorting = 'ASC') => {
 const _get = async (telegram_user_id, date) => {
   switch (date.constructor) {
     case Date: {
-      date = date.toJSON().substr(0, 10);
+      date = date.toJSON().slice(0, 10);
       break;
     }
     case String: {

@@ -36,7 +36,7 @@ class FatSecret {
           '&' + parameter + '=' + encodeURIComponent(parameters[parameter]);
         return accumulator;
       }, '')
-      .substr(1); // remove first &
+      .slice(1); // remove first &
   }
   /**
    * Perform the request to fatsecret with default params merged in.
