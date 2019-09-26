@@ -3,7 +3,7 @@
     "config:base",
     ":onlyNpm"
   ],
-  "prHourlyLimit": 4,
+  "prHourlyLimit": 24,
   "digest": {
     "automerge": true
   }
