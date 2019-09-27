@@ -102,7 +102,7 @@ skipTestForFast('API: Currency', require('./currency-service.test'));
 // INPUT
 skipTestForFast('/help', require('./help.test'));
 skipTestForFast('/version', require('./version.test'));
-skipTestForFast('/backup', require('./backup.test'));
+skipTestForFastOrTravis('/backup', require('./backup.test'));
 skipTestForFastOrTravis('/text', require('./text.test'));
 skipTestForFastOrTravis('/balance', require('./balance.test'));
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
@@ -115,7 +115,7 @@ skipTestForFastOrTravis('AppleHealth', require('./apple-health-service.test'));
 skipTestForFastOrTravis('Tinkoff', require('./tinkoff-service.test'));
 
 test('bot init', require('./telegram-bot.test'));
-test('foursquare', require('./foursquare-service.test'));
+skipTestForFastOrTravis('foursquare', require('./foursquare-service.test'));
 
 test.todo('Создать отдельного пользователя в БД'); // TODO: используя https://github.com/marak/Faker.js/
 test.todo('Проверка удаления своей записи');
