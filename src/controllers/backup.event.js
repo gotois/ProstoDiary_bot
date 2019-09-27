@@ -18,8 +18,8 @@ const onBackup = async ({ chat, from, date }) => {
 
   const { error, result } = await backupAPI(fromId, date);
   if (error) {
-    logger.log('error', error.toString());
-    await bot.sendMessage(chatId, error);
+    logger.log('error', error.message.toString());
+    await bot.sendMessage(chatId, error.message);
     return;
   }
   const { filename, fileBuffer } = result;

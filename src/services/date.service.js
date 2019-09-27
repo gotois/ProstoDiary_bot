@@ -48,8 +48,8 @@ const convertToNormalDate = (date) => {
 
     // @example: '07/20/2019'
     if (/\d{2}\/\d{2}\/\d{4}/.test(date)) {
-      dd = Number(date.slice(3, 5));
-      mm = Number(date.slice(0, 2));
+      dd = Number(date.slice(0, 2));
+      mm = Number(date.slice(3, 5));
       yyyy = Number(date.slice(6, 10));
     } else {
       dd = Number(date.match(/-\d+-(\d+)/)[1]);

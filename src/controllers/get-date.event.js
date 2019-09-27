@@ -26,8 +26,8 @@ const getDataFromDate = async ({ chat, from }, match) => {
       await bot.forwardMessage(chatId, userId, row.telegram_message_id);
     }
   } catch (error) {
-    logger.log('error', error.toString());
-    await bot.sendMessage(chatId, error.message || 'Произошла ошибка');
+    logger.log('error', error.message.toString());
+    await bot.sendMessage(chatId, error.message);
   }
 };
 

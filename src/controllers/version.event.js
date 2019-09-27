@@ -11,7 +11,7 @@ const getVersion = async ({ chat }) => {
   const { error, result } = await versionAPI();
   if (error) {
     logger.error(error);
-    await bot.sendMessage(chatId, error.message());
+    await bot.sendMessage(chatId, error.message);
     return;
   }
   await bot.sendMessage(chatId, result);

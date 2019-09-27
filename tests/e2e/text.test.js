@@ -13,6 +13,5 @@ module.exports = async (t) => {
   const { error } = await APIv2.insert(textBuffer, {
     type: 'plain/text',
   });
-  t.false(error);
-  t.pass();
+  t.true(!error);
 };
