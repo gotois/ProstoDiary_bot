@@ -3,8 +3,14 @@
     "config:base",
     ":onlyNpm"
   ],
-  "prHourlyLimit": 24,
+  "prHourlyLimit": 4,
   "digest": {
     "automerge": true
-  }
+  },
+  "schedule": [
+    "every weekend"
+  ],
+  "baseBranches": [
+    "master"
+  ]
 }
