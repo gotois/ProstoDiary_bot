@@ -161,7 +161,8 @@ const calcMoney = (string) => {
       }
       break;
     }
-    const textFinded = text.slice(index, currentIndex);
+    // todo: slice вместо substr выглядит правильным, но рушит тексты
+    const textFinded = text.substr(index, currentIndex); // eslint-disable-line
     string = textFinded.replace('€', '').replace(/$/, 'евро');
     return string;
   });

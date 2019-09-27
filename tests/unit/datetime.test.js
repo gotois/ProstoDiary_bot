@@ -15,7 +15,7 @@ module.exports = (t) => {
   // convertToNormalDate
   t.is(typeof convertToNormalDate('2016-12-3'), 'object');
   t.true(convertToNormalDate('2016-3-12') instanceof Date);
-  t.true(convertToNormalDate('07/13/2019') instanceof Date);
+  t.true(convertToNormalDate('13/07/2019') instanceof Date);
   t.is(convertToNormalDate('2016-01.02').getFullYear(), 2016);
   t.is(convertToNormalDate('2017-07-08').getDate(), 8);
   t.is(convertToNormalDate('2017-08-07').getDate(), 7);

@@ -104,7 +104,7 @@ skipTestForFast('/help', require('./help.test'));
 skipTestForFast('/version', require('./version.test'));
 skipTestForFast('/backup', require('./backup.test'));
 skipTestForFastOrTravis('/text', require('./text.test'));
-skipTestForFast('/balance', require('./balance.test'));
+skipTestForFastOrTravis('/balance', require('./balance.test'));
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
 test.todo('/start'); // + авторизация;
 test.todo('/dbclear');
