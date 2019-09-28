@@ -2,7 +2,7 @@ const bot = require('./core');
 const dbClient = require('./database');
 const logger = require('./services/logger.service');
 const { projectVersion } = require('./services/version.service');
-const { IS_PRODUCTION, IS_DEV, TELEGRAM } = require('./environment');
+const { IS_PRODUCTION, TELEGRAM } = require('./environment');
 const emailNotifier = require('./controllers/notifier.mail');
 /**
  * @description initialize bot
@@ -15,10 +15,14 @@ const initBot = () => {
     const timer = setTimeout(() => {
       return reject(new Error('Network unavailable'));
     }, DELAY);
-    Promise.all([
-      IS_DEV ? bot.deleteWebHook() : bot.setWebHook(TELEGRAM.WEB_HOOK_URL),
-      bot.getMe(),
-    ])
+    let webHookPromise;
+    if (IS_PRODUCTION) {
+      webHookPromise = bot.setWebHook(TELEGRAM.WEB_HOOK_URL);
+    } else {
+      webHookPromise = bot.deleteWebHook();
+    }
+
+    Promise.all([webHookPromise, bot.getMe()])
       .then(([_webhookResult, botInfo]) => {
         clearTimeout(timer);
         resolve(botInfo);

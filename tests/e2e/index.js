@@ -6,12 +6,12 @@ const {
 const { maintainers } = require('../../package');
 const TelegramServer = require('telegram-test-api');
 const sgMail = require('@sendgrid/mail');
-const { IS_CI, IS_DEV } = require('../../src/environment');
+const { IS_CI, IS_PRODUCTION } = require('../../src/environment');
 
 // This runs before all tests
 test.before(async (t) => {
   // TODO: для dev запускаем БД сервак. В дальнейшем включить полноценно для E2E - https://github.com/gotois/ProstoDiary_bot/issues/3
-  if (IS_DEV || process.env.NODE_ENV === 'test') {
+  if (IS_PRODUCTION && !IS_CI) {
     const dbClient = require('../../src/database');
     await t.notThrowsAsync(async () => {
       await dbClient.client.connect();
@@ -52,7 +52,7 @@ test.after('cleanup', (t) => {
 });
 
 test.after.always('guaranteed cleanup', async (t) => {
-  if (t.context.testPassed) {
+  if (t.context.testPassed || !t.context.tasks) {
     return;
   }
   const failedTasks = Object.entries(t.context.tasks).map(([taskName]) => {
@@ -68,7 +68,7 @@ test.after.always('guaranteed cleanup', async (t) => {
   if (IS_CI) {
     return;
   }
-  if (IS_DEV) {
+  if (!IS_PRODUCTION) {
     return;
   }
   const message = {
@@ -113,9 +113,9 @@ test.todo('/search');
 skipTestForFastOrTravis('archive service', require('./archive-service.test'));
 skipTestForFastOrTravis('AppleHealth', require('./apple-health-service.test'));
 skipTestForFastOrTravis('Tinkoff', require('./tinkoff-service.test'));
-
-test('bot init', require('./telegram-bot.test'));
 skipTestForFastOrTravis('foursquare', require('./foursquare-service.test'));
+
+skipTestForFastOrTravis('bot init', require('./telegram-bot.test'));
 
 test.todo('Создать отдельного пользователя в БД'); // TODO: используя https://github.com/marak/Faker.js/
 test.todo('Проверка удаления своей записи');

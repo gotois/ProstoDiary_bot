@@ -1,9 +1,11 @@
+const validator = require('validator');
+
 module.exports = (t) => {
   const env = require('../../src/environment');
   t.is(typeof env.DATABASE, 'object');
   t.is(typeof env.CORALOGIX, 'object');
   t.is(typeof env.TELEGRAM, 'object');
-  t.true(env.TELEGRAM.WEB_HOOK_URL.startsWith('https'));
+  t.true(validator.isURL(env.TELEGRAM.WEB_HOOK_URL));
   t.is(typeof env.PLOTLY, 'object');
   t.is(typeof env.NALOGRU, 'object');
   t.is(typeof env.FAT_SECRET, 'object');

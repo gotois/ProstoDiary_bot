@@ -12,7 +12,7 @@ Server Environments
 * Create ```keys``` directory in root. Create google-natural-lang.json (example from Google API)
 
 ```
-NODE_ENV={ production|development|TRAVIS_CI|test }
+NODE_ENV={ production|TRAVIS_CI|test }
 TELEGRAM_TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
 SERVER_NAME={ In DASH-CASE style }
 SALT_PASSWORD={ User salt password }

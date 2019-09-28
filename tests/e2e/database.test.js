@@ -1,8 +1,9 @@
 const databaseFoods = async (t) => {
-  const { IS_DEV } = require('../../src/environment');
+  const { IS_PRODUCTION } = require('../../src/environment');
   const dbFoods = require('../../src/database/foods.database');
   const rows = await dbFoods.get('actimel ');
-  if (IS_DEV) {
+  // todo: test show
+  if (!IS_PRODUCTION) {
     t.log(rows);
   }
   t.true(Array.isArray(rows));

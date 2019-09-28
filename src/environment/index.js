@@ -86,13 +86,13 @@ const ENV = {
   TELEGRAM: {
     TOKEN: TELEGRAM_TOKEN,
     get WEB_HOOK_URL() {
-      if (!SERVER_NAME) {
-        return '0.0.0.0:3000';
-      }
       if (!TELEGRAM_TOKEN) {
         throw new Error('TELEGRAM_TOKEN not found');
       }
-      return `https://${SERVER_NAME}.herokuapp.com/bot${TELEGRAM_TOKEN}`;
+      if (this.IS_PRODUCTION) {
+        return `https://${SERVER_NAME}.herokuapp.com/bot${TELEGRAM_TOKEN}`;
+      }
+      return SERVER_NAME;
     },
   },
   SERVER: {
@@ -140,14 +140,14 @@ const ENV = {
   GOOGLE: {
     GOOGLE_MAPS_GEOCODING_API,
     get GOOGLE_CREDENTIALS_PARSED() {
+      if (!GOOGLE_APPLICATION_CREDENTIALS) {
+        throw new Error(
+          'Env error: GOOGLE_APPLICATION_CREDENTIALS is not initialized',
+        );
+      }
       if (validator.isJSON(GOOGLE_APPLICATION_CREDENTIALS)) {
         return JSON.parse(GOOGLE_APPLICATION_CREDENTIALS);
       }
-      // if (!GOOGLE_APPLICATION_CREDENTIALS) {
-      //   throw new Error(
-      //     'Env error: GOOGLE_APPLICATION_CREDENTIALS is not initialized',
-      //   );
-      // }
       return GOOGLE_APPLICATION_CREDENTIALS;
     },
   },
@@ -158,12 +158,12 @@ const ENV = {
       return 'quickstart-session-id';
     },
     get DIALOGFLOW_CREDENTIALS() {
+      if (!DIALOGFLOW_CREDENTIALS) {
+        throw new Error('Env error: DIALOGFLOW_CREDENTIALS is not initialized');
+      }
       if (validator.isJSON(DIALOGFLOW_CREDENTIALS)) {
         return JSON.parse(DIALOGFLOW_CREDENTIALS);
       }
-      // if (!DIALOGFLOW_CREDENTIALS) {
-      //   throw new Error('Env error: DIALOGFLOW_CREDENTIALS is not initialized');
-      // }
       return DIALOGFLOW_CREDENTIALS;
     },
   },
@@ -198,14 +198,13 @@ const ENV = {
     },
   },
   get IS_PRODUCTION() {
-    // todo: использовать !this.IS_DEV
     return String(NODE_ENV) === 'production';
   },
   get IS_CI() {
     return String(NODE_ENV) === 'TRAVIS_CI';
   },
-  get IS_DEV() {
-    return String(NODE_ENV) === 'development';
+  get IS_AVA() {
+    return String(process.env.NODE_ENV) === 'test';
   },
 };
 
