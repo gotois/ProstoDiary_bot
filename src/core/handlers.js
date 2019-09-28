@@ -1,4 +1,6 @@
 const commands = require('./commands');
+const { IS_CI } = require('../../src/environment');
+
 /**
  * @param {TelegramBot} bot - bot
  */
@@ -36,6 +38,9 @@ module.exports = (bot) => {
     require('../controllers/webhook-error.event'),
   );
   bot.on(commands.LOCATION.alias, require('../controllers/location.event'));
-  bot.on(commands.VOICE.alias, require('../controllers/voice.event'));
+  // hack for skip CI errors
+  if (!IS_CI) {
+    bot.on(commands.VOICE.alias, require('../controllers/voice.event'));
+  }
   bot.on(commands.DOCUMENT.alias, require('../controllers/document.event'));
 };

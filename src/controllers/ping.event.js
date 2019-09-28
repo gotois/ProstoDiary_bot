@@ -1,4 +1,4 @@
-const bot = require('../core');
+const bot = require('../core/bot');
 const pingAPI = require('../api/v1/ping');
 /**
  * @param  {object} chat - chat

@@ -1,5 +1,5 @@
 const { PLOTLY } = require('../environment');
-const plotly = require('plotly')(PLOTLY.PLOTLY_LOGIN, PLOTLY.PLOTLY_TOKEN);
+const plotly = require('plotly')(PLOTLY.LOGIN, PLOTLY.TOKEN);
 const { Writable } = require('stream');
 /**
  * @returns {{x: Array, y: Array, type: string}}

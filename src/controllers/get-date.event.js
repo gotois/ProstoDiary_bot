@@ -1,4 +1,4 @@
-const bot = require('../core');
+const bot = require('../core/bot');
 const getDateAPI = require('../api/v1/get-date');
 const logger = require('../services/logger.service');
 /**

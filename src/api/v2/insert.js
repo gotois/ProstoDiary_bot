@@ -1,6 +1,6 @@
 const fileType = require('file-type');
 const pkg = require('../../../package');
-const { IS_CI } = require('../../environment');
+const { IS_CI, IS_AVA } = require('../../environment');
 const sgMail = require('../../services/sendgridmail.service');
 /**
  * @param {Buffer} buffer - buffer
@@ -66,7 +66,7 @@ module.exports = async (
         'x-bot-telegram-user-id': String(telegram_user_id),
       },
     };
-    if (!IS_CI) {
+    if (!IS_CI && !IS_AVA) {
       const [mailResult] = await sgMail.send(message);
       if (!mailResult.complete) {
         throw new Error('mailResult not complete');

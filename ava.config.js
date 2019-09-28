@@ -13,10 +13,11 @@ export default () => {
     'concurrency': 5,
     'failWithoutAssertions': false,
     'environmentVariables': {
-      'SERVER_NAME': '0.0.0.0:3000',
       'TELEGRAM_TOKEN': '123456',
       'SALT_PASSWORD': '123456',
-      'TELEGRAM_SERVER_PORT': '9001',
+      'SERVER_NAME': 'localhost:9001',
+      'TELEGRAM_TEST_SERVER_HOST': 'localhost',
+      'TELEGRAM_TEST_SERVER_PORT': '9001',
     },
     'compileEnhancements': false,
   };

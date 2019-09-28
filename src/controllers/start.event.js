@@ -1,6 +1,6 @@
 const fs = require('fs');
 const pkg = require('../../package');
-const bot = require('../core');
+const bot = require('../core/bot');
 const sgMail = require('../services/sendgridmail.service');
 const dbUsers = require('../database/users.database');
 const logger = require('../services/logger.service');

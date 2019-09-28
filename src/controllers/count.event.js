@@ -1,4 +1,4 @@
-const bot = require('../core');
+const bot = require('../core/bot');
 const logger = require('../services/logger.service');
 /**
  * /count - -> выведет сколько всего потрачено

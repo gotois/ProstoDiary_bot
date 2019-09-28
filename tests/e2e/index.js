@@ -5,8 +5,12 @@ const {
 } = require('../helpers');
 const { maintainers } = require('../../package');
 const TelegramServer = require('telegram-test-api');
-const sgMail = require('@sendgrid/mail');
-const { IS_CI, IS_PRODUCTION } = require('../../src/environment');
+const {
+  IS_CI,
+  IS_PRODUCTION,
+  TELEGRAM_TEST_SERVER,
+} = require('../../src/environment');
+const sgMail = require('../../src/services/sendgridmail.service');
 
 // This runs before all tests
 test.before(async (t) => {
@@ -19,13 +23,16 @@ test.before(async (t) => {
     t.true(dbClient.client._connected);
   }
   const server = new TelegramServer({
-    port: process.env.TELEGRAM_SERVER_PORT,
-    host: 'localhost',
+    port: TELEGRAM_TEST_SERVER.PORT,
+    host: TELEGRAM_TEST_SERVER.HOST,
     storage: 'RAM',
     storeTimeout: 60,
   });
   await server.start();
-  const bot = require('../../src/core');
+  t.log(
+    `TelegramServer: ${TELEGRAM_TEST_SERVER.HOST}:${TELEGRAM_TEST_SERVER.PORT} started`,
+  );
+  const bot = require('../../src/core/bot');
   const client = server.getClient(process.env.TELEGRAM_TOKEN);
   require('../../src/core/handlers')(bot);
   /*eslint-disable require-atomic-updates */
@@ -33,7 +40,14 @@ test.before(async (t) => {
   t.context.client = client;
   t.context.tasks = {};
   /*eslint-enable */
-  t.pass();
+  const message = client.makeMessage('/ping');
+  await client.sendMessage(message);
+  try {
+    await client.getUpdates();
+    t.pass();
+  } catch (error) {
+    t.fail('Telegram Server not response: ' + error);
+  }
 });
 
 test.beforeEach((t) => {
@@ -62,13 +76,7 @@ test.after.always('guaranteed cleanup', async (t) => {
     return;
   }
   t.log('Failed: ', failedTasks);
-  if (process.env.FAST_TEST) {
-    return;
-  }
-  if (IS_CI) {
-    return;
-  }
-  if (!IS_PRODUCTION) {
+  if (process.env.FAST_TEST || IS_CI || !IS_PRODUCTION) {
     return;
   }
   const message = {
@@ -78,7 +86,7 @@ test.after.always('guaranteed cleanup', async (t) => {
     text: `Failed test: ${JSON.stringify(failedTasks, null, 2)}`,
   };
   const [mailResult] = await sgMail.send(message);
-  t.true(mailResult.statusCode >= 200 && mailResult.statusCode < 300);
+  t.true(mailResult.statusCode >= 200 && mailResult.statusCode < 400);
 });
 
 // Database
@@ -103,21 +111,19 @@ skipTestForFast('API: Currency', require('./currency-service.test'));
 skipTestForFast('/help', require('./help.test'));
 skipTestForFast('/version', require('./version.test'));
 skipTestForFastOrTravis('/backup', require('./backup.test'));
-skipTestForFastOrTravis('/text', require('./text.test'));
+skipTestForFastOrTravis('/text', require('./text.test')); // todo: добавить Запись в тестовую БД
 skipTestForFastOrTravis('/balance', require('./balance.test'));
-skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
-test.todo('/start'); // + авторизация;
+test.todo('/start');
 test.todo('/dbclear');
-test.todo('/search');
+test.todo('Создать отдельного пользователя в БД'); // TODO: используя https://github.com/marak/Faker.js/
+test.todo('Проверка удаления своей записи');
+test.todo('/search'); // + Проверека построения графика
+
+skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
 
 skipTestForFastOrTravis('archive service', require('./archive-service.test'));
 skipTestForFastOrTravis('AppleHealth', require('./apple-health-service.test'));
 skipTestForFastOrTravis('Tinkoff', require('./tinkoff-service.test'));
 skipTestForFastOrTravis('foursquare', require('./foursquare-service.test'));
 
-skipTestForFastOrTravis('bot init', require('./telegram-bot.test'));
-
-test.todo('Создать отдельного пользователя в БД'); // TODO: используя https://github.com/marak/Faker.js/
-test.todo('Проверка удаления своей записи');
-test.todo('Запись энтри');
-test.todo('Проверека построения графика');
+test('bot init', require('./telegram-bot.test'));

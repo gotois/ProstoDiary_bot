@@ -1,4 +1,4 @@
-const bot = require('../core');
+const bot = require('../core/bot');
 const commands = require('../core/commands');
 const format = require('../services/format.service');
 const logger = require('../services/logger.service');
@@ -68,7 +68,7 @@ const onText = async (message) => {
   }
   const botMessage = await bot.sendMessage(
     chatId,
-    'Saving: ' + `_${format.previousInput(text)}_`,
+    `_${format.previousInput(text)}_ 📝`,
     {
       parse_mode: 'Markdown',
       disable_notification: true,

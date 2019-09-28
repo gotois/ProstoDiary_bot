@@ -1,4 +1,4 @@
-const bot = require('../core');
+const bot = require('../core/bot');
 const { get } = require('./request.service');
 /**
  * @type {string}

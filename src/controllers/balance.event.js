@@ -1,5 +1,5 @@
 // todo: https://github.com/gotois/ProstoDiary_bot/issues/39
-const bot = require('../core');
+const bot = require('../core/bot');
 const logger = require('../services/logger.service');
 /**
  * @function

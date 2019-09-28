@@ -1,4 +1,4 @@
-const bot = require('../core');
+const bot = require('../core/bot');
 const logger = require('../services/logger.service');
 const { getTelegramFile } = require('../services/telegram-file.service');
 const APIv2 = require('../api/v2');

@@ -36,45 +36,45 @@ const isValidDate = (date) => {
  * @returns {Date|Error}
  */
 const convertToNormalDate = (date) => {
-  let normalDate;
-  if (date instanceof Date) {
-    normalDate = date;
-  } else {
-    date = date.split('.').join('-');
-
-    let dd;
-    let mm;
-    let yyyy;
-
-    // @example: '20/07/2019'
-    if (/\d{2}\/\d{2}\/\d{4}/.test(date)) {
-      if (date.includes('month/day/year')) {
-        dd = Number(date.slice(3, 5));
-        mm = Number(date.slice(0, 2));
-        yyyy = Number(date.slice(6, 10));
-      } else {
-        dd = Number(date.slice(0, 2));
-        mm = Number(date.slice(3, 5));
-        yyyy = Number(date.slice(6, 10));
-      }
-    } else {
-      dd = Number(date.match(/-\d+-(\d+)/)[1]);
-      mm = Number(date.match(/-(\d+)/)[1]) - 1;
-      yyyy = Number(date.match(/(\d+)-/)[1]);
-    }
-    if (dd > 31 || mm > 12) {
-      throw new Error('Invalid Date day or month');
-    }
-    const newDate = new Date();
-    newDate.setDate(dd);
-    newDate.setMonth(mm);
-    newDate.setYear(yyyy);
-    normalDate = newDate;
+  if (dateFns.isDate(date)) {
+    return date;
   }
-  if (!dateFns.isValid(normalDate)) {
+  date = date.split('.').join('-');
+
+  // todo: добавить проверку на validator.isISO8601
+  // ...
+
+  let dd;
+  let mm;
+  let yyyy;
+
+  // @example: '20/07/2019'
+  if (/\d{2}\/\d{2}\/\d{4}/.test(date)) {
+    if (date.includes('month/day/year')) {
+      dd = Number(date.slice(3, 5));
+      mm = Number(date.slice(0, 2));
+      yyyy = Number(date.slice(6, 10));
+    } else {
+      dd = Number(date.slice(0, 2));
+      mm = Number(date.slice(3, 5));
+      yyyy = Number(date.slice(6, 10));
+    }
+  } else {
+    dd = Number(date.match(/-\d+-(\d+)/)[1]);
+    mm = Number(date.match(/-(\d+)/)[1]) - 1;
+    yyyy = Number(date.match(/(\d+)-/)[1]);
+  }
+  if (dd > 31 || mm > 12) {
+    throw new Error('Invalid Date day or month');
+  }
+  const newDate = new Date();
+  newDate.setDate(dd);
+  newDate.setMonth(mm);
+  newDate.setYear(yyyy);
+  if (!dateFns.isValid(newDate)) {
     throw new Error('Date is invalid');
   }
-  return normalDate;
+  return newDate;
 };
 /**
  *

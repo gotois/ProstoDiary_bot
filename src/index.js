@@ -1,4 +1,4 @@
-const bot = require('./core');
+const bot = require('./core/bot');
 const dbClient = require('./database');
 const logger = require('./services/logger.service');
 const { projectVersion } = require('./services/version.service');

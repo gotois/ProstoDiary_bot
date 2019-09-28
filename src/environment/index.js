@@ -23,6 +23,9 @@ const {
   PORT,
   SERVER_NAME,
 
+  TELEGRAM_TEST_SERVER_HOST,
+  TELEGRAM_TEST_SERVER_PORT,
+
   DIALOGFLOW_CREDENTIALS,
   DIALOGFLOW_PROJECT_ID,
 
@@ -85,6 +88,12 @@ const ENV = {
   },
   TELEGRAM: {
     TOKEN: TELEGRAM_TOKEN,
+    get API_URL() {
+      if (ENV.IS_AVA || ENV.IS_CI) {
+        return `http://${ENV.TELEGRAM_TEST_SERVER.HOST}:${ENV.TELEGRAM_TEST_SERVER.PORT}`;
+      }
+      return 'https://api.telegram.org';
+    },
     get WEB_HOOK_URL() {
       if (!TELEGRAM_TOKEN) {
         throw new Error('TELEGRAM_TOKEN not found');
@@ -117,8 +126,12 @@ const ENV = {
     throw new Error('Env error: PERSON typeof');
   },
   PLOTLY: {
-    PLOTLY_LOGIN,
-    PLOTLY_TOKEN,
+    get LOGIN() {
+      return PLOTLY_LOGIN;
+    },
+    get TOKEN() {
+      return PLOTLY_TOKEN;
+    },
   },
   NALOGRU: {
     NALOGRU_EMAIL,
@@ -195,6 +208,17 @@ const ENV = {
     },
     get CLIENT_SECRET() {
       return FOURSQUARE_CLIENT_SECRET;
+    },
+  },
+  TELEGRAM_TEST_SERVER: {
+    get HOST() {
+      return TELEGRAM_TEST_SERVER_HOST;
+    },
+    get PORT() {
+      if (!validator.isPort(TELEGRAM_TEST_SERVER_PORT)) {
+        throw new Error('ENV: TELEGRAM_TEST_SERVER_PORT');
+      }
+      return Number(TELEGRAM_TEST_SERVER_PORT);
     },
   },
   get IS_PRODUCTION() {
