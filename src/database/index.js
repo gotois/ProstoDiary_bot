@@ -1,19 +1,9 @@
 const { Client, Pool } = require('pg');
-const { IS_PRODUCTION, IS_CI, DATABASE } = require('../environment');
-let connectionString;
-/**
- * @see path отличается одним символом @
- */
-if (IS_PRODUCTION) {
-  connectionString = `postgres://${DATABASE.databaseUser}:${DATABASE.password}.${DATABASE.databaseHost}:${DATABASE.databasePort}/${DATABASE.databaseName}`;
-} else if (IS_CI) {
-  connectionString = `postgres://${DATABASE.databaseUser}:${DATABASE.password}.${DATABASE.databaseHost}:${DATABASE.databasePort}/${DATABASE.databaseName}`;
-  console.log('connectionString', connectionString); // eslint-disable-line
-} else {
-  connectionString = `postgres://${DATABASE.databaseUser}:${DATABASE.password}@${DATABASE.databaseHost}:${DATABASE.databasePort}/${DATABASE.databaseName}`;
-}
-const client = new Client({ connectionString });
-const pool = new Pool({ connectionString });
+const { POSTGRES_CONNECTION_STRING } = require('../environment');
+console.log('connectionString', POSTGRES_CONNECTION_STRING); // eslint-disable-line
+
+const client = new Client({ connectionString: POSTGRES_CONNECTION_STRING });
+const pool = new Pool({ connectionString: POSTGRES_CONNECTION_STRING });
 /**
  * @param {string} query - query
  * @param {Array|undefined} parameters - params

@@ -73,10 +73,10 @@ const ENV = {
     PORT: MAIL_PORT,
   },
   DATABASE: {
-    databaseHost: PGHOST,
-    databaseName: PGDATABASE,
-    databaseUser: PGUSER,
-    databasePort: PGPORT,
+    host: PGHOST,
+    name: PGDATABASE,
+    user: PGUSER,
+    port: PGPORT,
     password: PGPASSWORD,
     // todo: переместить отсюда
     get passwordSalt() {
@@ -211,6 +211,9 @@ const ENV = {
     get HOST() {
       return TELEGRAM_TEST_SERVER_HOST;
     },
+    /**
+     * @returns {number}
+     */
     get PORT() {
       if (!validator.isPort(TELEGRAM_TEST_SERVER_PORT)) {
         throw new Error('ENV: TELEGRAM_TEST_SERVER_PORT');
@@ -218,12 +221,35 @@ const ENV = {
       return Number(TELEGRAM_TEST_SERVER_PORT);
     },
   },
+  /**
+   * @see path отличается одним символом @
+   * @returns {string}
+   */
+  get POSTGRES_CONNECTION_STRING() {
+    const { user, password, host, port, name } = ENV.DATABASE;
+    if (ENV.IS_PRODUCTION) {
+      return `postgres://${user}:${password}.${host}:${port}/${name}`;
+    } else if (ENV.IS_CI) {
+      return `postgres://${user}@${host}:${port}/${name}`;
+    } else {
+      return `postgres://${user}:${password}@${host}:${port}/${name}`;
+    }
+  },
+  /**
+   * @returns {boolean}
+   */
   get IS_PRODUCTION() {
     return String(NODE_ENV) === 'production';
   },
+  /**
+   * @returns {boolean}
+   */
   get IS_CI() {
     return String(NODE_ENV) === 'TRAVIS_CI';
   },
+  /**
+   * @returns {boolean}
+   */
   get IS_AVA() {
     return String(NODE_ENV) === 'test';
   },
