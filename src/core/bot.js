@@ -17,7 +17,6 @@ if (Object.prototype.hasOwnProperty.call(global, 'bot')) {
 } else if (IS_PRODUCTION) {
   bot = new TelegramBot(TELEGRAM.TOKEN, {
     webHook: { port: SERVER.PORT },
-    baseApiUrl: TELEGRAM.API_URL,
   });
 } else {
   bot = new TelegramBot(TELEGRAM.TOKEN, {

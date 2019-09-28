@@ -6,7 +6,7 @@ const { IS_PRODUCTION, TELEGRAM } = require('./environment');
 const emailNotifier = require('./controllers/notifier.mail');
 /**
  * @description initialize bot
- * @returns {Promise<object>}
+ * @returns {Promise<object|Error>}
  */
 const initBot = () => {
   return new Promise((resolve, reject) => {
@@ -21,18 +21,13 @@ const initBot = () => {
     } else {
       webHookPromise = bot.deleteWebHook();
     }
-
-    Promise.all([webHookPromise, bot.getMe()])
+    return Promise.all([webHookPromise, bot.getMe()])
       .then(([_webhookResult, botInfo]) => {
         clearTimeout(timer);
         resolve(botInfo);
       })
       .catch((error) => {
-        logger.log('info', error);
-        if (error.code === 'EFATAL') {
-          clearTimeout(timer);
-          throw error;
-        }
+        reject(error);
       });
   });
 };

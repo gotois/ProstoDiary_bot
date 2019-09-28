@@ -99,10 +99,7 @@ const ENV = {
       if (!TELEGRAM_TOKEN) {
         throw new Error('TELEGRAM_TOKEN not found');
       }
-      if (this.IS_PRODUCTION) {
-        return `https://${SERVER_NAME}.herokuapp.com/bot${TELEGRAM_TOKEN}`;
-      }
-      return SERVER_NAME;
+      return `https://${SERVER_NAME}.herokuapp.com/bot${TELEGRAM_TOKEN}`;
     },
   },
   SERVER: {
