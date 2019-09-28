@@ -5,8 +5,8 @@
 -- CREATE ROLE bot LOGIN;
 
 -- Warning! Set UTF-8 encoding: https://gist.github.com/ffmike/877447
-CREATE DATABASE "ProstoDiaryDB"
-    WITH
+create DATABASE "ProstoDiaryDB"
+    with
     OWNER = postgres
     ENCODING = 'UTF8'
     LC_COLLATE = 'en_US.utf8'
@@ -22,7 +22,7 @@ COMMENT ON DATABASE "ProstoDiaryDB"
 --
 
 -- Все на 100 гр. продукта
-CREATE UNLOGGED TABLE IF NOT EXISTS foods (
+create UNLOGGED TABLE IF NOT EXISTS foods (
   id SERIAL PRIMARY KEY,
   title TEXT UNIQUE, -- нужен индекс по этому
   protein NUMERIC (5, 2) default NULL,
@@ -32,19 +32,19 @@ CREATE UNLOGGED TABLE IF NOT EXISTS foods (
 );
 
 -- Хранимая процедура поиска по title мультиязычно
-CREATE OR REPLACE FUNCTION to_tsvector_multilang (title Text) RETURNS tsvector AS $$
+create or replace function to_tsvector_multilang (title Text) RETURNS tsvector as $$
 SELECT to_tsvector('russian', $1) ||
        to_tsvector('english', $1) ||
        to_tsvector('simple', $1)
 $$ LANGUAGE sql IMMUTABLE;
 
 -- Полнотекстовый поиск по тайтлу
-CREATE INDEX idx_gin_foods ON Foods USING GIN (to_tsvector_multilang(title));
+create INDEX idx_gin_foods ON Foods USING GIN (to_tsvector_multilang(title));
 
 -- История пользователя будет представлена как "процесс"
-CREATE TYPE intent AS ENUM (
+create type intent as ENUM (
   'undefined',
-  'install', -- rename -> system
+  'system', -- указывает на произошедшее в самом боте
   'buy',
   'eat',
   'finance',
@@ -54,7 +54,21 @@ CREATE TYPE intent AS ENUM (
   'pain',
   'todo',
   'weight',
-  'work'
+  'height', -- Смена роста
+  'family', -- Изменения в Семья
+  -- todo Смена группа крови
+  'work', -- смена вид деятельности
+   'job', -- Здесь же смена уровня дохода | новая цели в карьере
+  'birthday',-- Указание День рождения
+  'hobby',
+  'relationship', -- Изменения в отношениях
+  'social',-- Новое сообщество
+  'mood',-- настроение
+  'gender',-- гендер и любое его изменение
+  -- прочая биометрика
+  -- Твореческое выражение
+  -- данные об объемах покупок ценах
+  -- информа­цию о состоянии текущих контрактов
 );
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

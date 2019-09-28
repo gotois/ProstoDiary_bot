@@ -48,7 +48,6 @@ const onText = async (message) => {
     }
     return;
   }
-  logger.log('info', onText.name);
   const fromId = from.id;
   // Пропускаем команды бота
   if (entities) {
@@ -66,6 +65,7 @@ const onText = async (message) => {
   if (text.startsWith('/')) {
     return;
   }
+  logger.log('info', onText.name);
   const botMessage = await bot.sendMessage(
     chatId,
     `_${format.previousInput(text)}_ 📝`,
