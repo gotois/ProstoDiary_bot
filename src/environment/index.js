@@ -1,5 +1,6 @@
 const validator = require('validator');
 const { get } = require('../services/request.service');
+const { version } = require('../../package');
 
 const {
   NODE_ENV,
@@ -152,7 +153,7 @@ const ENV = {
   },
   GOOGLE: {
     GOOGLE_MAPS_GEOCODING_API,
-    get GOOGLE_CREDENTIALS_PARSED() {
+    get CREDENTIALS() {
       if (!GOOGLE_APPLICATION_CREDENTIALS) {
         throw new Error(
           'Env error: GOOGLE_APPLICATION_CREDENTIALS is not initialized',
@@ -167,10 +168,9 @@ const ENV = {
   DIALOGFLOW: {
     DIALOGFLOW_PROJECT_ID,
     get sessionId() {
-      // TODO: почему такое значение?
-      return 'quickstart-session-id';
+      return 'prostodiary-session-' + version;
     },
-    get DIALOGFLOW_CREDENTIALS() {
+    get CREDENTIALS() {
       if (!DIALOGFLOW_CREDENTIALS) {
         throw new Error('Env error: DIALOGFLOW_CREDENTIALS is not initialized');
       }
@@ -228,7 +228,7 @@ const ENV = {
     return String(NODE_ENV) === 'TRAVIS_CI';
   },
   get IS_AVA() {
-    return String(process.env.NODE_ENV) === 'test';
+    return String(NODE_ENV) === 'test';
   },
 };
 

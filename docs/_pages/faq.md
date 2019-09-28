@@ -10,7 +10,6 @@ permalink: /faq/
 ### Неработает CI
 Необходимо выставить env:
 * `SALT_PASSWORD`
-* `SERVER_NAME`
 * `TELEGRAM_TOKEN`
 
 ### Падает CI с неизвестной ошибкой

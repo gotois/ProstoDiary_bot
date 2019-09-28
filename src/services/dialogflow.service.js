@@ -4,7 +4,7 @@ const { formatQuery } = require('./text.service');
 const { DIALOGFLOW } = require('../environment');
 
 const sessionClient = new dialogflow.SessionsClient({
-  credentials: DIALOGFLOW.DIALOGFLOW_CREDENTIALS,
+  credentials: DIALOGFLOW.CREDENTIALS,
 });
 /**
  * Send request and log result

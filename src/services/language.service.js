@@ -3,7 +3,7 @@ const language = require('@google-cloud/language');
 const { isRUS, langISO } = require('./detect-language.service');
 
 const client = new language.LanguageServiceClient({
-  credentials: GOOGLE.GOOGLE_CREDENTIALS_PARSED,
+  credentials: GOOGLE.CREDENTIALS,
 });
 /**
  * @constant
