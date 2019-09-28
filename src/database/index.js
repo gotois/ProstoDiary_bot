@@ -1,11 +1,14 @@
 const { Client, Pool } = require('pg');
-const { IS_PRODUCTION, DATABASE } = require('../environment');
+const { IS_PRODUCTION, IS_CI, DATABASE } = require('../environment');
 let connectionString;
 /**
  * @see path отличается одним символом @
  */
 if (IS_PRODUCTION) {
   connectionString = `postgres://${DATABASE.databaseUser}:${DATABASE.password}.${DATABASE.databaseHost}:${DATABASE.databasePort}/${DATABASE.databaseName}`;
+} else if (IS_CI) {
+  connectionString = `postgres://${DATABASE.databaseUser}:${DATABASE.password}.${DATABASE.databaseHost}:${DATABASE.databasePort}/${DATABASE.databaseName}`;
+  console.log('connectionString', connectionString); // eslint-disable-line
 } else {
   connectionString = `postgres://${DATABASE.databaseUser}:${DATABASE.password}@${DATABASE.databaseHost}:${DATABASE.databasePort}/${DATABASE.databaseName}`;
 }

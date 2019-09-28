@@ -5,6 +5,10 @@ node_js:
 
 env:
   - NODE_ENV=TRAVIS_CI
+  global:
+  - PGPORT=5433
+  - PGHOST=localhost
+  - PGDATABASE=ProstoDiaryDB
 
 notifications:
   email:
@@ -31,6 +35,9 @@ branches:
 
 services:
   - postgresql
+
+addons:
+  postgresql: "10"
 
 before_script:
   - psql -U postgres -d postgres -a -f ./SQL/install.sql

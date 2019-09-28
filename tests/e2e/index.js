@@ -12,16 +12,16 @@ const {
 } = require('../../src/environment');
 const sgMail = require('../../src/services/sendgridmail.service');
 
-// This runs before all tests
+/**
+ * This runs before all tests
+ */
 test.before(async (t) => {
-  // TODO: для dev запускаем БД сервак. В дальнейшем включить полноценно для E2E - https://github.com/gotois/ProstoDiary_bot/issues/3
-  if (IS_PRODUCTION && !IS_CI) {
-    const dbClient = require('../../src/database');
-    await t.notThrowsAsync(async () => {
-      await dbClient.client.connect();
-    });
-    t.true(dbClient.client._connected);
-  }
+  const dbClient = require('../../src/database');
+  await t.notThrowsAsync(async () => {
+    await dbClient.client.connect();
+  });
+  t.true(dbClient.client._connected);
+
   const server = new TelegramServer({
     port: TELEGRAM_TEST_SERVER.PORT,
     host: TELEGRAM_TEST_SERVER.HOST,
@@ -32,6 +32,7 @@ test.before(async (t) => {
   t.log(
     `TelegramServer: ${TELEGRAM_TEST_SERVER.HOST}:${TELEGRAM_TEST_SERVER.PORT} started`,
   );
+
   const bot = require('../../src/core/bot');
   const client = server.getClient(process.env.TELEGRAM_TOKEN);
   require('../../src/core/handlers')(bot);
