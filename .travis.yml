@@ -6,11 +6,15 @@ node_js:
 services:
   - postgresql
 
+addons:
+  postgresql: "10"
+
 env:
   global:
     - NODE_ENV=TRAVIS_CI
-    - PGPORT=5433
+    - PGUSER=postgres
     - PGHOST=localhost
+    - PGPORT=5432
     - PGDATABASE=ProstoDiaryDB
 
 notifications:
