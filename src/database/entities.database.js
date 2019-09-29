@@ -1,8 +1,9 @@
 const crypt = require('../services/crypt.service');
-const { $$, pool } = require('.');
+const { $$, pool } = require('../core/database');
 require('../../types');
 /**
  * @param {number} telegram_user_id - user id
+ * @param {string|undefined} sorting - sorting
  * @returns {Promise<Array>}
  */
 const getAll = async (telegram_user_id, sorting = 'ASC') => {
@@ -12,7 +13,7 @@ const getAll = async (telegram_user_id, sorting = 'ASC') => {
      JOIN history
      ON history.user_story_id = user_t.id
      WHERE bot_t.telegram_user_id = $1
-     ORDER BY history.created_at ASC`,
+     ORDER BY history.created_at` + sorting,
     [telegram_user_id],
   );
   // TODO: надо сразу декодировать
@@ -74,8 +75,8 @@ const _post = async (storyJSON) => {
   try {
     const result = await $$(
       `SELECT id FROM bot_story
-    WHERE version = $1 AND telegram_user_id = $2
-    LIMIT 1`,
+       WHERE version = $1 AND telegram_user_id = $2
+       LIMIT 1`,
       [version, telegram_user_id],
     );
     await client.query('BEGIN');
@@ -86,8 +87,8 @@ const _post = async (storyJSON) => {
       const botStoryResult = await client.query({
         name: 'create-bot-story',
         text: `INSERT INTO bot_story (version, author, publisher, jurisdiction, telegram_user_id)
-             VALUES ($1, $2, $3, $4, $5)
-             RETURNING id`,
+               VALUES ($1, $2, $3, $4, $5)
+               RETURNING id`,
         values: [version, author, publisher, jurisdiction, telegram_user_id],
       });
       botStoryId = botStoryResult.rows[0].id;
@@ -167,8 +168,7 @@ const _delete = async (userId, telegram_message_id) => {
   }
 };
 /**
- * Удаление целиком всей истории пользователя целиком
- *
+ * @description Удаление всей истории пользователя целиком
  * @param {number} telegram_user_id - id user
  * @returns {Promise<undefined>}
  */

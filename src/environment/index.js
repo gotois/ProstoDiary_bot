@@ -90,7 +90,7 @@ const ENV = {
   TELEGRAM: {
     TOKEN: TELEGRAM_TOKEN,
     get API_URL() {
-      if (ENV.IS_AVA || ENV.IS_CI) {
+      if (ENV.IS_AVA_OR_CI) {
         return `http://${ENV.TELEGRAM_TEST_SERVER.HOST}:${ENV.TELEGRAM_TEST_SERVER.PORT}`;
       }
       return 'https://api.telegram.org';
@@ -252,6 +252,9 @@ const ENV = {
    */
   get IS_AVA() {
     return String(NODE_ENV) === 'test';
+  },
+  get IS_AVA_OR_CI() {
+    return ENV.IS_CI || ENV.IS_AVA;
   },
 };
 

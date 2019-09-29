@@ -1,5 +1,6 @@
 const { Client, Pool } = require('pg');
 const { POSTGRES_CONNECTION_STRING } = require('../environment');
+// todo: удалить если CI нормально уже работает
 console.log('connectionString', POSTGRES_CONNECTION_STRING); // eslint-disable-line
 
 const client = new Client({ connectionString: POSTGRES_CONNECTION_STRING });

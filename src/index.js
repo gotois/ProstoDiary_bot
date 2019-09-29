@@ -1,5 +1,5 @@
 const bot = require('./core/bot');
-const dbClient = require('./database');
+const dbClient = require('./core/database');
 const logger = require('./services/logger.service');
 const { projectVersion } = require('./services/version.service');
 const { IS_PRODUCTION, TELEGRAM } = require('./environment');

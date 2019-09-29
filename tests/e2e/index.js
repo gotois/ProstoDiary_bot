@@ -16,7 +16,7 @@ const sgMail = require('../../src/services/sendgridmail.service');
  * This runs before all tests
  */
 test.before(async (t) => {
-  const dbClient = require('../../src/database');
+  const dbClient = require('../../src/core/database');
   await t.notThrowsAsync(async () => {
     await dbClient.client.connect();
   });

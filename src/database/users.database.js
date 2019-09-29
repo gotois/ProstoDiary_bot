@@ -1,4 +1,4 @@
-const { $$ } = require('.');
+const { $$ } = require('../core/database');
 const pkg = require('../../package');
 /**
  * @param {number} telegramUserId - id
@@ -7,7 +7,7 @@ const pkg = require('../../package');
 const exist = async (telegramUserId) => {
   const result = await $$(
     `SELECT 1 FROM bot_story
-    WHERE telegram_user_id = $1 AND version = $2`,
+     WHERE telegram_user_id = $1 AND version = $2`,
     [telegramUserId, pkg.version],
   );
   return result;

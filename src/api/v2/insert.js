@@ -1,6 +1,6 @@
 const fileType = require('file-type');
 const pkg = require('../../../package');
-const { IS_CI, IS_AVA } = require('../../environment');
+const { IS_AVA_OR_CI } = require('../../environment');
 const sgMail = require('../../services/sendgridmail.service');
 /**
  * @param {Buffer} buffer - buffer
@@ -55,8 +55,8 @@ module.exports = async (
     // Отправляем переведенный текстовый формат или буфер из созданного бота письмом на специально сгенерированный ящик @gotointeractive.com (абстракт)
     const message = {
       to: 'denis@baskovsky.ru', // todo: специальный имейл созданный для бота
-      from: 'no-reply@gotointeractive.com', // todo: специальный имейл бота от телеграм
-      subject: 'prosto-diary', // todo: ?
+      from: 'no-reply@gotointeractive.com', // todo: специальный имейл бота от gotois
+      subject: 'prosto-diary', // todo: брать из package.json?
       text: 'required text', // todo возможно сюда стоит добавлять caption
       attachments: [createAttachment(buffer, type)],
       sendAt: date,
@@ -66,7 +66,7 @@ module.exports = async (
         'x-bot-telegram-user-id': String(telegram_user_id),
       },
     };
-    if (!IS_CI && !IS_AVA) {
+    if (!IS_AVA_OR_CI) {
       const [mailResult] = await sgMail.send(message);
       if (!mailResult.complete) {
         throw new Error('mailResult not complete');

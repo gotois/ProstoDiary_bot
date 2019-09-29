@@ -16,6 +16,7 @@ const INTENTS = {
   HEALTH: DIALOGFLOW_INTENT_URL + 'ba3c1ba9-dd32-444f-93c8-deced4e877c8',
   WEIGHT: DIALOGFLOW_INTENT_URL + 'dfa31d31-274a-4a57-8436-22ad6cf14d8c',
   WORK: DIALOGFLOW_INTENT_URL + '5a82fc33-7a6e-4b97-89c2-b8e2a32ea0ad',
+  // todo: добавить все интенты с dialogflow
 };
 
 module.exports = INTENTS;

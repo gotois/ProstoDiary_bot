@@ -1,7 +1,6 @@
-const { $$ } = require('.');
+const { $$ } = require('../core/database');
 const { detectLang } = require('../services/detect-language.service');
 /**
- *
  * @param {string} title - food title
  * @returns {Promise<Array>}
  */
