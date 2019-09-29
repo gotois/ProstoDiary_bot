@@ -4,6 +4,7 @@ const format = require('../services/format.service');
 const logger = require('../services/logger.service');
 const APIv2 = require('../api/v2');
 const kppAPI = require('../api/v1/kpp');
+const { IS_AVA_OR_CI } = require('../environment');
 /**
  * @typedef {number} COMMANDS_ENUM
  **/
@@ -78,6 +79,12 @@ const onText = async (message, match) => {
     }
     return;
   }
+  // Пропускаем команды бота от AVA Server
+  if (IS_AVA_OR_CI) {
+    if (text.startsWith('/')) {
+      return;
+    }
+  }
   // Пропускаем команды бота
   if (entities) {
     if (
@@ -126,7 +133,9 @@ const onText = async (message, match) => {
       break;
     }
     default: {
-      errorAPIMessage = 'Unknown command';
+      errorAPIMessage = {
+        message: 'Unknown command',
+      };
       break;
     }
   }
