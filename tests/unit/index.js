@@ -1,4 +1,8 @@
-const { test, skipTestForFastOrTravis } = require('../helpers');
+const {
+  test,
+  skipTestForFastOrTravis,
+  skipTestForFast,
+} = require('../helpers');
 
 test('database config', require('./dbconfig.test'));
 test('logger', require('./log.test'));
@@ -13,3 +17,4 @@ test('env', require('./environment.test'));
 test('faker', require('./faker.test'));
 skipTestForFastOrTravis('QR test', require('./qr.test'));
 test('request', require('./request.test'));
+skipTestForFast('config', require('./config.test'));
