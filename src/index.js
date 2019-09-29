@@ -13,7 +13,7 @@ const initBot = () => {
     // noinspection MagicNumberJS
     const DELAY = IS_PRODUCTION ? 10000 : 2500;
     const timer = setTimeout(() => {
-      return reject(new Error('Network unavailable'));
+      return reject('Network unavailable');
     }, DELAY);
     let webHookPromise;
     if (IS_PRODUCTION) {

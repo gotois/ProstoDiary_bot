@@ -1,6 +1,19 @@
 const kppService = require('../../services/kpp.service');
 
 module.exports = async (text) => {
-  const kppDataResult = await kppService(text);
-  return JSON.stringify(kppDataResult, null, 2);
+  try {
+    const kppDataResult = await kppService(text);
+    // todo добавлять это в StoryJSON
+    return {
+      jsonrpc: '2.0',
+      result: JSON.stringify(kppDataResult, null, 2),
+    };
+  } catch (error) {
+    return {
+      jsonrpc: '2.0',
+      error: {
+        message: error.toString(),
+      },
+    };
+  }
 };

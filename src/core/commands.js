@@ -56,10 +56,6 @@ module.exports = {
     alias: /^\/(search|найти)(\s)(.+)/,
     description: 'Поиск вхождения `String`',
   },
-  KPP: {
-    alias: /^\/kpp(\s)(.+)/,
-    description: 'Просмотр информации по своему кассовому чеку `String`',
-  },
   EDITED_MESSAGE_TEXT: {
     alias: 'edited_message_text',
     description: '',

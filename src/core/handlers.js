@@ -18,14 +18,10 @@ module.exports = (bot) => {
   bot.onText(commands.GRAPH.alias, require('../controllers/plot.event'));
   bot.onText(commands.GET.alias, require('../controllers/get-date.event'));
   bot.onText(commands.GETTODAY.alias, require('../controllers/get-date.event'));
+  bot.onText(commands.BALANCE.alias, require('../controllers/balance.event'));
   // end
 
   bot.onText(commands.VERSION.alias, require('../controllers/version.event'));
-  // todo: переместить в TEXT
-  bot.onText(commands.KPP.alias, require('../controllers/kpp.event'));
-  // end
-
-  bot.onText(commands.BALANCE.alias, require('../controllers/balance.event'));
 
   bot.on(
     commands.EDITED_MESSAGE_TEXT.alias,
@@ -38,9 +34,6 @@ module.exports = (bot) => {
     require('../controllers/webhook-error.event'),
   );
   bot.on(commands.LOCATION.alias, require('../controllers/location.event'));
-  // hack for skip CI errors
-  if (!IS_CI) {
-    bot.on(commands.VOICE.alias, require('../controllers/voice.event'));
-  }
+  bot.on(commands.VOICE.alias, require('../controllers/voice.event'));
   bot.on(commands.DOCUMENT.alias, require('../controllers/document.event'));
 };
