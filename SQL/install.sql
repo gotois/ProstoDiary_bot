@@ -9,8 +9,8 @@ create DATABASE "ProstoDiaryDB"
     with
     OWNER = postgres
     ENCODING = 'UTF8'
-    LC_COLLATE = 'en_US.utf8'
-    LC_CTYPE = 'en_US.utf8'
+--    LC_COLLATE = 'en_US.utf8'
+--    LC_CTYPE = 'en_US.utf8'
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1;
 
@@ -64,7 +64,7 @@ create type intent as ENUM (
   'relationship', -- Изменения в отношениях
   'social',-- Новое сообщество
   'mood',-- настроение
-  'gender',-- гендер и любое его изменение
+  'gender'-- гендер и любое его изменение
   -- прочая биометрика
   -- Твореческое выражение
   -- данные об объемах покупок ценах

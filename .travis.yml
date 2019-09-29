@@ -40,11 +40,13 @@ branches:
   only:
     - master
 
-before_script:
-  - psql -U postgres -d postgres -a -f ./SQL/install.sql
-
 install:
   - npm ci
+
+before_script:
+  - psql --version
+  - psql -U postgres -d postgres -a -f ./SQL/install.sql
+  - git lfs pull
 
 script:
   - npm test
