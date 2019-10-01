@@ -117,7 +117,7 @@ const onText = async (message, match) => {
       logger.log('info', 'onKPP');
       const { error, result } = await kppAPI(text);
       errorAPIMessage = error;
-      resultAPIMessage = result;
+      resultAPIMessage = JSON.stringify(result, null, 2);
       break;
     }
     case COMMANDS_ENUM.TEXT: {

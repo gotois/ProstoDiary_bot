@@ -6,7 +6,7 @@ module.exports = async (text) => {
     // todo добавлять это в StoryJSON
     return {
       jsonrpc: '2.0',
-      result: JSON.stringify(kppDataResult, null, 2),
+      result: kppDataResult,
     };
   } catch (error) {
     return {
