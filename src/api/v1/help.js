@@ -1,6 +1,6 @@
 const commands = require('../../core/commands');
 /**
- * @todo поддержать еще вариант /help something, где будет происходить поиск по something
+ * @todo поддержать вариант /help something, где будет происходить поиск по командам
  * @returns {jsonrpc}
  */
 module.exports = () => {

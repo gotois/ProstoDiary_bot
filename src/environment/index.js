@@ -143,7 +143,12 @@ const ENV = {
     FAT_SECRET_API_SHARED_SECRET,
   },
   SENDGRID: {
-    SENDGRID_API_KEY,
+    get API_KEY() {
+      if (!SENDGRID_API_KEY) {
+        throw new Error('Env error SENDGRID_API_KEY is not initialized');
+      }
+      return SENDGRID_API_KEY;
+    },
   },
   OPEN_WEATHER: {
     OPEN_WEATHER_KEY,

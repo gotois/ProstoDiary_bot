@@ -14,7 +14,7 @@ const getVoice = async ({ chat, voice }) => {
   const chatId = chat.id;
   const fileBuffer = await getTelegramFile(voice.file_id);
   const text = await voiceToText(fileBuffer, voice);
-  // todo: вычлинять команды из текста
+  // todo: вычлинять команды из текста и в зависимости от этого делать либо /search либо запись
   const { error, result } = await APIv2.insert(Buffer.from(text), {
     type: 'plain/text',
   });

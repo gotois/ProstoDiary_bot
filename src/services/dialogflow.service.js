@@ -7,8 +7,7 @@ const sessionClient = new dialogflow.SessionsClient({
   credentials: DIALOGFLOW.CREDENTIALS,
 });
 /**
- * Send request and log result
- *
+ * @description Send request and log result
  * @param {string} query - query
  * @returns {Promise<Array>}
  */
@@ -31,36 +30,24 @@ const detectTextIntent = async (query) => {
   return result;
 };
 /**
- * TODO: получаю имя и значение Intent
- * TODO: нужно покрыть тестами
- * на основе этого делаю записи в нужные части БД (сохраняя при этом стандартный rawMsg)
- *
- * @param {Array} responses - responses array
- * @returns {string}
- */
-const processResponse = (responses) => {
-  for (const response of responses) {
-    const result = response.queryResult;
-    return result;
-  }
-  // TODO: UNDEFINED INTENT? генерация undefined Intent
-  // ...
-};
-/**
- * получаем и разбираем Intent (если есть)
- *
- * inputAnalyze('купил овощи 30 рублей');
- *
+ * @example inputAnalyze('купил овощи 30 рублей');
+ * @description получаем и разбираем Intent (если есть)
  * @param {string} rawMessage - raw message
  * @returns {Promise<string>}
  */
 const inputAnalyze = async (rawMessage) => {
   const query = formatQuery(rawMessage);
-  const responses = await detectTextIntent(query);
-  const result = await processResponse(responses);
-  return result;
+  const [response] = await detectTextIntent(query);
+  return response.queryResult;
+};
+
+const detectIntentAudio = () => {
+  // todo
 };
 
 module.exports = {
-  inputAnalyze,
+  detectTextIntent: inputAnalyze,
+  detectIntentAudio,
+  // todo: расширить встроенными методами https://github.com/googleapis/nodejs-dialogflow
+  // todo add createContext
 };

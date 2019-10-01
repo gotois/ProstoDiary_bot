@@ -13,7 +13,7 @@ const getAll = async (telegram_user_id, sorting = 'ASC') => {
      JOIN history
      ON history.user_story_id = user_t.id
      WHERE bot_t.telegram_user_id = $1
-     ORDER BY history.created_at` + sorting,
+     ORDER BY history.created_at ${sorting}`,
     [telegram_user_id],
   );
   // TODO: надо сразу декодировать

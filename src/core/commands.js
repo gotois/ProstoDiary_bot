@@ -40,10 +40,6 @@ module.exports = {
     alias: /^\/set (\d{4}-\d{1,2}-\d{1,2})\s/,
     description: 'Добавление данных за этот срок `YYYY-MM-DD`',
   },
-  GRAPH: {
-    alias: /^\/graph(\s)/,
-    description: 'Построение графиков `String | RegExp`',
-  },
   BALANCE: {
     alias: /^\/balance$/,
     description: 'Отображение всех денежных средств пользователя',
@@ -54,7 +50,7 @@ module.exports = {
   },
   SEARCH: {
     alias: /^\/(search|найти)(\s)(.+)/,
-    description: 'Поиск вхождения `String`',
+    description: 'Поиск вхождения `String | RegExp`',
   },
   EDITED_MESSAGE_TEXT: {
     alias: 'edited_message_text',

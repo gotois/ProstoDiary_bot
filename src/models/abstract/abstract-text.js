@@ -147,7 +147,7 @@ class AbstractText extends Abstract {
     
     if (this.text.length <= 256) {
       try {
-        const dialogflowResult = await dialogflowService.inputAnalyze(this.text);
+        const dialogflowResult = await dialogflowService.detectTextIntent(this.text);
         this.language = dialogflowResult.languageCode;
         this.intent = dialogflowResult.intent.displayName;
         // todo: как-то использовать результат из dialogFlow

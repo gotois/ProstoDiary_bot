@@ -15,7 +15,6 @@ module.exports = (bot) => {
 
   // todo: переместить в SEARCH
   bot.onText(commands.COUNT.alias, require('../controllers/count.event'));
-  bot.onText(commands.GRAPH.alias, require('../controllers/plot.event'));
   bot.onText(commands.GET.alias, require('../controllers/get-date.event'));
   bot.onText(commands.GETTODAY.alias, require('../controllers/get-date.event'));
   bot.onText(commands.BALANCE.alias, require('../controllers/balance.event'));
