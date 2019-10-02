@@ -2,68 +2,85 @@ const bot = require('../core/bot');
 const commands = require('../core/commands');
 const logger = require('../services/logger.service');
 const searchAPI = require('../api/v2/search');
-/**
- * @constant
- * @type {string}
- */
-const NEXT_PAGE = '__next_page';
-/**
- * @todo использовать этот контроллер для понимания что отображать пользователю
- * @param {object} msg - message
- * @param {object} msg.chat - chat
- * @param {object} msg.from - from
- * @param {string} msg.text - text
- * @returns {undefined}
- */
-const onSearch = async ({ chat, from, text }) => {
-  let botMessage;
-  async function showMessage() {
-    const generatorResult = result.generator.next();
-    if (result.generator.done || !result.generator.value) {
+const TelegramBotRequest = require('./telegram-bot-request');
+
+class Search extends TelegramBotRequest {
+  /**
+   * @constant
+   * @type {object}
+   */
+  static get enum() {
+    return {
+      NEXT_PAGE: '__next_page',
+    };
+  }
+  constructor(message, api) {
+    message.text = message.text
+      .replace(commands.SEARCH.alias, '')
+      .trim()
+      .toLowerCase();
+    super(message, api);
+  }
+  async showMessage(generator) {
+    const generatorResult = generator.next();
+    if (generatorResult.done || !generatorResult.value) {
       return;
     }
-    botMessage = await bot.sendMessage(chatId, generatorResult.value, {
-      disable_web_page_preview: true,
-      parse_mode: 'Markdown',
-      reply_markup: generatorResult.done
-        ? null
-        : { inline_keyboard: [[{ text: 'NEXT', callback_data: NEXT_PAGE }]] },
-    });
+    const messageListener = async (query) => {
+      bot.off('callback_query', messageListener);
+      switch (query.data) {
+        case Search.enum.NEXT_PAGE: {
+          await bot.deleteMessage(
+            this.message.chat.id,
+            this.botMessage.message_id,
+          );
+          await this.showMessage(generator);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    };
+    let replyMarkup;
+    if (generatorResult.done) {
+      replyMarkup = null;
+    } else {
+      replyMarkup = {
+        inline_keyboard: [
+          [{ text: 'NEXT', callback_data: Search.enum.NEXT_PAGE }],
+        ],
+      };
+    }
+    this.botMessage = await bot.sendMessage(
+      this.message.chat.id,
+      generatorResult.value,
+      {
+        disable_web_page_preview: true,
+        parse_mode: 'Markdown',
+        reply_markup: replyMarkup,
+      },
+    );
     bot.once('callback_query', messageListener);
   }
-  async function messageListener(query) {
-    bot.off('callback_query', messageListener);
-    switch (query.data) {
-      case NEXT_PAGE: {
-        await bot.deleteMessage(chatId, botMessage.message_id);
-        await showMessage();
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-  }
+}
+/**
+ * @param {TelegramMessage} message - message
+ * @returns {Promise<undefined>}
+ */
+const onSearch = async (message) => {
   logger.log('info', onSearch.name);
-  const chatId = chat.id;
-  const fromId = from.id;
-  const input = text
-    .replace(commands.SEARCH.alias, '')
-    .trim()
-    .toLowerCase();
-
-  // todo: нужно разбирать input в том числе через dialogflow (через создание возможности dialogflow context?)
-  // ...
-  // еще подключить /balance | /count | /get-date
-
-  const { error, result } = await searchAPI(input, fromId);
-  if (error) {
-    logger.error(error);
-    await bot.sendMessage(chatId, error.message);
-    return;
+  const search = new Search(message, searchAPI);
+  const searchResult = await search.request();
+  // todo использовать этот контроллер для понимания что отображать пользователю - если есть возможность отобразить график - отображать и прочее
+  if (searchResult.graph) {
+    await bot.sendPhoto(
+      message.chat.id,
+      searchResult.graph.buffer,
+      searchResult.graph.options,
+    );
   }
-  await bot.sendPhoto(chatId, result.graph.buffer, result.graph.options);
-  await showMessage();
+  await search.showMessage(searchResult.generator);
 };
 
 module.exports = onSearch;

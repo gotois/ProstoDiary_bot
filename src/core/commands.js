@@ -49,7 +49,7 @@ module.exports = {
     description: 'Подсчет потраченого `- | +`',
   },
   SEARCH: {
-    alias: /^\/(search|найти)(\s)(.+)/,
+    alias: /^\/(search|найти)(\s)/,
     description: 'Поиск вхождения `String | RegExp`',
   },
   EDITED_MESSAGE_TEXT: {

@@ -49,3 +49,15 @@
  * @property {string} name - name
  * @property {string} email - email
  */
+/**
+ * @module types
+ */
+/**
+ * @typedef {object} TelegramMessage
+ * @property {object} chat - chat
+ * @property {object} from - from
+ * @property {string} text - text
+ * @property {object} reply_to_message - message
+ * @property {number} message_id - id message
+ * @property {number} date - unix time
+ */

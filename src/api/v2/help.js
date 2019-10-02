@@ -1,6 +1,6 @@
 const commands = require('../../core/commands');
 /**
- * @todo поддержать вариант /help something, где будет происходить поиск по командам
+ * @todo поддержать вариант /help something, где будет происходить поиск по командам. Для этого поддержать новый dialogflow help intent
  * @returns {jsonrpc}
  */
 module.exports = () => {

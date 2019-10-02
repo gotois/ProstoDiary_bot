@@ -1,20 +1,14 @@
 const bot = require('../core/bot');
-const logger = require('../services/logger.service');
-const helpAPI = require('../api/v1/help');
+const helpAPI = require('../api/v2/help');
+const TelegramBotRequest = require('./telegram-bot-request');
 /**
- * @param {object} msg - message
- * @param {object} msg.chat - chat
- * @returns {undefined}
+ * @param {TelegramMessage} message - message
+ * @returns {Promise<undefined>}
  */
-const onHelp = async ({ chat }) => {
-  const chatId = chat.id;
-  const { error, result } = await helpAPI();
-  if (error) {
-    logger.error(error);
-    await bot.sendMessage(chatId, error.message);
-    return;
-  }
-  await bot.sendMessage(chatId, result, {
+const onHelp = async (message) => {
+  const help = new TelegramBotRequest(message, helpAPI);
+  const helpResult = await help.request();
+  await bot.sendMessage(message.chat.id, helpResult, {
     parse_mode: 'Markdown',
   });
 };

@@ -3,7 +3,6 @@ const commands = require('../core/commands');
 const format = require('../services/format.service');
 const logger = require('../services/logger.service');
 const APIv2 = require('../api/v2');
-const kppAPI = require('../api/v1/kpp');
 const { IS_AVA_OR_CI } = require('../environment');
 /**
  * @typedef {number} COMMANDS_ENUM
@@ -50,19 +49,14 @@ const unknownCommand = (input) => {
   return false;
 };
 /**
- * Все что пишешь - записывается в сегодняшний день
- *
- * @param {object} message - message
- * @param {object} message.chat - chat
- * @param {object} message.from - from
- * @param {string} message.text - text
- * @param {object} message.reply_to_message - message
- * @param {number} message.message_id - id message
- * @param {number} message.date - unix time
+ * @param {TelegramMessage} message - message
  * @param {any} match - matcher
- * @returns {undefined}
+ * @returns {Promise<undefined>}
  */
 const onText = async (message, match) => {
+  if (match.type !== 'text') {
+    return;
+  }
   const {
     chat,
     from,
@@ -98,9 +92,6 @@ const onText = async (message, match) => {
       return;
     }
   }
-  if (match.type !== 'text') {
-    return;
-  }
   const botMessage = await bot.sendMessage(
     chatId,
     `_${format.previousInput(text)}_ 📝`,
@@ -115,7 +106,7 @@ const onText = async (message, match) => {
   switch (getInputType(text)) {
     case COMMANDS_ENUM.KPP: {
       logger.log('info', 'onKPP');
-      const { error, result } = await kppAPI(text);
+      const { error, result } = await APIv2.kpp(text);
       errorAPIMessage = error;
       resultAPIMessage = JSON.stringify(result, null, 2);
       break;

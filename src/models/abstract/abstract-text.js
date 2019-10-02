@@ -1,10 +1,7 @@
 const validator = require('validator');
-const Eyo = require('eyo-kernel');
 const Abstract = require('./');
 const logger = require('../../services/logger.service');
 const dialogflowService = require('../../services/dialogflow.service');
-const { spellText } = require('../../services/speller.service');
-const { detectLang, isRUS, isENG } = require('../../services/detect-language.service');
 const languageService = require('../../services/language.service');
 const crypt = require('../../services/crypt.service');
 const foodService = require('../../services/food.service');
@@ -88,27 +85,10 @@ class AbstractText extends Abstract {
    */
   async fill() {
     this.text = this.buffer.toString();
-    this.language = detectLang(this.text).language;
     
     // TODO: сделать перевод в английский текст
     // ...
     
-    // ёфикация текста
-    if (isRUS(this.language)) {
-      const safeEyo = new Eyo();
-      safeEyo.dictionary.loadSafeSync();
-      this.text = safeEyo.restore(this.text);
-    } else if (isENG(this.language)) {
-    } else {
-      // пока только поддерживаем EN, RU
-      throw new Error('Unsupported language');
-    }
-    try {
-      const yandexSpellLanguageCode = this.language.slice(0, 2);
-      this.text = await spellText(this.text, yandexSpellLanguageCode);
-    } catch (error) {
-      logger.error(error);
-    }
     try {
       const { categories, documentSentiment, entities, language, sentences, tokens } = await languageService.annotateText(this.text, this.language);
       this.language = language;
@@ -174,11 +154,6 @@ class AbstractText extends Abstract {
     // ...
     
     // Сериализация найденных параметров (Entities)
-    // ...
-    
-    // Исправление кастомных типов
-    // (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
-    // 	.9 -> 0.9
     // ...
     
     // todo: middleware

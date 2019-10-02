@@ -1,20 +1,16 @@
 const bot = require('../core/bot');
 const logger = require('../services/logger.service');
+const TelegramBotRequest = require('./telegram-bot-request');
+const versionAPI = require('../api/v1/version');
 /**
- * @param  {object} chat - chat
+ * @param {TelegramMessage} message - message
  * @returns {Promise<undefined>}
  */
-const getVersion = async ({ chat }) => {
+const getVersion = async (message) => {
   logger.log('info', getVersion.name);
-  const chatId = chat.id;
-  const versionAPI = require('../api/v1/version');
-  const { error, result } = await versionAPI();
-  if (error) {
-    logger.error(error);
-    await bot.sendMessage(chatId, error.message);
-    return;
-  }
-  await bot.sendMessage(chatId, result);
+  const version = new TelegramBotRequest(message, versionAPI);
+  const versionResult = await version.request();
+  await bot.sendMessage(message.chat.id, versionResult);
 };
 
 module.exports = getVersion;

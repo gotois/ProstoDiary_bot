@@ -2,7 +2,7 @@ const fs = require('fs');
 
 module.exports = async (t) => {
   t.timeout(5000);
-  const kppAPI = require('../../src/api/v1/kpp');
+  const kppAPI = require('../../src/api/v2/kpp');
   {
     const qrImage = fs.readFileSync('tests/data/photo/qr-example-big-1.jpg');
     const { error, result } = await kppAPI(qrImage);

@@ -5,6 +5,7 @@ const { decodeRows } = require('../../services/format.service');
 const { createRegexInput } = require('../../services/text.service');
 const { createPhotoBuffer } = require('../../services/graph.service');
 const datetime = require('../../services/date.service');
+const correctionText = require('../../services/correction-text.service');
 /**
  * @constant
  * @type {number}
@@ -40,6 +41,13 @@ function* generateEntries(rows, input) {
  */
 module.exports = async (input, userId) => {
   try {
+    input = await correctionText(input);
+
+    // todo: нужно разбирать input в том числе через dialogflow (через создание возможности dialogflow context?)
+    // ...
+
+    // еще подключить /balance | /count | /get-date
+
     const rows = await dbEntries.getAll(userId);
     // todo: это нужно перенести внутрь getAll
     // const regExp = createRegexInput(input);
