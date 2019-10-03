@@ -32,7 +32,8 @@
     "e2e:fast": "cross-env FAST_TEST=FAST_TEST ava tests/e2e/index.js",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "docs:serve": "cd docs/ ; jekyll serve",
-    "prepare": "snyk protect"
+    "prepare": "npm run snyk-protect && snyk protect",
+    "snyk-protect": "snyk protect"
   },
   "engines": {
     "node": "12.x",
@@ -102,7 +103,8 @@
     "validator": "11.1.0",
     "winston": "3.2.1",
     "wolfram-alpha-api": "git+https://github.com/qertis/wolfram-alpha-api.git",
-    "yauzl": "2.10.0"
+    "yauzl": "2.10.0",
+    "snyk": "^1.230.5"
   },
   "devDependencies": {
     "@commitlint/cli": "8.2.0",
@@ -125,7 +127,6 @@
     "npm-check-updates": "3.1.23",
     "nyc": "14.1.1",
     "prettier": "1.18.2",
-    "snyk": "1.228.5",
     "telegram-test-api": "2.3.1"
   },
   "snyk": true

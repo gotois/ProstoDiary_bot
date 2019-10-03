@@ -12,3 +12,24 @@ patch:
         patched: '2019-07-03T21:02:52.140Z'
     - node-telegram-bot-api > request-promise > request-promise-core > lodash:
         patched: '2019-07-03T21:02:52.140Z'
+  SNYK-JS-HTTPSPROXYAGENT-469131:
+    - '@google-cloud/speech > @google-cloud/common > teeny-request > https-proxy-agent':
+        patched: '2019-10-03T21:02:57.575Z'
+    - '@google-cloud/language > google-gax > google-auth-library > gaxios > https-proxy-agent':
+        patched: '2019-10-03T21:02:57.575Z'
+    - '@google-cloud/speech > @google-cloud/common > google-auth-library > gaxios > https-proxy-agent':
+        patched: '2019-10-03T21:02:57.575Z'
+    - dialogflow > google-gax > google-auth-library > gaxios > https-proxy-agent:
+        patched: '2019-10-03T21:02:57.575Z'
+    - '@google-cloud/translate > google-gax > google-auth-library > gtoken > gaxios > https-proxy-agent':
+        patched: '2019-10-03T21:02:57.575Z'
+    - dialogflow > google-gax > google-auth-library > gtoken > gaxios > https-proxy-agent:
+        patched: '2019-10-03T21:02:57.575Z'
+    - '@google-cloud/language > google-gax > google-auth-library > gcp-metadata > gaxios > https-proxy-agent':
+        patched: '2019-10-03T21:02:57.575Z'
+    - '@google-cloud/translate > @google-cloud/common > google-auth-library > gtoken > gaxios > https-proxy-agent':
+        patched: '2019-10-03T21:02:57.575Z'
+    - '@google-cloud/speech > @google-cloud/common > google-auth-library > gcp-metadata > gaxios > https-proxy-agent':
+        patched: '2019-10-03T21:02:57.575Z'
+    - dialogflow > google-gax > google-auth-library > gcp-metadata > gaxios > https-proxy-agent:
+        patched: '2019-10-03T21:02:57.575Z'
