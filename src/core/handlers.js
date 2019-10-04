@@ -1,6 +1,5 @@
 const commands = require('./commands');
 const { IS_CI } = require('../../src/environment');
-
 /**
  * @param {TelegramBot} bot - bot
  */
@@ -12,16 +11,8 @@ module.exports = (bot) => {
   bot.onText(commands.HELP.alias, require('../controllers/help.event'));
   bot.onText(commands.SET.alias, require('../controllers/set-date.event'));
   bot.onText(commands.SEARCH.alias, require('../controllers/search.event'));
-
-  // todo: переместить в SEARCH
-  bot.onText(commands.COUNT.alias, require('../controllers/count.event'));
-  bot.onText(commands.GET.alias, require('../controllers/get-date.event'));
-  bot.onText(commands.GETTODAY.alias, require('../controllers/get-date.event'));
   bot.onText(commands.BALANCE.alias, require('../controllers/balance.event'));
-  // end
-
   bot.onText(commands.VERSION.alias, require('../controllers/version.event'));
-
   bot.on(
     commands.EDITED_MESSAGE_TEXT.alias,
     require('../controllers/edited-message-text.event'),

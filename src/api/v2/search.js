@@ -45,8 +45,11 @@ module.exports = async (input, userId) => {
 
     // todo: нужно разбирать input в том числе через dialogflow (через создание возможности dialogflow context?)
     // ...
+    // todo: должно быть естественным языком вида: /search покажи все покупки за прошлую неделю
+    // today|last week|last year|etc
+    // const rows = await dbEntries.get(currentUser.id, date);
 
-    // еще подключить /balance | /count | /get-date
+    // еще подключить /count | /get-date
 
     const rows = await dbEntries.getAll(userId);
     // todo: это нужно перенести внутрь getAll
@@ -69,6 +72,7 @@ module.exports = async (input, userId) => {
     return {
       jsonrpc: '2.0',
       result: {
+        // todo: надо возвращать StoryJSON объекты, можно в иттераторе - https://github.com/gotois/ProstoDiary_bot/issues/160#issuecomment-536405332
         generator: generateEntries(rows, input),
         graph: {
           buffer: photoBuffer,

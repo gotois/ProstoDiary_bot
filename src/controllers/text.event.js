@@ -49,6 +49,10 @@ const unknownCommand = (input) => {
   return false;
 };
 /**
+ * @todo символ `/` означает что запись будет точно в историю. Пример:
+ * /
+ * вчера вечером был фитнес
+ *
  * @param {TelegramMessage} message - message
  * @param {any} match - matcher
  * @returns {Promise<undefined>}

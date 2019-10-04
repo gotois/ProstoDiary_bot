@@ -2,6 +2,7 @@ const bot = require('../core/bot');
 const commands = require('../core/commands');
 const logger = require('../services/logger.service');
 const searchAPI = require('../api/v2/search');
+const countAPI = require('../api/v1/count');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Search extends TelegramBotRequest {
@@ -80,6 +81,44 @@ const onSearch = async (message) => {
       searchResult.graph.options,
     );
   }
+  {
+    //  прежняя регулярка  alias: /^\/get (\d{4}-\d{1,2}-\d{1,2})$/, - 'Получение данных за этот срок `YYYY-MM-DD`',
+    // ...
+    // расширить до '/search yesterday'/ '/search позавчера' и т.д.
+    // ...
+    // todo пример получения данных. Бывший "/get 26.11.2016 or /get today"
+    // const rows = await getDateAPI(match, userId);
+    // if (rows.length === 0) {
+    //   await bot.sendMessage(chatId, 'Записей нет');
+    //   return;
+    // }
+    // for (const row of rows) {
+    //   await bot.forwardMessage(chatId, userId, row.telegram_message_id);
+    // }
+  }
+  {
+    // todo пример  сколько всего потрачено|получено (прежний /count)
+    // const countResult = await countAPI(match[1].toUpperCase(), fromId);
+    // const replyParameters = Object.assign({}, parameters, {
+    //   reply_markup: {
+    //     inline_keyboard: [
+    //       [
+    //         { text: 'Всего потрачено', callback_data: '-' },
+    //         { text: 'Всего получено', callback_data: '+' },
+    //       ],
+    //     ],
+    //   },
+    // });
+    // await bot.sendMessage(chatId, 'Финансы', replyParameters);
+    // TODO: возможна утечка, если не уничтожать слушатель
+    // bot.once('callback_query', async ({ data }) => {
+    //   const countResult = await countAPI(data, fromId);
+    //   await bot.sendMessage(chatId, countResult, parameters);
+    // });
+  }
+  // todo если результат имеет информацию о еде, тогда подключать соответствующего ассистента по еде и предлагать советы
+  // ...
+
   await search.showMessage(searchResult.generator);
 };
 
