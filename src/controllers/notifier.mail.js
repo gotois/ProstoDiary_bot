@@ -2,6 +2,7 @@ require('dotenv').config();
 const notifier = require('mail-notifier');
 const logger = require('../services/logger.service');
 const { MAIL } = require('../environment');
+const dialogflowService = require('../services/dialogflow.service');
 const { unpack } = require('../services/archive.service');
 const AbstractText = require('../models/abstract/abstract-text');
 const AbstractPhoto = require('../models/abstract/abstract-photo');
@@ -20,7 +21,7 @@ const imap = {
 };
 /**
  * @param {object} mail - mail
- * @param {Array} mail.attachments - email attachments
+ * @param {Array<object>} mail.attachments - email attachments
  * @returns {Promise<Array>}
  */
 const readAttachments = async ({ attachments, from }) => {
@@ -40,6 +41,21 @@ const readAttachments = async ({ attachments, from }) => {
     } = attachment;
     switch (contentType) {
       case 'plain/text': {
+        if (content <= 256) {
+          try {
+            // todo: вырезать конфиденциальную информацию и не отправлять ее на серверы анализов
+            // ...
+            const dialogflowResult = await dialogflowService.detectTextIntent(
+              content,
+            );
+            // todo: на основе результата из dialogFlow в дальнейшем предполгаем какой tag ставить
+            // dialogflowResult.languageCode;
+            // dialogflowResult.intent.displayName;
+            // dialogflowResult.parameters.fields
+          } catch (error) {
+            logger.error(error.message);
+          }
+        }
         abstracts.push(new AbstractText(content, publisher));
         break;
       }

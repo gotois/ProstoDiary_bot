@@ -3,7 +3,6 @@ module.exports = {
   insert: require('./insert'),
   remove: require('./remove'),
   search: require('./search'),
-  train: require('./train'),
   editedMessageTextAPI: require('./edited-message-text'),
   kpp: require('./kpp'),
 };

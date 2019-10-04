@@ -1,5 +1,6 @@
 const dbEntries = require('../../database/entities.database');
 /**
+ * @todo дать возможность очищать только определенные данные из истории
  * @returns {jsonrpc}
  */
 module.exports = async (userId) => {

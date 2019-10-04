@@ -58,6 +58,11 @@ npm run dev
 npm start
 ```
 
+### CRON: проводим очистку и оптимизацию БД (натурализация)
+```bash
+npm run start:naturalize
+```
+
 Tools
 ---
 #### Package upgrade

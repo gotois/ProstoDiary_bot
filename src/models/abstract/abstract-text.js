@@ -1,7 +1,6 @@
 const validator = require('validator');
 const Abstract = require('./');
 const logger = require('../../services/logger.service');
-const dialogflowService = require('../../services/dialogflow.service');
 const languageService = require('../../services/language.service');
 const crypt = require('../../services/crypt.service');
 const foodService = require('../../services/food.service');
@@ -26,6 +25,10 @@ class AbstractText extends Abstract {
   
   constructor(buffer) {
     super(buffer);
+  
+    // ...
+    // TODO: Постисправление найденных параметров (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
+    // ...
   }
   
   get sentiment() {
@@ -121,28 +124,6 @@ class AbstractText extends Abstract {
     // когда? - сегодня - получаем абстрактное время от пользователя, которое нужно перевести в более точное.
     // что сделал? - купил сыра -> говорим что произошло действие "покупка", ищутся все предыдущие связи для актуализации этой покупке (место, время, валюта, ищется стоимость, кому была отправлена транзакция, из каких ресурсов)
     // купил что? сыр - 100 грамм -> из БД продуктов ищется сыр 100 грамм и прикрепляется ссылка
-    
-    // todo: вырезать конфиденциальную информацию и не отправлять ее на серверы анализов
-    // ...
-    
-    if (this.text.length <= 256) {
-      try {
-        const dialogflowResult = await dialogflowService.detectTextIntent(this.text);
-        this.language = dialogflowResult.languageCode;
-        this.intent = dialogflowResult.intent.displayName;
-        // todo: как-то использовать результат из dialogFlow
-        this.#parameters.unshift(dialogflowResult.parameters.fields);
-
-        // TODO: Если в интентах все необходимые параметры используются они
-        // ...
-        // TODO: Постисправление найденных параметров (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
-        // ...
-        // TODO: на основе Intent'a делаем различные предположения и записываем в БД в структурированном виде
-        // ...
-      } catch (error) {
-        logger.error(error.message);
-      }
-    }
     
     // FIXME: Разбить текст на строки через "\n" (Обработка каждой строки выполняется отдельно)
     // И еще лучше если это дополнительно прогнать через NLP
