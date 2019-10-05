@@ -34,16 +34,6 @@ module.exports = (t) => {
   t.false(SET.alias.test('/set something'));
 
   t.true(SEARCH.alias.test('/search something'));
-  // todo
-  // t.true(GETTODAY.search.test('/search что было сегодня?'));
-  // t.true(GET.search.test('/get показать 2018-03-18'));
-  // t.true(COUNT.alias.test('/count'));
-  // t.true(COUNT.alias.test('/count +'));
-  // t.true(COUNT.alias.test('/count -'));
-  // t.false(COUNT.alias.test('/count/'));
-  // t.false(COUNT.alias.test('/count-'));
-  // t.false(COUNT.alias.test('/count+'));
-  // todoend
 
   t.true(BACKUP.alias.test('/backup'));
   t.false(BACKUP.alias.test('/backup 1'));

@@ -23,7 +23,7 @@ const onDatabaseClear = async ({ chat, from }) => {
   );
   const dbClearAPI = require('../api/v1/database-clear');
   // todo: проверять выгружен ли был бэкап, и если нет - предупреждать пользователя
-  await bot.onReplyToMessage(chat.id, message_id, async ({ text }) => {
+  bot.onReplyToMessage(chat.id, message_id, async ({ text }) => {
     if (text !== 'YES') {
       await bot.sendMessage(chat.id, 'Операция отменена');
       return;

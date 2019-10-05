@@ -7,140 +7,93 @@ const logger = require('../services/logger.service');
 const auth = require('../services/auth.service');
 const BotStory = require('../models/story/bot-story');
 const { PERSON } = require('../environment');
-/**
- * @param {number} chatId - chatId
- * @param {jsonld} personData - personData
- * @returns {IterableIterator<*|void|PromiseLike<Promise | never>|Promise<Promise | never>|Promise>}
- */
-function* messageIterator(chatId, personData) {
-  // Step 1: выводить оферту
-  const offerta = fs.readFileSync('docs/_pages/offerta.md').toString();
-  yield bot.sendMessage(chatId, offerta, {
-    parse_mode: 'Markdown',
-    reply_markup: {
-      force_reply: true,
-      inline_keyboard: [
-        [{ text: 'Принимаю', callback_data: 'AGREE' }],
-        [{ text: 'Не принимаю', callback_data: 'CANCEL' }],
-      ],
-    },
-  });
-  // Step 2: получать соль
-  yield bot.sendMessage(
-    chatId,
-    'Введите соль для шифрования\n' +
-      '*Используйте специальные непечатные символы с помощью NumLock',
-    {
-      reply_markup: {
-        force_reply: true,
-      },
-    },
-  );
-  // Step 3: генерируем Auth token
-  const secret = auth.genereateGoogleAuth(personData.email);
-  yield bot.sendMessage(
-    chatId,
-    `**Check your data:**\n\nAuth key: ${secret.base32}\nMail: ${personData.email}`,
-    {
-      parse_mode: 'Markdown',
-      reply_markup: {
-        force_reply: true,
-        inline_keyboard: [
-          [{ text: 'OK', callback_data: 'CHECK' }],
-          [{ text: 'CANCEL', callback_data: 'CANCEL' }],
-        ],
-      },
-    },
-  );
-  yield bot.sendMessage(chatId, 'Введите сгенерированный код из почты', {
-    reply_markup: {
-      force_reply: true,
-    },
-  });
-  yield bot.sendMessage(
-    chatId,
-    `Привет __${personData.name}__!\nЯ твой бот __${pkg.description}__ ${pkg.version}!\nНе забудь настроить двухфакторную аутентификацию.`,
-    {
-      parse_mode: 'Markdown',
-    },
-  );
-}
-/**
- * При первом включении создаем в БД специальную колонку для работы
- *
- * @param {object} msg - message
- * @param {object} msg.chat - chat
- * @param {object} msg.from - from
- * @returns {undefined}
- */
-const onStart = async ({ chat, from, date, message_id }) => {
-  logger.log('info', onStart.name);
-  const chatId = chat.id;
-  const { rowCount } = await dbUsers.exist(from.id);
-  // if (false) { // todo: test
-  if (rowCount > 0) {
-    await bot.sendMessage(chatId, 'Повторная установка не требуется');
-    return;
+
+class Start {
+  /**
+   * @param {TelegramMessage} message - message
+   */
+  constructor(message, personData) {
+    this.message = message;
+    this.personData = personData;
+    this.dialog = this.messageIterator();
+    this.messageListener = this.messageListener.bind(this);
+    bot.on('callback_query', this.messageListener);
   }
-  // }
-  const personData = await PERSON;
-  // eslint-disable-next-line
-  const messageListener = async (query) => {
+  async beginDialog() {
+    // if (false) { // todo: test
+    const { rowCount } = await dbUsers.exist(this.message.from.id);
+    if (rowCount > 0) {
+      await bot.sendMessage(
+        this.message.chat.id,
+        'Повторная установка не требуется',
+      );
+      return;
+    }
+    // }
+    await this.dialog.next();
+  }
+  async messageListener(query) {
     const installKey = '123456'; // todo сгенерированный ключ подтверждающий вход
     switch (query.data) {
       case 'CHECK': {
         await sgMail.send({
-          to: personData.email,
+          to: this.personData.email,
           from: 'no-reply@gotointeractive.com',
           subject: 'ProstoDiary Auth👾',
           text:
             'Welcome to ProstoDiary.\nДля подтверждения пришлите боту сообщение' +
             installKey,
         });
-        const checkMessageValue = await iterator.next().value;
+        const checkMessageValue = await this.dialog.next().value;
         bot.onReplyToMessage(
-          chatId,
+          this.message.chat.id,
           checkMessageValue.message_id,
           async ({ text }) => {
             if (text !== installKey) {
-              // eslint-disable-next-line
-              console.log('wrong key');
+              // todo доделать функционал ограниченности попыток
+              await bot.sendMessage(
+                this.message.chat.id,
+                'Неверный ключ, осталось попыток: 3',
+              );
               return;
             }
             const story = new BotStory(
               Buffer.from(
-                `INSTALL ${from.language_code} Bot for ${from.first_name}`,
+                `INSTALL ${this.message.from.language_code} Bot for ${this.message.from.first_name}`,
               ),
               {
-                date,
+                date: this.message.date,
                 type: 'CORE',
                 intent: 'system',
-                telegram_user_id: from.id,
-                telegram_message_id: message_id,
+                telegram_user_id: this.message.from.id,
+                telegram_message_id: this.message.message_id,
               },
             );
             try {
               await story.save();
-              iterator.next();
+              this.dialog.next();
             } catch (error) {
               logger.log('error', error);
-              await bot.sendMessage(chatId, 'Вход закончился ошибкой');
+              await bot.sendMessage(
+                this.message.chat.id,
+                'Вход закончился ошибкой',
+              );
             } finally {
-              bot.off('callback_query', messageListener);
+              bot.off('callback_query', this.messageListener);
             }
           },
         );
         break;
       }
       case 'CANCEL': {
-        await bot.sendMessage(chatId, 'Please rerun /start');
-        bot.off('callback_query', messageListener);
+        await bot.sendMessage(this.message.chat.id, 'Please rerun /start');
+        bot.off('callback_query', this.messageListener);
         break;
       }
       case 'AGREE': {
-        const cryptoMessageValue = await iterator.next().value;
+        const cryptoMessageValue = await this.dialog.next().value;
         bot.onReplyToMessage(
-          chatId,
+          this.message.chat.id,
           cryptoMessageValue.message_id,
           // eslint-disable-next-line
           async ({ text }) => {
@@ -152,7 +105,7 @@ const onStart = async ({ chat, from, date, message_id }) => {
             //   intent: 'system',
             //   type: 'CORE',
             // })
-            iterator.next();
+            this.dialog.next();
           },
         );
         break;
@@ -161,10 +114,78 @@ const onStart = async ({ chat, from, date, message_id }) => {
         break;
       }
     }
-  };
-  const iterator = messageIterator(chatId, personData);
-  await iterator.next();
-  bot.on('callback_query', messageListener);
+  }
+  /**
+   * @param {jsonld} personData - personData
+   * @returns {IterableIterator<*|void|PromiseLike<Promise | never>|Promise<Promise | never>|Promise>}
+   */
+  *messageIterator(personData) {
+    // Step 1: выводить оферту
+    const offerta = fs.readFileSync('docs/_pages/offerta.md').toString();
+    yield bot.sendMessage(this.message.chat.id, offerta, {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        force_reply: true,
+        inline_keyboard: [
+          [{ text: 'Принимаю', callback_data: 'AGREE' }],
+          [{ text: 'Не принимаю', callback_data: 'CANCEL' }],
+        ],
+      },
+    });
+    // Step 2: получать соль
+    yield bot.sendMessage(
+      this.message.chat.id,
+      'Введите соль для шифрования\n' +
+        '*Используйте специальные непечатные символы с помощью NumLock',
+      {
+        reply_markup: {
+          force_reply: true,
+        },
+      },
+    );
+    // Step 3: генерируем Auth token
+    const secret = auth.genereateGoogleAuth(this.personData.email);
+    yield bot.sendMessage(
+      this.message.chat.id,
+      `**Check your data:**\n\nAuth key: ${secret.base32}\nMail: ${this.personData.email}`,
+      {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          force_reply: true,
+          inline_keyboard: [
+            [{ text: 'OK', callback_data: 'CHECK' }],
+            [{ text: 'CANCEL', callback_data: 'CANCEL' }],
+          ],
+        },
+      },
+    );
+    yield bot.sendMessage(
+      this.message.chat.id,
+      'Введите сгенерированный код из почты',
+      {
+        reply_markup: {
+          force_reply: true,
+        },
+      },
+    );
+    yield bot.sendMessage(
+      this.message.chat.id,
+      `Привет __${this.personData.name}__!\nЯ твой бот __${pkg.description}__ ${pkg.version}!\nНе забудь настроить двухфакторную аутентификацию.`,
+      {
+        parse_mode: 'Markdown',
+      },
+    );
+  }
+}
+/**
+ * @param {TelegramMessage} message - message
+ * @returns {undefined}
+ */
+const onStart = async (message) => {
+  logger.log('info', onStart.name);
+  const personData = await PERSON;
+  const start = new Start(message, personData);
+  await start.beginDialog(personData);
 };
 
 module.exports = onStart;

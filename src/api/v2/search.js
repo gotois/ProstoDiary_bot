@@ -37,19 +37,13 @@ function* generateEntries(rows, input) {
   }
 }
 /**
- * @returns {Promise<void>}
+ * @returns {Promise<undefined>}
  */
 module.exports = async (input, userId) => {
   try {
     input = await correctionText(input);
 
-    // todo: нужно разбирать input в том числе через dialogflow (через создание возможности dialogflow context?)
-    // ...
-    // todo: должно быть естественным языком вида: /search покажи все покупки за прошлую неделю
-    // today|last week|last year|etc
     // const rows = await dbEntries.get(currentUser.id, date);
-
-    // еще подключить /count | /get-date
 
     const rows = await dbEntries.getAll(userId);
     // todo: это нужно перенести внутрь getAll
@@ -68,6 +62,9 @@ module.exports = async (input, userId) => {
     const latestDate = rows[rows.length - 1].date;
     const rangeTimes = datetime.fillRangeTimes(firstDate, latestDate);
     const photoBuffer = await createPhotoBuffer(rows, rangeTimes);
+
+    // todo если результат имеет информацию о еде, тогда подключать соответствующего ассистента по еде и предлагать советы
+    // ...
 
     return {
       jsonrpc: '2.0',

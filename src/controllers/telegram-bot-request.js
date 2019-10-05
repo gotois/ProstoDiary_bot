@@ -6,10 +6,15 @@ class TelegramBotRequest {
   #api;
   constructor(message, api) {
     this.#message = message;
-    this.#api = api;
+    if (api) {
+      this.api = api;
+    }
   }
   get message() {
     return this.#message;
+  }
+  set api(api) {
+    this.#api = api;
   }
   async request() {
     const { error, result } = await this.#api(this.message.text, this.message.from.id);

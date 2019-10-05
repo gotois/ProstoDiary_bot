@@ -38,10 +38,10 @@ const formatterText = (input) => {
  * @returns {Array}
  */
 const decodeRows = (rows = []) => {
-  return rows.map(({ date_added, entry }) => {
+  return rows.map(({ date, text }) => {
     return {
-      date: date_added,
-      entry: crypt.decode(entry),
+      date,
+      text: crypt.decode(text),
     };
   });
 };

@@ -59,6 +59,11 @@ const convertToNormalDate = (date) => {
       mm = Number(date.slice(3, 5));
       yyyy = Number(date.slice(6, 10));
     }
+  } else if (/\d{4}-\d{1,2}-\d{1,2}/.test(date)) {
+    // `YYYY-MM-DD`
+    dd = Number(date.slice(8, 10));
+    mm = Number(date.slice(5, 7));
+    yyyy = Number(date.slice(0, 4));
   } else {
     dd = Number(date.match(/-\d+-(\d+)/)[1]);
     mm = Number(date.match(/-(\d+)/)[1]) - 1;

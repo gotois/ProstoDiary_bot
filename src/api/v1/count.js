@@ -29,7 +29,7 @@ module.exports = async (data, fromId) => {
     throw new Error('No data');
   }
   const entries = objectRows.map((row) => {
-    return row.entry;
+    return row.text;
   });
   const getAllSpentMoney = () => {
     return getMoney({
@@ -45,7 +45,6 @@ module.exports = async (data, fromId) => {
   };
   const startTime = objectRows[0].date.toLocaleDateString();
   const endTime = objectRows[objectRows.length - 1].date.toLocaleDateString();
-
   switch (data) {
     case '-': {
       const money = getAllSpentMoney();
@@ -60,7 +59,12 @@ module.exports = async (data, fromId) => {
       );
     }
     default: {
-      throw new Error('Проверьте правильность запроса. \nНапример: "/count -"');
+      // throw new Error('Проверьте правильность запроса. \nНапример: "/count -"');
+      // fixme для теста всегда отрабатываю логику "-"
+      const money = getAllSpentMoney();
+      return (
+        '_Всего потрачено_:\n' + formatResponse({ startTime, endTime, money })
+      );
     }
   }
 };
