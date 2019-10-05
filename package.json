@@ -114,7 +114,7 @@
     "commitizen": "4.0.3",
     "cross-env": "6.0.3",
     "cz-conventional-changelog": "3.0.2",
-    "eslint": "6.5.0",
+    "eslint": "6.5.1",
     "eslint-config-prettier": "6.3.0",
     "eslint-plugin-ava": "9.0.0",
     "eslint-plugin-jsdoc": "15.9.5",
