@@ -1,19 +1,19 @@
+const jsonrpc = require('jsonrpc-lite');
 const kppService = require('../../services/kpp.service');
-
-module.exports = async (text) => {
+const AbstractDocument = require('../../models/abstract/abstract-document');
+/**
+ * @param {RequestObject} requestObject - requestObject
+ * @returns {JsonRpc|JsonRpcError}
+ */
+module.exports = async (requestObject) => {
+  const { text } = requestObject.params;
   try {
     const kppDataResult = await kppService(text);
-    // todo добавлять это в StoryJSON
-    return {
-      jsonrpc: '2.0',
-      result: kppDataResult,
-    };
+    // todo добавлять это в Abstract document
+    //  const abstractDocument = new AbstractDocument();
+    //  ...
+    return jsonrpc.success(requestObject.id, kppDataResult);
   } catch (error) {
-    return {
-      jsonrpc: '2.0',
-      error: {
-        message: error.toString(),
-      },
-    };
+    return jsonrpc.error(requestObject.id, new jsonrpc.JsonRpcError(error, 99));
   }
 };

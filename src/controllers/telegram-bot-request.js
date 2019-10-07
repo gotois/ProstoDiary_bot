@@ -16,18 +16,24 @@ class TelegramBotRequest {
   set api(api) {
     this.#api = api;
   }
-  async request() {
-    const { error, result } = await this.#api(this.message.text, this.message.from.id);
-    
-    // todo: оборачивать ответ в jsonrpc ответ
-    // ...
-    
+  get api() {
+    return this.#api;
+  }
+  /**
+   * @param {RequestObject} requestObject - requestObject
+   * @returns {Promise<*>}
+   */
+  async request(requestObject) {
+    const { error, result } = await this.#api(requestObject);
     if (error) {
       logger.error(error);
-      await bot.sendMessage(this.message.chat.id, error.message);
-      throw error;
+      await this.onError(error);
     }
     return result;
+  }
+  async onError(error) {
+    await bot.sendMessage(this.message.chat.id, error.message);
+    throw error;
   }
 }
 

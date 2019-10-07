@@ -1,13 +1,15 @@
+const jsonrpc = require('jsonrpc-lite');
+const logger = require('../../services/logger.service');
 const format = require('../../services/format.service');
 const UserStory = require('../../models/story/user-story');
 /**
- * @param {string} text - text
- * @param {Date} date - date
- * @param {number} message_id - message_id
- * @param {number} telegram_user_id - telegram_user_id
- * @returns {jsonrpc}
+ * @param {RequestObject} requestObject - requestObject
+ * @returns {JsonRpc|JsonRpcError}
  */
-module.exports = async (text, date, message_id, telegram_user_id) => {
+module.exports = async (requestObject) => {
+  const { text, date, message_id, telegram_user_id } = requestObject.params;
+  //fixme манипулировать Абстрактом, а не UserStory
+  logger.log('warn', '!!!!!!!!!!');
   const story = new UserStory({
     source: Buffer.from(text),
     date,
@@ -17,16 +19,11 @@ module.exports = async (text, date, message_id, telegram_user_id) => {
   try {
     await story.fill();
     await story.update();
-    return {
-      jsonrpc: '2.0',
-      result: '_Запись обновлена_\n' + format.previousInput(text),
-    };
+    return jsonrpc.success(
+      requestObject.id,
+      '_Запись обновлена_\n' + format.previousInput(text),
+    );
   } catch (error) {
-    return {
-      jsonrpc: '2.0',
-      error: {
-        message: error.message.toString(),
-      },
-    };
+    return jsonrpc.error(requestObject.id, new jsonrpc.JsonRpcError(error, 99));
   }
 };

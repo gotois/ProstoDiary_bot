@@ -1,8 +1,8 @@
 // https://github.com/gotois/ProstoDiary_bot/issues/160
-
+const jsonrpc = require('jsonrpc-lite');
 const dbEntries = require('../../database/entities.database');
 const { decodeRows } = require('../../services/format.service');
-const { createRegexInput } = require('../../services/text.service');
+const { createRegexInput } = require('../../services/string.service');
 const { createPhotoBuffer } = require('../../services/graph.service');
 const datetime = require('../../services/date.service');
 const correctionText = require('../../services/correction-text.service');
@@ -37,15 +37,16 @@ function* generateEntries(rows, input) {
   }
 }
 /**
- * @returns {Promise<undefined>}
+ * @param {RequestObject} requestObject - requestObject
+ * @returns {Promise<JsonRpc|JsonRpcError>}
  */
-module.exports = async (input, userId) => {
+module.exports = async (requestObject) => {
   try {
-    input = await correctionText(input);
+    const input = await correctionText(requestObject.params.input);
 
     // const rows = await dbEntries.get(currentUser.id, date);
 
-    const rows = await dbEntries.getAll(userId);
+    const rows = await dbEntries.getAll(requestObject.params.userId);
     // todo: это нужно перенести внутрь getAll
     // const regExp = createRegexInput(input);
     // console.log('rows', rows)
@@ -66,26 +67,18 @@ module.exports = async (input, userId) => {
     // todo если результат имеет информацию о еде, тогда подключать соответствующего ассистента по еде и предлагать советы
     // ...
 
-    return {
-      jsonrpc: '2.0',
-      result: {
-        // todo: надо возвращать StoryJSON объекты, можно в иттераторе - https://github.com/gotois/ProstoDiary_bot/issues/160#issuecomment-536405332
-        generator: generateEntries(rows, input),
-        graph: {
-          buffer: photoBuffer,
-          options: {
-            caption: 'График для "xxx"', // fixme `График для "${regExp.toString()}"`,
-            parse_mode: 'Markdown',
-          },
+    return jsonrpc.success(requestObject.id, {
+      // todo: надо возвращать StoryJSON объекты, можно в иттераторе - https://github.com/gotois/ProstoDiary_bot/issues/160#issuecomment-536405332
+      generator: generateEntries(rows, input),
+      graph: {
+        buffer: photoBuffer,
+        options: {
+          caption: 'График для "xxx"', // fixme `График для "${regExp.toString()}"`,
+          parse_mode: 'Markdown',
         },
       },
-    };
+    });
   } catch (error) {
-    return {
-      jsonrpc: '2.0',
-      error: {
-        message: error.message.toString(),
-      },
-    };
+    return jsonrpc.error(requestObject.id, new jsonrpc.JsonRpcError(error, 99));
   }
 };

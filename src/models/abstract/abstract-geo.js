@@ -2,9 +2,13 @@ const Abstract = require('./');
 const foursquare = require('../../services/foursquare.service');
 
 class AbstractGeo extends Abstract {
-  #place = []; // {geoJSON} - место где была сделана запись. // todo rename location
+  /**
+   * место где была сделана запись. // todo rename location
+   * @type {Array<geoJSON>}
+   */
+  #place = [];
   
-  async fill () {
+  async save () {
     // насыщаем foursquare
     try {
       // todo: entities - смотри abstract-text

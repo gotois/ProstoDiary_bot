@@ -6,12 +6,13 @@ const foodService = require('../../services/food.service');
 class AbstractPhoto extends Abstract {
   #caption;
   
-  constructor(buffer, caption) {
-    super(buffer);
-    this.#caption = caption;
+  get context() {
+    return {
+      ...super.context,
+    }
   }
   
-  async fill () {
+  async save () {
     const { isQR } = await getPhotoDetection({
       caption: this.#caption,
       fileBuffer: this.buffer,

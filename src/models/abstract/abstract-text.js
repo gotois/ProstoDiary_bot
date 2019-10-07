@@ -2,7 +2,7 @@ const validator = require('validator');
 const Abstract = require('./');
 const logger = require('../../services/logger.service');
 const languageService = require('../../services/language.service');
-const crypt = require('../../services/crypt.service');
+const dialogflowService = require('../../services/dialogflow.service');
 const foodService = require('../../services/food.service');
 
 class AbstractText extends Abstract {
@@ -23,35 +23,34 @@ class AbstractText extends Abstract {
   // #addresses = []; // полученные адреса из текста
   // #behavior; // todo: анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
   
-  constructor(buffer) {
-    super(buffer);
-  
-    // ...
-    // TODO: Постисправление найденных параметров (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
-    // ...
-  }
-  
   get sentiment() {
     return this.#sentiment;
   }
+  
   get hrefs() {
     return this.#hrefs;
   }
+  
   get entities() {
     return this.#entities; // todo: разбить на схемы
   }
+  
   get emails() {
     return this.#emails;
   }
+  
   get phones() {
     return this.#phones;
   }
+  
   get category() {
     return this.#category;
   }
+  
   get names() {
     return this.#names;
   }
+  
   get parameters() {
     return this.#parameters;
   }
@@ -61,22 +60,46 @@ class AbstractText extends Abstract {
       this.#language.unshift(langCode);
     }
   }
+  
   /**
    * @returns {string}
    */
   get language() {
     return this.#language[0];
   }
+  
   set text(text) {
     if (!this.#text.includes(text)) {
       this.#text.unshift(text);
     }
   }
+  
   /**
    * @returns {string}
    */
   get text() {
     return this.#text[0];
+  }
+  
+  /**
+   * @returns {object}
+   */
+  get context() {
+    return {
+      ...super.context,
+      languageCode: this.language,
+      text: this.text,
+      sentiment: this.sentiment,
+      hrefs: this.hrefs,
+      entities: this.entities,
+      emails: this.emails,
+      phones: this.phones,
+      category: this.category,
+      names: this.names,
+      parameters: this.parameters,
+      // geo: this.geo // todo: geoJSON доступен из текста
+      // wiki: todo: {topologyLink} ?краткое описание из вики?
+    };
   }
   
   /**
@@ -86,11 +109,27 @@ class AbstractText extends Abstract {
    * @todo https://github.com/gotois/ProstoDiary_bot/issues/84
    * @returns {Promise<undefined>}
    */
-  async fill() {
-    this.text = this.buffer.toString();
+  async save() {
+    this.text = this.raw.toString();
     
     // TODO: сделать перевод в английский текст
-    // ...
+    //  ...
+    
+    if (this.text.length <= 256) {
+      try {
+        // todo: заменять перед запросами конфиденциальную информацию фейками, не теряя контекста
+        //  ...
+        const dialogflowResult = await dialogflowService.detectTextIntent(
+          this.text,
+        );
+        console.log('dialogflowResult', dialogflowResult.intent.displayName)
+        this.language = dialogflowResult.languageCode;
+        this.tag = dialogflowResult.intent.displayName;
+        // dialogflowResult.parameters.fields
+      } catch (error) {
+        logger.error(error.message);
+      }
+    }
     
     try {
       const { categories, documentSentiment, entities, language, sentences, tokens } = await languageService.annotateText(this.text, this.language);
@@ -111,11 +150,11 @@ class AbstractText extends Abstract {
           this.#hrefs.push(lemma);
         }
         // TODO: получить имена
-        // ...
+        //  ...
         // TODO: получить адреса
-        // ...
+        //  ...
         // TODO: получить даты
-        // ...
+        //  ...
       }
     } catch (error) {
       logger.error(error.message);
@@ -129,17 +168,17 @@ class AbstractText extends Abstract {
     // И еще лучше если это дополнительно прогнать через NLP
     
     // todo: это выполнять не здесь
-    // Насыщение абстрактов (от Abstract к Natural)
-    // ...
-    // Связка абстракта фактами
-    // ...
+    //  Насыщение абстрактов (от Abstract к Natural)
+    //  ...
+    //  Связка абстракта фактами
+    //  ...
     
-    // Сериализация найденных параметров (Entities)
-    // ...
+    // todo Сериализация найденных параметров (Entities)
+    //  ...
     
     // todo: middleware
-    // дополняем данными из FatSecret
-    // try {
+    //  дополняем данными из FatSecret
+    //  try {
     //   for (const parameter of this.#parameters) {
     //     if (parameter.Food) {
     //       for (const food of parameter.Food.listValue.values) {
@@ -148,12 +187,14 @@ class AbstractText extends Abstract {
     //       }
     //     }
     //   }
-    // } catch (error) {
+    //  } catch (error) {
     //   logger.error(error.message);
-    // }
+    //  }
     
     // todo проверяем что текст поправил туду в todoist - если так то спрашиваем у пользователя прав ли бот
-    // ...
+    //  ...
+    
+    await super.save();
   }
 }
 

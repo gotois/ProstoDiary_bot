@@ -1,72 +1,68 @@
+const jsonrpc = require('jsonrpc-lite');
 const bot = require('../core/bot');
 const logger = require('../services/logger.service');
 const APIv2 = require('../api/v2');
 const dbEntries = require('../database/entities.database');
-/**
- * @constant
- * @type {string[]}
- */
-const DELETE_VARIABLES = ['del', 'remove'];
-/**
- * Сообщение удалено?
- *
- * @param {string} message - message
- * @returns {boolean}
- */
-const isDeletedMessage = (message) => {
-  return DELETE_VARIABLES.some((del) => {
-    return message.toLowerCase() === del.toLowerCase();
-  });
-};
-/**
- * Обновление текста в БД
- *
- * @param {object} msg - msg
- * @param {object} msg.chat - chat
- * @param {object} msg.from - from
- * @param {string} msg.text - text
- * @param {string} msg.message_id - message
- * @returns {undefined}
- */
-const onEditedMessageText = async ({ chat, from, text, date, message_id }) => {
-  logger.log('info', onEditedMessageText.name);
-  const chatId = chat.id;
-  const input = text.trim();
-  if (input.startsWith('/')) {
-    await bot.sendMessage(chatId, 'Редактирование этой записи невозможно');
-    return;
+const TelegramBotRequest = require('./telegram-bot-request');
+
+class EditMessageText extends TelegramBotRequest {
+  /**
+   * @constant
+   * @type {string[]}
+   */
+  static get DELETE_VARIABLES() {
+    return ['del', 'remove'];
   }
-  if (isDeletedMessage(input)) {
-    const { error, result } = await APIv2.remove(from.id, message_id);
-    if (error) {
-      logger.log('error', error.toString());
-      await bot.sendMessage(chatId, 'Не удалена');
+  constructor(message) {
+    message.text = message.text.trim();
+    super(message);
+    // Сообщение удалено?
+    if (
+      EditMessageText.DELETE_VARIABLES.some((del) => {
+        return message.text.toLowerCase() === del.toLowerCase();
+      })
+    ) {
+      this.api = APIv2.remove;
+    } else {
+      this.api = APIv2.editedMessageTextAPI;
+    }
+  }
+
+  async beginDialog() {
+    logger.log('info', EditMessageText.name);
+    if (this.message.text.startsWith('/')) {
+      await bot.sendMessage(
+        this.message.chat.id,
+        'Редактирование этой записи невозможно',
+      );
       return;
     }
-    await bot.sendMessage(chatId, result);
-    return;
+    const isExist = await dbEntries.exist(
+      this.message.from.id,
+      this.message.message_id,
+    );
+    if (!isExist) {
+      // TODO: если записи нет - тогда спрашиваем пользователя, создавать ли новую запись?
+      await bot.sendMessage(this.message.chat.id, 'Запись не найдена');
+      return;
+    }
+    const requestObject = jsonrpc.request('123', 'edit or delete');
+    // TODO: https://github.com/gotois/ProstoDiary_bot/issues/34
+    const result = await this.request(requestObject);
+    await bot.sendMessage(this.message.chat.id, result, {
+      parse_mode: 'Markdown',
+    });
   }
-  const isExist = await dbEntries.exist(from.id, message_id);
-  if (!isExist) {
-    // TODO: если записи нет - тогда спрашиваем пользователя, создавать ли новую запись?
-    await bot.sendMessage(chatId, 'Запись не найдена');
-    return;
-  }
-  // TODO: https://github.com/gotois/ProstoDiary_bot/issues/34
-  const { error, result } = await APIv2.editedMessageTextAPI(
-    text,
-    date,
-    message_id,
-    chat.id,
-  );
-  if (error) {
-    logger.error(error);
-    await bot.sendMessage(chatId, error.toLocaleString());
-    return;
-  }
-  await bot.sendMessage(chatId, result, {
-    parse_mode: 'Markdown',
-  });
+}
+
+/**
+ * @description Обновление текста в БД
+ * @param {TelegramMessage} message - msg
+ * @returns {Promise<undefined>}
+ */
+const onEditedMessageText = async (message) => {
+  const editedMessageTextAPI = new EditMessageText(message);
+  await editedMessageTextAPI.beginDialog();
 };
 
 module.exports = onEditedMessageText;

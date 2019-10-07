@@ -1,29 +1,38 @@
+const jsonrpc = require('jsonrpc-lite');
 const bot = require('../core/bot');
 const logger = require('../services/logger.service');
 const { voiceToText } = require('../services/voice.service');
 const { getTelegramFile } = require('../services/telegram-file.service');
+const TelegramBotRequest = require('./telegram-bot-request');
 const APIv2 = require('../api/v2');
+
+class Voice extends TelegramBotRequest {
+  constructor(message) {
+    super(message);
+    this.api = APIv2.mail;
+  }
+  async beginDialog() {
+    logger.log('info', Voice.name);
+    const fileBuffer = await getTelegramFile(this.message.voice.file_id);
+    const text = await voiceToText(fileBuffer, this.message.voice);
+    // todo: вычлинять команды из текста и в зависимости от этого делать либо /search либо запись
+    //  ...
+    const requestObject = jsonrpc.request('123', 'mail', {
+      buffer: Buffer.from(text),
+      mime: 'plain/text',
+    });
+    const result = await this.request(requestObject);
+    await bot.sendMessage(this.message.chat.id, result);
+  }
+}
+
 /**
- * @param {object} msg - msg
- * @param {object} msg.chat - chat
- * @param {object} msg.voice - voice
+ * @param {TelegramMessage} message - msg
  * @returns {Promise<undefined>}
  */
-const getVoice = async ({ chat, voice }) => {
-  logger.log('info', getVoice.name);
-  const chatId = chat.id;
-  const fileBuffer = await getTelegramFile(voice.file_id);
-  const text = await voiceToText(fileBuffer, voice);
-  // todo: вычлинять команды из текста и в зависимости от этого делать либо /search либо запись
-  const { error, result } = await APIv2.insert(Buffer.from(text), {
-    type: 'plain/text',
-  });
-  if (error) {
-    logger.log('error', error.toString());
-    await bot.sendMessage(chatId, 'Распознавание голоса неудачно');
-    return;
-  }
-  await bot.sendMessage(chatId, result);
+const onVoice = async (message) => {
+  const voice = new Voice(message);
+  await voice.beginDialog();
 };
 
-module.exports = getVoice;
+module.exports = onVoice;

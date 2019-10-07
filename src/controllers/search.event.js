@@ -1,3 +1,4 @@
+const jsonrpc = require('jsonrpc-lite');
 const bot = require('../core/bot');
 const commands = require('../core/commands');
 const logger = require('../services/logger.service');
@@ -29,6 +30,7 @@ class Search extends TelegramBotRequest {
   }
 
   async beginDialog() {
+    logger.log('info', Search.name);
     const dialogResult = await dialogflowService.detectTextIntent(
       '{search} ' + this.message.text,
     );
@@ -37,8 +39,6 @@ class Search extends TelegramBotRequest {
       await bot.sendMessage(this.message.chat.id, 'Unknown Search');
       return;
     }
-    console.log('dialogResult, dialogResult', dialogResult);
-
     await bot.sendMessage(this.message.chat.id, `Поиск ${this.message.text}`, {
       reply_markup: {
         force_reply: true,
@@ -73,9 +73,10 @@ class Search extends TelegramBotRequest {
       };
     }
     // fixme: форвардить сообщения, если они есть
-    if (false) {
-      //   await bot.forwardMessage(chatId, userId, row.telegram_message_id);
-    } else {
+    //  if (false) {
+    //  await bot.forwardMessage(chatId, userId, row.telegram_message_id);
+    //  } else
+    {
       this.botMessage = await bot.sendMessage(
         this.message.chat.id,
         generatorResult.value,
@@ -101,8 +102,8 @@ class Search extends TelegramBotRequest {
       // Показ всех записей сортировка ASC
       case 'ASC': {
         this.api = searchAPI;
-        const searchResult = await this.request();
-        console.log('search result', searchResult);
+        const requestObject = jsonrpc.request('123', 'search', {});
+        const searchResult = await this.request(requestObject);
 
         // todo использовать этот контроллер для понимания что отображать пользователю - если есть возможность отобразить график - отображать и прочее
         if (searchResult.graph) {
@@ -127,7 +128,7 @@ class Search extends TelegramBotRequest {
       case 'COUNT -': {
         this.api = countAPI;
         const countResult = await this.request();
-        console.log('count result', countResult);
+        logger.log('count result', countResult);
         break;
       }
       // countAPI(+)
@@ -151,7 +152,7 @@ class Search extends TelegramBotRequest {
           botMessageMore.message_id,
           async ({ text }) => {
             const dialogResult = await dialogflowService.detectTextIntent(text);
-            console.log(':::', dialogResult);
+            logger.log(':::', dialogResult);
             await bot.sendMessage(
               this.message.chat.id,
               dialogResult.fulfillmentText,
@@ -173,7 +174,6 @@ class Search extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 const onSearch = async (message) => {
-  logger.log('info', onSearch.name);
   const search = new Search(message);
   await search.beginDialog();
 };

@@ -5,7 +5,7 @@ module.exports = (t) => {
     isRegexString,
     createRegexInput,
     formatWord,
-  } = require('../../src/services/text.service');
+  } = require('../../src/services/string.service');
   t.is(typeof formatQuery, 'function');
 
   // spaces

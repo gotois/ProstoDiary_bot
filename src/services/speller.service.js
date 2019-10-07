@@ -1,5 +1,5 @@
 const { post } = require('./request.service');
-const { replaceBetween } = require('./text.service');
+const { replaceBetween } = require('./string.service');
 /**
  * @constant
  * @type {string}

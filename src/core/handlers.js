@@ -9,7 +9,6 @@ module.exports = (bot) => {
   bot.onText(commands.DBCLEAR.alias, require('../controllers/dbclear.event'));
   bot.onText(commands.START.alias, require('../controllers/start.event'));
   bot.onText(commands.HELP.alias, require('../controllers/help.event'));
-  bot.onText(commands.SET.alias, require('../controllers/set-date.event'));
   bot.onText(commands.SEARCH.alias, require('../controllers/search.event'));
   bot.onText(commands.BALANCE.alias, require('../controllers/balance.event'));
   bot.onText(commands.VERSION.alias, require('../controllers/version.event'));

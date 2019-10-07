@@ -1,36 +1,46 @@
+const jsonrpc = require('jsonrpc-lite');
 const bot = require('../core/bot');
 const logger = require('../services/logger.service');
 const { getTelegramFile } = require('../services/telegram-file.service');
+const TelegramBotRequest = require('./telegram-bot-request');
 const APIv2 = require('../api/v2');
+
+class Photo extends TelegramBotRequest {
+  constructor(message) {
+    super(message);
+    this.api = APIv2.mail;
+  }
+
+  async beginDialog() {
+    logger.log('info', Photo.name);
+    const [_smallPhoto, mediumPhoto] = this.message.photo;
+    if (!mediumPhoto.file_id || mediumPhoto.file_size === 0) {
+      await bot.sendMessage(this.message.chat.id, 'Wrong photo');
+      return;
+    }
+    this.photo = mediumPhoto;
+    const fileBuffer = await getTelegramFile(this.photo.file_id);
+    const requestObject = jsonrpc.request('123', 'mail', {
+      buffer: fileBuffer,
+      caption: this.message.caption,
+      date: this.message.date,
+      telegram_user_id: this.message.from.id,
+      telegram_message_id: this.message.message_id,
+    });
+    const result = await this.request(requestObject);
+    await bot.sendMessage(this.message.chat.id, result, {
+      parse_mode: 'Markdown',
+    });
+  }
+}
+
 /**
- * @param {object} message - message
- * @param {object} message.chat - chat
- * @param {Array<object>} message.photo - photo
- * @param {string} message.caption - caption
+ * @param {TelegramMessage} message - message
  * @returns {Promise<undefined>}
  */
-const onPhoto = async ({ chat, photo, caption, from, date, message_id }) => {
-  logger.log('info', onPhoto.name);
-  const chatId = chat.id;
-  const [_smallPhoto, mediumPhoto] = photo;
-  if (!mediumPhoto.file_id || mediumPhoto.file_size === 0) {
-    throw new Error('Wrong photo');
-  }
-  const fileBuffer = await getTelegramFile(mediumPhoto.file_id);
-  const { error, result } = await APIv2.insert(fileBuffer, {
-    caption,
-    date,
-    telegram_user_id: from.id,
-    telegram_message_id: message_id,
-  });
-  if (error) {
-    logger.log('error', error);
-    await bot.sendMessage(chatId, error);
-    return;
-  }
-  await bot.sendMessage(chatId, result, {
-    parse_mode: 'Markdown',
-  });
+const onPhoto = async (message) => {
+  const photo = new Photo(message);
+  await photo.beginDialog();
 };
 
 module.exports = onPhoto;

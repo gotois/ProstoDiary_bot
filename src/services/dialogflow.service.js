@@ -1,6 +1,6 @@
 const dialogflow = require('dialogflow');
 const { detectLang } = require('./detect-language.service');
-const { formatQuery } = require('./text.service');
+const { formatQuery } = require('./string.service');
 const { DIALOGFLOW } = require('../environment');
 
 const sessionClient = new dialogflow.SessionsClient({

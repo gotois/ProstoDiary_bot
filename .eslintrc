@@ -103,7 +103,7 @@
     "jsdoc/newline-after-description": "warn",
     "jsdoc/check-tag-names": "error",
     "jsdoc/check-types": "error",
-    "jsdoc/no-undefined-types": "warn",
+    "jsdoc/no-undefined-types": "off",
     "jsdoc/require-param-description": "warn",
     "jsdoc/require-param-name": "error",
     "jsdoc/require-returns-type": "error",

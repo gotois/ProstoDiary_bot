@@ -73,6 +73,28 @@ create type intent as ENUM (
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- todo create table
+CREATE TABLE IF NOT EXISTS abstract (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4()
+--  type
+--  tags
+--  creator
+--  publisher
+--  raw
+--  jurisdiction
+--  timestamp
+--  telegram_user_id
+--  telegram_message_id
+--  user_email
+);
+
+--todo: вместо history, bot_story, и user_story
+--CREATE TABLE IF NOT EXISTS story (
+--  name
+--  abstracts_ids
+--);
+
+
 -- TODO: переделать схему под приватную и доступную для редактирования только роли бот
 --create schema private;
 CREATE TABLE IF NOT EXISTS bot_story (

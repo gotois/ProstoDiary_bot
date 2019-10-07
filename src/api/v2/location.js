@@ -1,3 +1,4 @@
+const jsonrpc = require('jsonrpc-lite');
 const { getWeather } = require('../../services/weather.service');
 const { getFullName } = require('../../services/restcountries.service');
 const { getGeoCode } = require('../../services/geocode.service');
@@ -30,8 +31,12 @@ const getLocShortName = (parsedData) => {
   }
   return parsedData[resultLength - 1].address_components[0].short_name;
 };
-
-module.exports = async (location) => {
+/**
+ * @param {RequestObject} requestObject - requestObject
+ * @returns {JsonRpc|JsonRpcError}
+ */
+module.exports = async (requestObject) => {
+  const { location } = requestObject.params;
   let formattedAddress;
   let currencySymbol;
   let currencyCode;
@@ -50,5 +55,8 @@ module.exports = async (location) => {
   } catch (error) {
     logger.log(error);
   }
-  return `${formattedAddress} ; валюта: ${currencySymbol} ; code: ${currencyCode} ; погода: ${weatherDescription}`;
+  return jsonrpc.success(
+    requestObject.id,
+    `${formattedAddress} ; валюта: ${currencySymbol} ; code: ${currencyCode} ; погода: ${weatherDescription}`,
+  );
 };

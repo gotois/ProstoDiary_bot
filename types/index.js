@@ -36,8 +36,7 @@
  * @module types
  */
 /**
- * @typedef {object} jsonrpc
- * @property {string} jsonrpc - jsonrpc version
+ * @typedef {object} JsonRpc
  * @property {*|undefined} result - result
  * @property {object|undefined} error - error
  */
@@ -57,7 +56,34 @@
  * @property {object} chat - chat
  * @property {object} from - from
  * @property {string} text - text
+ * @property {any} voice - voice
+ * @property {any} document - document
+ * @property {Array<object>} photo - photo
+ * @property {object} location - location
+ * @property {string} caption - caption
  * @property {object} reply_to_message - message
  * @property {number} message_id - id message
  * @property {number} date - unix time
+ */
+/**
+ * @module types
+ */
+/**
+ * @typedef {string} Tag - tag enum
+ */
+/**
+ * @module types
+ */
+/**
+ * @typedef {object} Mail - mail
+ * @property {any} html - html
+ * @property {Array<object>} attachments - attachments
+ * @property {any} text - text
+ * @property {any} subject - subject
+ * @property {any} to - to
+ * @property {any} receivedData - receivedData
+ * @property {any} messageId - messageId
+ * @property {any} priority - priority
+ * @property {any} flags - flags
+ * @property {any} receivedData - receivedData
  */

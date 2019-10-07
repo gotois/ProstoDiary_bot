@@ -1,70 +1,167 @@
+const { version, publisher } = require('../../../package');
+const crypt = require('../../services/crypt.service');
 const INTENTS = require('../../core/intents');
+/**
+ * https://github.com/gotois/ProstoDiary_bot/issues/152#issuecomment-527747303
+ *
+ * @constant
+ * @type {{CORE: string, HARD: string, SOFT: string}}
+ */
+const INPUT_TYPE = {
+  SOFT: 'SOFT', // Запись только кажется верной
+  HARD: 'HARD', // Запись может быть правдивой
+  CORE: 'CORE', // Исключительно точный ввод
+};
 
 class Abstract {
-  #intent = []; // Определяем намерения
-  #publisher = undefined;
+  // todo #id - UID
+  // ...
+  /**
+   * @type {INPUT_TYPE}
+   */
+  #type = INPUT_TYPE.SOFT; // todo: rename inputType?
+  /**
+   * @type {Array<Tag>}
+   */
+  #tags = [];
+  #creator; // возвращает ID Person|Bot
+  /**
+   * кто ответственнен за публикацию (пользователь, бот или сторонний сервис)
+   * @type {string}
+   */
+  #publisher;
   /**
    * @type {Buffer}
    */
-  buffer = null;
+  #raw = null;
   /**
-   * @param {Buffer} content - raw content
-   * @param {string} publisher - кто ответственнен за контент
+   * Получение даты события (Подведение таймлайна)
+   * SmartDate - [TIMESTAMP_START, TIMESTAMP_END]
+   *
+   * @type {Array<number>}
    */
-  constructor(content, publisher) {
-    this.buffer = content;
+  #timestamp = [];
+  // ...
+
+  /**
+   * @param {Buffer} raw - raw content
+   * @param {number} date - smart date from to until
+   */
+  constructor(raw, date = Date.now()) {
+    this.#raw = raw;
+  
+    // ...
+    // TODO: Постисправление найденных параметров (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
+    // ...
+    
+    // fixme: по умолчанию заполняем время с шагом в один час
+    //  ...
+    this.#timestamp.push(date);
+  }
+  /**
+   * @todo: если есть более очевидный тип Hard или Core, то он заменяет прежний тип
+   * @param {INPUT_TYPE} inputType - type
+   */
+  set type(inputType) {
+    if (!Object.values(INPUT_TYPE).includes(inputType)) {
+      throw new TypeError('Unknown story type');
+    }
+    this.#type = inputType;
+  }
+  /**
+   * @returns {INPUT_TYPE}
+   */
+  get type() {
+    return this.#type;
+  }
+  get timestamp() {
+    return this.#timestamp;
+  }
+  /**
+   * @description bot package version
+   * @type {string}
+   */
+  get version() {
+    return version;
+  }
+  /**
+   * @todo: это правовое поле действий бота
+   * @type {JSON|undefined}
+   */
+  get jurisdiction() {
+    return JSON.stringify([
+      {
+        "publisher": publisher,
+        "coding": [
+          {
+            "system": "urn:iso:std:iso:3166",
+            "code": "GB",
+            // "display": "United Kingdom of Great Britain and Northern Ireland (the)"
+          }
+        ]
+      }
+    ]);
+  }
+  set creator(creator) {
+    if (Array.isArray(creator)) {
+      this.#creator = creator.flatMap(({ address }) => {
+        return address;
+      })
+    } else {
+      this.#creator = creator;
+    }
+  }
+  get creator() {
+    return this.#creator;
+  }
+  set publisher(publisher) {
     this.#publisher = publisher;
   }
   get publisher () {
     return this.#publisher;
   }
-  get intent() {
-    if (this.#intent.length) {
-      return this.#intent[0].replace('Intent', '').toLowerCase();
-    }
-    return [];
+  get tags() {
+    return this.#tags;
   }
-  set intent(intentName) {
-    this.#intent.unshift(intentName);
+  get raw() {
+    // todo: если есть ссылка, то используем ее
+    return this.#raw;
   }
   /**
-   * @todo: добавить криптование контента crypt.encode(context)
-   * параметры проставляются в зависимости от типа Abstract
+   * @param {Tag} tagName - tag name
+   */
+  set tag(tagName) {
+    tagName = tagName.replace('Intent', '').toLowerCase();
+    this.#tags.unshift(tagName);
+  }
+  /**
+   * @todo: добавить криптование контента crypt.encode(text)
    * @returns {object}
    */
   get context() {
-    switch (this.constructor.name) {
-      case 'AbstractText': {
-        return {
-          abstract: 'text',
-          languageCode: this.language,
-          text: this.text,
-          sentiment: this.sentiment,
-          hrefs: this.hrefs,
-          entities: this.entities,
-          emails: this.emails,
-          phones: this.phones,
-          category: this.category,
-          names: this.names,
-          parameters: this.parameters,
-          // geo: this.geo // todo: geoJSON доступен из текста
-          // wiki: todo: {topologyLink} ?краткое описание из вики?
-        }
-      }
-      case 'AbstractPhoto': {
-        return {
-          abstract: 'photo',
-        }
-      }
-      case 'AbstractDocument': {
-        return {
-          abstract: 'document',
-        }
-      }
-      default: {
-        throw new Error('Unknown abstract');
-      }
-    }
+    return {
+      type: this.type,
+      tags: this.tags,
+      raw: this.raw,
+      version: this.version,
+      jurisdiction: this.jurisdiction,
+      timestamp: this.timestamp,
+      creator: this.creator,
+      publisher: this.publisher,
+  
+      telegram_bot_id: this.telegram_bot_id,
+      telegram_user_id: this.telegram_user_id,
+      telegram_message_id: this.telegram_message_id,
+      email_message_id: this.email_message_id,
+    };
+  }
+  /**
+   * @fixme доделать сохранение абстракта во временную таблицу
+   * @returns {Promise<UID>}
+   */
+  async save() {
+    console.log('save', this.context)
+    return 1;
   }
 }
 

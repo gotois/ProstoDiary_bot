@@ -3,7 +3,6 @@ const dbClient = require('./core/database');
 const logger = require('./services/logger.service');
 const { projectVersion } = require('./services/version.service');
 const { IS_PRODUCTION, TELEGRAM } = require('./environment');
-const emailNotifier = require('./controllers/notifier.mail');
 /**
  * @description initialize bot
  * @returns {Promise<object|Error>}
@@ -69,7 +68,7 @@ const sendUpdatesToUsers = (text) => {
   getAllTelegramUserIds()
     .then((userIds) => {
       return userIds.map((user) => {
-        // TODO: если возвращает 400 ошибку тогда проверить message и блокировать пользователя
+        // todo: если возвращает 400 ошибку тогда проверить message и блокировать пользователя
         return bot.sendMessage(user.telegram_user_id, text);
       });
     })
@@ -85,8 +84,9 @@ const sendUpdatesToUsers = (text) => {
   await databaseConnect();
   const botInfo = await startTelegramBot();
   require('./core/handlers')(bot);
-  // запускаем считыватель писем
-  // emailNotifier.start();
+
+  // todo: для Heroku еще включать инстанс Vzor
+  // const vzor = require('./services/vzor.service');
 
   if (IS_PRODUCTION) {
     logger.log('info', `production bot:${botInfo.first_name} started`);

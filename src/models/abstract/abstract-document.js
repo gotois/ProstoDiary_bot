@@ -7,9 +7,14 @@ const kppService = require('../../services/kpp.service');
 
 // todo: ofx|pdf|json|xml|AppleHealth(export.xml)
 class AbstractDocument extends Abstract {
-  #document = null;
   
-  async fill () {
+  get context() {
+    return {
+      ...super.context,
+    }
+  }
+  
+  async save () {
     // todo: парсинг ofx
     // const ofxResult = await readOFX(buffer);
     // ofxResult.BANKMSGSRSV1.STMTTRNRS.STMTRS.BANKACCTFROM

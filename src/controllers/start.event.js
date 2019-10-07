@@ -1,3 +1,4 @@
+const jsonrpc = require('jsonrpc-lite');
 const fs = require('fs');
 const pkg = require('../../package');
 const bot = require('../core/bot');
@@ -7,19 +8,20 @@ const logger = require('../services/logger.service');
 const auth = require('../services/auth.service');
 const BotStory = require('../models/story/bot-story');
 const { PERSON } = require('../environment');
+const APIv2 = require('../api/v2');
 
 class Start {
   /**
    * @param {TelegramMessage} message - message
    */
-  constructor(message, personData) {
+  constructor(message) {
     this.message = message;
-    this.personData = personData;
     this.dialog = this.messageIterator();
     this.messageListener = this.messageListener.bind(this);
     bot.on('callback_query', this.messageListener);
   }
   async beginDialog() {
+    logger.log('info', Start.name);
     // if (false) { // todo: test
     const { rowCount } = await dbUsers.exist(this.message.from.id);
     if (rowCount > 0) {
@@ -30,6 +32,7 @@ class Start {
       return;
     }
     // }
+    this.personData = await PERSON;
     await this.dialog.next();
   }
   async messageListener(query) {
@@ -57,20 +60,17 @@ class Start {
               );
               return;
             }
-            const story = new BotStory(
-              Buffer.from(
+            const requestObject = jsonrpc.request('123', 'system', {
+              buffer: Buffer.from(
                 `INSTALL ${this.message.from.language_code} Bot for ${this.message.from.first_name}`,
               ),
-              {
-                date: this.message.date,
-                type: 'CORE',
-                intent: 'system',
-                telegram_user_id: this.message.from.id,
-                telegram_message_id: this.message.message_id,
-              },
-            );
+              mime: 'plain/text',
+              date: this.message.date,
+              telegram_user_id: this.message.from.id,
+              telegram_message_id: this.message.message_id,
+            });
             try {
-              await story.save();
+              await APIv2.system(requestObject);
               this.dialog.next();
             } catch (error) {
               logger.log('error', error);
@@ -95,16 +95,17 @@ class Start {
         bot.onReplyToMessage(
           this.message.chat.id,
           cryptoMessageValue.message_id,
-          // eslint-disable-next-line
           async ({ text }) => {
-            // todo: сохранять в БД соль для crypto
-            // eslint-disable-next-line
-            console.log('your salt', text);
-            // secret.base32 // todo: это нужно сохранять в БД
-            // new Story({
-            //   intent: 'system',
-            //   type: 'CORE',
-            // })
+            const requestObject = jsonrpc.request('123', 'system', {
+              buffer: Buffer.from(
+                `INSERT INTO user_story (salt) VALUES (${text})`,
+              ),
+              mime: 'application/sql',
+              date: this.message.date,
+              telegram_user_id: this.message.from.id,
+              telegram_message_id: this.message.message_id,
+            });
+            await APIv2.system(requestObject);
             this.dialog.next();
           },
         );
@@ -116,10 +117,9 @@ class Start {
     }
   }
   /**
-   * @param {jsonld} personData - personData
    * @returns {IterableIterator<*|void|PromiseLike<Promise | never>|Promise<Promise | never>|Promise>}
    */
-  *messageIterator(personData) {
+  *messageIterator() {
     // Step 1: выводить оферту
     const offerta = fs.readFileSync('docs/_pages/offerta.md').toString();
     yield bot.sendMessage(this.message.chat.id, offerta, {
@@ -182,10 +182,8 @@ class Start {
  * @returns {undefined}
  */
 const onStart = async (message) => {
-  logger.log('info', onStart.name);
-  const personData = await PERSON;
-  const start = new Start(message, personData);
-  await start.beginDialog(personData);
+  const start = new Start(message);
+  await start.beginDialog();
 };
 
 module.exports = onStart;
