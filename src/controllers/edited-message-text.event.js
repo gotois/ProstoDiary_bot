@@ -1,7 +1,8 @@
 const jsonrpc = require('jsonrpc-lite');
 const bot = require('../core/bot');
 const logger = require('../services/logger.service');
-const APIv2 = require('../api/v2');
+const APIv2Remove = require('../api/v2/remove');
+const APIv2EditMessageText = require('../api/v2/edited-message-text');
 const dbEntries = require('../database/entities.database');
 const TelegramBotRequest = require('./telegram-bot-request');
 
@@ -22,9 +23,9 @@ class EditMessageText extends TelegramBotRequest {
         return message.text.toLowerCase() === del.toLowerCase();
       })
     ) {
-      this.api = APIv2.remove;
+      this.api = APIv2Remove;
     } else {
-      this.api = APIv2.editedMessageTextAPI;
+      this.api = APIv2EditMessageText;
     }
   }
 
@@ -54,7 +55,6 @@ class EditMessageText extends TelegramBotRequest {
     });
   }
 }
-
 /**
  * @description Обновление текста в БД
  * @param {TelegramMessage} message - msg

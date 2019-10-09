@@ -1,5 +1,5 @@
 const jsonrpc = require('jsonrpc-lite');
-const AbstractSystem = require('../../models/abstract/abstract-system');
+const AbstractScript = require('../../models/abstract/abstract-script');
 
 /**
  * @param {RequestObject} requestObject - requestObject
@@ -9,18 +9,19 @@ module.exports = async (requestObject) => {
   const {
     buffer,
     date,
+    mime,
     telegram_message_id,
     telegram_bot_id,
     publisher,
     creator,
   } = requestObject.params;
-  const abstractSystem = new AbstractSystem(buffer, date);
-  abstractSystem.creator = creator;
-  abstractSystem.publisher = publisher;
-  abstractSystem.telegram_message_id = telegram_message_id;
-  abstractSystem.telegram_bot_id = telegram_bot_id;
+  const abstractScript = new AbstractScript(buffer, mime, date);
+  abstractScript.creator = creator;
+  abstractScript.publisher = publisher;
+  abstractScript.telegram_message_id = telegram_message_id;
+  abstractScript.telegram_bot_id = telegram_bot_id;
   try {
-    await abstractSystem.save();
+    await abstractScript.commit();
     return jsonrpc.success(requestObject.id, '✅');
   } catch (error) {
     return jsonrpc.error(requestObject.id, new jsonrpc.JsonRpcError(error, 99));

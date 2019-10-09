@@ -16,6 +16,7 @@ const INPUT_TYPE = {
 class Abstract {
   // todo #id - UID
   // ...
+  #mime;
   /**
    * @type {INPUT_TYPE}
    */
@@ -45,10 +46,12 @@ class Abstract {
 
   /**
    * @param {Buffer} raw - raw content
+   * @param {string} mime - mime type
    * @param {number} date - smart date from to until
    */
-  constructor(raw, date = Date.now()) {
+  constructor(raw, mime, date = Date.now()) {
     this.#raw = raw;
+    this.#mime = mime;
   
     // ...
     // TODO: Постисправление найденных параметров (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
@@ -76,6 +79,9 @@ class Abstract {
   }
   get timestamp() {
     return this.#timestamp;
+  }
+  get mime() {
+    return this.#mime;
   }
   /**
    * @description bot package version
@@ -156,12 +162,18 @@ class Abstract {
     };
   }
   /**
+   * @override
+   * @returns {Promise<void>}
+   */
+  async precommit() {
+  }
+  /**
    * @fixme доделать сохранение абстракта во временную таблицу
+   * @override
    * @returns {Promise<UID>}
    */
-  async save() {
-    console.log('save', this.context)
-    return 1;
+  async commit() {
+    await this.precommit();
   }
 }
 

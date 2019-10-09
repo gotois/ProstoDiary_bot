@@ -41,7 +41,7 @@ class Attachment {
    * @param {Mail} mail - mail
    * @returns {Promise<Array<Abstract>>}
    */
-  static async read ({ attachments, date }) {
+  static async read({ attachments, date }) {
     const abstracts = [];
     for (const attachment of attachments) {
       const {
@@ -57,28 +57,28 @@ class Attachment {
       } = attachment;
       switch (contentType) {
         case 'plain/text': {
-          abstracts.push(new AbstractText(content, date));
+          abstracts.push(new AbstractText(content, contentType, date));
           break;
         }
         case 'image/png':
         case 'image/jpeg': {
-          abstracts.push(new AbstractPhoto(content, date));
+          abstracts.push(new AbstractPhoto(content, contentType, date));
           break;
         }
         case 'application/pdf':
         case 'application/xml': {
-          abstracts.push(new AbstractDocument(content, date));
+          abstracts.push(new AbstractDocument(content, contentType, date));
           break;
         }
         case 'application/zip':
         case 'multipart/x-zip': {
           for await (const [_fileName, zipBuffer] of unpack(content)) {
-            abstracts.push(new AbstractDocument(zipBuffer, date));
+            abstracts.push(new AbstractDocument(zipBuffer, contentType, date));
           }
           break;
         }
         case 'application/octet-stream': {
-          abstracts.push(new AbstractText(content, date));
+          abstracts.push(new AbstractText(content, contentType, date));
           break;
         }
         default: {
@@ -88,7 +88,7 @@ class Attachment {
       }
     }
     return abstracts;
-  };
+  }
 }
 
 module.exports = Attachment;

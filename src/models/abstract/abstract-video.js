@@ -1,6 +1,5 @@
-const Abstract = require('./');
+const Abstract = require('.');
 
-class AbstractVideo extends Abstract {
-}
+class AbstractVideo extends Abstract {}
 
 module.exports = AbstractVideo;

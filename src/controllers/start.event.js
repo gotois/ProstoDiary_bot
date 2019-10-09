@@ -6,9 +6,8 @@ const sgMail = require('../services/sendgridmail.service');
 const dbUsers = require('../database/users.database');
 const logger = require('../services/logger.service');
 const auth = require('../services/auth.service');
-const BotStory = require('../models/story/bot-story');
 const { PERSON } = require('../environment');
-const APIv2 = require('../api/v2');
+const APIv2Script = require('../api/v2/script');
 
 class Start {
   /**
@@ -53,14 +52,11 @@ class Start {
           checkMessageValue.message_id,
           async ({ text }) => {
             if (text !== installKey) {
-              // todo доделать функционал ограниченности попыток
-              await bot.sendMessage(
-                this.message.chat.id,
-                'Неверный ключ, осталось попыток: 3',
-              );
+              // todo доделать функционал ограниченности попыток - 3 штуки макс
+              await bot.sendMessage(this.message.chat.id, 'Неверный ключ');
               return;
             }
-            const requestObject = jsonrpc.request('123', 'system', {
+            const requestObject = jsonrpc.request('123', 'script', {
               buffer: Buffer.from(
                 `INSTALL ${this.message.from.language_code} Bot for ${this.message.from.first_name}`,
               ),
@@ -69,18 +65,16 @@ class Start {
               telegram_user_id: this.message.from.id,
               telegram_message_id: this.message.message_id,
             });
-            try {
-              await APIv2.system(requestObject);
+            const result = await APIv2Script(requestObject);
+            if (result === '✅') {
               this.dialog.next();
-            } catch (error) {
-              logger.log('error', error);
+            } else {
               await bot.sendMessage(
                 this.message.chat.id,
                 'Вход закончился ошибкой',
               );
-            } finally {
-              bot.off('callback_query', this.messageListener);
             }
+            bot.off('callback_query', this.messageListener);
           },
         );
         break;
@@ -96,7 +90,7 @@ class Start {
           this.message.chat.id,
           cryptoMessageValue.message_id,
           async ({ text }) => {
-            const requestObject = jsonrpc.request('123', 'system', {
+            const requestObject = jsonrpc.request('123', 'script', {
               buffer: Buffer.from(
                 `INSERT INTO user_story (salt) VALUES (${text})`,
               ),
@@ -105,8 +99,12 @@ class Start {
               telegram_user_id: this.message.from.id,
               telegram_message_id: this.message.message_id,
             });
-            await APIv2.system(requestObject);
-            this.dialog.next();
+            const result = await APIv2Script(requestObject);
+            if (result === '') {
+              this.dialog.next();
+            } else {
+              bot.off('callback_query', this.messageListener);
+            }
           },
         );
         break;

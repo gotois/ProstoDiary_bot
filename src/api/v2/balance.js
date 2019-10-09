@@ -1,3 +1,6 @@
+const jsonrpc = require('jsonrpc-lite');
+// todo: данные брать из сервера
+
 /**
  * @param {Array<object>} items - balance items
  * @returns {string}
@@ -34,8 +37,7 @@ const formatBalanceText = (items) => {
   return balanceMarkDown.trim();
 };
 
-// todo: данные брать из сервера
-module.exports = () => {
+module.exports = (requestObject) => {
   const balanceResult = formatBalanceText([
     { currency: 'BTC', value: 20, bank: 'Blockchain' },
     { currency: 'RUB', value: 2250, bank: 'Альфа-банк' },
@@ -49,5 +51,5 @@ module.exports = () => {
     { currency: 'ETF', value: 10, bank: 'BANK' },
     { currency: 'ИСЖ', value: 100, bank: 'BANK' },
   ]);
-  return balanceResult;
+  return jsonrpc.success(requestObject.id, balanceResult);
 };

@@ -1,4 +1,4 @@
-const Story = require('./');
+const Story = require('.');
 
 class BotStory extends Story {
   constructor(abstract) {
@@ -7,7 +7,7 @@ class BotStory extends Story {
   toJSON() {
     return {
       ...super.toJSON(),
-    }
+    };
   }
 }
 

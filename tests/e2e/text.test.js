@@ -10,12 +10,12 @@ module.exports = async (t) => {
   // t.log(updates.result)
   // END
 
-  const APIv2 = require('../../src/api/v2');
+  const APIv2Text = require('../../src/api/v2/text');
   const requestObject = jsonrpc.request('123', 'text', {
     buffer: Buffer.from('поел салат с сыром'),
     mime: 'plain/text',
     // email_message_id: '',
   });
-  const result = await APIv2.text(requestObject);
+  const result = await APIv2Text(requestObject);
   t.log(result);
 };

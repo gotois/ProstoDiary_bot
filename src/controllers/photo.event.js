@@ -3,12 +3,12 @@ const bot = require('../core/bot');
 const logger = require('../services/logger.service');
 const { getTelegramFile } = require('../services/telegram-file.service');
 const TelegramBotRequest = require('./telegram-bot-request');
-const APIv2 = require('../api/v2');
+const APIv2Mail = require('../api/v2/mail');
 
 class Photo extends TelegramBotRequest {
   constructor(message) {
     super(message);
-    this.api = APIv2.mail;
+    this.api = APIv2Mail;
   }
 
   async beginDialog() {
@@ -33,7 +33,6 @@ class Photo extends TelegramBotRequest {
     });
   }
 }
-
 /**
  * @param {TelegramMessage} message - message
  * @returns {Promise<undefined>}

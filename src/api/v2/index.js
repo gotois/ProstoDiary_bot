@@ -1,10 +1,15 @@
-module.exports = {
-  backup: require('./backup'),
-  text: require('./text'),
-  mail: require('./mail'),
-  remove: require('./remove'),
-  search: require('./search'),
-  editedMessageTextAPI: require('./edited-message-text'),
-  kpp: require('./kpp'),
-  system: require('./system'),
-};
+for (const api of [
+  'backup',
+  'text',
+  'mail',
+  'remove',
+  'search',
+  'edited-message-text',
+  'kpp',
+  'script',
+]) {
+  /**
+   * @returns {object}
+   */
+  module.exports[api] = require('./' + api);
+}

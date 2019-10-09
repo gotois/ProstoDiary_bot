@@ -8,7 +8,7 @@ class AbstractGeo extends Abstract {
    */
   #place = [];
   
-  async save () {
+  async precommit() {
     // насыщаем foursquare
     try {
       // todo: entities - смотри abstract-text
@@ -33,6 +33,10 @@ class AbstractGeo extends Abstract {
     } catch (error) {
       logger.error(error.message);
     }
+  }
+
+  async commit() {
+
   }
 }
 

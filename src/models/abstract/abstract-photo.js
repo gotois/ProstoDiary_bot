@@ -11,8 +11,8 @@ class AbstractPhoto extends Abstract {
       ...super.context,
     }
   }
-  
-  async save () {
+
+  async precommit () {
     const { isQR } = await getPhotoDetection({
       caption: this.#caption,
       fileBuffer: this.buffer,
@@ -32,6 +32,10 @@ class AbstractPhoto extends Abstract {
         foodText += `\n${item.name}_${food_name}_: ${food_description}`;
       }
     }
+  }
+  
+  async commit() {
+
   }
 }
 

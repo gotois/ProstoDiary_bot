@@ -4,12 +4,12 @@ const logger = require('../services/logger.service');
 const { voiceToText } = require('../services/voice.service');
 const { getTelegramFile } = require('../services/telegram-file.service');
 const TelegramBotRequest = require('./telegram-bot-request');
-const APIv2 = require('../api/v2');
+const APIv2Mail = require('../api/v2/mail');
 
 class Voice extends TelegramBotRequest {
   constructor(message) {
     super(message);
-    this.api = APIv2.mail;
+    this.api = APIv2Mail;
   }
   async beginDialog() {
     logger.log('info', Voice.name);
@@ -25,7 +25,6 @@ class Voice extends TelegramBotRequest {
     await bot.sendMessage(this.message.chat.id, result);
   }
 }
-
 /**
  * @param {TelegramMessage} message - msg
  * @returns {Promise<undefined>}

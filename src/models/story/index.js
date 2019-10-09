@@ -30,6 +30,9 @@ class Story {
       // author_ids: JSON.stringify(PERSON), // todo: change person type
     };
   }
+  async push() {
+
+  }
 }
 
 module.exports = Story;

@@ -50,7 +50,7 @@ class Vzor {
           abstract.email_message_id = mail.uid;
           abstract.publisher = pkg.publisher;
           abstract.creator = from;
-          await abstract.save();
+          await abstract.commit();
         }
       }
     } else {
@@ -58,7 +58,7 @@ class Vzor {
       // todo нужно разбирать адреса и прочее самостоятельно через APIv2/text|document|photo
       //  но уже без отправки письма
       //  ...
-      // await abstract.save();
+      // await abstract.commit();
     }
   }
   connectedNListener() {

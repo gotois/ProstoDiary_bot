@@ -1,4 +1,4 @@
-const Story = require('./');
+const Story = require('.');
 const dbEntries = require('../../database/entities.database');
 
 class UserStory extends Story {
@@ -14,20 +14,13 @@ class UserStory extends Story {
       // todo: сюда же добавляется raw - ссылка на исходик (в письме аттача или типо того)
       // todo: канонический урл - url
       // todo: bot blockchain sign
-    }
-  }
-  /**
-   * @returns {undefined}
-   */
-  async update () {
-    // todo: учитывая что используется стандарт почты - нужно кидать новое письмо
-    await dbEntries.put(this.toJSON());
+    };
   }
   /**
    * @todo https://github.com/gotois/ProstoDiary_bot/issues/98
    * @returns {undefined}
    */
-  async save () {
+  async push() {
     await dbEntries.post(this.toJSON());
   }
 }

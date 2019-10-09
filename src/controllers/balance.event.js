@@ -1,25 +1,30 @@
 // todo: https://github.com/gotois/ProstoDiary_bot/issues/39
 const bot = require('../core/bot');
 const logger = require('../services/logger.service');
-/**
- * @function
- * @param {object} msg - msg
- * @param {object} msg.chat - chat
- * @returns {Promise<undefined>}
- */
-const getBalance = async ({ chat }) => {
-  logger.log('info', getBalance.name);
-  const chatId = chat.id;
-  const balanceAPI = require('../api/v1/balance');
-  try {
+const balanceAPI = require('../api/v2/balance');
+const TelegramBotRequest = require('./telegram-bot-request');
+
+class Balance extends TelegramBotRequest {
+  constructor(message) {
+    super(message);
+    this.api = balanceAPI;
+  }
+  async beginDialog() {
+    logger.log('info', Balance.name);
     const balanceResult = await balanceAPI();
-    await bot.sendMessage(chatId, balanceResult, {
+    await bot.sendMessage(this.message.chat.id, balanceResult, {
       parse_mode: 'Markdown',
     });
-  } catch (error) {
-    logger.log('error', error.toString());
-    await bot.sendMessage(chatId, 'Ошибка');
   }
+}
+/**
+ * @function
+ * @param {TelegramMessage} message - message
+ * @returns {Promise<undefined>}
+ */
+const onBalance = async (message) => {
+  const balance = new Balance(message);
+  await balance.beginDialog();
 };
 
-module.exports = getBalance;
+module.exports = onBalance;

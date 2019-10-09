@@ -4,7 +4,8 @@ const format = require('../services/format.service');
 const logger = require('../services/logger.service');
 const { IS_AVA_OR_CI } = require('../environment');
 const commands = require('../core/commands');
-const APIv2 = require('../api/v2');
+const APIv2KPP = require('../api/v2/kpp');
+const APIv2Text = require('../api/v2/text');
 const TelegramBotRequest = require('./telegram-bot-request');
 /**
  * @typedef {number} COMMANDS_ENUM
@@ -44,12 +45,12 @@ class Text extends TelegramBotRequest {
     super(message);
     switch (this.getInputType(message.text)) {
       case COMMANDS_ENUM.KPP: {
-        this.api = APIv2.kpp;
+        this.api = APIv2KPP;
         break;
       }
       case COMMANDS_ENUM.TEXT: {
         // this.api = APIv2.mail; // todo uncomment
-        this.api = APIv2.text; // todo test
+        this.api = APIv2Text; // todo test
         break;
       }
       default: {

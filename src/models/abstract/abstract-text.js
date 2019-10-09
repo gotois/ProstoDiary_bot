@@ -1,5 +1,6 @@
 const validator = require('validator');
 const Abstract = require('./');
+const { $$, pool } = require('../../core/database');
 const logger = require('../../services/logger.service');
 const languageService = require('../../services/language.service');
 const dialogflowService = require('../../services/dialogflow.service');
@@ -109,7 +110,7 @@ class AbstractText extends Abstract {
    * @todo https://github.com/gotois/ProstoDiary_bot/issues/84
    * @returns {Promise<undefined>}
    */
-  async save() {
+  async precommit() {
     this.text = this.raw.toString();
     
     // TODO: сделать перевод в английский текст
@@ -193,8 +194,28 @@ class AbstractText extends Abstract {
     
     // todo проверяем что текст поправил туду в todoist - если так то спрашиваем у пользователя прав ли бот
     //  ...
-    
-    await super.save();
+  }
+
+  async commit() {
+    await super.commit();
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      await client.query({
+        name: 'create-commit',
+        text: `INSERT INTO abstract (bot_story_id, user_story_id)
+             VALUES ($1, $2)
+             RETURNING *`,
+        values: [telegram_message_id],
+      });
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 }
 
