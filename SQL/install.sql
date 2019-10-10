@@ -32,19 +32,19 @@ create UNLOGGED TABLE IF NOT EXISTS foods (
 );
 
 -- Хранимая процедура поиска по title мультиязычно
-create or replace function to_tsvector_multilang (title Text) RETURNS tsvector as $$
+create or replace function to_tsvector_multilang (title TEXT) RETURNS tsvector as $$
 SELECT to_tsvector('russian', $1) ||
        to_tsvector('english', $1) ||
        to_tsvector('simple', $1)
-$$ LANGUAGE sql IMMUTABLE;
+$$ LANGUAGE SQL IMMUTABLE;
 
 -- Полнотекстовый поиск по тайтлу
-create INDEX idx_gin_foods ON Foods USING GIN (to_tsvector_multilang(title));
+create INDEX idx_gin_foods ON foods USING GIN (to_tsvector_multilang(title));
 
 -- История пользователя будет представлена как "процесс"
-create type intent as ENUM (
+create type TAG as ENUM (
   'undefined',
-  'system', -- указывает на произошедшее в самом боте
+  'script',
   'buy',
   'eat',
   'finance',
@@ -73,68 +73,66 @@ create type intent as ENUM (
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- todo create table
-CREATE TABLE IF NOT EXISTS abstract (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4()
---  type
---  tags
---  creator
---  publisher
---  raw
---  jurisdiction
---  timestamp
---  telegram_user_id
---  telegram_message_id
---  user_email
+create type ABSTRACT_TYPE as ENUM (
+  'soft',
+  'hard',
+  'core'
 );
-
---todo: вместо history, bot_story, и user_story
---CREATE TABLE IF NOT EXISTS story (
---  name
---  abstracts_ids
---);
-
 
 -- TODO: переделать схему под приватную и доступную для редактирования только роли бот
 --create schema private;
-CREATE TABLE IF NOT EXISTS bot_story (
-  id BIGSERIAL PRIMARY KEY,
---  sign SOMEHASH PRIMARY KEY UNIQUE, -- электронная подпись сгенерированная ботом, которая подтверждает что бот не был скомпроментирован. todo: попробвать через `MD5('string');`?
-  version VARCHAR(20) NOT NULL CHECK (version <> ''), -- bot Version. отсюда же можно узнать и api version аналогична в package.json -нужна для проверки необходимости обновить историю бота
-  author JSONB NOT NULL, -- JSON-LD; todo: нужна отдельная приватная таблица для этого; также более правильнее если это будет перенесено в user_story
-  publisher VARCHAR(100) NOT NULL, -- название организации которые курируют разработку бота. todo: нужна отдельная таблица для этого
-  jurisdiction JSONB, -- Intended jurisdiction for operation definition (if applicable); todo: нужна отдельная таблица для этого
-  telegram_user_id INTEGER NOT NULL
-);
---
--- TODO: переделать схему под приватную и доступную для ...?
---
-CREATE TABLE IF NOT EXISTS user_story (
-  id BIGSERIAL PRIMARY KEY,
-  type INTENT NOT NULL,
-  telegram_message_id INTEGER NOT NULL UNIQUE, -- todo: думаю это тоже нужно перенести в bot_story table
-  context JSONB NOT NULL -- TEXT чтобы дешифровать данные нужно выполнить дешифровку этой подписи telegram_id + SALT_PASSWORD
-);
-CREATE INDEX IF NOT EXISTS idx_intent ON user_story (type);
-
-CREATE TABLE IF NOT EXISTS history (
+CREATE TABLE IF NOT EXISTS abstract (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), -- глобальная историческая ссылка. в идеале - blockchain ID
-  -- todo raw source text, video, photo, document, etc
-  -- ...
-  bot_story_id BIGSERIAL REFERENCES bot_story ON UPDATE CASCADE ON DELETE CASCADE,
-  user_story_id BIGSERIAL REFERENCES user_story  ON UPDATE CASCADE ON DELETE CASCADE,
-  created_at timestamp default current_timestamp, -- Первая сформированной очереди
-  updated_at timestamp default NULL -- Последняя дата апдейта очереди
-  --  status TEXT, -- это статус транзакции (нужен в дальнейшем) // draft | active | retired | unknown
-  -- url: "https://gotointeractive.com/storylang/OperationDefinition/example", // Canonical identifier for this operation definition, represented as a URI (globally unique)
+  type ABSTRACT_TYPE NOT NULL,
+  tags TAG ARRAY NOT NULL,
+  mime VARCHAR(20) NOT NULL,
+  --  raw -- todo raw source text, video, photo, document, etc
+  --  raw_url
+  version VARCHAR(20) NOT NULL CHECK (version <> ''), -- bot Version. отсюда же можно узнать и api version аналогична в package.json -нужна для проверки необходимости обновить историю бота
+  jurisdiction JSONB, -- Intended jurisdiction for operation definition (if applicable); todo: нужна отдельная таблица для этого
 
-  -- ниже под вопросом
-  --  "name": "Populate Questionnaire", // Name for this operation definition (computer friendly)
-  --"experimental" : true, // For testing purposes, not real usage
+--  timestamp
+
+  creator JSONB NOT NULL, -- JSON-LD; todo: нужна отдельная приватная таблица для этого
+  publisher VARCHAR(100) NOT NULL, -- название организации которые курируют разработку бота. todo: нужна отдельная таблица для этого
+
+  telegram_user_id INTEGER default NULL,
+  telegram_message_id INTEGER UNIQUE,
+  user_email_id TEXT UNIQUE default NULL,
+  context JSONB NOT NULL, -- TEXT чтобы дешифровать данные нужно выполнить дешифровку этой подписи telegram_id + SALT_PASSWORD
+
+
+  --  status TEXT, -- это статус транзакции (нужен в дальнейшем) // draft | active | retired | unknown
   -- "kind": "operation", // operation | query
+  --"experimental" : true, // For testing purposes, not real usage
+
+  created_at timestamp default current_timestamp,
+  updated_at timestamp default NULL
+
+--  sign SOMEHASH PRIMARY KEY UNIQUE, -- электронная подпись сгенерированная ботом, которая подтверждает что бот не был скомпроментирован. todo: попробвать через `MD5('string');`?
+  -- url: "https://gotointeractive.com/storylang/OperationDefinition/example", // Canonical identifier for this operation definition, represented as a URI (globally unique)
   -- "affectsState" : <boolean>, // Whether content is changed by the operation
   -- "code": "populate", //  Name used to invoke the operation
   -- "resource": [ // Types this operation applies to
   --   "Questionnaire"
   -- ],
 );
+CREATE UNIQUE INDEX ON abstract (tags);
+-- todo Example
+-- INSERT INTO public.abstract(
+--	type, tags, mime, version, creator, publisher, context)
+--	VALUES ('soft', '{"eat"}', 'text/sql', '0.0.0', '{"foo": 12}', 'test', '{"foo": 12}'::jsonb  );
+
+
+-- todo create table author
+--  id BIGSERIAL PRIMARY KEY,
+--  bot_story_id BIGSERIAL REFERENCES bot_story ON UPDATE CASCADE ON DELETE CASCADE,
+
+
+-- todo аналогично строить для каждого TAG
+CREATE MATERIALIZED VIEW IF NOT EXISTS history_eat AS
+SELECT *
+FROM abstract
+WHERE tags @> '{"eat"}';
+
+CREATE UNIQUE INDEX ON history_eat (mime);
