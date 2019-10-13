@@ -1,3 +1,4 @@
+const openpgp = require('openpgp');
 const { version, publisher } = require('../../../package');
 const crypt = require('../../services/crypt.service');
 const INTENTS = require('../../core/intents');
@@ -169,6 +170,17 @@ class Abstract {
    * @returns {Promise<void>}
    */
   async precommit() {
+    // todo такую проверку делать только для абстракта типа текст
+    const rawString = this.raw.toString();
+    if (rawString.startsWith('-----BEGIN PGP MESSAGE-----')) {
+      const rawDecrypt = await openpgp.decrypt({
+        message: await openpgp.message.readArmored(),
+        passwords: ['secret stuff'],
+      });
+      this.rawDecrypt = rawDecrypt.data;
+    } else {
+      this.rawDecrypt = rawString;
+    }
   }
   /**
    * @fixme доделать сохранение абстракта во временную таблицу

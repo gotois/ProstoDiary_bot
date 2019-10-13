@@ -1,4 +1,5 @@
 const fileType = require('file-type');
+const openpgp = require('openpgp');
 const { unpack } = require('../../services/archive.service');
 const logger = require('../../services/logger.service');
 const AbstractText = require('../abstract/abstract-text');
@@ -11,26 +12,28 @@ class Attachment {
    * @param {string|undefined} type - mime type
    * @returns {{disposition: string, filename: string, content_id: string, type: string, content: string}}
    */
-  static create(buffer, type) {
+  static async create(buffer, type) {
     if (Buffer.byteLength(buffer) === 0) {
       throw new Error('Empty buffer');
     }
-    let content;
     let filename = 'attachment';
     const content_id = 'attachmentid';
     if (type === 'plain/text') {
-      content = buffer.toString('base64');
       filename += '.txt';
     } else {
       const fType = fileType(buffer);
-      content = buffer.toString('base64');
       if (fType) {
         type = fType.mime;
         filename += '.' + fType.ext;
       }
     }
+    const encrypted = await openpgp.encrypt({
+      message: openpgp.message.fromBinary(buffer),
+      passwords: ['secret stuff'],
+      // compression: openpgp.enums.compression.zip // todo: добавить затем компрессию
+    });
     return {
-      content,
+      content: Buffer.from(encrypted.data).toString('base64'),
       filename,
       type,
       disposition: 'attachment',
@@ -47,14 +50,17 @@ class Attachment {
       const {
         content,
         contentType,
+        transferEncoding,
         // generatedFileName,
         // contentId,
         // checksum,
         // length,
         // contentDisposition,
         // fileName,
-        // transferEncoding,
       } = attachment;
+      if (transferEncoding !== 'base64') {
+        continue;
+      }
       switch (contentType) {
         case 'plain/text': {
           abstracts.push(new AbstractText(content, contentType, date));

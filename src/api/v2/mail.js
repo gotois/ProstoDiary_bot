@@ -21,14 +21,14 @@ module.exports = async (requestObject) => {
     if (IS_AVA_OR_CI) {
       throw new Error('API not supported');
     }
-    // step 1 получаем ввод, переводим его в текстовый формат или буфер (raw)
-    // Отправляем переведенный текстовый формат или буфер из созданного бота письмом на специально сгенерированный ящик @gotointeractive.com (абстракт)
+    // получаем ввод, переводим его в текстовый формат или буфер (raw)
+    const attachment = await Attachment.create(buffer, mime);
     const message = {
       to: 'denis@baskovsky.ru', // todo: специальный имейл созданный для бота
       from: 'no-reply@gotointeractive.com', // todo: creator from gotois
       subject: pkg.name,
       text: 'required text', // todo возможно сюда стоит добавлять caption
-      attachments: [Attachment.create(buffer, mime)],
+      attachments: [attachment],
       sendAt: date,
       headers: {
         'x-bot': pkg.name,
@@ -36,6 +36,7 @@ module.exports = async (requestObject) => {
         'x-bot-telegram-user-id': String(telegram_user_id),
       },
     };
+    // Отправляем переведенный текстовый формат или буфер из созданного бота письмом на специально сгенерированный ящик @gotointeractive.com
     const [mailResult] = await sgMail.send(message);
     if (!mailResult.complete) {
       throw new Error('mailResult not complete');

@@ -1,6 +1,6 @@
 const validator = require('validator');
 const Abstract = require('./');
-const { $$, pool } = require('../../core/database');
+const { pool } = require('../../core/database');
 const logger = require('../../services/logger.service');
 const languageService = require('../../services/language.service');
 const dialogflowService = require('../../services/dialogflow.service');
@@ -111,8 +111,11 @@ class AbstractText extends Abstract {
    * @returns {Promise<undefined>}
    */
   async precommit() {
-    this.text = this.raw.toString();
-    
+    await super.precommit();
+    if (this.rawDecrypt) {
+      this.text = this.rawDecrypt;
+    }
+
     // TODO: сделать перевод в английский текст
     //  ...
     
@@ -196,12 +199,36 @@ class AbstractText extends Abstract {
     //  ...
   }
 
+  // fixme
   async commit() {
     await super.commit();
-
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
+      // 1 - формируем запрос message
+      // ...
+      const messageResult = await client.query({
+        name: 'create-message',
+        text: `INSERT INTO message (url, telegram_message_id)
+             VALUES ($1, $2)
+             RETURNING *`,
+        values: ['xxx', this.message.telegram_message_id],
+      });
+      messageResult.rows[0].id;
+
+      // https://stackoverflow.com/questions/6722344/select-or-insert-a-row-in-one-command
+      // 2 - формируем запрос creator_id
+      const creatorResult = await client.query({
+        name: 'create-creator',
+        text: `INSERT INTO person (jsonld)
+             VALUES ($1)
+             RETURNING *`,
+        values: ['xxx'],
+      });
+      creatorResult.rows[0].id;
+      // 3 - формируем запрос publisher_id
+      // ...
+
       await client.query({
         name: 'create-commit',
         text: `INSERT INTO abstract (bot_story_id, user_story_id)

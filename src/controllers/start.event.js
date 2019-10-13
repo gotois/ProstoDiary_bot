@@ -19,6 +19,7 @@ class Start {
     this.messageListener = this.messageListener.bind(this);
     bot.on('callback_query', this.messageListener);
   }
+  // todo нужно спрашивать про доступный JSON-LD в виде ссылки, например - https://me.baskovsky.ru, затем бот парсит данные и загружает в таблицу creator
   async beginDialog() {
     logger.log('info', Start.name);
     // if (false) { // todo: test

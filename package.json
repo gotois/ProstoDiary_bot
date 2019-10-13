@@ -98,6 +98,7 @@
     "mail-notifier": "0.5.0",
     "music-metadata": "4.8.0",
     "node-telegram-bot-api": "0.30.0",
+    "openpgp": "4.6.2",
     "openweather-apis": "4.0.0",
     "pg": "7.12.1",
     "plotly": "1.0.6",

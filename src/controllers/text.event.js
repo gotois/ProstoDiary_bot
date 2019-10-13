@@ -7,6 +7,7 @@ const { IS_AVA_OR_CI } = require('../environment');
 const commands = require('../core/commands');
 const APIv2KPP = require('../api/v2/kpp');
 const APIv2Text = require('../api/v2/text');
+const APIv2Mail = require('../api/v2/mail');
 const TelegramBotRequest = require('./telegram-bot-request');
 /**
  * @typedef {number} COMMANDS_ENUM
@@ -50,7 +51,7 @@ class Text extends TelegramBotRequest {
         break;
       }
       case COMMANDS_ENUM.TEXT: {
-        // this.api = APIv2.mail; // todo uncomment
+        // this.api = APIv2Mail; // todo uncomment
         this.api = APIv2Text; // todo test
         break;
       }
