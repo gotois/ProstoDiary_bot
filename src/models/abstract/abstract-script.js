@@ -8,7 +8,7 @@ class AbstractScript extends Abstract {
   async precommit() {
     switch (this.mime) {
       case 'application/sql': {
-        this.cmd = `psql -U postgres -d postgres -a "${buffer.toString()}"`;
+        this.cmd = `postgres -U postgres -d postgres -a "${buffer.toString()}"`;
         break;
       }
       case 'plain/text': {

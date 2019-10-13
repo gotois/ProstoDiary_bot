@@ -40,17 +40,19 @@ class Vzor {
    */
   async mailListener(mail) {
     const { from, headers, attachments } = mail;
-    // todo: имя бота с которого пришло письмо
-    //  это если письмо было отправлено ботом
+    // todo: имя бота с которого было отправлено  письмо
     if (headers['x-bot']) {
       if (attachments) {
+        let index = 0;
         for (const abstract of await Attachment.read(mail)) {
           abstract.telegram_user_id = headers['x-bot-telegram-user-id'];
           abstract.telegram_message_id = headers['x-bot-telegram-message-id'];
-          abstract.email_message_id = mail.uid;
+          abstract.email_message_id = mail.messageId;
+          abstract.raw_id = mail.attachments[index].contentId;
           abstract.publisher = pkg.publisher;
           abstract.creator = from;
           await abstract.commit();
+          index++;
         }
       }
     } else {

@@ -22,7 +22,7 @@
     "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js --serial",
     "start": "./scripts/index",
     "start:debug": "cross-env NODE_ENV=production node --inspect ./scripts/index",
-    "start:naturalize": "./scripts/naturalize",
+    "start:materialize": "./scripts/materialize",
     "start:vzor": "scripts/vzor",
     "clean": "rm -rf .nyc_output && ava tests/e2e/index.js --serial --reset-cache",
     "dev": "cross-env NODE_ENV=development nodemon ./scripts/index",

@@ -47,9 +47,9 @@ class Abstract {
   /**
    * @param {Buffer} raw - raw content
    * @param {string} mime - mime type
-   * @param {number} date - smart date from to until
+   * @param {number} timestamp - smart date from to until
    */
-  constructor(raw, mime, date = Date.now()) {
+  constructor(raw, mime, timestamp = Date.now()) {
     this.#raw = raw;
     this.#mime = mime;
   
@@ -59,7 +59,7 @@ class Abstract {
     
     // fixme: по умолчанию заполняем время с шагом в один час
     //  ...
-    this.#timestamp.push(date);
+    this.#timestamp.push(timestamp);
   }
   /**
    * @todo: если есть более очевидный тип Hard или Core, то он заменяет прежний тип
@@ -76,6 +76,9 @@ class Abstract {
    */
   get type() {
     return this.#type;
+  }
+  set timestamp(timestamp) {
+    this.#timestamp.unshift(timestamp);
   }
   get timestamp() {
     return this.#timestamp;

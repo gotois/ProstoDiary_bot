@@ -1,4 +1,5 @@
 const jsonrpc = require('jsonrpc-lite');
+const pkg = require('../../package');
 const bot = require('../core/bot');
 const format = require('../services/format.service');
 const logger = require('../services/logger.service');
@@ -91,6 +92,12 @@ class Text extends TelegramBotRequest {
     );
     const requestObject = jsonrpc.request('123', 'text', {
       buffer: Buffer.from(this.message.text),
+      date: this.message.date,
+      mime: 'plain/text',
+      telegram_user_id: this.message.from.id, // todo: объединить с creator
+      // creator: ...
+      telegram_message_id: this.message.message_id,
+      publisher: pkg.publisher,
     });
     try {
       const result = await this.request(requestObject);

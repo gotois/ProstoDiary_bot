@@ -13,11 +13,11 @@ module.exports = async (requestObject) => {
     creator,
   } = requestObject.params;
   const abstractText = new AbstractText(buffer, mime, date);
-  abstractText.creator = creator;
+  abstractText.creator = creator; // fixme использовать из telegram_user_id
   abstractText.publisher = publisher;
-  abstractText.telegram_message_id = telegram_message_id;
   abstractText.telegram_user_id = telegram_user_id;
   abstractText.email_message_id = email_message_id;
+  abstractText.telegram_message_id = telegram_message_id;
   try {
     await abstractText.commit();
     return jsonrpc.success(requestObject.id, '✅');

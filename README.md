@@ -60,7 +60,7 @@ npm start
 
 ### CRON: проводим очистку и оптимизацию БД (натурализация)
 ```bash
-npm run start:naturalize
+npm run start:materialize
 ```
 
 Tools
