@@ -1,4 +1,4 @@
-const crypt = require('../services/crypt.service');
+// const crypt = require('../services/crypt.service');
 const { $$, pool } = require('../core/database');
 require('../../types');
 /**
@@ -86,7 +86,8 @@ const _post = async (storyJSON) => {
     } else {
       const botStoryResult = await client.query({
         name: 'create-bot-story',
-        text: `INSERT INTO bot_story (version, author, publisher, jurisdiction, telegram_user_id)
+        text: `INSERT INTO bot_story 
+               (version, author, publisher, jurisdiction, telegram_user_id)
                VALUES ($1, $2, $3, $4, $5)
                RETURNING id`,
         values: [version, author, publisher, jurisdiction, telegram_user_id],

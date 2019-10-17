@@ -66,8 +66,10 @@ class Vzor {
   connectedNListener() {
     logger.info('connected email notifier');
   }
+  /**
+   * запускаем считыватель писем
+   */
   startN() {
-    // запускаем считыватель писем
     this.n.start();
   }
   stopN() {

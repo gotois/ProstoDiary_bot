@@ -44,7 +44,8 @@ class Start {
           from: 'no-reply@gotointeractive.com',
           subject: 'ProstoDiary Auth👾',
           text:
-            'Welcome to ProstoDiary.\nДля подтверждения пришлите боту сообщение' +
+            'Welcome to ProstoDiary.\n' +
+            'Для подтверждения пришлите боту сообщение' +
             installKey,
         });
         const checkMessageValue = await this.dialog.next().value;
@@ -146,7 +147,9 @@ class Start {
     const secret = auth.genereateGoogleAuth(this.personData.email);
     yield bot.sendMessage(
       this.message.chat.id,
-      `**Check your data:**\n\nAuth key: ${secret.base32}\nMail: ${this.personData.email}`,
+      `**Check your data:**\n\n
+      Auth key: ${secret.base32}\n
+      Mail: ${this.personData.email}`,
       {
         parse_mode: 'Markdown',
         reply_markup: {

@@ -4,7 +4,7 @@ const speakeasy = require('speakeasy');
  * @constant
  * @type {string}
  */
-const ENCODING_BASE32 = 'base32';
+// const ENCODING_BASE32 = 'base32';
 
 module.exports = {
   /**
@@ -23,35 +23,33 @@ module.exports = {
     return secret;
   },
   /**
-   * показать токен который привязан к устройству
-   *
+   * @description показать токен который привязан к устройству
+   * @todo нужно найти из истории secret (БД)
    * @returns {string}
    */
-  async showToken() {
-    // todo: нужно найти из истории secret (БД)
-    // const secret = await Story.find({
-    //   intent: 'auth',
-    // })
-    return speakeasy.totp({
-      secret,
-      encoding: ENCODING_BASE32,
-    });
-  },
+  // async showToken() {
+  //   const secret = await Story.find({
+  //     intent: 'auth',
+  //   })
+  //   return speakeasy.totp({
+  //     secret,
+  //     encoding: ENCODING_BASE32,
+  //   });
+  // },
   /**
-   * Проверить что переданный токен действительно валиден
-   *
+   * @description Проверить что переданный токен действительно валиден
+   * @todo нужно найти из истории secret (БД)
    * @param {string} token - token
    * @returns {boolean}
    */
-  async verify(token) {
-    // todo: нужно найти из истории secret (БД)
-    // const secret = await Story.find({
-    //   intent: 'auth',
-    // })
-    return speakeasy.totp.verify({
-      secret,
-      encoding: ENCODING_BASE32,
-      token: token,
-    });
-  },
+  // async verify(token) {
+  // const secret = await Story.find({
+  //   intent: 'auth',
+  // })
+  // return speakeasy.totp.verify({
+  //   secret,
+  //   encoding: ENCODING_BASE32,
+  //   token: token,
+  // });
+  // },
 };

@@ -10,14 +10,13 @@ class Attachment {
   /**
    * @param {Buffer} buffer - buffer
    * @param {string|undefined} type - mime type
-   * @returns {{disposition: string, filename: string, content_id: string, type: string, content: string}}
+   * @returns {object}
    */
   static async create(buffer, type) {
     if (Buffer.byteLength(buffer) === 0) {
       throw new Error('Empty buffer');
     }
     let filename = 'attachment';
-    const content_id = 'attachmentid';
     if (type === 'plain/text') {
       filename += '.txt';
     } else {
@@ -30,14 +29,14 @@ class Attachment {
     const encrypted = await openpgp.encrypt({
       message: openpgp.message.fromBinary(buffer),
       passwords: ['secret stuff'],
-      // compression: openpgp.enums.compression.zip // todo: добавить затем компрессию
+      compression: openpgp.enums.compression.zlib,
     });
     return {
       content: Buffer.from(encrypted.data).toString('base64'),
       filename,
       type,
       disposition: 'attachment',
-      content_id,
+      content_id: 'attachmentid', // todo использовать другое именование
     };
   }
   /**

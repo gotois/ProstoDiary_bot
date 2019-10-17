@@ -1,6 +1,6 @@
 const jsonrpc = require('jsonrpc-lite');
 const kppService = require('../../services/kpp.service');
-const AbstractDocument = require('../../models/abstract/abstract-document');
+// const AbstractDocument = require('../../models/abstract/abstract-document');
 /**
  * @param {RequestObject} requestObject - requestObject
  * @returns {JsonRpc|JsonRpcError}

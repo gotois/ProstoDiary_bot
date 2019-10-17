@@ -7,7 +7,7 @@ const { IS_AVA_OR_CI } = require('../environment');
 const commands = require('../core/commands');
 const APIv2KPP = require('../api/v2/kpp');
 const APIv2Text = require('../api/v2/text');
-const APIv2Mail = require('../api/v2/mail');
+// const APIv2Mail = require('../api/v2/mail');
 const TelegramBotRequest = require('./telegram-bot-request');
 /**
  * @typedef {number} COMMANDS_ENUM

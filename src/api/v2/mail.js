@@ -15,7 +15,7 @@ module.exports = async (requestObject) => {
     mime,
     telegram_user_id,
     telegram_message_id,
-    caption = ' empty ',
+    // caption = ' empty ',
   } = requestObject.params;
   try {
     if (IS_AVA_OR_CI) {

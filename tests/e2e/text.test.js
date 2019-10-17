@@ -14,7 +14,7 @@ module.exports = async (t) => {
   const requestObject = jsonrpc.request('123', 'text', {
     buffer: Buffer.from('поел салат с сыром'),
     mime: 'plain/text',
-    // email_message_id: '',
+    email_message_id: 'xxxg@xxx.sendgrid.net',
   });
   const result = await APIv2Text(requestObject);
   t.log(result);

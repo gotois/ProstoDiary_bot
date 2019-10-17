@@ -91,7 +91,8 @@ const ENV = {
     TOKEN: TELEGRAM_TOKEN,
     get API_URL() {
       if (ENV.IS_AVA_OR_CI) {
-        return `http://${ENV.TELEGRAM_TEST_SERVER.HOST}:${ENV.TELEGRAM_TEST_SERVER.PORT}`;
+        const { HOST, PORT } = ENV.TELEGRAM_TEST_SERVER;
+        return `http://${HOST}:${PORT}`;
       }
       return 'https://api.telegram.org';
     },

@@ -1,8 +1,8 @@
 // https://github.com/gotois/ProstoDiary_bot/issues/160
 const jsonrpc = require('jsonrpc-lite');
 const dbEntries = require('../../database/entities.database');
-const { decodeRows } = require('../../services/format.service');
-const { createRegexInput } = require('../../services/string.service');
+// const { decodeRows } = require('../../services/format.service');
+// const { createRegexInput } = require('../../services/string.service');
 const { createPhotoBuffer } = require('../../services/graph.service');
 const datetime = require('../../services/date.service');
 const correctionText = require('../../services/correction-text.service');

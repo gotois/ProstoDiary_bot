@@ -2,6 +2,7 @@ const validator = require('validator');
 const fs = require('fs');
 /**
  * @todo добавить проверку yml файлов конфигурации
+ * @param {object} t - test
  */
 module.exports = (t) => {
   const eslintrcJSON = fs.readFileSync('.eslintrc').toString();
