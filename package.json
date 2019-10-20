@@ -86,7 +86,7 @@
     "@google-cloud/vision": "1.4.0",
     "@sendgrid/mail": "6.4.0",
     "archiver": "3.1.1",
-    "coralogix-logger-winston": "1.0.10",
+    "coralogix-logger-winston": "1.0.11",
     "crypto-random-string": "3.0.1",
     "date-fns": "2.4.1",
     "dialogflow": "0.10.3",
