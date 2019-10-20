@@ -81,7 +81,7 @@
   },
   "dependencies": {
     "@google-cloud/language": "3.2.6",
-    "@google-cloud/speech": "3.2.6",
+    "@google-cloud/speech": "3.3.1",
     "@google-cloud/translate": "4.2.0",
     "@google-cloud/vision": "1.4.0",
     "@sendgrid/mail": "6.4.0",
