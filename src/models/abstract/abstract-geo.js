@@ -1,4 +1,4 @@
-const Abstract = require('./');
+const Abstract = require('./abstract');
 const foursquare = require('../../services/foursquare.service');
 
 class AbstractGeo extends Abstract {

@@ -1,12 +1,10 @@
 for (const api of [
   'backup',
-  'text',
-  'mail',
+  'post',
   'remove',
   'search',
   'edited-message-text',
   'kpp',
-  'script',
 ]) {
   /**
    * @returns {object}

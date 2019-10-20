@@ -1,28 +1,36 @@
 const { execSync } = require('child_process');
-const Abstract = require('.');
+const { DATABASE } = require('../../environment');
+const logger = require('../../services/logger.service');
+const Abstract = require('./abstract');
 
 // todo: это абстракция необходима только для бота - она оборачивает все внутренние запросы на его обновление
 //  боту не нужны сложные правила разбора естественного языка, он вполне может обойтись любым компьютерным языком.
 //  таким образом можно передавать не просто историю в StoryJSON, а некие запросы на выполнение этой истории (js, python, php, etc)
 class AbstractScript extends Abstract {
+  #cmd = [];
   async precommit() {
     switch (this.mime) {
       case 'application/sql': {
-        this.cmd = `postgres -U postgres -d postgres -a "${buffer.toString()}"`;
+        this.#cmd.push(`psql --dbname ${DATABASE.name} --host ${DATABASE.host} --username ${DATABASE.user} --port ${DATABASE.port} --no-password --command "${this.raw.toString()}"`);
         break;
       }
-      case 'plain/text': {
-        console.log('plain text script');
-        break;
-      }
+      // todo: python, js, etc
+      // case 'plain/text': {
+      //   this.#cmd.push(`${this.raw.toString()}`);
+      //   break;
+      // }
       default: {
-        return jsonrpc.JsonRpcError.invalidRequest('mime type ' + this.mime);
+        throw new TypeError('mime type ' + this.mime);
       }
     }
   }
   async commit() {
-    const stdout = execSync(this.cmd);
-    console.log('xxx', stdout.toString())
+    await super.commit();
+
+    for (const stdin of this.#cmd) {
+      const stdout = execSync(stdin);
+      logger.log('info', stdout.toString());
+    }
   }
 }
 

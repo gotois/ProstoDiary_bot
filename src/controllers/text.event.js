@@ -6,8 +6,7 @@ const logger = require('../services/logger.service');
 const { IS_AVA_OR_CI } = require('../environment');
 const commands = require('../core/commands');
 const APIv2KPP = require('../api/v2/kpp');
-const APIv2Text = require('../api/v2/text');
-// const APIv2Mail = require('../api/v2/mail');
+const APIPost = require('../api/v2/post');
 const TelegramBotRequest = require('./telegram-bot-request');
 /**
  * @typedef {number} COMMANDS_ENUM
@@ -51,8 +50,7 @@ class Text extends TelegramBotRequest {
         break;
       }
       case COMMANDS_ENUM.TEXT: {
-        // this.api = APIv2Mail; // todo uncomment
-        this.api = APIv2Text; // todo test
+        this.api = APIPost;
         break;
       }
       default: {
@@ -91,14 +89,13 @@ class Text extends TelegramBotRequest {
         disable_web_page_preview: true,
       },
     );
-    const requestObject = jsonrpc.request('123', 'text', {
+    const requestObject = jsonrpc.request('123', 'post', {
       buffer: Buffer.from(this.message.text),
       date: this.message.date,
       mime: 'plain/text',
-      telegram_user_id: this.message.from.id, // todo: объединить с creator
-      // creator: ...
+      telegram_user_id: this.message.from.id,
       telegram_message_id: this.message.message_id,
-      publisher: pkg.publisher,
+      publisher: pkg.author.email,
     });
     try {
       const result = await this.request(requestObject);

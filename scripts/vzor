@@ -1,6 +1,15 @@
 #!/usr/bin/env node
 require('dotenv').config();
+const { IS_CRON } = require('../src/environment');
 const VzorService = require('../src/services/vzor.service');
 
-const vzor = new VzorService();
-vzor.startN();
+(async function main() {
+  if (IS_CRON) {
+    const mailMap = await VzorService.search(['ALL']); // eslint-disable-line
+    // mailMap.forEach(async (mail) => {
+    //   await mailService.read(mail);
+    // });
+  } else {
+    new VzorService();
+  }
+})();

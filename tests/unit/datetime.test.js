@@ -19,7 +19,7 @@ module.exports = (t) => {
   t.is(convertToNormalDate('2016-01.02').getFullYear(), 2016);
   t.is(convertToNormalDate('2017-07-08').getDate(), 8);
   t.is(convertToNormalDate('2017-08-07').getDate(), 7);
-  t.is(convertToNormalDate('2017-08-07').getMonth(), 7);
+  t.is(convertToNormalDate('2017-08-07').getMonth(), 8);
   t.throws(() => {
     convertToNormalDate('2017-27-2');
   }, Error);

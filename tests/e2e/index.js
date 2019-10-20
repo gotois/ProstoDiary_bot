@@ -3,14 +3,13 @@ const {
   skipTestForFastOrTravis,
   skipTestForFast,
 } = require('../helpers');
-const { maintainers } = require('../../package');
+const pkg = require('../../package');
 const TelegramServer = require('telegram-test-api');
 const {
   IS_CI,
   IS_PRODUCTION,
   TELEGRAM_TEST_SERVER,
 } = require('../../src/environment');
-const sgMail = require('../../src/services/sendgridmail.service');
 
 /**
  * This runs before all tests
@@ -81,13 +80,13 @@ test.after.always('guaranteed cleanup', async (t) => {
   if (process.env.FAST_TEST || IS_CI || !IS_PRODUCTION) {
     return;
   }
-  const message = {
-    to: maintainers[0].email,
-    from: 'no-reply@gotointeractive.com',
-    subject: 'ProstoDiary: 👾 E2E failed',
-    text: `Failed test: ${JSON.stringify(failedTasks, null, 2)}`,
-  };
-  const [mailResult] = await sgMail.send(message);
+  const sgMail = require('../../src/services/sendgridmail.service');
+  const [mailResult] = await sgMail.send({
+    to: pkg.maintainers[0].email,
+    from: pkg.author.email,
+    subject: '👾 ProstoDiary 🐛: E2E tests failed',
+    text: JSON.stringify(failedTasks, null, 2),
+  });
   t.true(mailResult.statusCode >= 200 && mailResult.statusCode < 400);
 });
 
@@ -118,7 +117,7 @@ skipTestForFast('API: Currency', require('./currency-service.test'));
 skipTestForFast('/help', require('./help.test'));
 skipTestForFast('/version', require('./version.test'));
 skipTestForFastOrTravis('/backup', require('./backup.test'));
-skipTestForFastOrTravis('/text', require('./text.test')); // todo: добавить Запись в тестовую БД
+skipTestForFastOrTravis('/post', require('./post.test'));
 skipTestForFastOrTravis('/balance', require('./balance.test'));
 test.todo('/start');
 test.todo('/dbclear');

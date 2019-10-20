@@ -1,14 +1,14 @@
 const jsonrpc = require('jsonrpc-lite');
 const bot = require('../core/bot');
 const logger = require('../services/logger.service');
-const { getTelegramFile } = require('../services/telegram-file.service');
-const APIv2Mail = require('../api/v2/mail');
+const { getTelegramFile } = require('../services/file.service');
+const APIPost = require('../api/v2/post');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Document extends TelegramBotRequest {
   constructor(message) {
     super(message);
-    this.api = APIv2Mail;
+    this.api = APIPost;
   }
   async beginDialog() {
     logger.log('info', Document.name);

@@ -1,4 +1,4 @@
-const Abstract = require('./');
+const Abstract = require('./abstract');
 // const { getPhotoDetection } = require('../services/photo.service');
 const kppService = require('../../services/kpp.service');
 const foodService = require('../../services/food.service');

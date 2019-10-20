@@ -1,10 +1,11 @@
 const validator = require('validator');
-const Abstract = require('./');
+const Abstract = require('./abstract');
 const { pool } = require('../../core/database');
 const logger = require('../../services/logger.service');
 const languageService = require('../../services/language.service');
 const dialogflowService = require('../../services/dialogflow.service');
 const foodService = require('../../services/food.service');
+const dbEntries = require('../../database/entities.database');
 
 class AbstractText extends Abstract {
   #text = [];
@@ -199,32 +200,41 @@ class AbstractText extends Abstract {
     //  ...
   }
 
-  // fixme
   async commit() {
     await super.commit();
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      // 1 - формируем запрос message
-      // ...
+      // формируем запрос message
       const messageResult = await client.query({
         name: 'create-message',
         text: `INSERT INTO message (url, telegram_message_id)
              VALUES ($1, $2)
-             RETURNING *`,
-        values: ['xxx', this.message.telegram_message_id],
+             RETURNING id`,
+        values: [this.mail_uid, this.telegram_message_id],
       });
+      console.log('zzz', messageResult)
       messageResult.rows[0].id;
-
       // https://stackoverflow.com/questions/6722344/select-or-insert-a-row-in-one-command
       // 2 - формируем запрос creator_id
-      const creatorResult = await client.query({
-        name: 'create-creator',
-        text: `INSERT INTO person (jsonld)
+      const creatorSelectResult = await client.query({
+        name: 'creator-select',
+        text: `SELECT id FROM creator WHERE email = $1`,
+        values: [this.creator.email],
+      });
+      console.log(creatorSelectResult)
+      return
+      if (creatorSelectResult.rows.length == 0) {
+        const creatorResult = await client.query({
+          name: 'create-creator',
+          text: `INSERT INTO creator (jsonld)
              VALUES ($1)
              RETURNING *`,
-        values: ['xxx'],
-      });
+          values: ['xxx'],
+        });
+      }
+
+
       creatorResult.rows[0].id;
       // 3 - формируем запрос publisher_id
       // ...

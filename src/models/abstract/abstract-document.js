@@ -1,4 +1,4 @@
-const Abstract = require('.');
+const Abstract = require('./abstract');
 const {
   uploadAppleHealthData,
 } = require('../../services/apple-health.service');

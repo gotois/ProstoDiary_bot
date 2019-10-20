@@ -23,9 +23,10 @@
     "start": "./scripts/index",
     "start:debug": "cross-env NODE_ENV=production node --inspect ./scripts/index",
     "start:materialize": "./scripts/materialize",
-    "start:vzor": "scripts/vzor",
+    "start:vzor": "cross-env NODE_ENV=cron ./scripts/vzor",
     "clean": "rm -rf .nyc_output && ava tests/e2e/index.js --serial --reset-cache",
     "dev": "cross-env NODE_ENV=development nodemon ./scripts/index",
+    "dev:vzor": "./scripts/vzor",
     "dev:debug": "cross-env NODE_ENV=development nodemon --verbose --inspect ./scripts/index",
     "lint": "eslint src/*.js src/**/*.js src/**/**/*.js tests/**/*.js",
     "unit": "ava tests/unit/index.js",
@@ -58,8 +59,8 @@
     "personal bot"
   ],
   "author": {
-    "name": "Denis Baskovsky",
-    "url": "http://denis.baskovsky.ru/"
+    "name": "gotois",
+    "email": "no-reply@gotointeractive.com"
   },
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
@@ -69,7 +70,8 @@
   "maintainers": [
     {
       "email": "denis@baskovsky.ru",
-      "name": "Denis Baskovsky"
+      "name": "Denis Baskovsky",
+      "url": "http://denis.baskovsky.ru/"
     }
   ],
   "config": {
@@ -85,6 +87,7 @@
     "@sendgrid/mail": "6.4.0",
     "archiver": "3.1.1",
     "coralogix-logger-winston": "1.0.10",
+    "crypto-random-string": "3.0.1",
     "date-fns": "2.4.1",
     "dialogflow": "0.10.3",
     "dotenv": "8.1.0",

@@ -1,11 +1,17 @@
 const fs = require('fs');
+const jsonrpc = require('jsonrpc-lite');
 
 module.exports = async (t) => {
   t.timeout(5000);
-  const kppAPI = require('../../src/api/v2/kpp');
+  const APIv2KPP = require('../../src/api/v2/kpp');
   {
     const qrImage = fs.readFileSync('tests/data/photo/qr-example-big-1.jpg');
-    const { error, result } = await kppAPI(qrImage);
+    const { error, result } = await APIv2KPP(
+      jsonrpc.request('123', 'kpp', {
+        buffer: qrImage,
+        mime: 'image/jpeg',
+      }),
+    );
     t.true(!error);
     t.true(typeof result === 'object');
     t.is(result.ecashTotalSum, 43026);
@@ -20,7 +26,7 @@ module.exports = async (t) => {
     t.is(result.items[0].sum, 14950);
   }
   {
-    const { error, result } = await kppAPI(
+    const { error, result } = await APIv2KPP(
       't=20190708T1045&s=195.00&fn=8711000101658062&i=170428&fp=305056502&n=1',
     );
     t.true(!error);

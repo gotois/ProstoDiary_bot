@@ -1,5 +1,6 @@
 const openpgp = require('openpgp');
 const { version, publisher } = require('../../../package');
+const person = require('../jsonld/person');
 const crypt = require('../../services/crypt.service');
 const INTENTS = require('../../core/intents');
 /**
@@ -26,12 +27,11 @@ class Abstract {
    * @type {Array<Tag>}
    */
   #tags = [];
-  #creator; // возвращает ID Person|Bot
+  #creator = {}; // возвращает ID Person|Bot
   /**
    * кто ответственнен за публикацию (пользователь, бот или сторонний сервис)
-   * @type {string}
    */
-  #publisher;
+  #publisher = {};
   /**
    * @type {Buffer}
    */
@@ -112,20 +112,14 @@ class Abstract {
       }
     ]);
   }
-  set creator(creator) {
-    if (Array.isArray(creator)) {
-      this.#creator = creator.flatMap(({ address }) => {
-        return address;
-      })
-    } else {
-      this.#creator = creator;
-    }
+  set creator(value) {
+    this.#creator = person(value);
   }
   get creator() {
     return this.#creator;
   }
-  set publisher(publisher) {
-    this.#publisher = publisher;
+  set publisher(value) {
+    this.#publisher = person(value);
   }
   get publisher () {
     return this.#publisher;
@@ -170,11 +164,10 @@ class Abstract {
    * @returns {Promise<void>}
    */
   async precommit() {
-    // todo такую проверку делать только для абстракта типа текст
     const rawString = this.raw.toString();
     if (rawString.startsWith('-----BEGIN PGP MESSAGE-----')) {
       const rawDecrypt = await openpgp.decrypt({
-        message: await openpgp.message.readArmored(),
+        message: await openpgp.message.readArmored(rawString),
         passwords: ['secret stuff'],
       });
       this.rawDecrypt = rawDecrypt.data;
@@ -185,7 +178,6 @@ class Abstract {
   /**
    * @fixme доделать сохранение абстракта во временную таблицу
    * @override
-   * @returns {Promise<UID>}
    */
   async commit() {
     await this.precommit();

@@ -1,5 +1,6 @@
 const jsonrpc = require('jsonrpc-lite');
 const fs = require('fs');
+const cryptoRandomString = require('crypto-random-string');
 const pkg = require('../../package');
 const bot = require('../core/bot');
 const sgMail = require('../services/sendgridmail.service');
@@ -7,7 +8,7 @@ const dbUsers = require('../database/users.database');
 const logger = require('../services/logger.service');
 const auth = require('../services/auth.service');
 const { PERSON } = require('../environment');
-const APIv2Script = require('../api/v2/script');
+const APIPost = require('../api/v2/post');
 
 class Start {
   /**
@@ -19,7 +20,6 @@ class Start {
     this.messageListener = this.messageListener.bind(this);
     bot.on('callback_query', this.messageListener);
   }
-  // todo нужно спрашивать про доступный JSON-LD в виде ссылки, например - https://me.baskovsky.ru, затем бот парсит данные и загружает в таблицу creator
   async beginDialog() {
     logger.log('info', Start.name);
     // if (false) { // todo: test
@@ -31,53 +31,90 @@ class Start {
       );
       return;
     }
-    // }
-    this.personData = await PERSON;
+    // } // testend
     await this.dialog.next();
   }
+  async agreeReplyMessage({ text }) {// eslint-disable-line
+    // todo проверять text, валидировать его json, проверять типы и пр
+    //  ...
+    this.creator = await PERSON; // пока вместо текст используем env
+
+    // todo добавить специальные непечатные символы с помощью NumLock', а также эмоджи
+    // fixme сохранять мастер соль
+    // const masterSalt = cryptoRandomString({ length: 10 });
+
+    const script = `INSERT INTO creator (telegramUserId, id, name, email, image, url, sameAs) VALUES (${
+      this.message.from.id
+    }, '${this.creator['@id']}', '${this.creator.name}', '${
+      this.creator.email
+    }', '${this.creator.image}', '${this.creator.url}', array${JSON.stringify(
+      this.creator.sameAs,
+    ).replace(/"/g, '\'')}) ;`; // eslint-disable-line
+    const requestObject = jsonrpc.request('123', 'script', {
+      buffer: Buffer.from(script),
+      date: this.message.date,
+      mime: 'application/sql',
+      creator: this.creator.email,
+      publisher: pkg.author.email,
+      telegram_message_id: this.message.message_id,
+    });
+    const result = await APIPost(requestObject);
+    if (result.error) {
+      console.error(result.error); // eslint-disable-line
+      await bot.sendMessage(
+        this.message.chat.id,
+        'Сгенерирована ошибка скрипта. Попробуйте сначала',
+      );
+      bot.off('callback_query', this.messageListener);
+      return;
+    }
+    this.dialog.next();
+  }
+  async checkReplyMessage({ text }) {
+    if (text !== this.installKey) {
+      // todo доделать функционал ограниченности попыток - 3 штуки макс
+      await bot.sendMessage(this.message.chat.id, 'Неверный ключ');
+      return;
+    }
+    const requestObject = jsonrpc.request('123', 'post', {
+      buffer: Buffer.from(
+        `Установка ${pkg.name} ${this.message.from.language_code} для ${this.message.from.first_name}`,
+      ),
+      mime: 'plain/text',
+      date: this.message.date,
+      creator: pkg.author.email,
+      publisher: pkg.author.email,
+      telegram_message_id: this.message.message_id,
+    });
+    const result = await APIPost(requestObject);
+    if (result.error) {
+      bot.off('callback_query', this.messageListener);
+      await bot.sendMessage(
+        this.message.chat.id,
+        'Вход закончился ошибкой. Попробуйте снова /start',
+      );
+      return;
+    }
+    this.dialog.next();
+  }
   async messageListener(query) {
-    const installKey = '123456'; // todo сгенерированный ключ подтверждающий вход
     switch (query.data) {
       case 'CHECK': {
+        this.installKey = cryptoRandomString({ length: 5, type: 'url-safe' });
         await sgMail.send({
-          to: this.personData.email,
-          from: 'no-reply@gotointeractive.com',
+          to: this.creator.email,
+          from: pkg.author.email,
           subject: 'ProstoDiary Auth👾',
           text:
-            'Welcome to ProstoDiary.\n' +
-            'Для подтверждения пришлите боту сообщение' +
-            installKey,
+            'Welcome to ProstoDiary. ' +
+            'Для подтверждения пришлите боту сообщение: ' +
+            this.installKey,
         });
         const checkMessageValue = await this.dialog.next().value;
         bot.onReplyToMessage(
           this.message.chat.id,
           checkMessageValue.message_id,
-          async ({ text }) => {
-            if (text !== installKey) {
-              // todo доделать функционал ограниченности попыток - 3 штуки макс
-              await bot.sendMessage(this.message.chat.id, 'Неверный ключ');
-              return;
-            }
-            const requestObject = jsonrpc.request('123', 'script', {
-              buffer: Buffer.from(
-                `INSTALL ${this.message.from.language_code} Bot for ${this.message.from.first_name}`,
-              ),
-              mime: 'plain/text',
-              date: this.message.date,
-              telegram_user_id: this.message.from.id,
-              telegram_message_id: this.message.message_id,
-            });
-            const result = await APIv2Script(requestObject);
-            if (result === '✅') {
-              this.dialog.next();
-            } else {
-              await bot.sendMessage(
-                this.message.chat.id,
-                'Вход закончился ошибкой',
-              );
-            }
-            bot.off('callback_query', this.messageListener);
-          },
+          this.checkReplyMessage.bind(this),
         );
         break;
       }
@@ -87,27 +124,11 @@ class Start {
         break;
       }
       case 'AGREE': {
-        const cryptoMessageValue = await this.dialog.next().value;
+        const jsonLDMessageValue = await this.dialog.next().value;
         bot.onReplyToMessage(
           this.message.chat.id,
-          cryptoMessageValue.message_id,
-          async ({ text }) => {
-            const requestObject = jsonrpc.request('123', 'script', {
-              buffer: Buffer.from(
-                `INSERT INTO user_story (salt) VALUES (${text})`,
-              ),
-              mime: 'application/sql',
-              date: this.message.date,
-              telegram_user_id: this.message.from.id,
-              telegram_message_id: this.message.message_id,
-            });
-            const result = await APIv2Script(requestObject);
-            if (result === '') {
-              this.dialog.next();
-            } else {
-              bot.off('callback_query', this.messageListener);
-            }
-          },
+          jsonLDMessageValue.message_id,
+          this.agreeReplyMessage.bind(this),
         );
         break;
       }
@@ -127,16 +148,18 @@ class Start {
       reply_markup: {
         force_reply: true,
         inline_keyboard: [
-          [{ text: 'Принимаю', callback_data: 'AGREE' }],
-          [{ text: 'Не принимаю', callback_data: 'CANCEL' }],
+          [
+            { text: 'Принимаю', callback_data: 'AGREE' },
+            { text: 'Не принимаю', callback_data: 'CANCEL' },
+          ],
         ],
       },
     });
-    // Step 2: получать соль
+    // Step 2: получать JSON-LD, например - https://me.baskovsky.ru
     yield bot.sendMessage(
       this.message.chat.id,
-      'Введите соль для шифрования\n' +
-        '*Используйте специальные непечатные символы с помощью NumLock',
+      'Введите ссылку вашего сайта\n' +
+        '*На сайте необходимы данные Person JSON-LD*',
       {
         reply_markup: {
           force_reply: true,
@@ -144,19 +167,21 @@ class Start {
       },
     );
     // Step 3: генерируем Auth token
-    const secret = auth.genereateGoogleAuth(this.personData.email);
+    const secret = auth.genereateGoogleAuth(this.creator.email);
     yield bot.sendMessage(
       this.message.chat.id,
-      `**Check your data:**\n\n
-      Auth key: ${secret.base32}\n
-      Mail: ${this.personData.email}`,
+      '**Check your data:**\n\n' +
+        `Auth key: ${secret.base32}\n` +
+        `Mail: ${this.creator.email}`,
       {
         parse_mode: 'Markdown',
         reply_markup: {
           force_reply: true,
           inline_keyboard: [
-            [{ text: 'OK', callback_data: 'CHECK' }],
-            [{ text: 'CANCEL', callback_data: 'CANCEL' }],
+            [
+              { text: 'OK', callback_data: 'CHECK' },
+              { text: 'CANCEL', callback_data: 'CANCEL' },
+            ],
           ],
         },
       },
@@ -172,7 +197,9 @@ class Start {
     );
     yield bot.sendMessage(
       this.message.chat.id,
-      `Привет __${this.personData.name}__!\nЯ твой бот __${pkg.description}__ ${pkg.version}!\nНе забудь настроить двухфакторную аутентификацию.`,
+      `Привет __${this.creator.name}__!\n
+      Я твой бот __${pkg.description}__ ${pkg.version}!\n
+      Не забудь бэкапить двухфакторную аутентификацию.`,
       {
         parse_mode: 'Markdown',
       },

@@ -114,6 +114,7 @@ const ENV = {
       return Promise.resolve(PERSON);
     } else if (typeof PERSON === 'string') {
       if (validator.isURL(PERSON)) {
+        // todo добавить возможность указывать сайты визитки, где данные будут прописаны внутри тега script
         return (async () => {
           const personData = await get(PERSON);
           return JSON.parse(personData.toString('utf8'));
@@ -261,6 +262,9 @@ const ENV = {
   },
   get IS_AVA_OR_CI() {
     return ENV.IS_CI || ENV.IS_AVA;
+  },
+  get IS_CRON() {
+    return String(NODE_ENV) === 'cron';
   },
 };
 

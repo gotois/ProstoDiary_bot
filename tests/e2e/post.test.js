@@ -1,7 +1,7 @@
 const jsonrpc = require('jsonrpc-lite');
 
 module.exports = async (t) => {
-  t.timeout(10000);
+  t.timeout(15000);
   // FIXME: не работает с гугл сервисами - https://github.com/jehy/telegram-test-api/issues/21
   // const { client } = t.context;
   // let message = client.makeMessage('Hello good@gmail.com my friend +79881112341 Alena https://google.com');
@@ -10,12 +10,14 @@ module.exports = async (t) => {
   // t.log(updates.result)
   // END
 
-  const APIv2Text = require('../../src/api/v2/text');
-  const requestObject = jsonrpc.request('123', 'text', {
+  const APIPost = require('../../src/api/v2/post');
+  const requestObject = jsonrpc.request('123', 'post', {
     buffer: Buffer.from('поел салат с сыром'),
     mime: 'plain/text',
-    email_message_id: 'xxxg@xxx.sendgrid.net',
+    creator: 'xxxg@xxx.xyz',
+    publisher: 'yyy@xxx.xyz',
+    telegram_message_id: 1234567890,
   });
-  const result = await APIv2Text(requestObject);
+  const result = await APIPost(requestObject);
   t.log(result);
 };
