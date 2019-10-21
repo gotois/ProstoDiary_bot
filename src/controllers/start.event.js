@@ -37,7 +37,7 @@ class Start {
   async agreeReplyMessage({ text }) {// eslint-disable-line
     // todo проверять text, валидировать его json, проверять типы и пр
     //  ...
-    this.creator = await PERSON; // пока вместо текст используем env
+    this.user = await PERSON; // пока вместо текст используем env
 
     // todo добавить специальные непечатные символы с помощью NumLock', а также эмоджи
     // fixme сохранять мастер соль
@@ -45,16 +45,17 @@ class Start {
 
     const script = `INSERT INTO creator (telegramUserId, id, name, email, image, url, sameAs) VALUES (${
       this.message.from.id
-    }, '${this.creator['@id']}', '${this.creator.name}', '${
-      this.creator.email
-    }', '${this.creator.image}', '${this.creator.url}', array${JSON.stringify(
-      this.creator.sameAs,
-    ).replace(/"/g, '\'')}) ;`; // eslint-disable-line
+    }, '${this.user['@id']}', '${this.user.name}', '${this.user.email}', '${
+      this.user.image
+    }', '${this.user.url}', array${JSON.stringify(this.user.sameAs).replace(
+      /"/g,
+      '\'', // eslint-disable-line
+    )}) ;`;
     const requestObject = jsonrpc.request('123', 'script', {
       buffer: Buffer.from(script),
       date: this.message.date,
       mime: 'application/sql',
-      creator: this.creator.email,
+      creator: this.user.email,
       publisher: pkg.author.email,
       telegram_message_id: this.message.message_id,
     });
@@ -102,13 +103,10 @@ class Start {
       case 'CHECK': {
         this.installKey = cryptoRandomString({ length: 5, type: 'url-safe' });
         await sgMail.send({
-          to: this.creator.email,
+          to: this.user.email,
           from: pkg.author.email,
-          subject: 'ProstoDiary Auth👾',
-          text:
-            'Welcome to ProstoDiary. ' +
-            'Для подтверждения пришлите боту сообщение: ' +
-            this.installKey,
+          subject: 'Welcome to ProstoDiary',
+          text: 'Для подтверждения пришлите боту сообщение: ' + this.installKey,
         });
         const checkMessageValue = await this.dialog.next().value;
         bot.onReplyToMessage(
@@ -167,12 +165,12 @@ class Start {
       },
     );
     // Step 3: генерируем Auth token
-    const secret = auth.genereateGoogleAuth(this.creator.email);
+    const secret = auth.genereateGoogleAuth(this.user.email);
     yield bot.sendMessage(
       this.message.chat.id,
       '**Check your data:**\n\n' +
         `Auth key: ${secret.base32}\n` +
-        `Mail: ${this.creator.email}`,
+        `Mail: ${this.user.email}`,
       {
         parse_mode: 'Markdown',
         reply_markup: {
@@ -197,7 +195,7 @@ class Start {
     );
     yield bot.sendMessage(
       this.message.chat.id,
-      `Привет __${this.creator.name}__!\n
+      `Привет __${this.user.name}__!\n
       Я твой бот __${pkg.description}__ ${pkg.version}!\n
       Не забудь бэкапить двухфакторную аутентификацию.`,
       {

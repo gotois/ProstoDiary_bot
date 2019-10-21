@@ -1,5 +1,5 @@
 const pkg = require('../../package');
-const { IS_AVA_OR_CI } = require('../environment');
+const { IS_AVA_OR_CI, PERSON } = require('../environment');
 const logger = require('../services/logger.service');
 const sgMail = require('../services/sendgridmail.service');
 const Attachment = require('../models/attachment');
@@ -8,18 +8,16 @@ const Attachment = require('../models/attachment');
  * @param {RequestObject} requestObject - requestObject
  * @returns {object|Error}
  */
-const create = async (requestObject) => {
+const post = async (requestObject) => {
   const {
     buffer,
     mime,
     publisher,
     creator,
-
-    telegram_user_id,
-    telegram_message_id,
-
-    date = Math.round(new Date().getTime() / 1000),
-    // caption = ' empty ',
+    date,
+    caption = null, // eslint-disable-line
+    telegram_user_id = null,
+    telegram_message_id = null,
   } = requestObject.params;
   // получаем ввод, переводим его в текстовый формат или буфер (raw)
   const attachment = await Attachment.create(buffer, mime);
@@ -36,10 +34,11 @@ const create = async (requestObject) => {
   if (telegram_user_id) {
     headers['x-bot-telegram-user-id'] = String(telegram_user_id);
   }
+  const user = await PERSON; // пока вместо БД используем env
   const message = {
-    to: 'denis@baskovsky.ru', // todo: специально сгенерированный ящик бота @gotointeractive.com, сгенерированный при первом запуске и записанный в JSON-LD
+    to: user.email,
     from: publisher,
-    subject: pkg.name,
+    subject: '', // todo добавить timestamp - таким образом чтобы было проще искать
     html: '<br>',
     text: 'required text', // todo здесь будет текст StoryLanguage с шифрованным описанием всей истории абстракта
     attachments: [attachment],
@@ -79,6 +78,6 @@ const read = async (mail) => {
 };
 
 module.exports = {
-  create,
+  post,
   read,
 };

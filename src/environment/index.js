@@ -78,7 +78,7 @@ const ENV = {
     user: PGUSER,
     port: PGPORT,
     password: PGPASSWORD,
-    // todo: переместить отсюда
+    // todo: это вообще не нужно, так как планируется сделать masterSalt
     get passwordSalt() {
       return SALT_PASSWORD;
     },
@@ -110,20 +110,20 @@ const ENV = {
    * @returns {Promise<jsonld>|Error}
    */
   get PERSON() {
-    if (typeof PERSON === 'object') {
-      return Promise.resolve(PERSON);
-    } else if (typeof PERSON === 'string') {
-      if (validator.isURL(PERSON)) {
-        // todo добавить возможность указывать сайты визитки, где данные будут прописаны внутри тега script
-        return (async () => {
+    return (async () => {
+      if (typeof PERSON === 'object') {
+        return Promise.resolve(PERSON);
+      } else if (typeof PERSON === 'string') {
+        if (validator.isURL(PERSON)) {
+          // todo добавить возможность указывать сайты визитки, где данные будут прописаны внутри тега script
           const personData = await get(PERSON);
           return JSON.parse(personData.toString('utf8'));
-        })();
-      } else if (validator.isJSON(PERSON)) {
-        return Promise.resolve(JSON.parse(PERSON));
+        } else if (validator.isJSON(PERSON)) {
+          return Promise.resolve(JSON.parse(PERSON));
+        }
       }
-    }
-    throw new Error('Env error: PERSON typeof');
+      throw new Error('Env error: PERSON typeof');
+    })();
   },
   PLOTLY: {
     get LOGIN() {
@@ -234,6 +234,7 @@ const ENV = {
    */
   get POSTGRES_CONNECTION_STRING() {
     const { user, password, host, port, name } = ENV.DATABASE;
+    // todo предусмотреть demo режим
     if (ENV.IS_PRODUCTION) {
       return `postgres://${user}:${password}.${host}:${port}/${name}`;
     } else if (ENV.IS_CI) {
@@ -260,9 +261,15 @@ const ENV = {
   get IS_AVA() {
     return String(NODE_ENV) === 'test';
   },
+  /**
+   * @returns {boolean}
+   */
   get IS_AVA_OR_CI() {
     return ENV.IS_CI || ENV.IS_AVA;
   },
+  /**
+   * @returns {boolean}
+   */
   get IS_CRON() {
     return String(NODE_ENV) === 'cron';
   },

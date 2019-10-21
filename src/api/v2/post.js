@@ -3,14 +3,20 @@ const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
 const mailService = require('../../services/mail.service');
 const VzorService = require('../../services/vzor.service');
-
+/**
+ * @param {RequestObject} requestObject - requestObject
+ * @returns {Promise<JsonRpc|JsonRpcError>}
+ */
 module.exports = async (requestObject) => {
+  if (!requestObject.params.date) {
+    requestObject.params.date = Math.round(new Date().getTime() / 1000);
+  }
   try {
-    // доставляем письмо
-    const message = await mailService.create(requestObject);
+    // отправляем письмо
+    const message = await mailService.post(requestObject);
+    const since = format(fromUnixTime(message.sendAt), 'MMM dd, yyyy'); // текущий RFC позволяет искать только по дате
+    // todo использовать поиск по subject
     // находим письмо
-    const since = format(fromUnixTime(message.sendAt), 'MMM dd, yyyy'); // текущий RFC позволяет искать только так
-    // todo нужно еще сильнее ограничить поиск. Использовать для этого другие флаги или текстовый поиск по subject в который добавить timestamp
     const mailMap = await VzorService.search(['UNSEEN', ['SINCE', since]]);
     // считываем его содержимое и записываем в БД
     mailMap.forEach(async (mail) => {

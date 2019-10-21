@@ -176,7 +176,6 @@ class Abstract {
     }
   }
   /**
-   * @fixme доделать сохранение абстракта во временную таблицу
    * @override
    */
   async commit() {
