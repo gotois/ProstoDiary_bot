@@ -88,7 +88,7 @@
     "archiver": "3.1.1",
     "coralogix-logger-winston": "1.0.11",
     "crypto-random-string": "3.0.1",
-    "date-fns": "2.4.1",
+    "date-fns": "2.5.1",
     "dialogflow": "0.12.1",
     "dotenv": "8.1.0",
     "eyo-kernel": "2.5.6",
