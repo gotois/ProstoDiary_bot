@@ -93,8 +93,8 @@ class Text extends TelegramBotRequest {
       buffer: Buffer.from(this.message.text),
       date: this.message.date,
       mime: 'plain/text',
-      telegram_user_id: this.message.from.id,
       telegram_message_id: this.message.message_id,
+      creator: this.message.from.id,
       publisher: pkg.author.email,
     });
     try {

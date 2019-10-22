@@ -1,4 +1,5 @@
 const jsonrpc = require('jsonrpc-lite');
+const pkg = require('../../package');
 const bot = require('../core/bot');
 const logger = require('../services/logger.service');
 const { getTelegramFile } = require('../services/file.service');
@@ -24,7 +25,8 @@ class Photo extends TelegramBotRequest {
       buffer: fileBuffer,
       caption: this.message.caption,
       date: this.message.date,
-      telegram_user_id: this.message.from.id,
+      creator: this.message.from.id,
+      publisher: pkg.author.email,
       telegram_message_id: this.message.message_id,
     });
     const result = await this.request(requestObject);

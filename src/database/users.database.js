@@ -1,14 +1,14 @@
 const { $$ } = require('../core/database');
-const pkg = require('../../package');
 /**
  * @param {number} telegramUserId - id
  * @returns {Promise}
  */
 const exist = async (telegramUserId) => {
+  // todo использовать View где будет отдаваться JSON-LD
   const result = await $$(
-    `SELECT 1 FROM bot_story
-     WHERE telegram_user_id = $1 AND version = $2`,
-    [telegramUserId, pkg.version],
+    `SELECT 1 FROM jsonld
+     WHERE telegram = $1`,
+    [telegramUserId],
   );
   return result;
 };

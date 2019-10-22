@@ -1,18 +1,18 @@
 const openpgp = require('openpgp');
 const { version, publisher } = require('../../../package');
-const person = require('../jsonld/person');
 const crypt = require('../../services/crypt.service');
 const INTENTS = require('../../core/intents');
 /**
  * https://github.com/gotois/ProstoDiary_bot/issues/152#issuecomment-527747303
  *
  * @constant
- * @type {{CORE: string, HARD: string, SOFT: string}}
+ * @type {{CORE: string, HARD: string, SOFT: string, UNTRUSTED: string}}
  */
 const INPUT_TYPE = {
-  SOFT: 'SOFT', // Запись только кажется верной
-  HARD: 'HARD', // Запись может быть правдивой
-  CORE: 'CORE', // Исключительно точный ввод
+  UNTRUSTED: 'UNTRUSTED',
+  SOFT: 'SOFT',
+  HARD: 'HARD',
+  CORE: 'CORE',
 };
 
 class Abstract {
@@ -113,13 +113,13 @@ class Abstract {
     ]);
   }
   set creator(value) {
-    this.#creator = person(value);
+    this.#creator = value;
   }
   get creator() {
     return this.#creator;
   }
   set publisher(value) {
-    this.#publisher = person(value);
+    this.#publisher = value;
   }
   get publisher () {
     return this.#publisher;

@@ -3,11 +3,11 @@
 if (!process.env.PORT) {
   require('dotenv').config();
 }
-const bot = require('./core/bot');
-const dbClient = require('./core/database');
-const logger = require('./services/logger.service');
-const { projectVersion } = require('./services/version.service');
-const { IS_PRODUCTION, TELEGRAM } = require('./environment');
+const bot = require('../src/core/bot');
+const dbClient = require('../src/core/database');
+const logger = require('../src/services/logger.service');
+const { projectVersion } = require('../src/services/version.service');
+const { IS_PRODUCTION, TELEGRAM } = require('../src/environment');
 /**
  * @description initialize bot
  * @returns {Promise<object|Error>}
@@ -88,7 +88,7 @@ const sendUpdatesToUsers = (text) => {
 (async function main() {
   await databaseConnect();
   const botInfo = await startTelegramBot();
-  require('./core/handlers')(bot);
+  require('../src/core/handlers')(bot);
 
   // todo: для Heroku еще включать инстанс Vzor
   // const vzor = require('./services/vzor.service');

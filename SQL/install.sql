@@ -1,12 +1,6 @@
---
--- Create DB
---
--- FIXME: создать роль бота
--- CREATE ROLE bot LOGIN;
-
 -- Warning! Set UTF-8 encoding: https://gist.github.com/ffmike/877447
-create DATABASE "ProstoDiaryDB"
-    with
+CREATE DATABASE ProstoDiaryDB
+    WITH
     OWNER = postgres
     ENCODING = 'UTF8'
 --    LC_COLLATE = 'en_US.utf8'
@@ -14,15 +8,16 @@ create DATABASE "ProstoDiaryDB"
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1;
 
-COMMENT ON DATABASE "ProstoDiaryDB"
-    IS 'Local DB';
+COMMENT ON DATABASE ProstoDiaryDB IS 'Local DB';
 
---
--- Foods
---
+CREATE USER bot WITH ENCRYPTED PASSWORD '0000';
+GRANT ALL PRIVILEGES ON DATABASE ProstoDiaryDB TO bot;
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- todo перенести это в стороннего ассистента https://github.com/gotois/nutrition_bot
 -- Все на 100 гр. продукта
-create UNLOGGED TABLE IF NOT EXISTS foods (
+CREATE UNLOGGED TABLE IF NOT EXISTS foods (
   id SERIAL PRIMARY KEY,
   title TEXT UNIQUE, -- нужен индекс по этому
   protein NUMERIC (5, 2) default NULL,
@@ -32,20 +27,23 @@ create UNLOGGED TABLE IF NOT EXISTS foods (
 );
 
 -- Хранимая процедура поиска по title мультиязычно
-create or replace function to_tsvector_multilang (title TEXT) RETURNS tsvector as $$
+CREATE OR REPLACE FUNCTION to_tsvector_multilang (title TEXT) RETURNS tsvector as $$
 SELECT to_tsvector('russian', $1) ||
        to_tsvector('english', $1) ||
        to_tsvector('simple', $1)
 $$ LANGUAGE SQL IMMUTABLE;
 
 -- Полнотекстовый поиск по тайтлу
-create INDEX idx_gin_foods ON foods USING GIN (to_tsvector_multilang(title));
+CREATE INDEX idx_gin_foods ON foods USING GIN (to_tsvector_multilang(title));
 
--- История пользователя будет представлена как "процесс"
-create type TAG as ENUM (
+CREATE TYPE TAG AS ENUM (
   'undefined',
   'script',
   'buy',
+  'kpp',
+  'weather',
+  'sex',
+  'contract', -- информа­цию о состоянии текущих контрактов
   'eat',
   'finance',
   'fitness',
@@ -56,83 +54,91 @@ create type TAG as ENUM (
   'weight',
   'height', -- Смена роста
   'family', -- Изменения в Семья
-  -- todo Смена группа крови
   'work', -- смена вид деятельности
   'job', -- Здесь же смена уровня дохода | новая цели в карьере
   'birthday',-- Указание День рождения
   'hobby',
   'relationship', -- Изменения в отношениях
   'social',-- Новое сообщество
-  'mood',-- настроение
+  'mood',-- настроение и твореческое выражение
   'gender'-- гендер и любое его изменение
-  -- прочая биометрика
-  -- Твореческое выражение
-  -- данные об объемах покупок ценах
-  -- информа­цию о состоянии текущих контрактов
+  -- todo прочие изменения биометрики
 );
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
-create type ABSTRACT_TYPE as ENUM (
-  'soft',
-  'hard',
-  'core'
+CREATE TYPE ABSTRACT_TYPE AS ENUM (
+  'untrusted', -- Запись требует обработки
+  'soft', -- Запись только кажется верной
+  'hard', -- Запись может быть правдивой
+  'core' -- Исключительно точный ввод
 );
 
--- TODO: переделать схему под приватную и доступную для редактирования только роли бот
---create schema private;
+CREATE TABLE IF NOT EXISTS message (
+  id SERIAL PRIMARY KEY AUTOINC,
+  -- todo добавить uid письма
+  url TEXT CONSTRAINT must_be_different UNIQUE, -- ссылка на email attachment
+  telegram_message_id SERIAL must_be_different UNIQUE, -- сообщение телеграмма
+  UNIQUE(telegram_message_id)
+);
+-- todo нужна VIEW которая будет отдавать bytea сырых данных - raw таблицы
+
+CREATE TABLE IF NOT EXISTS jsonld (
+  @id TEXT NOT NULL,
+  @context TEXT NOT NULL,
+  email TEXT NOT NULL,
+  telegram SERIAL,
+  sameAs TEXT ARRAY,
+  UNIQUE(email, telegram, sameAs),
+  PRIMARY KEY (@id)
+);
+CREATE UNIQUE INDEX ON jsonld (@id);
+CREATE UNIQUE INDEX ON jsonld (email);
+CREATE UNIQUE INDEX ON jsonld (telegram);
+-- todo нужна VIEW которая будет отдавать полный стандарт JSON-LD https://github.com/gotois/ProstoDiary_bot/issues/236
+
 CREATE TABLE IF NOT EXISTS abstract (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), -- глобальная историческая ссылка. в идеале - blockchain ID
+  id UUID DEFAULT uuid_generate_v4(), -- глобальная историческая ссылка. в идеале - blockchain ID
+  updated_at TIMESTAMP DEFAULT current_timestamp, -- время необходимое для того чтобы знать что оно было изменено
+  created_at TIMESTAMP NOT NULL, -- время записи публикации (может меняться если вычислено более правильное время)
   type ABSTRACT_TYPE NOT NULL,
   tags TAG ARRAY NOT NULL,
-  mime VARCHAR(20) NOT NULL,
-  --  raw -- todo raw source text, video, photo, document, etc
-  --  raw_url
+  mime VARCHAR(20) NOT NULL CHECK (mime <> ''),
   version VARCHAR(20) NOT NULL CHECK (version <> ''), -- bot Version. отсюда же можно узнать и api version аналогична в package.json -нужна для проверки необходимости обновить историю бота
-  jurisdiction JSONB, -- Intended jurisdiction for operation definition (if applicable); todo: нужна отдельная таблица для этого
+  context JSONB NOT NULL, -- todo CRYPTO: чтобы дешифровать данные нужно выполнить дешифровку этой подписи telegram_id + SALT_PASSWORD
 
---  timestamp
-
-  creator JSONB NOT NULL, -- JSON-LD; todo: нужна отдельная приватная таблица для этого
-  publisher VARCHAR(100) NOT NULL, -- название организации которые курируют разработку бота. todo: нужна отдельная таблица для этого
-
-  telegram_user_id INTEGER default NULL,
-  telegram_message_id INTEGER UNIQUE,
-  user_email_id TEXT UNIQUE default NULL,
-  context JSONB NOT NULL, -- TEXT чтобы дешифровать данные нужно выполнить дешифровку этой подписи telegram_id + SALT_PASSWORD
-
-
-  --  status TEXT, -- это статус транзакции (нужен в дальнейшем) // draft | active | retired | unknown
-  -- "kind": "operation", // operation | query
-  --"experimental" : true, // For testing purposes, not real usage
-
-  created_at timestamp default current_timestamp,
-  updated_at timestamp default NULL
-
---  sign SOMEHASH PRIMARY KEY UNIQUE, -- электронная подпись сгенерированная ботом, которая подтверждает что бот не был скомпроментирован. todo: попробвать через `MD5('string');`?
-  -- url: "https://gotointeractive.com/storylang/OperationDefinition/example", // Canonical identifier for this operation definition, represented as a URI (globally unique)
+  -- todo need help
+  -- jurisdiction JSONB, -- Intended jurisdiction for operation definition (if applicable); todo: нужна отдельная таблица
+  -- sign SOMEHASH -- todo электронная подпись сгенерированная ботом, которая подтверждает что бот не был скомпроментирован. todo: попробвать через `MD5('string');`?
+  -- url: "https://gotointeractive.com/storylang/OperationDefinition/example", -- todo Canonical identifier for this operation definition, represented as a URI (globally unique)
+  -- status TEXT, -- это статус транзакции (нужен в дальнейшем) // draft | active | retired | unknown . draft когда еще не было никуда записано, затем статус когда записано на почту, но не обработано
+  -- kind TEXT, -- operation | query
+  -- experimental: BOOLEAN -- For testing purposes, not real usage
   -- "affectsState" : <boolean>, // Whether content is changed by the operation
   -- "code": "populate", //  Name used to invoke the operation
   -- "resource": [ // Types this operation applies to
   --   "Questionnaire"
   -- ],
+
+  PRIMARY KEY (id),
+  FOREIGN KEY (message_id) REFERENCES message (id) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (creator_id) REFERENCES jsonld (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за создание записи
+  FOREIGN KEY (publisher_id) REFERENCES jsonld (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за публикацию записи, либо сам ProstoDiary_bot, либо внешний сторонний сервис, включая других ботов
+  UNIQUE(created_at)
 );
 CREATE UNIQUE INDEX ON abstract (tags);
--- todo Example
--- INSERT INTO public.abstract(
---	type, tags, mime, version, creator, publisher, context)
---	VALUES ('soft', '{"eat"}', 'text/sql', '0.0.0', '{"foo": 12}', 'test', '{"foo": 12}'::jsonb  );
+CREATE UNIQUE INDEX ON abstract (creator_id);
+CREATE UNIQUE INDEX ON abstract (publisher_id);
 
-
--- todo create table author
---  id BIGSERIAL PRIMARY KEY,
---  bot_story_id BIGSERIAL REFERENCES bot_story ON UPDATE CASCADE ON DELETE CASCADE,
-
-
--- todo аналогично строить для каждого TAG
+-- История пользователя представлена как "процесс"
+-- TODO: переделать схему под приватную и доступную для редактирования только роли бот
+-- todo нужен timestamp (SmartDate from - until) высчитываемый для истории. Возможно будет хорошей идеей генерировать уникальный view на каждый день
 CREATE MATERIALIZED VIEW IF NOT EXISTS history_eat AS
 SELECT *
 FROM abstract
 WHERE tags @> '{"eat"}';
 
-CREATE UNIQUE INDEX ON history_eat (mime);
+CREATE MATERIALIZED VIEW IF NOT EXISTS history_script AS
+SELECT *
+FROM abstract
+WHERE tags @> '{"script"}';
+
+-- todo аналогично строить для каждого TAG

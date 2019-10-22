@@ -1,5 +1,4 @@
 const validator = require('validator');
-const { get } = require('../services/request.service');
 const { version } = require('../../package');
 
 const {
@@ -57,8 +56,6 @@ const {
   FOURSQUARE_CLIEND_ID,
   FOURSQUARE_CLIENT_SECRET,
 
-  PERSON,
-
   MAIL_USER,
   MAIL_PASSWORD,
   MAIL_HOST,
@@ -105,25 +102,6 @@ const ENV = {
   },
   SERVER: {
     PORT,
-  },
-  /**
-   * @returns {Promise<jsonld>|Error}
-   */
-  get PERSON() {
-    return (async () => {
-      if (typeof PERSON === 'object') {
-        return Promise.resolve(PERSON);
-      } else if (typeof PERSON === 'string') {
-        if (validator.isURL(PERSON)) {
-          // todo добавить возможность указывать сайты визитки, где данные будут прописаны внутри тега script
-          const personData = await get(PERSON);
-          return JSON.parse(personData.toString('utf8'));
-        } else if (validator.isJSON(PERSON)) {
-          return Promise.resolve(JSON.parse(PERSON));
-        }
-      }
-      throw new Error('Env error: PERSON typeof');
-    })();
   },
   PLOTLY: {
     get LOGIN() {
