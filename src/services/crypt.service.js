@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { DATABASE } = require('../environment');
+const masterSalt = '123123123';
 /**
  * @constant {string}
  */
@@ -14,7 +14,7 @@ const BITES_LENGTH = 16;
  */
 const encrypt = (text) => {
   const sha256 = crypto.createHash('sha256');
-  sha256.update(DATABASE.passwordSalt);
+  sha256.update(masterSalt);
   // Initialization Vector
   const iv = crypto.randomBytes(BITES_LENGTH);
   const cipher = crypto.createCipheriv(ALGORITHM, sha256.digest(), iv);
@@ -27,7 +27,7 @@ const encrypt = (text) => {
  */
 const decrypt = (text) => {
   const sha256 = crypto.createHash('sha256');
-  sha256.update(DATABASE.passwordSalt);
+  sha256.update(masterSalt);
   const input = Buffer.from(text, 'base64');
   // Initialization Vector
   const iv = input.slice(0, BITES_LENGTH);

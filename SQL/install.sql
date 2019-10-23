@@ -1,41 +1,3 @@
--- Warning! Set UTF-8 encoding: https://gist.github.com/ffmike/877447
-CREATE DATABASE ProstoDiaryDB
-    WITH
-    OWNER = postgres
-    ENCODING = 'UTF8'
---    LC_COLLATE = 'en_US.utf8'
---    LC_CTYPE = 'en_US.utf8'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1;
-
-COMMENT ON DATABASE ProstoDiaryDB IS 'Local DB';
-
-CREATE USER bot WITH ENCRYPTED PASSWORD '0000';
-GRANT ALL PRIVILEGES ON DATABASE ProstoDiaryDB TO bot;
-
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
--- todo перенести это в стороннего ассистента https://github.com/gotois/nutrition_bot
--- Все на 100 гр. продукта
-CREATE UNLOGGED TABLE IF NOT EXISTS foods (
-  id SERIAL PRIMARY KEY,
-  title TEXT UNIQUE, -- нужен индекс по этому
-  protein NUMERIC (5, 2) default NULL,
-  fat NUMERIC (5, 2) default NULL,
-  carbohydrate NUMERIC (5, 2) default NULL,
-  kcal NUMERIC (5) default NULL
-);
-
--- Хранимая процедура поиска по title мультиязычно
-CREATE OR REPLACE FUNCTION to_tsvector_multilang (title TEXT) RETURNS tsvector as $$
-SELECT to_tsvector('russian', $1) ||
-       to_tsvector('english', $1) ||
-       to_tsvector('simple', $1)
-$$ LANGUAGE SQL IMMUTABLE;
-
--- Полнотекстовый поиск по тайтлу
-CREATE INDEX idx_gin_foods ON foods USING GIN (to_tsvector_multilang(title));
-
 CREATE TYPE TAG AS ENUM (
   'undefined',
   'script',
@@ -73,24 +35,25 @@ CREATE TYPE ABSTRACT_TYPE AS ENUM (
 );
 
 CREATE TABLE IF NOT EXISTS message (
-  id SERIAL PRIMARY KEY AUTOINC,
+  id BIGSERIAL,
   -- todo добавить uid письма
-  url TEXT CONSTRAINT must_be_different UNIQUE, -- ссылка на email attachment
-  telegram_message_id SERIAL must_be_different UNIQUE, -- сообщение телеграмма
-  UNIQUE(telegram_message_id)
+  url TEXT UNIQUE, -- ссылка на email attachment
+  telegram_message_id SERIAL CONSTRAINT must_be_different UNIQUE, -- сообщение телеграмма
+  UNIQUE(telegram_message_id),
+  PRIMARY KEY (id)
 );
 -- todo нужна VIEW которая будет отдавать bytea сырых данных - raw таблицы
 
 CREATE TABLE IF NOT EXISTS jsonld (
-  @id TEXT NOT NULL,
-  @context TEXT NOT NULL,
+  id TEXT NOT NULL,
+  context TEXT NOT NULL,
   email TEXT NOT NULL,
   telegram SERIAL,
   sameAs TEXT ARRAY,
   UNIQUE(email, telegram, sameAs),
-  PRIMARY KEY (@id)
+  PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX ON jsonld (@id);
+CREATE UNIQUE INDEX ON jsonld (id);
 CREATE UNIQUE INDEX ON jsonld (email);
 CREATE UNIQUE INDEX ON jsonld (telegram);
 -- todo нужна VIEW которая будет отдавать полный стандарт JSON-LD https://github.com/gotois/ProstoDiary_bot/issues/236
@@ -103,7 +66,7 @@ CREATE TABLE IF NOT EXISTS abstract (
   tags TAG ARRAY NOT NULL,
   mime VARCHAR(20) NOT NULL CHECK (mime <> ''),
   version VARCHAR(20) NOT NULL CHECK (version <> ''), -- bot Version. отсюда же можно узнать и api version аналогична в package.json -нужна для проверки необходимости обновить историю бота
-  context JSONB NOT NULL, -- todo CRYPTO: чтобы дешифровать данные нужно выполнить дешифровку этой подписи telegram_id + SALT_PASSWORD
+  context JSONB NOT NULL, -- todo использовать криптование
 
   -- todo need help
   -- jurisdiction JSONB, -- Intended jurisdiction for operation definition (if applicable); todo: нужна отдельная таблица
@@ -118,27 +81,13 @@ CREATE TABLE IF NOT EXISTS abstract (
   --   "Questionnaire"
   -- ],
 
+  message_id BIGSERIAL REFERENCES message (id) ON UPDATE CASCADE ON DELETE CASCADE,
+  creator_id TEXT REFERENCES jsonld (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за создание записи
+  publisher_id TEXT REFERENCES jsonld (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за публикацию записи, либо сам ProstoDiary_bot, либо внешний сторонний сервис, включая других ботов
+
   PRIMARY KEY (id),
-  FOREIGN KEY (message_id) REFERENCES message (id) ON UPDATE CASCADE ON DELETE CASCADE,
-  FOREIGN KEY (creator_id) REFERENCES jsonld (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за создание записи
-  FOREIGN KEY (publisher_id) REFERENCES jsonld (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за публикацию записи, либо сам ProstoDiary_bot, либо внешний сторонний сервис, включая других ботов
   UNIQUE(created_at)
 );
 CREATE UNIQUE INDEX ON abstract (tags);
 CREATE UNIQUE INDEX ON abstract (creator_id);
 CREATE UNIQUE INDEX ON abstract (publisher_id);
-
--- История пользователя представлена как "процесс"
--- TODO: переделать схему под приватную и доступную для редактирования только роли бот
--- todo нужен timestamp (SmartDate from - until) высчитываемый для истории. Возможно будет хорошей идеей генерировать уникальный view на каждый день
-CREATE MATERIALIZED VIEW IF NOT EXISTS history_eat AS
-SELECT *
-FROM abstract
-WHERE tags @> '{"eat"}';
-
-CREATE MATERIALIZED VIEW IF NOT EXISTS history_script AS
-SELECT *
-FROM abstract
-WHERE tags @> '{"script"}';
-
--- todo аналогично строить для каждого TAG
