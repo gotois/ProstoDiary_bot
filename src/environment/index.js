@@ -10,8 +10,6 @@ const {
   PGPORT,
   PGPASSWORD,
 
-  SALT_PASSWORD,
-
   CORALOGIX_WINSTON_PRIVATE_KEY,
   CORALOGIX_WINSTON_APPLICATION_NAME,
 
@@ -75,10 +73,6 @@ const ENV = {
     user: PGUSER,
     port: PGPORT,
     password: PGPASSWORD,
-    // todo: это вообще не нужно, так как планируется сделать masterSalt
-    get passwordSalt() {
-      return SALT_PASSWORD;
-    },
   },
   CORALOGIX: {
     CORALOGIX_WINSTON_PRIVATE_KEY,
@@ -232,6 +226,9 @@ const ENV = {
    */
   get IS_CI() {
     return String(NODE_ENV) === 'TRAVIS_CI';
+  },
+  get IS_FAST_TEST() {
+    return Boolean(process.env.FAST_TEST);
   },
   /**
    * @returns {boolean}

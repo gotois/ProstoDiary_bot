@@ -15,7 +15,6 @@ Server Environments
 NODE_ENV={ production|TRAVIS_CI|test }
 TELEGRAM_TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
 SERVER_NAME={ In DASH-CASE style }
-SALT_PASSWORD={ User salt password }
 
 PGUSER={ database username }
 PGHOST={ database host }
@@ -61,8 +60,6 @@ FOURSQUARE_PUSH_SECRET={ string }
 FOURSQUARE_REDIRECT_URI=http://localhost
 FOURSQUARE_ACCESS_TOKEN={ string } # Чтобы получить token перейдите по ссылке и подтвердите привязку приложения. (В хэше открытого попапа будет  access token)
 
-PERSON={JSON-LD|Url}  # example https://me.baskovsky.ru/
-
 MAIL_USER={ string }
 MAIL_PASSWORD={ string }
 MAIL_HOST={ string }
@@ -71,7 +68,7 @@ MAIL_PORT={ number }
 
 <details>
 	<summary>Setup PostgreSQL 11.0</summary>
-* Create database ProstoDiaryDB
+* Create database storydb
 * Import Foods table from data/database/tables/foods.csv
 </details>
 

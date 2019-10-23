@@ -1,13 +1,13 @@
 const jsonrpc = require('jsonrpc-lite');
 
 module.exports = async (t) => {
-  t.timeout(1000);
-  const APIv2Script = require('../../src/api/v2/script');
+  t.timeout(10000);
+  const APIPost = require('../../src/api/v2/post');
 
   const requestObject = jsonrpc.request('123', 'script', {
     buffer: Buffer.from(`INSERT INTO user_story (salt) VALUES (${'123'})`),
     mime: 'application/sql',
   });
-  const result = await APIv2Script(requestObject);
+  const result = await APIPost(requestObject);
   t.log(result);
 };

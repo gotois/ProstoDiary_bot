@@ -20,7 +20,7 @@ class TelegramBotRequest {
     return this.#api;
   }
   /**
-   * @param {RequestObject} requestObject - requestObject
+   * @param {RequestObject|NotificationObject} requestObject - requestObject
    * @returns {Promise<*>}
    */
   async request(requestObject) {

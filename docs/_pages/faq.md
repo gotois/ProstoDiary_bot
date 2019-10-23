@@ -7,10 +7,15 @@ permalink: /faq/
 ### Не получается установить зависимости
 На Node 12 пакеты сразу могу не встать, поэтому рекомендуется установить сначала devDependencies, а затем dependencies
 
-### Неработает CI
-Необходимо выставить env:
-* `SALT_PASSWORD`
-* `TELEGRAM_TOKEN`
+## Хочу делать запросы через cURL 
+Пример запроса без параметров:
+```
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" --data '{"jsonrpc":"2.0","method":"ping","id":67}' http://127.0.0.1:9090/api
+```
+Пример запроса с параметрами:
+```
+curl -X POST -H "Content-Type: application/json" -H "Accept: application/json" --data '{"jsonrpc":"2.0","method":"help","params":{"id":1},"id":67}' http://127.0.0.1:9090/api
+```
 
 ### Падает CI с неизвестной ошибкой
 * Проверить логи CI

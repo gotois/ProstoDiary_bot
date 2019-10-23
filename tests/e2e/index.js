@@ -9,6 +9,7 @@ const {
   IS_CI,
   IS_PRODUCTION,
   TELEGRAM_TEST_SERVER,
+  TELEGRAM,
 } = require('../../src/environment');
 
 /**
@@ -31,9 +32,8 @@ test.before(async (t) => {
   t.log(
     `TelegramServer: ${TELEGRAM_TEST_SERVER.HOST}:${TELEGRAM_TEST_SERVER.PORT} started`,
   );
-
   const bot = require('../../src/core/bot');
-  const client = server.getClient(process.env.TELEGRAM_TOKEN);
+  const client = server.getClient(TELEGRAM.TOKEN);
   require('../../src/core/handlers')(bot);
   /*eslint-disable require-atomic-updates */
   t.context.server = server;

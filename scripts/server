@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+require('dotenv').config();
+const RpcServer = require('http-jsonrpc-server');
+const logger = require('../src/services/logger.service');
+const APIv2 = require('../src/api/v2');
+const API_PATH = '/api';
+
+const rpcServer = new RpcServer({
+  path: API_PATH,
+  methods: {
+    ...APIv2,
+  },
+  onRequestError(error) {
+    logger.error(error);
+  },
+  onServerError(error) {
+    logger.error(error);
+  },
+});
+
+rpcServer.listen(9090, '127.0.0.1').then((port) => {
+  logger.info(
+    `JSON RPC server is listening at http://127.0.0.1:${port}${API_PATH}`,
+  );
+});

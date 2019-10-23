@@ -11,6 +11,7 @@
 [![Website](https://img.shields.io/website/https/prosto-diary.gotointeractive.com.svg?link=https://prosto-diary.gotointeractive.com)](https://prosto-diary.gotointeractive.com)
 [![GitHub](https://img.shields.io/github/license/gotois/ProstoDiary_bot.svg)](https://github.com/gotois/ProstoDiary_bot/blob/master/LICENSE)
 [![sketchboard](https://img.shields.io/badge/Schemes-orange.svg?link=https://gallery.sketchboard.me/team/tm_XjeyfGQC?s=TBE23WvgfgAg&style=flat&label=sketchboard.me)](https://gallery.sketchboard.me/team/tm_XjeyfGQC?s=TBE23WvgfgAg)
+[![Trello](https://img.shields.io/badge/Trello-black.svg?style=flat&label=trello)](https://trello.com/gotois)
 [![Issuehunt](https://img.shields.io/badge/ProstoDiary_bot-blueviolet.svg?link=https://issuehunt.io/r/gotois/ProstoDiary_bot&style=flat&label=issuehunt.io)](https://issuehunt.io/r/gotois/ProstoDiary_bot)
 
 ## About
@@ -53,14 +54,24 @@ Run
 npm run dev
 ```
 
-### Production
+### Production Telegram Bot
 ```bash
 npm start
+```
+
+### Запуск JSON-RPC сервера
+```bash
+npm run start:server
 ```
 
 ### CRON: проводим очистку и оптимизацию БД (натурализация)
 ```bash
 npm run start:materialize
+```
+
+### CRON: запуск считывателя письма
+```bash
+npm run start:vzor
 ```
 
 Tools
@@ -86,9 +97,6 @@ Run Telegram Bot
 ```
 /start
 ```
-
-## Communicating
-[Trello](https://trello.com/gotois)
 
 ## License
 goto Interactive Software
