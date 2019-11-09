@@ -84,7 +84,7 @@
     "@google-cloud/language": "3.6.0",
     "@google-cloud/speech": "3.3.2",
     "@google-cloud/translate": "4.2.1",
-    "@google-cloud/vision": "1.5.0",
+    "@google-cloud/vision": "1.7.0",
     "@sendgrid/mail": "6.4.0",
     "archiver": "3.1.1",
     "coralogix-logger-winston": "1.0.11",
