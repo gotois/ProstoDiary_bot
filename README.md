@@ -15,7 +15,7 @@
 [![Issuehunt](https://img.shields.io/badge/ProstoDiary_bot-blueviolet.svg?link=https://issuehunt.io/r/gotois/ProstoDiary_bot&style=flat&label=issuehunt.io)](https://issuehunt.io/r/gotois/ProstoDiary_bot)
 
 ## About
-Virtual tracker: diary, food, health, sleep, todo, etc
+Virtual tracker: text diary, email, food, health, sleep, tasks, etc
 
 Install
 ---

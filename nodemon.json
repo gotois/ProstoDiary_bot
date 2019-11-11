@@ -2,14 +2,16 @@
   "restartable": "rs",
   "ignore": [
     "*.md",
+    "*.log",
     "*.yml",
     "*.csv",
     "tests/",
     "data/",
+    "SQL/",
     "logs/",
     "docs/",
     "node_modules/"
   ],
-  "ext": "js,json",
+  "ext": "js",
   "delay": "3000"
 }

@@ -14,7 +14,6 @@ Server Environments
 ```
 NODE_ENV={ production|TRAVIS_CI|test }
 TELEGRAM_TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
-SERVER_NAME={ In DASH-CASE style }
 
 PGUSER={ database username }
 PGHOST={ database host }

@@ -14,9 +14,8 @@ export default () => {
     'failWithoutAssertions': false,
     'environmentVariables': {
       'TELEGRAM_TOKEN': '123456',
-      'SERVER_NAME': 'AVA',
-      'TELEGRAM_TEST_SERVER_HOST': 'localhost',
-      'TELEGRAM_TEST_SERVER_PORT': '9001',
+      'HOST': 'localhost',
+      'PORT': '9001',
     },
     'compileEnhancements': false,
   };

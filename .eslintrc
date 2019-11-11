@@ -16,6 +16,10 @@
     "max-depth": "error",
     "max-len": ["warn", {
       "ignoreComments": true,
+      "tabWidth": 2,
+      "comments": 140,
+      "ignoreTrailingComments": true,
+      "ignoreUrls": true,
       "code": 80
     }],
     "new-parens": "error",
@@ -103,7 +107,7 @@
     "jsdoc/require-hyphen-before-param-description": "warn",
     "jsdoc/require-param-type": "error",
     "jsdoc/require-param": "warn",
-    "jsdoc/newline-after-description": "warn",
+    "jsdoc/newline-after-description": "error",
     "jsdoc/check-tag-names": "error",
     "jsdoc/check-types": "error",
     "jsdoc/no-undefined-types": "off",
@@ -184,6 +188,20 @@
           "todo"
         ]
       }
+    ],
+    "sql/format": [
+      2,
+      {
+        "ignoreExpressions": false,
+        "ignoreInline": true,
+        "ignoreTagless": true
+      }
+    ],
+    "sql/no-unsafe-query": [
+      2,
+      {
+        "allowLiteral": false
+      }
     ]
   },
   "settings": {
@@ -211,7 +229,8 @@
     "node",
     "prettier",
     "unicorn",
-    "json"
+    "json",
+    "sql"
   ],
   "extends": [
     "eslint:recommended",
