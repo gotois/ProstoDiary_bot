@@ -6,12 +6,12 @@ const { sql, pool } = require('../../core/database');
 const { get } = require('../../services/request.service');
 const validator = require('validator');
 
-// todo: перенести это в oauth
+// todo: перенести это в oauth + сделать e2e тест для тех ссылок, что генерирует сам бот
 const getJSONLD = async (www) => {
   if (!validator.isURL(www)) {
     throw new Error('wrong www');
   }
-  let jsonld = {};
+  const jsonld = {};
   // todo: это уже избыточно, авторизация делается через oauth
   const html = (await get(www)).toString('utf8');
   if (validator.isJSON(html)) {
@@ -34,19 +34,24 @@ const getJSONLD = async (www) => {
   const telegram = jsonld['telegram'];
 
   return {
-    id, context, type, email, url, name, sameAs, telegram,
+    id,
+    context,
+    type,
+    email,
+    url,
+    name,
+    sameAs,
+    telegram,
   };
 };
 
 /**
  * @returns {SuccessObject}
+ * @param requestObject
  */
 module.exports = async (requestObject) => {
   // https://avatars.mds.yandex.net/get-yapic/15298/enc-ffa5107cc5808ac078e7e2ecd952eb4e981f41522136a7bc59e323e22b797ac3/islands-middle
-  const {
-    yandex,
-    telegram,
-  } = requestObject;
+  const { yandex, telegram } = requestObject;
   const secret = await auth.generateSecret({
     name: pkg.name,
     symbols: true,
@@ -59,19 +64,21 @@ module.exports = async (requestObject) => {
   const output = await pool.connect(async ({ transaction }) => {
     const result = await transaction(async (transactionConnection) => {
       const jsonld = await transactionConnection.one(sql`
-        INSERT INTO jsonld
-        (id, context, type, email, url, name, same_as)
-        VALUES (${id}, ${context}, ${type}, ${email}, ${url}, ${name}, ${sql.array(sameAs, sql`text[]`)})
-        RETURNING id
-      `);
+INSERT INTO jsonld (id, context, type, email, url, name, same_as)
+    VALUES (${id}, ${context}, ${type}, ${email}, ${url}, ${name}, ${sql.array(sameAs, sql`text[]`)})
+RETURNING
+    id
+`);
       const passport = await transactionConnection.one(sql`
-        INSERT INTO passport
-        (jsonld_id, recover_passwords, secret, telegram, email, password)
-        VALUES (${jsonld.id}, ${sql.array(secret.recoverPasswords, sql`text[]`)}, ${passcode}, ${telegram}, crypt(${masterEmail}, gen_salt('bf', 8)), crypt(${masterPassword}, gen_salt('bf', 8)))
-        RETURNING password
-      `);
+INSERT INTO passport (jsonld_id, recover_passwords, secret, telegram, email, password)
+    VALUES (${jsonld.id}, ${sql.array(secret.recoverPasswords, sql`text[]`)}, ${passcode}, ${telegram}, crypt(${masterEmail}, gen_salt('bf', 8)), crypt(${masterPassword}, gen_salt('bf', 8)))
+RETURNING
+    password
+`);
       // на будущее, бот сам следит за своей почтой, периодически обновляя пароли. Пользователя вообще не касается что данные сохраняются у него в почте
-      const yaMailResult = await mailService.createYaMail('https://me.baskovsky.ru');
+      const yaMailResult = await mailService.createYaMail(
+        'https://me.baskovsky.ru',
+      );
       await sgMail.send({
         to: email,
         cc: yaMailResult.email,
@@ -87,7 +94,9 @@ module.exports = async (requestObject) => {
         <p>Пришлите <a href="https://prosto-diary.gotointeractive.com/">ProstoDiary_bot</a> сгенерированный токен от двухфакторной аутентификации.</p>
         <br>
         <h2>Шаг 3: сохраните ключи рекавери.</h2>
-        <p>Сохраните рекавер ключи в надежном и секретном месте: ${JSON.stringify(secret.recoverPasswords)}</p>
+        <p>Сохраните рекавер ключи в надежном и секретном месте: ${JSON.stringify(
+    secret.recoverPasswords,
+  )}</p>
       `,
       });
       // todo: записывать логин и пароль в .htdigest

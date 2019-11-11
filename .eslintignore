@@ -5,5 +5,5 @@
 /bin
 /SQL
 src/models/
-src/controllers/telegram-bot-request.js
+src/controllers/telegram/telegram-bot-request.js
 ava.config.js

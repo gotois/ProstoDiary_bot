@@ -3,20 +3,22 @@ const { pack } = require('../../services/archive.service');
 const format = require('../../services/format.service');
 const auth = require('../../services/auth.service');
 /**
- * @todo: тексты брать из почты используя Vzor.search
+ * @todo тексты брать из почты используя Vzor.search
  * @todo должен в том числе содержать StoryJSON в полном объеме и храниться в отдельном файле: story.json
  * @param {RequestObject} requestObject - requestObject
  * @returns {SuccessObject|JsonRpcError}
  */
 module.exports = async (requestObject) => {
-  const { user, date, passcode, token, sorting = 'ASC' } = requestObject.params;
+  const { user, date, passcode, token, sorting = 'ASC' } = requestObject;
   const valid = await auth.verify(passcode, token);
   if (!valid) {
     throw new Error('Wrong token');
   }
   const filename = `backup_${date}.txt`;
   const rows = await pool.connect(async (connection) => {
-    const rows = await connection.many(sql`SELECT 1 FROM jsonld WHERE telegram = ${telegram}`);
+    const rows = await connection.many(
+      sql`SELECT 1 FROM jsonld WHERE telegram = ${telegram}`,
+    );
     return rows;
   });
 

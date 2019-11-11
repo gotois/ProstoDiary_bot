@@ -4,6 +4,7 @@ const { version } = require('../../package');
 const {
   NODE_ENV,
 
+  NGROK,
   PGHOST,
   PGDATABASE,
   PGUSER,
@@ -20,9 +21,6 @@ const {
 
   PORT,
   SERVER_NAME,
-
-  TELEGRAM_TEST_SERVER_HOST,
-  TELEGRAM_TEST_SERVER_PORT,
 
   DIALOGFLOW_CREDENTIALS,
   DIALOGFLOW_PROJECT_ID,
@@ -58,9 +56,21 @@ const {
   MAIL_PASSWORD,
   MAIL_HOST,
   MAIL_PORT,
+
+  YA_PDD_TOKEN,
+  YA_OAUTH_ID,
+  YA_OAUTH_PASSWORD,
+  YA_OAUTH_CALLBACK,
+
+  FACEBOOK_APP_ID,
+  FACEBOOK_APP_SECRET,
+  FACEBOOK_CALLBACK_URL,
 } = process.env;
 
 const ENV = {
+  NGROK: {
+    TOKEN: NGROK,
+  },
   MAIL: {
     USER: MAIL_USER,
     PASSWORD: MAIL_PASSWORD,
@@ -78,24 +88,47 @@ const ENV = {
     CORALOGIX_WINSTON_PRIVATE_KEY,
     CORALOGIX_WINSTON_APPLICATION_NAME,
   },
+  FACEBOOK: {
+    FACEBOOK_APP_ID,
+    FACEBOOK_APP_SECRET,
+    FACEBOOK_CALLBACK_URL,
+  },
+  YANDEX: {
+    YA_PDD_TOKEN,
+    YA_OAUTH_ID,
+    YA_OAUTH_PASSWORD,
+    YA_OAUTH_CALLBACK,
+  },
   TELEGRAM: {
     TOKEN: TELEGRAM_TOKEN,
     get API_URL() {
       if (ENV.IS_AVA_OR_CI) {
-        const { HOST, PORT } = ENV.TELEGRAM_TEST_SERVER;
+        const { HOST, PORT } = ENV.SERVER;
         return `http://${HOST}:${PORT}`;
       }
       return 'https://api.telegram.org';
     },
-    get WEB_HOOK_URL() {
+  },
+  SERVER: {
+    get PORT() {
+      if (PORT && validator.isPort(PORT)) {
+        return PORT;
+      }
+      throw new Error('Unknown Port');
+    },
+    get HOST() {
       if (!TELEGRAM_TOKEN) {
         throw new Error('TELEGRAM_TOKEN not found');
       }
-      return `https://${SERVER_NAME}.herokuapp.com/bot${TELEGRAM_TOKEN}`;
+      if (ENV.IS_PRODUCTION) {
+        return `https://${SERVER_NAME}.herokuapp.com`;
+      } else if (process.env.NGROK_URL) {
+        return process.env.NGROK_URL;
+      } else if (process.env.HOST) {
+        return process.env.HOST;
+      }
+      return 'localhost';
     },
-  },
-  SERVER: {
-    PORT,
   },
   PLOTLY: {
     get LOGIN() {
@@ -184,20 +217,6 @@ const ENV = {
     },
     get CLIENT_SECRET() {
       return FOURSQUARE_CLIENT_SECRET;
-    },
-  },
-  TELEGRAM_TEST_SERVER: {
-    get HOST() {
-      return TELEGRAM_TEST_SERVER_HOST;
-    },
-    /**
-     * @returns {number}
-     */
-    get PORT() {
-      if (!validator.isPort(TELEGRAM_TEST_SERVER_PORT)) {
-        throw new Error('ENV: TELEGRAM_TEST_SERVER_PORT');
-      }
-      return Number(TELEGRAM_TEST_SERVER_PORT);
     },
   },
   /**

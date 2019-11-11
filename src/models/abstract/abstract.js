@@ -168,7 +168,7 @@ class Abstract {
     if (rawString.startsWith('-----BEGIN PGP MESSAGE-----')) {
       const rawDecrypt = await openpgp.decrypt({
         message: await openpgp.message.readArmored(rawString),
-        passwords: ['secret stuff'],
+        passwords: ['secret stuff'], // todo брать из pgp_password
       });
       this.rawDecrypt = rawDecrypt.data;
     } else {

@@ -8,39 +8,30 @@ const TelegramServer = require('telegram-test-api');
 const {
   IS_CI,
   IS_PRODUCTION,
-  TELEGRAM_TEST_SERVER,
+  SERVER,
   TELEGRAM,
 } = require('../../src/environment');
-
 /**
  * This runs before all tests
  */
 test.before(async (t) => {
-  const dbClient = require('../../src/core/database');
-  await t.notThrowsAsync(async () => {
-    await dbClient.client.connect();
-  });
-  t.true(dbClient.client._connected);
-
   const server = new TelegramServer({
-    port: TELEGRAM_TEST_SERVER.PORT,
-    host: TELEGRAM_TEST_SERVER.HOST,
+    host: SERVER.HOST,
+    port: SERVER.PORT,
     storage: 'RAM',
     storeTimeout: 60,
   });
   await server.start();
-  t.log(
-    `TelegramServer: ${TELEGRAM_TEST_SERVER.HOST}:${TELEGRAM_TEST_SERVER.PORT} started`,
-  );
-  const bot = require('../../src/core/bot');
+  require('../../src/core/bot');
+  require('../../src/controllers/telegram');
+  t.log(`TelegramServer: ${SERVER.HOST}:${SERVER.PORT} started`);
   const client = server.getClient(TELEGRAM.TOKEN);
-  require('../../src/core/handlers')(bot);
   /*eslint-disable require-atomic-updates */
   t.context.server = server;
   t.context.client = client;
   t.context.tasks = {};
   /*eslint-enable */
-  // todo uncomment
+  // todo uncomment?
   // const message = client.makeMessage('/ping');
   // await client.sendMessage(message);
   // try {
@@ -105,20 +96,17 @@ skipTestForFastOrTravis(
   require('./dialogflow-service.test'),
 );
 skipTestForFastOrTravis('API: googleapis Geocode', require('./geocode.test'));
-skipTestForFastOrTravis('API: Fatsecret', require('./fatsecret.test'));
 skipTestForFastOrTravis('API: Google Vision', require('./vision.test'));
-skipTestForFastOrTravis('API: KPP nalog.ru', require('./kpp.test'));
 skipTestForFastOrTravis('API: Translate', require('./translate.test'));
 skipTestForFast('API: Wolfram Alpha', require('./wolfram-alpha.test'));
 skipTestForFastOrTravis('API: Todoist', require('./todoist-service.test'));
 skipTestForFast('API: Currency', require('./currency-service.test'));
 
-// INPUT
+// Telegram commands
 skipTestForFast('/help', require('./help.test'));
-skipTestForFast('/version', require('./version.test'));
 skipTestForFastOrTravis('/backup', require('./backup.test'));
 skipTestForFastOrTravis('/post', require('./post.test'));
-skipTestForFastOrTravis('/balance', require('./balance.test'));
+skipTestForFastOrTravis('/ping', require('./ping.test'));
 test.todo('/start');
 test.todo('/dbclear');
 test.todo('Создать отдельного пользователя в БД'); // TODO: используя https://github.com/marak/Faker.js/

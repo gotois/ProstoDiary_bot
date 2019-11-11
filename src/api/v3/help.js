@@ -4,10 +4,14 @@ const { IS_PRODUCTION } = require('../../environment');
 const { commands } = require('../../controllers/telegram');
 /**
  * @returns {SuccessObject}
+ * @param _params
+ * @param _parameters
+ * @param xxx
  */
-module.exports = (_params, { user }) => {
-  console.log(user)
-
+module.exports = (_parameters, xxx) => {
+  const { user } = xxx;
+  console.log(xxx);
+  console.log(_parameters);
 
   const helpData = Object.entries(commands).reduce(
     (accumulator, [command, object]) => {

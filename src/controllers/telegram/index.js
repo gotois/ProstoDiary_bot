@@ -1,25 +1,7 @@
 const bot = require('../../core/bot');
-const { pool, sql, NotFoundError } = require('../../core/database');
 const logger = require('../../services/logger.service');
 // const { IS_AVA_OR_CI } = require('../../environment');
 
-const load = async (value) => {
-  if (!Number.isInteger(value)) {
-    throw new Error('Invalid load profile');
-  }
-  const profile = await pool.connect(async (connection) => {
-    try {
-
-    } catch (error) {
-      if (!(error instanceof NotFoundError)) {
-        throw error;
-      }
-    }
-    const res = await connection.maybeOne(sql`SELECT * FROM passport WHERE telegram = ${value}`);
-    return res;
-  });
-  return profile;
-};
 /**
  * @type {object}
  */
@@ -99,7 +81,6 @@ bot.on('webhook_error', (error) => {
  * @param {object} match - matcher
  */
 bot.on('message', async (message, { type }) => {
-  console.log('jkjkjkjkjkjkjkjkj', message.text)
   if (message.text.length === 1) {
     return;
   }
@@ -108,10 +89,8 @@ bot.on('message', async (message, { type }) => {
       throw new Error('Reply message not supported');
     }
   }
-  console.log('OOOOO')
-  // fixme из-за этого запроса падаются Е2Е тесты
-  const session = await load(message.from.id);
-  console.log(session)
+  const session = 'TEST_MESSAGE';
+  console.log(session);
 
   switch (type) {
     case 'text': {

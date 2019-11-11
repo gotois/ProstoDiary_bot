@@ -1,52 +1,65 @@
-const pkg = require('../../package');
-const { IS_AVA_OR_CI } = require('../environment');
-const sgMail = require('../services/sendgridmail.service');
-const Attachment = require('../models/attachment');
-const jsonldModel = require('../models/jsonld');
+const cryptoRandomString = require('crypto-random-string');
+const { unpack } = require('./archive.service');
+const logger = require('./logger.service');
+const { post, get } = require('./request.service');
+const AbstractText = require('../models/abstract/abstract-text');
+const AbstractPhoto = require('../models/abstract/abstract-photo');
+const AbstractDocument = require('../models/abstract/abstract-document');
+
 /**
- * @description весь pipe работы с input - вставка и разбор логики voice, text, photo, document
- * @param {RequestObject} requestObject - requestObject
- * @returns {object|Error}
+ * @param {Mail} mail - mail
+ * @returns {Promise<Array<Abstract>>}
  */
-const post = async (requestObject) => {
-  const {
-    buffer,
-    mime,
-    publisher,
-    creator,
-    date,
-    caption = null, // eslint-disable-line
-    telegram_message_id = null,
-  } = requestObject.params;
-  const { email } = await jsonldModel.load(creator);
-  // получаем ввод, переводим его в текстовый формат или буфер (raw)
-  const attachment = await Attachment.create(buffer, mime);
-  const headers = {
-    'x-bot': pkg.name,
-    'x-bot-creator': email,
-  };
-  if (IS_AVA_OR_CI) {
-    headers['x-bot-testing'] = process.env.NODE_ENV;
+const createAbstract = async ({ attachments, date }) => {
+  const abstracts = [];
+  for (const attachment of attachments) {
+    const {
+      content,
+      contentType,
+      // transferEncoding,
+      // generatedFileName,
+      // contentId,
+      // checksum,
+      // length,
+      // contentDisposition,
+      // fileName,
+    } = attachment;
+    // if (transferEncoding !== 'base64') {
+    //   continue;
+    // }
+    switch (contentType) {
+      case 'plain/text': {
+        abstracts.push(new AbstractText(content, contentType, date));
+        break;
+      }
+      case 'image/png':
+      case 'image/jpeg': {
+        abstracts.push(new AbstractPhoto(content, contentType, date));
+        break;
+      }
+      case 'application/pdf':
+      case 'application/xml': {
+        abstracts.push(new AbstractDocument(content, contentType, date));
+        break;
+      }
+      case 'application/zip':
+      case 'multipart/x-zip': {
+        for await (const [_fileName, zipBuffer] of unpack(content)) {
+          abstracts.push(new AbstractDocument(zipBuffer, contentType, date));
+        }
+        break;
+      }
+      case 'application/octet-stream': {
+        abstracts.push(new AbstractText(content, contentType, date));
+        break;
+      }
+      default: {
+        // todo: тогда нужен разбора html и text самостоятельно из письма
+        logger.log('info', 'Unknown mime type ' + contentType);
+      }
+    }
   }
-  if (telegram_message_id) {
-    headers['x-bot-telegram-message-id'] = String(telegram_message_id);
-  }
-  const message = {
-    to: email,
-    from: publisher,
-    subject: 'todo subject', // todo добавить timestamp - таким образом чтобы было проще искать
-    html: '<br>',
-    text: 'required text', // todo здесь будет текст StoryLanguage с шифрованным описанием всей истории абстракта
-    attachments: [attachment],
-    sendAt: date,
-    headers,
-    categories: 'transactional',
-  };
-  const [mailResult] = await sgMail.send(message);
-  if (!mailResult.complete) {
-    throw new Error('sgMail send not completed');
-  }
-  return message;
+  return abstracts;
 };
 /**
  * @param {Mail} mail - mail
@@ -54,12 +67,14 @@ const post = async (requestObject) => {
  */
 const read = async (mail) => {
   const { from, headers, attachments } = mail;
+
   // имя бота с которого было отправлено письмо. пока верим всем ботам с таким хедером
   if (headers['x-bot']) {
     if (attachments) {
-      for (const abstract of await Attachment.read(mail)) {
-        abstract.telegram_message_id = headers['x-bot-telegram-message-id'];
-        abstract.creator = headers['x-bot-creator'];
+      for (const abstract of await createAbstract(mail)) {
+        console.log('abstract', abstract);
+        // abstract.telegram_message_id = headers['x-bot-telegram-message-id'];
+        // abstract.creator = headers['x-bot-creator'];
         abstract.publisher = from;
         abstract.mail_uid = mail.uid;
         await abstract.commit();
@@ -67,11 +82,83 @@ const read = async (mail) => {
     }
   } else {
     // todo когда приходит письмо не от бота, нужно разбирать адреса и прочее и делать новый post с отправкой письма в формате forward
-    //  ...
+    //  ...разделить read в два метода - первый будет анализировать, второй читать и записывать
   }
+};
+/**
+ * https://yandex.ru/dev/pdd/doc/reference/email-add-docpage/
+ *
+ * @param {string} www - params
+ * @returns {Promise<string|Buffer|Error|*>}
+ */
+const createYaMail = async (www) => {
+  const { domain, email, login, password } = generateEmailName(www);
+  const HOST = 'pddimp.yandex.ru';
+  const emailAdd = await post(
+    `https://${HOST}/api2/admin/email/add`,
+    {
+      domain,
+      login,
+      password,
+    },
+    {
+      PddToken: process.env.YA_PDD_TOKEN,
+    },
+  );
+  if (emailAdd.error) {
+    throw new Error(emailAdd.error);
+  }
+  const emailGetOauth = await post(
+    `https://${HOST}/api2/admin/email/get_oauth_token`,
+    {
+      domain,
+      login: emailAdd.login,
+      uid: emailAdd.uid,
+    },
+    {
+      PddToken: process.env.YA_PDD_TOKEN,
+    },
+  );
+  if (emailGetOauth.error) {
+    throw new Error(emailAdd.error);
+  }
+  await get(
+    `https://passport.yandex.ru/passport?mode=oauth&access_token=${
+      emailGetOauth['oauth-token']
+    }&type=trusted-pdd-partner`,
+  );
+  return {
+    ...emailAdd,
+    ...emailGetOauth,
+    email,
+    login,
+    password,
+  };
+};
+
+// в качестве логина используем url переданного вебсайта
+/**
+ * @param {string} www - name
+ * @returns {Promise<{password: string, email: string, domain: string}>}
+ */
+const generateEmailName = (www) => {
+  const login = www.replace(new RegExp('^https?://', 'i'), '').toLowerCase();
+  const domain = 'gotointeractive.com';
+  const email = `${login}@${domain}`;
+  // пароль генерируем случайным образом
+  const password = cryptoRandomString({
+    length: 30,
+    characters: '🤘👍👌😎🤝😋😜✊💪🙏🆒🆕🆙🆓🆗⬆️🔝➕⭐️🌟💥🔥☀️🕺',
+  });
+  return {
+    email,
+    password,
+    domain,
+  };
 };
 
 module.exports = {
-  post,
   read,
+  createYaMail,
+  generateEmailName,
 };

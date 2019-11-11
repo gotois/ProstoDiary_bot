@@ -1,24 +1,38 @@
 const request = require('request');
 /**
+ * @param {any} body - response body
+ * @returns {string}
+ */
+const formatMessage = (body) => {
+  return Buffer.isBuffer(body) ? body.toString('utf8') : body;
+};
+/**
  * @param {string} url - url
  * @param {object|undefined} headers - headers
+ * @param qs
  * @param {any} encoding - encoding
  * @returns {Promise<string|Buffer|Error>}
  */
-const get = (url, headers = {}, encoding = null) => {
+const get = (url, qs = {}, headers = {}, encoding = null) => {
   return new Promise((resolve, reject) => {
-    request.get({ url, headers, encoding }, (error, response, body) => {
-      if (error) {
-        return reject(error);
-      }
-      if (response.statusCode >= 400) {
-        return reject({
-          message: body.toString('utf8'),
-          statusCode: response.statusCode,
-        });
-      }
-      return resolve(body);
-    });
+    request.get(
+      { url: url + toQueryString(qs), headers, encoding },
+      (error, response, body) => {
+        if (error) {
+          return reject(error);
+        }
+        if (response.statusCode >= 400) {
+          return reject({
+            message: formatMessage(body),
+            statusCode: response.statusCode,
+          });
+        }
+        if (response.headers['content-type'] === 'application/json') {
+          resolve(JSON.parse(body));
+        }
+        return resolve(body);
+      },
+    );
   });
 };
 /**
@@ -47,7 +61,37 @@ const post = (
         }
         if (response.statusCode >= 400) {
           return reject({
-            message: body.toString('utf8'),
+            message: formatMessage(body),
+            statusCode: response.statusCode,
+          });
+        }
+        return resolve(body);
+      },
+    );
+  });
+};
+
+const patch = (
+  url,
+  form,
+  headers = { 'content-type': 'application/json; charset=UTF-8' },
+) => {
+  return new Promise((resolve, reject) => {
+    request(
+      {
+        method: 'PATCH',
+        url,
+        headers,
+        form,
+        json: true,
+      },
+      (error, response, body) => {
+        if (error) {
+          return reject(error);
+        }
+        if (response.statusCode >= 400) {
+          return reject({
+            message: formatMessage(body),
             statusCode: response.statusCode,
           });
         }
@@ -57,6 +101,7 @@ const post = (
   });
 };
 /**
+ * @todo заменить на библиотеку qs
  * @description Serialization
  * @param {object} data - data
  * @returns {string}
@@ -84,5 +129,6 @@ const toQueryString = (data) => {
 module.exports = {
   get,
   post,
+  patch,
   toQueryString,
 };

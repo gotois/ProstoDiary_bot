@@ -1,11 +1,9 @@
 const validator = require('validator');
 const Abstract = require('./abstract');
-const { pool } = require('../../core/database');
+const { pool, sql } = require('../../core/database');
 const logger = require('../../services/logger.service');
 const languageService = require('../../services/language.service');
 const dialogflowService = require('../../services/dialogflow.service');
-const foodService = require('../../services/food.service');
-const dbEntries = require('../../database/entities.database');
 
 class AbstractText extends Abstract {
   #text = [];
@@ -172,29 +170,11 @@ class AbstractText extends Abstract {
     // FIXME: Разбить текст на строки через "\n" (Обработка каждой строки выполняется отдельно)
     // И еще лучше если это дополнительно прогнать через NLP
     
-    // todo: это выполнять не здесь
-    //  Насыщение абстрактов (от Abstract к Natural)
-    //  ...
     //  Связка абстракта фактами
     //  ...
     
     // todo Сериализация найденных параметров (Entities)
     //  ...
-    
-    // todo: middleware
-    //  дополняем данными из FatSecret
-    //  try {
-    //   for (const parameter of this.#parameters) {
-    //     if (parameter.Food) {
-    //       for (const food of parameter.Food.listValue.values) {
-    //         const results = await foodService.search(food.stringValue, 2);
-    //         this.foodResults = results;
-    //       }
-    //     }
-    //   }
-    //  } catch (error) {
-    //   logger.error(error.message);
-    //  }
     
     // todo проверяем что текст поправил туду в todoist - если так то спрашиваем у пользователя прав ли бот
     //  ...
@@ -202,57 +182,32 @@ class AbstractText extends Abstract {
 
   async commit() {
     await super.commit();
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
-      // формируем запрос message
-      const messageResult = await client.query({
-        name: 'create-message',
-        text: `INSERT INTO message (url, telegram_message_id)
-             VALUES ($1, $2)
-             RETURNING id`,
-        values: [this.mail_uid, this.telegram_message_id],
-      });
-      console.log('zzz', messageResult)
-      messageResult.rows[0].id;
-      // https://stackoverflow.com/questions/6722344/select-or-insert-a-row-in-one-command
-      // 2 - формируем запрос creator_id
-      const creatorSelectResult = await client.query({
-        name: 'creator-select',
-        text: `SELECT id FROM creator WHERE email = $1`,
-        values: [this.creator.email],
-      });
-      console.log(creatorSelectResult)
-      return
-      if (creatorSelectResult.rows.length == 0) {
-        const creatorResult = await client.query({
-          name: 'create-creator',
-          text: `INSERT INTO creator (jsonld)
-             VALUES ($1)
-             RETURNING *`,
-          values: ['xxx'],
-        });
-      }
 
-
-      creatorResult.rows[0].id;
-      // 3 - формируем запрос publisher_id
-      // ...
-
-      await client.query({
-        name: 'create-commit',
-        text: `INSERT INTO abstract (bot_story_id, user_story_id)
-             VALUES ($1, $2)
-             RETURNING *`,
-        values: [telegram_message_id],
+    await pool.connect(async (connection) => {
+      await connection.transaction(async (transactionConnection) => {
+        const messageId = await transactionConnection.query(sql`
+          INSERT INTO message 
+          (uid, url, telegram_message_id) 
+          VALUES (${this.mail_uid}, ${2}, ${this.telegram_message_id}) 
+          RETURNING id`
+        );
+        const creatorId = transactionConnection.maybeOne(sql`
+          SELECT id FROM jsonld WHERE email = ${this.creator}`
+        );
+        if (!creatorId) {
+          // todo: делать заполнение jsonld новой персоной
+        }
+        const publisherId = transactionConnection.maybeOne(sql`
+          SELECT id FROM jsonld WHERE email = ${this.publisher}`
+        );
+        await transactionConnection.query(sql`
+          INSERT INTO abstract 
+          (created_at, type, tags, mime, version, context, message_id, creator_id, publisher_id)
+          VALUES (${this.timestamp}, ${this.type}, ${this.tags}, ${this.mime}, ${this.version}, ${this.context}, ${messageId}, ${creatorId}, ${publisherId})
+          RETURNING *`
+        );
       });
-      await client.query('COMMIT');
-    } catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    } finally {
-      client.release();
-    }
+    });
   }
 }
 

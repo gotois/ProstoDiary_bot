@@ -3,7 +3,6 @@ const {
   uploadAppleHealthData,
 } = require('../../services/apple-health.service');
 const { readOFX } = require('../../services/tinkoff.service');
-const kppService = require('../../services/kpp.service');
 
 class AbstractDocument extends Abstract {
   get context() {

@@ -32,7 +32,10 @@ class Start extends TelegramBotRequest {
   async messageListener(query) {
     switch (query.data) {
       case 'CANCEL': {
-        await bot.sendMessage(this.message.chat.id, 'Попробовать сначала /start');
+        await bot.sendMessage(
+          this.message.chat.id,
+          'Попробовать сначала /start',
+        );
         bot.off('callback_query', this.messageListener);
         break;
       }
@@ -65,6 +68,9 @@ class Start extends TelegramBotRequest {
         },
       });
     }
+    // TODO: эти данные лучше не передавать на сторонний сервер.
+    //  Лучше использовать какой-то безобидный id -
+    //  например id текущей сессии, которая после колбэка будет уничтожаться в oauth.js
     const callbackValues = qs.stringify({
       telegram: {
         ...this.message,
@@ -95,6 +101,7 @@ class Start extends TelegramBotRequest {
 }
 /**
  * @param {TelegramMessage} message - message
+ * @param session
  * @returns {undefined}
  */
 module.exports = async (message, session) => {

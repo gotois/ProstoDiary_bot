@@ -19,6 +19,14 @@ class Device {
   }
 }
 
+class FakerText {
+  static text(string) {
+    // todo: изменять значения строки таким образом, чтобы dialogflow отображал нужный интент, но на сервера приходили неверные данные
+    return string;
+  }
+}
+
 module.exports = {
   Device,
+  FakerText,
 };

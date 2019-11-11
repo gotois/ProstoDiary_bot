@@ -5,25 +5,23 @@ const {
   TELEGRAM,
   SERVER,
 } = require('../environment');
-let bot;
-if (Object.prototype.hasOwnProperty.call(global, 'bot')) {
-  bot = global.bot;
-} else if (IS_AVA_OR_CI) {
-  bot = new TelegramBot(TELEGRAM.TOKEN, {
+let telegramBot;
+if (IS_AVA_OR_CI) {
+  telegramBot = new TelegramBot(TELEGRAM.TOKEN, {
     polling: true,
     baseApiUrl: TELEGRAM.API_URL,
   });
+  telegramBot.startPolling({ restart: false });
 } else if (IS_PRODUCTION) {
-  bot = new TelegramBot(TELEGRAM.TOKEN, {
+  telegramBot = new TelegramBot(TELEGRAM.TOKEN, {
     webHook: { port: SERVER.PORT },
   });
+  telegramBot.setWebHook(`${SERVER.HOST}/bot${TELEGRAM.TOKEN}`);
 } else {
-  bot = new TelegramBot(TELEGRAM.TOKEN, {
-    polling: true,
-    baseApiUrl: TELEGRAM.API_URL,
-  });
+  telegramBot = new TelegramBot(TELEGRAM.TOKEN);
+  telegramBot.setWebHook(`${SERVER.HOST}/bot${TELEGRAM.TOKEN}`);
 }
 /**
  * @type {TelegramBot}
  */
-module.exports = bot;
+module.exports = telegramBot;

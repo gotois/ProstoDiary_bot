@@ -1,7 +1,7 @@
-module.exports = (request, response, next) => {
-  const jsonrpc = require('./jsonrpc');
+const jsonrpc = require('../core/jsonrpc');
 
-  console.log('kjkjlj')
+module.exports = (request, response, next) => {
+  console.log(request);
   jsonrpc.server.call(request.body, { user: request.user }, (error, result) => {
     if (error) {
       return next(error);

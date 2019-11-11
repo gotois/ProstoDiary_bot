@@ -4,7 +4,7 @@
   "description": "ProstoDiary: Global virtual assistant",
   "publisher": "goto Interactive Software",
   "homepage": "https://prosto-diary.gotointeractive.com",
-  "main": "./scripts/index",
+  "main": "./src/server.js",
   "workspaces": [
     "src/*",
     "scripts/*"

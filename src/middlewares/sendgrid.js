@@ -1,16 +1,21 @@
+// const VzorService = require('../src/services/imap.service');
+
 module.exports = async (request, response) => {
   for (const info of request.body) {
     switch (info.event) {
       case 'processed': {
-        console.log(info)
+        console.log(info);
 
-        const mailMap = await VzorService.search(['ALL', ['HEADER', 'MESSAGE-ID', info['smtp-id']]]);
+        const mailMap = await VzorService.search([
+          'ALL',
+          ['HEADER', 'MESSAGE-ID', info['smtp-id']],
+        ]);
         for (const [_mapId, mail] of mailMap) {
           // в зависимости от полученной категории выполняем разные действия
           if (info.category.includes('transaction')) {
             await mailService.read(mail);
           }
-          console.log(mail)
+          console.log(mail);
         }
         // for update message
         if (!info.test && info.chat_id && info.telegram_message_id) {
