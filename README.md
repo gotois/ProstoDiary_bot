@@ -19,7 +19,7 @@ Virtual tracker: text diary, email, food, health, sleep, tasks, etc
 
 Install
 ---
-```bash
+```
 brew install git-lfs
 git lfs clone git@github.com:gotois/ProstoDiary_bot.git
 chmod +x scripts/index
@@ -59,16 +59,6 @@ npm run dev
 npm start
 ```
 
-### Запуск JSON-RPC сервера
-```bash
-npm run start:server
-```
-
-### CRON: проводим очистку и оптимизацию БД (натурализация)
-```bash
-npm run start:materialize
-```
-
 ### CRON: запуск считывателя письма
 ```bash
 npm run start:vzor
@@ -87,10 +77,17 @@ npm run lint -- --fix
 ```
 
 #### docs
+#### Install
 ```
+sudo gem install bundler jekyll
 cd docs
+bundle install
+```
+#### Run
+```
 bundle exec jekyll serve
 ```
+
 
 Run Telegram Bot
 ---

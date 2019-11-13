@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+require('dotenv').config();
+const fs = require('fs');
+const openapiJsonrpcJsdoc = require('openapi-jsonrpc-jsdoc');
+
+(async function main() {
+  const data = await openapiJsonrpcJsdoc({
+    api: '/api/',
+    servers: [
+      {
+        url: '0.0.0.0:9000',
+      },
+    ],
+    packageUrl: './package.json',
+    files: './src/api/v3/*.js',
+  });
+  data.paths['/'] = {
+    get: {
+      description: 'index page',
+    },
+    responses: {
+      '200': {
+        description: 'OK',
+      },
+    },
+  };
+  fs.writeFileSync('docs/openapi.json', JSON.stringify(data, null, 2));
+})();
