@@ -28,7 +28,9 @@ module.exports = async (request, response) => {
     }
     // https://yandex.ru/dev/passport/doc/dg/tasks/algorithm-docpage/
     case 'yandex': {
-      passportData = await yandexService.passportInfo(grant.response.access_token);
+      passportData = await yandexService.passportInfo(
+        grant.response.access_token,
+      );
       break;
     }
     default: {
@@ -40,12 +42,12 @@ module.exports = async (request, response) => {
       ...passportData,
       access_token: response.access_token,
     },
-    telegram: grant.dynamic.telegram,
+    telegram: grant.dynamic && grant.dynamic.telegram, // если делаем прямой переход по урлу, то никакого telegram не будет
   });
   if (error) {
     return response.status(400).send(error);
   }
-  if (grant.dynamic.telegram) {
+  if (grant.dynamic && grant.dynamic.telegram) {
     const checkCodeMessageValue = await bot.sendMessage(
       grant.dynamic.telegram.chat.id,
       result,

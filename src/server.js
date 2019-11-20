@@ -1,32 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const auth = require('http-auth');
-const session = require('express-session');
 const pkg = require('../package');
 const logger = require('./services/logger.service');
 const { IS_PRODUCTION, TELEGRAM, SERVER } = require('./environment');
 
 const app = express();
 
-// todo lобавить логгер запросов вида:
-// app.use(logger('dev'))
-
-app.use(
-  session({
-    secret: 'some-secret-msg',
-    saveUninitialized: true,
-    resave: false,
-  }),
-);
+app.use(require('./middlewares/session'));
 app.use(require('./middlewares/grant'));
+app.use(require('./middlewares/logger'));
 
 const jsonParser = bodyParser.json();
-// todo: сделать кастомный вход - https://www.npmjs.com/package/http-auth#custom-authentication
-const digest = auth.digest({
-  realm: 'demo', // demo:demo
-  file: __dirname + '/../.htdigest',
-});
-const digestParser = auth.connect(digest);
+const digestParser = require('./middlewares/auth');
 
 app.listen(SERVER.PORT, () => {
   logger.log(
@@ -36,10 +21,11 @@ app.listen(SERVER.PORT, () => {
     } started on port ${SERVER.PORT}`,
   );
 });
-
 app.get('/', digestParser, require('./middlewares/ping'));
 // подтверждение авторизации oauth. Сначала переходить сначала по ссылке вида https://cd0b2563.eu.ngrok.io/connect/yandex. Через localhost не будет работать
 app.get('/oauth', require('./middlewares/oauth'));
+// JSON-LD пользователя/организации
+app.get('/id/:uuid/:date', require('./middlewares/id'));
 // json rpc server
 app.post('/api*', jsonParser, digestParser, require('./middlewares/jsonrpc'));
 // sendgrid mail webhook server
@@ -52,7 +38,5 @@ app.post(
   jsonParser,
   require('./middlewares/telegram'),
 );
-
-require('./controllers/telegram');
 
 module.exports = app;
