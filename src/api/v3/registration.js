@@ -1,107 +1,99 @@
 const pkg = require('../../../package');
-const sgMail = require('../../services/sendgridmail.service');
+const { mail } = require('../../services/sendgridmail.service');
 const mailService = require('../../services/mail.service');
+const jsonldService = require('../../services/jsonld.service');
 const auth = require('../../services/auth.service');
-const { sql, pool } = require('../../core/database');
-const { get } = require('../../services/request.service');
-const validator = require('validator');
-
-// todo: перенести это в oauth + сделать e2e тест для тех ссылок, что генерирует сам бот
-const getJSONLD = async (www) => {
-  if (!validator.isURL(www)) {
-    throw new Error('wrong www');
-  }
-  const jsonld = {};
-  // todo: это уже избыточно, авторизация делается через oauth
-  const html = (await get(www)).toString('utf8');
-  if (validator.isJSON(html)) {
-    const ldObject = JSON.parse(html);
-    for (const key in ldObject) {
-      if (ldObject.hasOwnProperty(key)) {
-        jsonld[key] = ldObject[key];
-      }
-    }
-  } else {
-    // todo добавить возможность указывать сайты визитки, где данные будут прописаны внутри тега script
-  }
-  const id = jsonld['@id'];
-  const context = JSON.stringify(jsonld['@context']);
-  const type = jsonld['@type'];
-  const email = jsonld['email'];
-  const url = jsonld['url'];
-  const name = jsonld['name'];
-  const sameAs = jsonld['sameAs'] || [];
-  const telegram = jsonld['telegram'];
-
-  return {
-    id,
-    context,
-    type,
-    email,
-    url,
-    name,
-    sameAs,
-    telegram,
-  };
-};
+const { sql, pool, NotFoundError } = require('../../core/database');
 
 /**
- * @returns {SuccessObject}
- * @param requestObject
+ * @param {any} requestObject - request
+ * @returns {Promise<string|Error>}
  */
 module.exports = async (requestObject) => {
-  // https://avatars.mds.yandex.net/get-yapic/15298/enc-ffa5107cc5808ac078e7e2ecd952eb4e981f41522136a7bc59e323e22b797ac3/islands-middle
   const { yandex, telegram } = requestObject;
+  const compacted = await jsonldService.compact(
+    {
+      'http://xmlns.com/foaf/0.1/name': yandex.real_name,
+      'http://schema.org/gender': yandex.sex,
+      'http://xmlns.com/foaf/0.1/nick': yandex.login,
+      'http://xmlns.com/foaf/0.1/mbox': {
+        '@id': `mailto://${yandex.default_email}`,
+      },
+      'http://xmlns.com/foaf/0.1/img': {
+        '@id': `https://avatars.mds.yandex.net/get-yapic/${yandex.default_avatar_id}/islands-middle`,
+      },
+      'http://schema.org/birthDate': {
+        '@id': yandex.birthday,
+      },
+      // "http://xmlns.com/foaf/0.1/homepage": {"@id": "http://denis.baskovsky.ru/"},
+      // "http://xmlns.com/foaf/0.1/title": "TeamLead",
+    },
+    'https://json-ld.org/contexts/person.jsonld',
+  );
   const secret = await auth.generateSecret({
     name: pkg.name,
     symbols: true,
     length: 20,
   });
-  const passcode = secret.base32;
-
-  // todo: sameAs будет содержать ссылку на провайдера yandex или telegram
-
   const output = await pool.connect(async ({ transaction }) => {
-    const result = await transaction(async (transactionConnection) => {
-      const jsonld = await transactionConnection.one(sql`
-INSERT INTO jsonld (id, context, type, email, url, name, same_as)
-    VALUES (${id}, ${context}, ${type}, ${email}, ${url}, ${name}, ${sql.array(sameAs, sql`text[]`)})
+    const passport = await transaction(async (transactionConnection) => {
+      try {
+        const data = await transactionConnection.one(sql`SELECT
+    id
+FROM
+    passport
+WHERE
+    telegram = ${Number(telegram.from.id)}
+`);
+        return data;
+      } catch (error) {
+        if (!(error instanceof NotFoundError)) {
+          throw error;
+        }
+      }
+      // todo предусмотреть возможность регистраци вне телеграма (email, whatsapp, matrix)
+      const data = await transactionConnection.one(sql`INSERT INTO passport (telegram)
+    VALUES (${telegram.from.id})
 RETURNING
     id
 `);
-      const passport = await transactionConnection.one(sql`
-INSERT INTO passport (jsonld_id, recover_passwords, secret, telegram, email, password)
-    VALUES (${jsonld.id}, ${sql.array(secret.recoverPasswords, sql`text[]`)}, ${passcode}, ${telegram}, crypt(${masterEmail}, gen_salt('bf', 8)), crypt(${masterPassword}, gen_salt('bf', 8)))
-RETURNING
-    password
-`);
+      return data;
+    });
+    const result = await transaction(async (transactionConnection) => {
       // на будущее, бот сам следит за своей почтой, периодически обновляя пароли. Пользователя вообще не касается что данные сохраняются у него в почте
-      const yaMailResult = await mailService.createYaMail(
-        'https://me.baskovsky.ru',
+      const { email, login, password, uid } = await mailService.createYaMail(
+        passport.id,
       );
-      await sgMail.send({
-        to: email,
-        cc: yaMailResult.email,
-        from: pkg.author.email,
-        subject: 'Passport ProstoDiary',
-        html: `
-        <h1>Добро пожаловать в ${pkg.name}!</h1>
+      try {
+        await transactionConnection.query(sql`INSERT INTO bot (passport_id, email, password, secret_key, secret_password)
+    VALUES (${passport.id}, ${email}, ${password}, ${secret.base32}, crypt(${secret.secretPassword}, gen_salt('bf', 8)))
+`);
+        await transactionConnection.query(sql`INSERT INTO ld (passport_id, jsonld)
+    VALUES (${passport.id}, ${JSON.stringify(compacted)})
+`);
+        await mail.send({
+          to: yandex.default_email,
+          from: email,
+          subject: `Passport ${pkg.name}`,
+          html: `
+        <h1>Добро пожаловать в систему, ${login}!</h1>
         <h2>Шаг 1: настройте двухфакторную аутентификацию.</h2>
         <p>Используйте камеру для распознавания QR-кода в приложении для двухэтапной аутентификации, например, Google Authenticator.</p>
-        <img src="${secret.qrTwoAuthImage}" alt="${passcode}">
+        <img src="${secret.qr}" alt="${secret.base32}">
         <br>
         <h2>Шаг 2: подтвердите себя.</h2>
         <p>Пришлите <a href="https://prosto-diary.gotointeractive.com/">ProstoDiary_bot</a> сгенерированный токен от двухфакторной аутентификации.</p>
         <br>
-        <h2>Шаг 3: сохраните ключи рекавери.</h2>
-        <p>Сохраните рекавер ключи в надежном и секретном месте: ${JSON.stringify(
-    secret.recoverPasswords,
-  )}</p>
+        <h2>Шаг 3: сохраните секретный ключ рекавери.</h2>
+        <p>Сохраните ваш секретный ключ в надежном и секретном месте оффлайн: <strong>${secret.secretPassword}</strong></p>
       `,
-      });
-      // todo: записывать логин и пароль в .htdigest
-      //  ...
-      return `Вам отправлено письмо, ${email}. Следуйте указаниям.`;
+        });
+        return `Вам отправлено письмо от вашего бота - ${email}. Следуйте указаниям.`;
+      } catch (error) {
+        // в случае ошибки, удаление созданного почтового ящика
+        await mailService.deleteYaMail(uid);
+        throw error;
+      }
     });
     return result;
   });

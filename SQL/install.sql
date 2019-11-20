@@ -1,67 +1,50 @@
-CREATE TYPE TAG AS ENUM (
-  'undefined',
-  'script',
-  'buy',
-  'kpp',
-  'weather',
-  'sex',
-  'contract', -- информа­цию о состоянии текущих контрактов
-  'eat',
-  'finance',
-  'fitness',
-  'health',
-  'meet',
-  'pain',
-  'todo',
-  'weight',
-  'height', -- Смена роста
-  'family', -- Изменения в Семья
-  'work', -- смена вид деятельности
-  'job', -- Здесь же смена уровня дохода | новая цели в карьере
-  'birthday',-- Указание День рождения
-  'hobby',
-  'relationship', -- Изменения в отношениях
-  'social',-- Новое сообщество
-  'mood',-- настроение и твореческое выражение
-  'gender'-- гендер и любое его изменение
-  -- todo прочие изменения биометрики
+CREATE TABLE IF NOT EXISTS passport (
+-- специально используем gen_random_uuid, чтобы отслеживать по MAC адресу компьютер на котором было создание портрета пользователя
+id UUID NOT NULL DEFAULT gen_random_uuid(),
+telegram BIGINT,
+UNIQUE (telegram),
+PRIMARY KEY (id)
 );
 
-CREATE TYPE ABSTRACT_TYPE AS ENUM (
-  'untrusted', -- Запись требует обработки
-  'soft', -- Запись только кажется верной
-  'hard', -- Запись может быть правдивой
-  'core' -- Исключительно точный ввод
+CREATE TABLE IF NOT EXISTS bot (
+passport_id UUID REFERENCES passport (id) ON UPDATE CASCADE ON DELETE CASCADE,
+updated_at TIMESTAMP NOT NULL DEFAULT now(),
+created_at TIMESTAMP DEFAULT current_timestamp,
+-- активирован или деактиван бот
+activated BOOLEAN NOT NULL DEFAULT false,
+-- не захэшированная почта в домене gotointeractive.com
+email TEXT NOT NULL,
+-- не захэшированный мастер пароль, используется ботом для почты и для auth
+password TEXT NOT NULL,
+-- секретный ключ, необходимый для привязки двухфакторной аутентификации
+secret_key TEXT NOT NULL,
+-- захэшированный пароль, дающий пользователю право на большее, чем бот, а также использующийся вместо двухфакторной аутентификации
+secret_password TEXT NOT NULL,
+UNIQUE (email)
+);
+
+CREATE TABLE IF NOT EXISTS ld (
+passport_id UUID REFERENCES passport (id) ON UPDATE CASCADE ON DELETE CASCADE,
+created_at TIMESTAMP DEFAULT current_timestamp,
+-- JSONLD данные которые можно превратить в n-quads
+jsonld JSONB NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS message (
-  id BIGSERIAL,
-  -- todo добавить uid письма
-  url TEXT UNIQUE, -- ссылка на email attachment
-  telegram_message_id SERIAL CONSTRAINT must_be_different UNIQUE, -- сообщение телеграмма
-  UNIQUE(telegram_message_id),
-  PRIMARY KEY (id)
+id BIGSERIAL,
+uid TEXT, -- todo UID письма может повторяться, предусмотреть это
+url TEXT UNIQUE, -- ссылка на email attachment
+telegram_message_id BIGINT CONSTRAINT must_be_different UNIQUE, -- сообщение телеграмма
+UNIQUE(telegram_message_id),
+PRIMARY KEY (id)
 );
 -- todo нужна VIEW которая будет отдавать bytea сырых данных - raw таблицы
 
-CREATE TABLE IF NOT EXISTS jsonld (
-  id TEXT NOT NULL,
-  context TEXT NOT NULL,
-  email TEXT NOT NULL,
-  telegram SERIAL,
-  sameAs TEXT ARRAY,
-  UNIQUE(email, telegram, sameAs),
-  PRIMARY KEY (id)
-);
-CREATE UNIQUE INDEX ON jsonld (id);
-CREATE UNIQUE INDEX ON jsonld (email);
-CREATE UNIQUE INDEX ON jsonld (telegram);
--- todo нужна VIEW которая будет отдавать полный стандарт JSON-LD https://github.com/gotois/ProstoDiary_bot/issues/236
 
 CREATE TABLE IF NOT EXISTS abstract (
   id UUID DEFAULT uuid_generate_v4(), -- глобальная историческая ссылка. в идеале - blockchain ID
-  updated_at TIMESTAMP DEFAULT current_timestamp, -- время необходимое для того чтобы знать что оно было изменено
-  created_at TIMESTAMP NOT NULL, -- время записи публикации (может меняться если вычислено более правильное время)
+  updated_at TIMESTAMP NOT NULL DEFAULT now(), -- время необходимое для того чтобы знать что оно было изменено
+  created_at TIMESTAMP DEFAULT current_timestamp, -- время записи публикации (может меняться если вычислено более правильное время)
   type ABSTRACT_TYPE NOT NULL,
   tags TAG ARRAY NOT NULL,
   mime VARCHAR(20) NOT NULL CHECK (mime <> ''),
@@ -82,8 +65,8 @@ CREATE TABLE IF NOT EXISTS abstract (
   -- ],
 
   message_id BIGSERIAL REFERENCES message (id) ON UPDATE CASCADE ON DELETE CASCADE,
-  creator_id TEXT REFERENCES jsonld (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за создание записи
-  publisher_id TEXT REFERENCES jsonld (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за публикацию записи, либо сам ProstoDiary_bot, либо внешний сторонний сервис, включая других ботов
+  creator_id UUID REFERENCES passport (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за создание записи
+  publisher_id UUID REFERENCES passport (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за публикацию записи, либо сам ProstoDiary_bot, либо внешний сторонний сервис, включая других ботов
 
   PRIMARY KEY (id),
   UNIQUE(created_at)
