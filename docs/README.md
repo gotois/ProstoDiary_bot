@@ -88,12 +88,15 @@ bundle install
 bundle exec jekyll serve
 ```
 
-
 Run Telegram Bot
 ---
 ```
 /start
 ```
+
+OpenAPI
+---
+https://prosto-diary.gotointeractive.com/openapi.json
 
 ## License
 goto Interactive Software
