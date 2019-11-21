@@ -13,11 +13,11 @@ permalink: /faq/
 ### Хочу делать API запросы через cURL 
 Пример запроса без параметров:
 ```
-curl --digest -u "user:password" -X POST -H "Content-Type: application/json" -H "Accept: application/json" --data '{"jsonrpc":"2.0","method":"ping","id":1}' http://127.0.0.1:9000/api
+curl --basic -u "demo:demo" -X POST -H "Content-Type: application/json" -H "Accept: application/json" --data '{"jsonrpc":"2.0","method":"ping","id":1}' http://127.0.0.1:9000/api/ping
 ```
 Пример запроса с параметрами:
 ```
-curl --digest -u "demo:demo" -X POST -H "Content-Type: application/json" -H "Accept: application/json" --data '{"jsonrpc":"2.0","method":"help","params":{"id":1},"id":1}' http://127.0.0.1:9000/api
+curl --basic -u "email:password" -X POST -H "Content-Type: application/json" -H "Accept: application/json" --data '{"jsonrpc":"2.0","method":"help","params":{"id":1},"id":1}' http://127.0.0.1:9000/api
 ```
 
 ### Падает CI с неизвестной ошибкой

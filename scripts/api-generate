@@ -7,6 +7,12 @@ const { SERVER } = require('../src/environment');
 (async function main() {
   const data = await openapiJsonrpcJsdoc({
     api: '/api/',
+    securitySchemes: {
+      BasicAuth: {
+        type: 'http',
+        scheme: 'basic',
+      },
+    },
     servers: [
       {
         url: `${SERVER.HOST}:${SERVER.PORT}`,

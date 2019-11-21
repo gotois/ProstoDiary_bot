@@ -731,24 +731,80 @@
                     "title": "Parameters",
                     "type": "object",
                     "required": [
-                      "telegram",
                       "token",
+                      "telegram",
                       "email"
                     ],
                     "properties": {
+                      "token": {
+                        "type": "string",
+                        "description": "two auth generated token"
+                      },
                       "telegram": {
                         "type": "string",
                         "description": "telegram id"
-                      },
-                      "token": {
-                        "type": "string",
-                        "description": "two auth token"
                       },
                       "email": {
                         "type": "string",
                         "description": "email login"
                       }
                     }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sign-out": {
+      "post": {
+        "operationId": "sign-out.js",
+        "deprecated": false,
+        "summary": "/sign-out",
+        "description": "блокировки чтения/приема и общей работы бота",
+        "tags": [
+          "JSONRPC"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "id",
+                  "jsonrpc",
+                  "params"
+                ],
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "default": "sign-out",
+                    "description": "API method sign-out"
+                  },
+                  "id": {
+                    "type": "integer",
+                    "default": 1,
+                    "format": "int32",
+                    "description": "Request ID"
+                  },
+                  "jsonrpc": {
+                    "type": "string",
+                    "default": "2.0",
+                    "description": "JSON-RPC Version (2.0)"
+                  },
+                  "params": {
+                    "title": "Parameters",
+                    "type": "object",
+                    "required": [],
+                    "properties": {}
                   }
                 }
               }
@@ -772,7 +828,7 @@
     "securitySchemes": {
       "BasicAuth": {
         "type": "http",
-        "scheme": "digest"
+        "scheme": "basic"
       }
     }
   },

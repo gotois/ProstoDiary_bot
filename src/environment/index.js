@@ -3,6 +3,7 @@ const { version } = require('../../package');
 
 const {
   NODE_ENV,
+  HOST,
 
   NGROK,
   PGHOST,
@@ -20,7 +21,6 @@ const {
   TELEGRAM_TOKEN,
 
   PORT,
-  SERVER_NAME,
 
   DIALOGFLOW_CREDENTIALS,
   DIALOGFLOW_PROJECT_ID,
@@ -113,19 +113,24 @@ const ENV = {
     get PORT() {
       if (PORT && validator.isPort(PORT)) {
         return PORT;
+      } else if (!ENV.IS_PRODUCTION) {
+        return 9000;
       }
       throw new Error('Unknown Port');
+    },
+    get HEROKUAPP() {
+      return 'https://prosto-diary.herokuapp.com';
     },
     get HOST() {
       if (!TELEGRAM_TOKEN) {
         throw new Error('TELEGRAM_TOKEN not found');
       }
       if (ENV.IS_PRODUCTION) {
-        return `https://${SERVER_NAME}.herokuapp.com`;
+        return ENV.HEROKUAPP;
       } else if (process.env.NGROK_URL) {
         return process.env.NGROK_URL;
-      } else if (process.env.HOST) {
-        return process.env.HOST;
+      } else if (HOST) {
+        return HOST;
       }
       return 'localhost';
     },
@@ -238,14 +243,17 @@ const ENV = {
    * @returns {boolean}
    */
   get IS_PRODUCTION() {
-    return String(NODE_ENV) === 'production';
+    return String(NODE_ENV).toLowerCase() === 'production';
   },
   /**
    * @returns {boolean}
    */
   get IS_CI() {
-    return String(NODE_ENV) === 'TRAVIS_CI';
+    return String(NODE_ENV).toLowerCase() === 'travis_ci';
   },
+  /**
+   * @returns {boolean}
+   */
   get IS_FAST_TEST() {
     return Boolean(process.env.FAST_TEST);
   },
@@ -253,7 +261,7 @@ const ENV = {
    * @returns {boolean}
    */
   get IS_AVA() {
-    return String(NODE_ENV) === 'test';
+    return String(NODE_ENV).toLowerCase() === 'test';
   },
   /**
    * @returns {boolean}
@@ -265,7 +273,7 @@ const ENV = {
    * @returns {boolean}
    */
   get IS_CRON() {
-    return String(NODE_ENV) === 'cron';
+    return String(NODE_ENV).toLowerCase() === 'cron';
   },
 };
 

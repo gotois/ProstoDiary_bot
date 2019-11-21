@@ -61,7 +61,7 @@ RETURNING
     });
     const result = await transaction(async (transactionConnection) => {
       // на будущее, бот сам следит за своей почтой, периодически обновляя пароли. Пользователя вообще не касается что данные сохраняются у него в почте
-      const { email, login, password, uid } = await mailService.createYaMail(
+      const { email, password, uid } = await mailService.createYaMail(
         passport.id,
       );
       try {
@@ -76,19 +76,21 @@ RETURNING
           from: email,
           subject: `Passport ${pkg.name}`,
           html: `
-        <h1>Добро пожаловать в систему, ${login}!</h1>
-        <h2>Шаг 1: настройте двухфакторную аутентификацию.</h2>
+        <h1>Добро пожаловать в систему ${pkg.author.name}!</h1>
+        <h2>Шаг 1: Настройте двухфакторную аутентификацию.</h2>
         <p>Используйте камеру для распознавания QR-кода в приложении для двухэтапной аутентификации, например, Google Authenticator.</p>
         <img src="${secret.qr}" alt="${secret.base32}">
         <br>
-        <h2>Шаг 2: подтвердите себя.</h2>
-        <p>Пришлите <a href="https://prosto-diary.gotointeractive.com/">ProstoDiary_bot</a> сгенерированный токен от двухфакторной аутентификации.</p>
+        <h2>Шаг 2: Сохраните секретный ключ рекавери.</h2>
+        <p>Сохраните ваш секретный ключ в надежном и секретном месте оффлайн: 
+          <strong>${secret.secretPassword}</strong>
+        </p>
         <br>
-        <h2>Шаг 3: сохраните секретный ключ рекавери.</h2>
-        <p>Сохраните ваш секретный ключ в надежном и секретном месте оффлайн: <strong>${secret.secretPassword}</strong></p>
+        <h2>Шаг 3: Активируйте бота.</h2>
+        <p>Пришлите <a href="https://prosto-diary.gotointeractive.com/">ProstoDiary_bot</a> сгенерированный токен от двухфакторной аутентификации.</p>
       `,
         });
-        return `Вам отправлено письмо от вашего бота - ${email}. Следуйте указаниям.`;
+        return `Вам отправлено письмо от вашего бота - ${email}. Пришлите сгенерированный токен от двухфакторной аутентификации.`;
       } catch (error) {
         // в случае ошибки, удаление созданного почтового ящика
         await mailService.deleteYaMail(uid);

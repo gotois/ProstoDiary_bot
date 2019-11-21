@@ -4,14 +4,12 @@ const nodemon = require('nodemon');
 const ngrok = require('ngrok');
 const { spawn } = require('child_process');
 const logger = require('../src/services/logger.service');
-const sendgridService = require('../src/services/sendgridmail.service');
 const { IS_PRODUCTION, SERVER, NGROK } = require('../src/environment');
 const clipboardHelper = require('../src/helpers/clipboard');
 
 (async function main() {
   if (IS_PRODUCTION) {
     spawn('node', ['src/server']);
-    // new VzorService();
   } else {
     await ngrok.authtoken(NGROK.TOKEN);
     const url = await ngrok.connect({
@@ -25,15 +23,19 @@ const clipboardHelper = require('../src/helpers/clipboard');
         logger.info(data);
       },
     });
-    nodemon(`-x 'NGROK_URL=${url} node' src/server`).on('start', () => {
-      logger.log('info', 'Nodemon has started');
-    }).on('quit', () => {
-      logger.log('info', 'App has quit');
-      process.exit(0);
-    }).on('restart', (files) => {
-      logger.log('info', 'App restarted due to: ' + files);
-    });
+    nodemon(`-x 'NGROK_URL=${url} node' src/server`)
+      .on('start', () => {
+        logger.log('info', 'Nodemon has started');
+      })
+      .on('quit', () => {
+        logger.log('info', 'App has quit');
+        process.exit(0);
+      })
+      .on('restart', (files) => {
+        logger.log('info', 'App restarted due to: ' + files);
+      });
     // fixme uncomment
+    // const { updateWebhook } = require('../src/services/sendgridmail.service');
     // await sendgridService.updateWebhook(url)
 
     // copy ngrok url to buffer
