@@ -14,11 +14,14 @@
   "info": {
     "version": "0.0.0-development",
     "title": "prosto-diary",
-    "description": "ProstoDiary: Global virtual assistant"
+    "description": "ProstoDiary: your personal all-in-one virtual assistant"
   },
   "servers": [
     {
-      "url": "0.0.0.0:9000"
+      "url": "localhost:9000"
+    },
+    {
+      "url": "https://prosto-diary.herokuapp.com"
     }
   ],
   "paths": {
@@ -686,7 +689,7 @@
         "operationId": "sign-in.js",
         "deprecated": false,
         "summary": "/sign-in",
-        "description": "разблокировка чтения/приема и общей работы бота",
+        "description": "Авторизация и разблокировка чтения/приема и общей работы бота",
         "tags": [
           "JSONRPC"
         ],
