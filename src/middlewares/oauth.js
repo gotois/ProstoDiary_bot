@@ -1,7 +1,11 @@
 const bot = require('../core/bot');
-const yandexService = require('../services/yandex.service');
 const { client } = require('../core/jsonrpc');
-
+const oauthService = require('../services/oauth.service');
+/**
+ * @param {string} token - token
+ * @param {TelegramMessage} message - telegram message
+ * @returns {Promise<void>}
+ */
 const telegramSignInCallback = async (token, message) => {
   await client.request('sign-in', {
     token,
@@ -23,14 +27,17 @@ module.exports = async (request, response) => {
   const { grant } = request.session;
   let passportData;
   switch (grant.provider) {
+    // https://developers.facebook.com/docs/graph-api/using-graph-api/?locale=ru_RU
     case 'facebook': {
-      throw new Error('TODO facebook');
+      if (grant.response.error) {
+        return response.status(400).send(grant.response.error.error_message);
+      }
+      passportData = await oauthService.facebookPassportInfo(grant.response);
+      break;
     }
     // https://yandex.ru/dev/passport/doc/dg/tasks/algorithm-docpage/
     case 'yandex': {
-      passportData = await yandexService.passportInfo(
-        grant.response.access_token,
-      );
+      passportData = await oauthService.yandexPassportInfo(grant.response);
       break;
     }
     default: {

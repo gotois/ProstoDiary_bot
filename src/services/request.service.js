@@ -8,8 +8,8 @@ const formatMessage = (body) => {
 };
 /**
  * @param {string} url - url
+ * @param {object} qs - query string
  * @param {object|undefined} headers - headers
- * @param qs
  * @param {any} encoding - encoding
  * @returns {Promise<string|Buffer|Error>}
  */
@@ -27,7 +27,7 @@ const get = (url, qs = {}, headers = {}, encoding = null) => {
             statusCode: response.statusCode,
           });
         }
-        if (response.headers['content-type'] === 'application/json') {
+        if (response.headers['content-type'].includes('application/json')) {
           resolve(JSON.parse(body));
         }
         return resolve(body);

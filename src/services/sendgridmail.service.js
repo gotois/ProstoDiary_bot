@@ -23,7 +23,5 @@ const updateWebhook = async (url) => {
   );
 };
 
-module.exports = {
-  send: sgMail.send,
-  updateWebhook,
-};
+module.exports.updateWebhook = updateWebhook;
+module.exports.mail = sgMail;

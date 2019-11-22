@@ -12,6 +12,17 @@ const grantConfig = {
   facebook: {
     key: FACEBOOK.FACEBOOK_APP_ID,
     secret: FACEBOOK.FACEBOOK_APP_SECRET,
+    redirect_uri: process.env.NGROK_URL + '/connect/facebook/callback',
+    grant_type: 'client_credentials',
+    scope: [
+      'email',
+      'user_age_range',
+      'user_birthday',
+      'user_gender',
+      'user_hometown',
+      'user_location',
+      'user_friends',
+    ],
   },
   yandex: {
     key: YANDEX.YA_OAUTH_ID,

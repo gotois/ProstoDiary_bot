@@ -4,32 +4,56 @@ const mailService = require('../../services/mail.service');
 const jsonldService = require('../../services/jsonld.service');
 const auth = require('../../services/auth.service');
 const { sql, pool, NotFoundError } = require('../../core/database');
-
-/**
- * @param {any} requestObject - request
- * @returns {Promise<string|Error>}
- */
-module.exports = async (requestObject) => {
-  const { yandex, telegram } = requestObject;
+const yandexLD = async (parameters) => {
   const compacted = await jsonldService.compact(
     {
-      'http://xmlns.com/foaf/0.1/name': yandex.real_name,
-      'http://schema.org/gender': yandex.sex,
-      'http://xmlns.com/foaf/0.1/nick': yandex.login,
+      'http://xmlns.com/foaf/0.1/name': parameters.real_name,
+      'http://schema.org/gender': parameters.sex,
+      'http://xmlns.com/foaf/0.1/nick': parameters.login,
       'http://xmlns.com/foaf/0.1/mbox': {
-        '@id': `mailto://${yandex.default_email}`,
+        '@id': `mailto://${parameters.default_email}`,
       },
       'http://xmlns.com/foaf/0.1/img': {
-        '@id': `https://avatars.mds.yandex.net/get-yapic/${yandex.default_avatar_id}/islands-middle`,
+        '@id': `https://avatars.mds.yandex.net/get-yapic/${parameters.default_avatar_id}/islands-middle`,
       },
       'http://schema.org/birthDate': {
-        '@id': yandex.birthday,
+        '@id': parameters.birthday,
+      },
+    },
+    'https://json-ld.org/contexts/person.jsonld',
+  );
+  return compacted;
+};
+const facebookLD = async (parameters) => {
+  const compacted = await jsonldService.compact(
+    {
+      'http://xmlns.com/foaf/0.1/name': parameters.name,
+      // 'http://schema.org/gender': params.gender, // может не быть
+      'http://xmlns.com/foaf/0.1/mbox': {
+        '@id': `mailto://${parameters.email}`,
       },
       // "http://xmlns.com/foaf/0.1/homepage": {"@id": "http://denis.baskovsky.ru/"},
       // "http://xmlns.com/foaf/0.1/title": "TeamLead",
     },
     'https://json-ld.org/contexts/person.jsonld',
   );
+  return compacted;
+};
+/**
+ * @param {any} requestObject - request
+ * @returns {Promise<string|Error>}
+ */
+module.exports = async (requestObject) => {
+  const { yandex, facebook, telegram } = requestObject;
+  let compacted;
+  if (yandex) {
+    compacted = await yandexLD(yandex);
+  } else if (facebook) {
+    compacted = await facebookLD(facebook);
+  } else {
+    throw new Error('Unknown registration Oauth2');
+  }
+
   const secret = await auth.generateSecret({
     name: pkg.name,
     symbols: true,
@@ -72,7 +96,7 @@ RETURNING
     VALUES (${passport.id}, ${JSON.stringify(compacted)})
 `);
         await mail.send({
-          to: yandex.default_email,
+          to: yandex.default_email, // fixme: поддержать из compacted (включая данные facebook)
           from: email,
           subject: `Passport ${pkg.name}`,
           html: `

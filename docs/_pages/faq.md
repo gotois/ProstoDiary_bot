@@ -31,6 +31,11 @@ curl --basic -u "email:password" -X POST -H "Content-Type: application/json" -H 
 ### Oauth падает с непонятной ошибкой
 Сначала выполни npm run dev, затем зайди в админку провайдера Oauth и поменяй callback урл на ngrok вида https://xxx.ngrok.io/connect/yandex/callback
 
+### Oath Facebook паадет с ошибкой
+> URL заблокирован: Не удалось выполнить переадресацию, поскольку конечный URI не внесен в «белый» список в разделе приложения «Клиентские настройки OAuth
+- Зайти в консоль Facebook в раздел https://developers.facebook.com/apps/:YOURAPP/fb-login/settings/
+- Поставить в поле Действительные URI перенаправления для OAuth значение `https://e692b549.eu.ngrok.io/connect/facebook/callback`
+
 ### Telegram commands
 ```
 /help
