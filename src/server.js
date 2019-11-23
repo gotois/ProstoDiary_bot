@@ -1,8 +1,10 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const pkg = require('../package');
+const jsonParser = require('body-parser').json();
+const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
+const package_ = require('../package');
 const logger = require('./services/logger.service');
 const { IS_PRODUCTION, TELEGRAM, SERVER } = require('./environment');
+const authParser = require('./middlewares/auth');
 
 const app = express();
 
@@ -10,14 +12,24 @@ app.use(require('./middlewares/session'));
 app.use(require('./middlewares/grant'));
 app.use(require('./middlewares/logger'));
 
-const jsonParser = bodyParser.json();
-const authParser = require('./middlewares/auth');
+// OpenApiValidator onto your express app
+new OpenApiValidator({
+  apiSpec: './docs/openapi.json',
+  validateRequests: true,
+  validateResponses: true,
+  unknownFormats: ['uuid'],
+  securityHandlers: {
+    BasicAuth: (_request, _scopes, _schema) => {
+      return Promise.resolve(true);
+    },
+  },
+}).install(app);
 
 app.listen(SERVER.PORT, () => {
   logger.log(
     'info',
     `${IS_PRODUCTION ? 'Production' : 'Dev'} server ${
-      pkg.version
+      package_.version
     } started on port ${SERVER.PORT}`,
   );
 });
@@ -38,5 +50,7 @@ app.post(
   jsonParser,
   require('./middlewares/telegram'),
 );
+// обработчик ошибок express
+app.use(require('./middlewares/error-handler'));
 
 module.exports = app;

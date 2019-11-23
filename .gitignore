@@ -10,3 +10,4 @@
 .jekyll-metadata
 coverage.lcov
 logs/
+*.rej

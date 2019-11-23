@@ -26,11 +26,17 @@ const { SERVER } = require('../src/environment');
   });
   data.paths['/'] = {
     get: {
-      description: 'index page',
-    },
-    responses: {
-      '200': {
-        description: 'OK',
+      responses: {
+        '200': {
+          description: 'OK',
+          content: {
+            'text/plain': {
+              schema: {
+                type: 'string',
+              },
+            },
+          },
+        },
       },
     },
   };

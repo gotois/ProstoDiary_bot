@@ -64,7 +64,6 @@ const {
 
   FACEBOOK_APP_ID,
   FACEBOOK_APP_SECRET,
-  FACEBOOK_CALLBACK_URL,
 } = process.env;
 
 const ENV = {
@@ -91,7 +90,6 @@ const ENV = {
   FACEBOOK: {
     FACEBOOK_APP_ID,
     FACEBOOK_APP_SECRET,
-    FACEBOOK_CALLBACK_URL,
   },
   YANDEX: {
     YA_PDD_TOKEN,

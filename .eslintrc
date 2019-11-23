@@ -192,9 +192,9 @@
     "sql/format": [
       2,
       {
-        "ignoreExpressions": false,
-        "ignoreInline": true,
-        "ignoreTagless": true
+        "ignoreExpressions": true,
+        "ignoreInline": false,
+        "ignoreTagless": false
       }
     ],
     "sql/no-unsafe-query": [
