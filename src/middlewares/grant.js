@@ -12,7 +12,7 @@ const grantConfig = {
   facebook: {
     key: FACEBOOK.FACEBOOK_APP_ID,
     secret: FACEBOOK.FACEBOOK_APP_SECRET,
-    redirect_uri: process.env.NGROK_URL + '/connect/facebook/callback',
+    redirect_uri: `${SERVER.HOST}/connect/facebook/callback`,
     grant_type: 'client_credentials',
     scope: [
       'email',
@@ -27,7 +27,7 @@ const grantConfig = {
   yandex: {
     key: YANDEX.YA_OAUTH_ID,
     secret: YANDEX.YA_OAUTH_PASSWORD,
-    redirect_uri: process.env.NGROK_URL + '/connect/yandex/callback',
+    redirect_uri: `${SERVER.HOST}/connect/yandex/callback`,
     nonce: true,
   },
 };

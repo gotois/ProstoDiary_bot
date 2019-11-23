@@ -5,23 +5,24 @@ const { SERVER, IS_PRODUCTION } = require('../../environment');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Start extends TelegramBotRequest {
-  constructor(message, session) {
-    super(message, session);
+  constructor(message) {
+    super(message);
     this.dialog = this.messageIterator();
     this.messageListener = this.messageListener.bind(this);
-    bot.on('callback_query', this.messageListener);
   }
   async beginDialog() {
-    if (this.creator) {
+    if (this.message.gotois) {
       // для ускорения разработки вынес под флаг
       if (IS_PRODUCTION) {
-        await bot.sendMessage(
-          this.message.chat.id,
-          'Повторная установка не требуется',
-        );
+        const message =
+          'Повторная установка не требуется\n\n' +
+          '/sign-in - включить бота \n' +
+          '/sign-out - выключить бота \n';
+        await bot.sendMessage(this.message.chat.id, message);
         return;
       }
     }
+    bot.on('callback_query', this.messageListener);
     await super.beginDialog();
     await this.dialog.next();
   }
@@ -86,11 +87,13 @@ class Start extends TelegramBotRequest {
           force_reply: true,
           inline_keyboard: [
             [
-              // todo: добавить facebook
-              //  ...
               {
                 text: 'Yandex',
                 url: `${SERVER.HOST}/connect/yandex?${callbackValues}`,
+              },
+              {
+                text: 'Facebook',
+                url: `${SERVER.HOST}/connect/facebook?${callbackValues}`,
               },
             ],
           ],
@@ -101,10 +104,9 @@ class Start extends TelegramBotRequest {
 }
 /**
  * @param {TelegramMessage} message - message
- * @param session
- * @returns {undefined}
+ * @returns {Promise<undefined>}
  */
-module.exports = async (message, session) => {
-  const start = new Start(message, session);
+module.exports = async (message) => {
+  const start = new Start(message);
   await start.beginDialog();
 };

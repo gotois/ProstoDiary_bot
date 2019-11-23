@@ -18,7 +18,11 @@ WHERE
   }
   jsonrpc.server.call(
     request.body,
-    { user: bot.passport_id },
+    {
+      gotois: {
+        id: bot.passport_id,
+      },
+    },
     (error, result) => {
       if (error) {
         return response.status(500).json(error);

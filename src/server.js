@@ -13,17 +13,19 @@ app.use(require('./middlewares/grant'));
 app.use(require('./middlewares/logger'));
 
 // OpenApiValidator onto your express app
-new OpenApiValidator({
-  apiSpec: './docs/openapi.json',
-  validateRequests: true,
-  validateResponses: true,
-  unknownFormats: ['uuid'],
-  securityHandlers: {
-    BasicAuth: (_request, _scopes, _schema) => {
-      return Promise.resolve(true);
+if (IS_PRODUCTION) {
+  new OpenApiValidator({
+    apiSpec: './docs/openapi.json',
+    validateRequests: true,
+    validateResponses: true,
+    unknownFormats: ['uuid'],
+    securityHandlers: {
+      BasicAuth: (_request, _scopes, _schema) => {
+        return Promise.resolve(true);
+      },
     },
-  },
-}).install(app);
+  }).install(app);
+}
 
 app.listen(SERVER.PORT, () => {
   logger.log(

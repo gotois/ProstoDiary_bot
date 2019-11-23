@@ -1,11 +1,13 @@
 const validator = require('validator');
 const { version } = require('../../package');
+const herokuAPP = require('../../app');
 
 const {
   NODE_ENV,
   HOST,
 
   NGROK,
+  NGROK_URL,
   PGHOST,
   PGDATABASE,
   PGUSER,
@@ -69,6 +71,7 @@ const {
 const ENV = {
   NGROK: {
     TOKEN: NGROK,
+    URL: NGROK_URL,
   },
   MAIL: {
     USER: MAIL_USER,
@@ -117,7 +120,7 @@ const ENV = {
       throw new Error('Unknown Port');
     },
     get HEROKUAPP() {
-      return 'https://prosto-diary.herokuapp.com';
+      return `https://${herokuAPP.name}.herokuapp.com`;
     },
     get HOST() {
       if (!TELEGRAM_TOKEN) {
@@ -125,8 +128,8 @@ const ENV = {
       }
       if (ENV.IS_PRODUCTION) {
         return ENV.HEROKUAPP;
-      } else if (process.env.NGROK_URL) {
-        return process.env.NGROK_URL;
+      } else if (ENV.NGROK.URL) {
+        return ENV.NGROK.URL;
       } else if (HOST) {
         return HOST;
       }
