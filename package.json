@@ -89,7 +89,7 @@
     "body-parser": "1.19.0",
     "coralogix-logger-winston": "1.0.11",
     "crypto-random-string": "3.0.1",
-    "date-fns": "2.7.0",
+    "date-fns": "2.8.1",
     "delay": "4.3.0",
     "dialogflow": "0.14.0",
     "dotenv": "8.2.0",
