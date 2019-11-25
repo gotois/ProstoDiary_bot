@@ -26,14 +26,12 @@ const clipboardHelper = require('../src/helpers/clipboard');
         },
       });
       nodemonInstance = nodemon(`-x 'NGROK_URL=${url} node' src/server`);
-      // fixme uncomment
-      // const { updateWebhook } = require('../src/services/sendgridmail.service');
-      // await sendgridService.updateWebhook(url)
+      const { updateWebhook } = require('../src/services/sendgridmail.service');
+      await updateWebhook(url);
       clipboardHelper.copy(url);
-      // copy ngrok url to buffer
     } catch (error) {
       logger.error(error.msg);
-      logger.warn(`"Run without NGROK. Telegram webhook doesn't work!"`);
+      logger.warn('"Run without NGROK. Telegram webhook doesn\'t work!"');
       nodemonInstance = nodemon({ script: 'src/server' });
     }
     nodemonInstance

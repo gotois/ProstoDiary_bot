@@ -43,7 +43,7 @@ app.get('/id/:uuid/:date', authParser, require('./middlewares/id'));
 // json rpc server
 app.post('/api*', jsonParser, authParser, require('./middlewares/jsonrpc'));
 // sendgrid mail webhook server
-app.post('/mail', jsonParser, require('./middlewares/sendgrid'));
+app.post('/mail', jsonParser, require('./middlewares/mail'));
 // вебхуки нотификаций от ассистентов
 app.post('/assistants', jsonParser, require('./middlewares/assistants'));
 // telegram
@@ -52,6 +52,8 @@ app.post(
   jsonParser,
   require('./middlewares/telegram'),
 );
+// 404 - not found
+app.get('*', require('./middlewares/not-found-handler'));
 // обработчик ошибок express
 app.use(require('./middlewares/error-handler'));
 

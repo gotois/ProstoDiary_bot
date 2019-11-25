@@ -74,6 +74,11 @@ const telegram = {
   },
 };
 
+const botCommands = Object.keys(telegram).filter((key) => {
+  return telegram[key].alias instanceof RegExp;
+});
+
 module.exports = {
   telegram,
+  botCommands,
 };

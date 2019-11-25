@@ -14,8 +14,6 @@ module.exports = async (requestObject) => {
     throw new Error('Unknown token argument');
   }
 
-
-
   // 1 - связка (telegram|email) + password
   // 2 - связка (telegram|email) + token
   // todo в зависимости от связки возващается стандартный passport или расширенный
@@ -36,7 +34,10 @@ FROM
 WHERE
     passport_id = ${passportTable.id}
 `);
-      const valid = await twoFactorAuthService.verify(botTable.secret_key, token);
+      const valid = await twoFactorAuthService.verify(
+        botTable.secret_key,
+        token,
+      );
       if (!valid) {
         // todo делать фолбэк транзакций на инсталляцию делать большой таймаут
         //  ...

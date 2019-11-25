@@ -1,6 +1,6 @@
 const TelegramBot = require('node-telegram-bot-api');
 const logger = require('../services/logger.service');
-const { telegram } = require('../controllers');
+const { telegram, botCommands } = require('../controllers');
 const {
   IS_PRODUCTION,
   IS_AVA_OR_CI,
@@ -36,60 +36,69 @@ if (IS_AVA_OR_CI) {
 }
 /**
  * @param {TelegramMessage} message - message
+ * @returns {?throws}
+ */
+const checkMessage = (message) => {
+  // Пропускаем команды бота
+  if (Array.isArray(message.entities)) {
+    if (message.entities[0].type === 'bot_command') {
+      // Пропускаем зарезервированные команды
+      const commandReserved = botCommands.some((command) => {
+        return message.text.search(telegram[command].alias) >= 0;
+      });
+      if (!commandReserved) {
+        throw new Error('Unknown command. Enter /help');
+      }
+    }
+  }
+};
+/**
+ * @param {TelegramMessage} message - message
  * @param {object} obj - matcher
  * @param {string} obj.type - matcher type
  */
 const messageListener = (message, { type }) => {
-  if (message.reply_to_message instanceof Object) {
-    if (!message.reply_to_message.from.is_bot) {
-      throw new Error('Reply message not supported');
+  try {
+    if (message.reply_to_message instanceof Object) {
+      if (!message.reply_to_message.from.is_bot) {
+        throw new Error('Reply message not supported');
+      }
     }
-  }
-  switch (type) {
-    case 'text': {
-      const myCommands = Object.keys(telegram).filter((key) => {
-        return telegram[key].alias instanceof RegExp;
-      });
-      // Пропускаем команды бота
-      if (Array.isArray(message.entities)) {
-        if (message.entities[0].type === 'bot_command') {
-          // Пропускаем зарезервированные команды
-          const commandReserved = myCommands.some((command) => {
-            return message.text.search(telegram[command].alias) >= 0;
-          });
-          if (!commandReserved) {
-            throw new Error('Unknown command. Enter /help');
+    switch (type) {
+      case 'text': {
+        checkMessage(message);
+        for (const key of botCommands) {
+          if (telegram[key].alias.test(message.text)) {
+            require('../controllers/telegram/' + telegram[key].event)(message);
+            return;
           }
         }
+        require('../controllers/telegram/text.event')(message);
+        break;
       }
-      for (const key of myCommands) {
-        if (telegram[key].alias.test(message.text)) {
-          require('../controllers/telegram/' + telegram[key].event)(message);
-          return;
-        }
+      case 'photo': {
+        require('../controllers/telegram/photo.event')(message);
+        break;
       }
-      require('../controllers/telegram/text.event')(message);
-      break;
+      case 'document': {
+        require('../controllers/telegram/document.event')(message);
+        break;
+      }
+      case 'location': {
+        require('../controllers/telegram/location.event')(message);
+        break;
+      }
+      case 'voice': {
+        require('../controllers/telegram/voice.event')(message);
+        break;
+      }
+      default: {
+        throw new Error(`Unknown ${type}. Enter /help`);
+      }
     }
-    case 'photo': {
-      require('../controllers/telegram/photo.event')(message);
-      break;
-    }
-    case 'document': {
-      require('../controllers/telegram/document.event')(message);
-      break;
-    }
-    case 'location': {
-      require('../controllers/telegram/location.event')(message);
-      break;
-    }
-    case 'voice': {
-      require('../controllers/telegram/voice.event')(message);
-      break;
-    }
-    default: {
-      throw new Error(`Unknown ${type}. Enter /help`);
-    }
+  } catch (error) {
+    logger.error(error.stack);
+    telegramBot.sendMessage(message.chat.id, error.message);
   }
 };
 telegramBot.on('message', messageListener);
