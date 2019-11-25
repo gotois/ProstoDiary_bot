@@ -4,9 +4,6 @@ const { getTelegramFile } = require('../../services/file.service');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Document extends TelegramBotRequest {
-  constructor(message, session) {
-    super(message, session);
-  }
   async beginDialog() {
     await super.beginDialog();
     const fileBuffer = await getTelegramFile(this.message.document.file_id);
@@ -24,9 +21,10 @@ class Document extends TelegramBotRequest {
 /**
  * @description пример считывания zip архива; его распаковка; нахождение export.xml и его превращение в json
  * @param {TelegramMessage} message - msg
+ * @param session
  * @returns {Promise<undefined>}
  */
-module.exports = async (message, session) => {
-  const document = new Document(message, session);
+module.exports = async (message) => {
+  const document = new Document(message);
   await document.beginDialog();
 };

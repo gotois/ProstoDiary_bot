@@ -1,5 +1,5 @@
 const bot = require('../../core/bot');
-const commands = require('../core/commands');
+const { telegram } = require('../../controllers');
 const logger = require('../../services/logger.service');
 const dialogflowService = require('../../services/dialogflow.service');
 const TelegramBotRequest = require('./telegram-bot-request');
@@ -14,13 +14,12 @@ class Search extends TelegramBotRequest {
       NEXT_PAGE: '__next_page',
     };
   }
-
-  constructor(message, session) {
+  constructor(message) {
     message.text = message.text
-      .replace(commands.SEARCH.alias, '')
+      .replace(telegram.SEARCH.alias, '')
       .trim()
       .toLowerCase();
-    super(message, session);
+    super(message);
 
     this.messageListener = this.messageListener.bind(this);
     bot.on('callback_query', this.messageListener);

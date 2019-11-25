@@ -1,5 +1,7 @@
 const { get } = require('../services/request.service');
 /**
+ * https://yandex.ru/dev/passport/doc/dg/tasks/algorithm-docpage/
+ *
  * @param {object} response - grant response
  * @param {string} response.access_token - yandex access token
  * @param {object} response.raw - yandex raw response
@@ -20,6 +22,8 @@ const yandexPassportInfo = async ({ access_token }) => {
   return response;
 };
 /**
+ * https://developers.facebook.com/docs/graph-api/using-graph-api/?locale=ru_RU
+ *
  * @param {object} response - grant response
  * @param {string} response.name - name
  * @param {object} response.id - facebook id

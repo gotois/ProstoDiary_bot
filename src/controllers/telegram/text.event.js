@@ -6,12 +6,6 @@ const TelegramBotRequest = require('./telegram-bot-request');
  * @typedef {number} COMMANDS_ENUM
  **/
 class Text extends TelegramBotRequest {
-  /**
-   * @param {TelegramMessage} message - message
-   */
-  constructor(message, session) {
-    super(message, session);
-  }
   onError(error) {
     throw error;
   }
@@ -33,7 +27,7 @@ class Text extends TelegramBotRequest {
         mime: 'plain/text',
         telegram_message_id: message_id,
         chat_id: this.message.chat.id,
-        creator: this.creator.email,
+        creator: this.message.gotois.email,
         publisher: pkg.author.email,
       });
       await bot.editMessageText(result, {
@@ -52,7 +46,7 @@ class Text extends TelegramBotRequest {
  * @param {TelegramMessage} message - message
  * @returns {Promise<undefined>}
  */
-module.exports = async (message, session) => {
-  const text = new Text(message, session);
+module.exports = async (message) => {
+  const text = new Text(message);
   await text.beginDialog();
 };

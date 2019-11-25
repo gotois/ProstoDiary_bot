@@ -3,9 +3,6 @@ const pkg = require('../../../package');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Location extends TelegramBotRequest {
-  constructor(message, session) {
-    super(message, session);
-  }
   async beginDialog() {
     await super.beginDialog();
     const { latitude, longitude } = this.message.location;
@@ -23,8 +20,7 @@ class Location extends TelegramBotRequest {
  * @param {TelegramMessage} message - message
  * @returns {Promise<undefined>}
  */
-module.exports = async (message, session) => {
-  console.log(message)
-  const location = new Location(message, session);
+module.exports = async (message) => {
+  const location = new Location(message);
   await location.beginDialog();
 };

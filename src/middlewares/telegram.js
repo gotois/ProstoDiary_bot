@@ -6,19 +6,23 @@ module.exports = async (request, response) => {
     response.sendStatus(400);
     return;
   }
-  const passport = await pool.connect(async (connection) => {
-    const passport = await connection.one(sql`
+  const gotoisCredentions = await pool.connect(async (connection) => {
+    const passportTable = await connection.one(sql`
       SELECT id FROM passport WHERE telegram = ${request.body.message.from.id};
     `);
+    const botTable = await connection.one(sql`
+      SELECT email FROM bot WHERE passport_id = ${passportTable.id};
+    `);
     return {
-      id: passport.id,
+      id: passportTable.id,
+      email: botTable.email,
     };
   });
   const body = {
     ...request.body,
     message: {
       ...request.body.message,
-      gotois: passport, // расширяем встроенный TelegramMessage
+      gotois: gotoisCredentions, // расширяем встроенный TelegramMessage
     },
   };
   bot.processUpdate(body);

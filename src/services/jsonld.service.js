@@ -1,14 +1,5 @@
 const jsonld = require('jsonld');
 /**
- * @param {object} document - doc
- * @param {object} context - context
- * @returns {Promise<*>}
- */
-const compact = async (document, context) => {
-  const compacted = await jsonld.compact(document, context);
-  return compacted;
-};
-/**
  * @description сериализатор
  * @param {any} compacted - compacted
  * @returns {Promise<*>}
@@ -30,7 +21,6 @@ const fromRDF = async (nquads) => {
 };
 
 module.exports = {
-  compact,
   toRDF,
   fromRDF,
 };

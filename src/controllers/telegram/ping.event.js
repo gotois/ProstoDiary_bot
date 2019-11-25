@@ -2,9 +2,6 @@ const bot = require('../../core/bot');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Ping extends TelegramBotRequest {
-  constructor(message, session) {
-    super(message, session);
-  }
   async beginDialog() {
     await super.beginDialog();
     const result = await this.request('ping');
@@ -15,7 +12,7 @@ class Ping extends TelegramBotRequest {
  * @param {TelegramMessage} message - message
  * @returns {Promise<undefined>}
  */
-module.exports = async (message, session) => {
-  const ping = new Ping(message, session);
+module.exports = async (message) => {
+  const ping = new Ping(message);
   await ping.beginDialog();
 };

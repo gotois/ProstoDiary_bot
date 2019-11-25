@@ -4,9 +4,6 @@ const { getTelegramFile } = require('../../services/file.service');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Photo extends TelegramBotRequest {
-  constructor(message, session) {
-    super(message, session);
-  }
   async beginDialog() {
     await super.beginDialog();
     const [_smallPhoto, mediumPhoto] = this.message.photo;
@@ -34,7 +31,7 @@ class Photo extends TelegramBotRequest {
  * @param {TelegramMessage} message - message
  * @returns {Promise<undefined>}
  */
-module.exports = async (message, session) => {
-  const photo = new Photo(message, session);
+module.exports = async (message) => {
+  const photo = new Photo(message);
   await photo.beginDialog();
 };

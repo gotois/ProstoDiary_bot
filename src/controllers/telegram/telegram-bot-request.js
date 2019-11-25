@@ -2,15 +2,13 @@ const logger = require('../../services/logger.service');
 const bot = require('../../core/bot');
 const { client } = require('../../core/jsonrpc');
 
-// todo перенести в models?
 class TelegramBotRequest {
   #message;
   /**
    * @param {TelegramMessage} message - message
    */
-  constructor(message, session) {
+  constructor(message) {
     this.#message = message;
-    this.creator = session;
   }
   get message() {
     return this.#message;

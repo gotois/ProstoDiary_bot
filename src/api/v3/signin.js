@@ -1,5 +1,5 @@
 const { sql, pool } = require('../../core/database');
-const auth = require('../../services/auth.service');
+const twoFactorAuthService = require('../../services/2fa.service');
 /**
  * @description Авторизация и разблокировка чтения/приема и общей работы бота
  * @param {object} requestObject - params
@@ -13,43 +13,47 @@ module.exports = async (requestObject) => {
   if (!token) {
     throw new Error('Unknown token argument');
   }
+
+
+
   // 1 - связка (telegram|email) + password
   // 2 - связка (telegram|email) + token
   // todo в зависимости от связки возващается стандартный passport или расширенный
   const signInResult = await pool.connect(async (connection) => {
     try {
       // todo: поддержать `... telegram = ${telegram} OR email = ${email}`
-      const passport = await connection.one(sql`SELECT
+      const passportTable = await connection.one(sql`SELECT
     *
 FROM
     passport
 WHERE
     telegram = ${telegram}
 `);
-      const botPassport = await connection.one(sql`SELECT
+      const botTable = await connection.one(sql`SELECT
     *
 FROM
     bot
 WHERE
-    passport_id = ${passport.id}
+    passport_id = ${passportTable.id}
 `);
-      const valid = await auth.verify(botPassport.secret_key, token);
+      const valid = await twoFactorAuthService.verify(botTable.secret_key, token);
       if (!valid) {
         // todo делать фолбэк транзакций на инсталляцию делать большой таймаут
         //  ...
         // `Превышено число попыток входа. Начните снова через N секунд
         throw new Error('Неверный ключ. Попробуйте снова');
       }
-      if (!botPassport.activated) {
-        await connection.query(sql`UPDATE
+      if (!botTable.activated) {
+        await connection.query(sql`
+UPDATE
     bot
 SET
     activated = ${true}
 WHERE
-    passport_id = ${botPassport.passport_id}
+    passport_id = ${botTable.passport_id}
 `);
       }
-      return 'Бот включен';
+      return 'Бот активирован';
     } catch (error) {
       return `Вход закончился ошибкой: ${error.message}`;
     }

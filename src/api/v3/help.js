@@ -1,19 +1,16 @@
 const pkg = require('../../../package');
 const { getCheckSum } = require('../../services/version.service');
 const { IS_PRODUCTION } = require('../../environment');
-const { commands } = require('../../controllers/telegram');
+const { telegram } = require('../../controllers');
 /**
+ * @param {object} parameters - xxx p
  * @returns {SuccessObject}
- * @param _params
- * @param _parameters
- * @param xxx
  */
-module.exports = (_parameters, xxx) => {
-  const { user } = xxx;
-  console.log(xxx);
-  console.log(_parameters);
+module.exports = (parameters) => {
+  const { user } = parameters;
+  console.log(parameters);
 
-  const helpData = Object.entries(commands).reduce(
+  const helpData = Object.entries(telegram).reduce(
     (accumulator, [command, object]) => {
       if (object.description.length === 0) {
         return accumulator;

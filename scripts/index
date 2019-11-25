@@ -11,19 +11,32 @@ const clipboardHelper = require('../src/helpers/clipboard');
   if (IS_PRODUCTION) {
     spawn('node', ['src/server']);
   } else {
+    let nodemonInstance;
     await ngrok.authtoken(NGROK.TOKEN);
-    const url = await ngrok.connect({
-      addr: SERVER.PORT,
-      proto: 'http',
-      region: 'eu',
-      onStatusChange(status) {
-        logger.info(status);
-      },
-      onLogEvent(data) {
-        logger.info(data);
-      },
-    });
-    nodemon(`-x 'NGROK_URL=${url} node' src/server`)
+    try {
+      const url = await ngrok.connect({
+        addr: SERVER.PORT,
+        proto: 'http',
+        // region: 'eu', // uncomment if needs
+        onStatusChange(status) {
+          logger.info(status);
+        },
+        onLogEvent(data) {
+          logger.info(data);
+        },
+      });
+      nodemonInstance = nodemon(`-x 'NGROK_URL=${url} node' src/server`);
+      // fixme uncomment
+      // const { updateWebhook } = require('../src/services/sendgridmail.service');
+      // await sendgridService.updateWebhook(url)
+      clipboardHelper.copy(url);
+      // copy ngrok url to buffer
+    } catch (error) {
+      logger.error(error.msg);
+      logger.warn(`"Run without NGROK. Telegram webhook doesn't work!"`);
+      nodemonInstance = nodemon({ script: 'src/server' });
+    }
+    nodemonInstance
       .on('start', () => {
         logger.log('info', 'Nodemon has started');
       })
@@ -34,11 +47,5 @@ const clipboardHelper = require('../src/helpers/clipboard');
       .on('restart', (files) => {
         logger.log('info', 'App restarted due to: ' + files);
       });
-    // fixme uncomment
-    // const { updateWebhook } = require('../src/services/sendgridmail.service');
-    // await sendgridService.updateWebhook(url)
-
-    // copy ngrok url to buffer
-    clipboardHelper.copy(url);
   }
 })();

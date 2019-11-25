@@ -2,9 +2,6 @@ const bot = require('../../core/bot');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class DatabaseClear extends TelegramBotRequest {
-  constructor(message, session) {
-    super(message, session);
-  }
   async beginDialog() {
     await super.beginDialog();
     const options = {
@@ -35,7 +32,7 @@ class DatabaseClear extends TelegramBotRequest {
  * @param {TelegramMessage} message - message
  * @returns {Promise<undefined>}
  */
-module.exports = async (message, session) => {
-  const databaseClear = new DatabaseClear(message, session);
+module.exports = async (message) => {
+  const databaseClear = new DatabaseClear(message);
   await databaseClear.beginDialog();
 };

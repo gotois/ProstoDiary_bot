@@ -1,7 +1,7 @@
 const { sql, pool } = require('../../core/database');
 const { pack } = require('../../services/archive.service');
 const format = require('../../services/format.service');
-const auth = require('../../services/auth.service');
+const twoFactorAuthService = require('../../services/2fa.service');
 /**
  * @todo тексты брать из почты используя Vzor.search
  * @todo должен в том числе содержать StoryJSON в полном объеме и храниться в отдельном файле: story.json
@@ -10,7 +10,7 @@ const auth = require('../../services/auth.service');
  */
 module.exports = async (requestObject) => {
   const { user, date, passcode, token, sorting = 'ASC' } = requestObject;
-  const valid = await auth.verify(passcode, token);
+  const valid = await twoFactorAuthService.verify(passcode, token);
   if (!valid) {
     throw new Error('Wrong token');
   }

@@ -9,10 +9,6 @@ class EditMessageText extends TelegramBotRequest {
   static get DELETE_VARIABLES() {
     return ['del', 'remove'];
   }
-  constructor(message, session) {
-    message.text = message.text.trim();
-    super(message, session);
-  }
   async beginDialog() {
     await super.beginDialog();
     if (this.message.text.startsWith('/')) {
@@ -52,7 +48,8 @@ class EditMessageText extends TelegramBotRequest {
  * @param {TelegramMessage} message - msg
  * @returns {Promise<undefined>}
  */
-module.exports = async (message, session) => {
-  const editedMessageTextAPI = new EditMessageText(message, session);
+module.exports = async (message) => {
+  message.text = message.text.trim();
+  const editedMessageTextAPI = new EditMessageText(message);
   await editedMessageTextAPI.beginDialog();
 };

@@ -3,7 +3,6 @@
  */
 const telegram = {
   BACKUP: {
-    // fixme похоже event не используется.
     event: 'backup.event',
     alias: /^\/(backup|бэкап)$/,
     description: 'Выгрузка бэкапа',
@@ -47,6 +46,16 @@ const telegram = {
     event: 'search.event',
     alias: /^\/(search|найти)(\s)/,
     description: 'Поиск вхождения `String | RegExp`',
+  },
+  SIGNIN: {
+    event: 'signin.event',
+    alias: /^\/signin$/,
+    description: '',
+  },
+  SIGNOUT: {
+    event: 'signout.event',
+    alias: /^\/signout$/,
+    description: '',
   },
   START: {
     event: 'start.event',

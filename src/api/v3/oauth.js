@@ -1,11 +1,13 @@
+const jsonld = require('jsonld');
 const pkg = require('../../../package');
+const { sql, pool } = require('../../core/database');
 const { mail } = require('../../services/sendgridmail.service');
 const mailService = require('../../services/mail.service');
-const jsonldService = require('../../services/jsonld.service');
-const auth = require('../../services/auth.service');
-const { sql, pool, NotFoundError } = require('../../core/database');
+const twoFactorAuthService = require('../../services/2fa.service');
+const oauthService = require('../../services/oauth.service');
+
 const yandexLD = async (parameters) => {
-  const compacted = await jsonldService.compact(
+  const compacted = await jsonld.compact(
     {
       'http://xmlns.com/foaf/0.1/name': parameters.real_name,
       'http://schema.org/gender': parameters.sex,
@@ -16,16 +18,17 @@ const yandexLD = async (parameters) => {
       'http://xmlns.com/foaf/0.1/img': {
         '@id': `https://avatars.mds.yandex.net/get-yapic/${parameters.default_avatar_id}/islands-middle`,
       },
-      'http://schema.org/birthDate': {
-        '@id': parameters.birthday,
-      },
+      // fixme неправильно сериализуется
+      // 'http://schema.org/birthDate': {
+      //   '@id': parameters.birthday,
+      // },
     },
     'https://json-ld.org/contexts/person.jsonld',
   );
   return compacted;
 };
 const facebookLD = async (parameters) => {
-  const compacted = await jsonldService.compact(
+  const compacted = await jsonld.compact(
     {
       'http://xmlns.com/foaf/0.1/name': parameters.name,
       // 'http://schema.org/gender': params.gender, // может не быть
@@ -39,64 +42,26 @@ const facebookLD = async (parameters) => {
   );
   return compacted;
 };
-/**
- * @param {any} requestObject - request
- * @returns {Promise<string|Error>}
- */
-module.exports = async (requestObject) => {
-  const { yandex, facebook, telegram } = requestObject;
-  let compacted;
-  if (yandex) {
-    compacted = await yandexLD(yandex);
-  } else if (facebook) {
-    compacted = await facebookLD(facebook);
-  } else {
-    throw new Error('Unknown registration Oauth2');
-  }
 
-  const secret = await auth.generateSecret({
+const registration = async (passport) => {
+  const secret = await twoFactorAuthService.generateSecret({
     name: pkg.name,
     symbols: true,
     length: 20,
   });
   const output = await pool.connect(async ({ transaction }) => {
-    const passport = await transaction(async (transactionConnection) => {
-      try {
-        const data = await transactionConnection.one(sql`SELECT
-    id
-FROM
-    passport
-WHERE
-    telegram = ${Number(telegram.from.id)}
-`);
-        return data;
-      } catch (error) {
-        if (!(error instanceof NotFoundError)) {
-          throw error;
-        }
-      }
-      // todo предусмотреть возможность регистраци вне телеграма (email, whatsapp, matrix)
-      const data = await transactionConnection.one(sql`INSERT INTO passport (telegram)
-    VALUES (${telegram.from.id})
-RETURNING
-    id
-`);
-      return data;
-    });
     const result = await transaction(async (transactionConnection) => {
       // на будущее, бот сам следит за своей почтой, периодически обновляя пароли. Пользователя вообще не касается что данные сохраняются у него в почте
       const { email, password, uid } = await mailService.createYaMail(
         passport.id,
       );
+      // todo добавлять uid почты в session
       try {
         await transactionConnection.query(sql`INSERT INTO bot (passport_id, email, password, secret_key, secret_password)
     VALUES (${passport.id}, ${email}, ${password}, ${secret.base32}, crypt(${secret.secretPassword}, gen_salt('bf', 8)))
 `);
-        await transactionConnection.query(sql`INSERT INTO ld (passport_id, jsonld)
-    VALUES (${passport.id}, ${JSON.stringify(compacted)})
-`);
         await mail.send({
-          to: yandex.default_email, // fixme: поддержать из compacted (включая данные facebook)
+          to: passport.user_email,
           from: email,
           subject: `Passport ${pkg.name}`,
           html: `
@@ -124,4 +89,52 @@ RETURNING
     return result;
   });
   return output;
+};
+/**
+ * @description блокировки чтения/приема и общей работы бота
+ * @returns {Promise<void>}
+ */
+module.exports = async (requestObject) => {
+  const { passport_id, yandex, facebook, telegram } = requestObject;
+  let compacted;
+  if (yandex) {
+    const yaPassport = await oauthService.yandexPassportInfo(yandex.response);
+    compacted = await yandexLD(yaPassport);
+  } else if (facebook) {
+    const fbPassport = await oauthService.facebookPassportInfo(facebook.response);
+    compacted = await facebookLD(fbPassport);
+  } else {
+    throw new Error('Unknown registration Oauth2');
+  }
+  const passport = await pool.connect(async (connection) => {
+    let passportId = passport_id;
+    if (!passportId) {
+      // todo предусмотреть возможность регистраци вне телеграма (email, whatsapp, matrix)
+      const passportTable = await connection.one(sql`
+INSERT INTO passport (telegram)
+  VALUES (${telegram.from.id})
+`);
+      passportId = passportTable.id;
+    }
+    await connection.query(sql`
+INSERT INTO ld (passport_id, jsonld)
+  VALUES (${passportId}, ${JSON.stringify(compacted)})
+`);
+    const passportTable = await connection.one(sql`
+SELECT
+    id
+FROM
+    passport
+WHERE
+    telegram = ${Number(telegram.from.id)}
+`);
+    return passportTable;
+  });
+  // fixme: если не была проведена регистрация, проводим ее
+  if (true) {
+    const output = await registration(passport);
+    return output;
+  } else {
+    return 'Вы успешно обновили данные OAuth';
+  }
 };

@@ -7,3 +7,8 @@ CREATE DATABASE storydb
     CONNECTION LIMIT = -1;
 UPDATE pg_database SET encoding = pg_char_to_encoding('UTF8') WHERE datname = 'storydb';
 COMMENT ON DATABASE storydb IS 'Local DB';
+
+-- EXTENSION
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION "pgcrypto";

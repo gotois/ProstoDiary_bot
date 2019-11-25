@@ -1,0 +1,2 @@
+-- схема где храним соли, пароли и pgp ключи
+--CREATE SCHEMA IF NOT EXISTS private AUTHORIZATION bot;

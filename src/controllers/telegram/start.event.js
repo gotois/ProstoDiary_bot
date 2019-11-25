@@ -16,8 +16,8 @@ class Start extends TelegramBotRequest {
       if (IS_PRODUCTION) {
         const message =
           'Повторная установка не требуется\n\n' +
-          '/sign-in - включить бота \n' +
-          '/sign-out - выключить бота \n';
+          '/signin - включить бота \n' +
+          '/signout - выключить бота \n';
         await bot.sendMessage(this.message.chat.id, message);
         return;
       }

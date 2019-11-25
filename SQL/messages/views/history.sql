@@ -11,5 +11,4 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS history_script AS
 SELECT *
 FROM abstract
 WHERE tags @> '{"script"}';
-
--- todo аналогично строить для каждого TAG
+-- ... todo аналогично строить для каждого TAG
