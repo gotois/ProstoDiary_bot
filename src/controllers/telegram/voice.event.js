@@ -1,5 +1,5 @@
 const bot = require('../../core/bot');
-const pkg = require('../../../package');
+const package_ = require('../../../package');
 const { voiceToText } = require('../../services/voice.service');
 const { getTelegramFile } = require('../../services/file.service');
 const TelegramBotRequest = require('./telegram-bot-request');
@@ -17,7 +17,7 @@ class Voice extends TelegramBotRequest {
       mime: 'plain/text',
       chat_id: this.message.chat.id,
       creator: this.message.gotois.email,
-      publisher: pkg.author.email,
+      publisher: package_.author.email,
     });
     await bot.sendMessage(this.message.chat.id, result);
   }

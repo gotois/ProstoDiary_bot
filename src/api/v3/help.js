@@ -1,15 +1,13 @@
-const pkg = require('../../../package');
+const package_ = require('../../../package');
 const { getCheckSum } = require('../../services/version.service');
 const { IS_PRODUCTION } = require('../../environment');
 const { telegram } = require('../../controllers');
 /**
- * @param {object} parameters - xxx p
+ * @param {object} parameters - param
  * @returns {SuccessObject}
  */
 module.exports = (parameters) => {
   const { user } = parameters;
-  console.log(parameters);
-
   const helpData = Object.entries(telegram).reduce(
     (accumulator, [command, object]) => {
       if (object.description.length === 0) {
@@ -28,7 +26,7 @@ module.exports = (parameters) => {
     }, '') +
     '\n\nF.A.Q.: ' +
     'https://prosto-diary.gotointeractive.com/faq/';
-  message += pkg.version;
+  message += package_.version;
   if (IS_PRODUCTION) {
     message += ' - production\n';
   }

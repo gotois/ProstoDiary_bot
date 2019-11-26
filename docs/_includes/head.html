@@ -4,13 +4,13 @@
 </title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta property="og:title" content="ProstoDiary">
+<meta property="og:title" content="{{ site.title }}">
+<meta property="og:description" content="{{ site.description }}">
 <meta property="og:image" content="">
 <meta property="og:site_name" content="ProstoDiary">
-<meta property="og:description" content="">
 
-<meta name="title" content="ProstoDiary">
-<meta name="description" content="Global virtual assistant">
+<meta name="title" content="{{ site.title }}">
+<meta name="description" content="{{ site.description }}">
 <meta name="abstract" content="Global virtual assistant">
 <meta name="keywords" lang="en" content="bot, assistant">
 <meta name="keywords" lang="ru" content="бот, ассистент">
@@ -34,10 +34,10 @@
 
 <meta name="rating" content="general">
 <meta name="author" content="gotois">
-<meta name="author-corporate" content="support@gotointeractive.com">
+<meta name="author-corporate" content="{{ site.email }}">
 <meta name="designer" content="Denis Baskovsky">
 <meta name="publisher" content="Denis Baskovsky">
-<meta name="web_author" content="Denis Baskovsky">
+<meta name="web_author" content="{{ site.github_username }}">
 <meta name="no-email-collection" content="http://www.unspam.com/noemailcollection/">
 
 <meta name="copyright" content="gotois">
@@ -47,7 +47,7 @@
 
 <meta http-equiv="Cache-Control" content="no-cache">
 <meta name="application-name" content="gotois">
-<meta name="date-creation-yyyymmdd" content="2018-01-01">
+<meta name="date-creation-yyyymmdd" content="{{ site.time | date: '%Y-%m-%d' }}">
 <meta http-equiv="imagetoolbar" content="no">
 <meta name="msthemecompatible" content="no">
 <meta name="format-detection" content="address=no;telephone=yes">

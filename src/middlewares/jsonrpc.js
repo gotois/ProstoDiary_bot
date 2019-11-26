@@ -1,9 +1,10 @@
 const jsonrpc = require('../core/jsonrpc');
 const { pool, sql } = require('../core/database');
 
-module.exports = async (request, response) => {
-  const bot = await pool.connect(async (connection) => {
-    const data = await connection.maybeOne(sql`
+module.exports = async (request, response, next) => {
+  try {
+    const bot = await pool.connect(async (connection) => {
+      const data = await connection.maybeOne(sql`
 SELECT
     passport_id
 FROM
@@ -11,23 +12,26 @@ FROM
 WHERE
     email = ${request.user + '@gotointeractive.com'}
 `);
-    return data;
-  });
-  if (!bot) {
-    return response.sendStatus(401).send('401 Unauthorized');
-  }
-  jsonrpc.server.call(
-    request.body,
-    {
-      gotois: {
-        id: bot.passport_id,
+      return data;
+    });
+    if (!bot) {
+      return response.sendStatus(401).send('401 Unauthorized');
+    }
+    jsonrpc.server.call(
+      request.body,
+      {
+        gotois: {
+          id: bot.passport_id,
+        },
       },
-    },
-    (error, result) => {
-      if (error) {
-        return response.status(500).json(error);
-      }
-      return response.send(result);
-    },
-  );
+      (error, result) => {
+        if (error) {
+          return response.status(500).json(error);
+        }
+        return response.send(result);
+      },
+    );
+  } catch (error) {
+    next(error);
+  }
 };

@@ -1,4 +1,4 @@
-const pkg = require('../../../package');
+const package_ = require('../../../package');
 const bot = require('../../core/bot');
 const format = require('../../services/format.service');
 const TelegramBotRequest = require('./telegram-bot-request');
@@ -28,7 +28,7 @@ class Text extends TelegramBotRequest {
         telegram_message_id: message_id,
         chat_id: this.message.chat.id,
         creator: this.message.gotois.email,
-        publisher: pkg.author.email,
+        publisher: package_.author.email,
       });
       await bot.editMessageText(result, {
         chat_id: this.message.chat.id,

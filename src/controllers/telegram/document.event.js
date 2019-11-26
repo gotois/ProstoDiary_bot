@@ -1,4 +1,4 @@
-const pkg = require('../../../package');
+const package_ = require('../../../package');
 const bot = require('../../core/bot');
 const { getTelegramFile } = require('../../services/file.service');
 const TelegramBotRequest = require('./telegram-bot-request');
@@ -12,7 +12,7 @@ class Document extends TelegramBotRequest {
       mime: this.message.document.mime_type,
       date: this.message.date,
       creator: this.message.from.id,
-      publisher: pkg.author.email,
+      publisher: package_.author.email,
       telegram_message_id: this.message.message_id,
     });
     await bot.sendMessage(this.message.chat.id, result);
