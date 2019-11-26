@@ -1,3 +1,4 @@
+const validator = require('validator');
 const cryptoRandomString = require('crypto-random-string');
 const { unpack } = require('./archive.service');
 const logger = require('./logger.service');
@@ -5,6 +6,15 @@ const { post, get } = require('./request.service');
 const AbstractText = require('../models/abstract/abstract-text');
 const AbstractPhoto = require('../models/abstract/abstract-photo');
 const AbstractDocument = require('../models/abstract/abstract-document');
+const { YANDEX } = require('../environment');
+/**
+ * @constant
+ */
+const YANDEX_HOST = 'pddimp.yandex.ru';
+/**
+ * @constant
+ */
+const DOMAIN = 'gotointeractive.com';
 
 /**
  * @param {Mail} mail - mail
@@ -67,12 +77,10 @@ const createAbstract = async ({ attachments, date }) => {
  */
 const read = async (mail) => {
   const { from, headers, attachments } = mail;
-
   // имя бота с которого было отправлено письмо. пока верим всем ботам с таким хедером
   if (headers['x-bot']) {
     if (attachments) {
       for (const abstract of await createAbstract(mail)) {
-        console.log('abstract', abstract);
         // abstract.telegram_message_id = headers['x-bot-telegram-message-id'];
         // abstract.creator = headers['x-bot-creator'];
         abstract.publisher = from;
@@ -86,46 +94,80 @@ const read = async (mail) => {
   }
 };
 /**
+ * @description удаление созданного почтового ящика
+ * @param {number} uid - Yandex uid
+ * @returns {Promise<void>}
+ */
+const deleteYaMail = async (uid) => {
+  const emailDelete = await post(
+    `https://${YANDEX_HOST}/api2/admin/email/del`,
+    {
+      domain: DOMAIN,
+      uid: uid,
+    },
+    {
+      PddToken: YANDEX.YA_PDD_TOKEN,
+    },
+  );
+  if (emailDelete.error) {
+    throw new Error(emailDelete.error);
+  }
+  return emailDelete;
+};
+/**
  * https://yandex.ru/dev/pdd/doc/reference/email-add-docpage/
  *
- * @param {string} www - params
+ * @todo вообще думаю что можно заложить сценарий более читаемых имен
+ * @param {string} login - login
  * @returns {Promise<string|Buffer|Error|*>}
  */
-const createYaMail = async (www) => {
-  const { domain, email, login, password } = generateEmailName(www);
-  const HOST = 'pddimp.yandex.ru';
+const createYaMail = async (login) => {
+  if (validator.isURL(login)) {
+    login = login.replace(new RegExp('^https?://', 'i'), '').toLowerCase();
+  } else if (validator.isUUID) {
+    login = login
+      .toLowerCase()
+      .replace(/-/g, '')
+      .slice(0, 30);
+  } else {
+    throw new Error('Login wrong type');
+  }
+  const { email, password } = generateEmailName(login);
   const emailAdd = await post(
-    `https://${HOST}/api2/admin/email/add`,
+    `https://${YANDEX_HOST}/api2/admin/email/add`,
     {
-      domain,
+      domain: DOMAIN,
       login,
       password,
     },
     {
-      PddToken: process.env.YA_PDD_TOKEN,
+      PddToken: YANDEX.YA_PDD_TOKEN,
     },
   );
   if (emailAdd.error) {
     throw new Error(emailAdd.error);
   }
   const emailGetOauth = await post(
-    `https://${HOST}/api2/admin/email/get_oauth_token`,
+    `https://${YANDEX_HOST}/api2/admin/email/get_oauth_token`,
     {
-      domain,
+      domain: DOMAIN,
       login: emailAdd.login,
       uid: emailAdd.uid,
     },
     {
-      PddToken: process.env.YA_PDD_TOKEN,
+      PddToken: YANDEX.YA_PDD_TOKEN,
     },
   );
   if (emailGetOauth.error) {
     throw new Error(emailAdd.error);
   }
   await get(
-    `https://passport.yandex.ru/passport?mode=oauth&access_token=${
-      emailGetOauth['oauth-token']
-    }&type=trusted-pdd-partner`,
+    'https://passport.yandex.ru/passport',
+    {
+      mode: 'oauth',
+      access_token: emailGetOauth['oauth-token'],
+      type: 'trusted-pdd-partner',
+    }
   );
   return {
     ...emailAdd,
@@ -135,30 +177,27 @@ const createYaMail = async (www) => {
     password,
   };
 };
-
-// в качестве логина используем url переданного вебсайта
 /**
- * @param {string} www - name
- * @returns {Promise<{password: string, email: string, domain: string}>}
+ * @description пароль генерируем случайным образом
+ * @param {string} login - login
+ * @returns {{password: string, email: string}}
  */
-const generateEmailName = (www) => {
-  const login = www.replace(new RegExp('^https?://', 'i'), '').toLowerCase();
-  const domain = 'gotointeractive.com';
-  const email = `${login}@${domain}`;
-  // пароль генерируем случайным образом
+const generateEmailName = (login) => {
+  const email = `${login}@${DOMAIN}`;
   const password = cryptoRandomString({
     length: 30,
-    characters: '🤘👍👌😎🤝😋😜✊💪🙏🆒🆕🆙🆓🆗⬆️🔝➕⭐️🌟💥🔥☀️🕺',
+    //🤘👍👌😎🤝😋😜✊💪🙏🆒🆕🆙🆓🆗⬆️🔝➕⭐️🌟💥🔥☀️🕺', todo - по какой-то причине яндекс пока не поддерживает эмодзи пароли
+    characters: '1234567890qwertyuiopasdfghjklzxcvbnm',
   });
   return {
     email,
     password,
-    domain,
   };
 };
 
 module.exports = {
   read,
   createYaMail,
+  deleteYaMail,
   generateEmailName,
 };

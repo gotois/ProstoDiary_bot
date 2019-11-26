@@ -3,10 +3,16 @@ const { SENDGRID } = require('../environment');
 const { patch } = require('../services/request.service');
 
 sgMail.setApiKey(SENDGRID.API_KEY);
-
+/**
+ * @constant
+ * @type {string}
+ */
 const HOST = 'api.sendgrid.com';
-
-// update Event Webhook settings
+/**
+ * @description update Event Webhook settings
+ * @param {string} url - url
+ * @returns {Promise<void>}
+ */
 const updateWebhook = async (url) => {
   await patch(
     `https://${HOST}/v3/user/webhooks/event/settings`,

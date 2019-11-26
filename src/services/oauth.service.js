@@ -7,7 +7,7 @@ const { get } = require('../services/request.service');
  * @param {object} response.raw - yandex raw response
  * @returns {Promise<string|Buffer|Error|*>}
  */
-const yandexPassportInfo = async ({ access_token }) => {
+const yandex = async ({ access_token }) => {
   const HOST = 'login.yandex.ru';
   const response = await get(
     `https://${HOST}/info`,
@@ -29,7 +29,7 @@ const yandexPassportInfo = async ({ access_token }) => {
  * @param {object} response.id - facebook id
  * @returns {Promise<string|Buffer|Error|*>}
  */
-const facebookPassportInfo = async ({ access_token }) => {
+const facebook = async ({ access_token }) => {
   const HOST = 'graph.facebook.com';
   const response = await get(
     `https://${HOST}/v5.0/me`,
@@ -44,6 +44,6 @@ const facebookPassportInfo = async ({ access_token }) => {
 };
 
 module.exports = {
-  yandexPassportInfo,
-  facebookPassportInfo,
+  yandex,
+  facebook,
 };
