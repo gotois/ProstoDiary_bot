@@ -1,21 +1,21 @@
 module.exports = (t) => {
-  const env = require('../../src/environment');
-  t.is(typeof env.DATABASE, 'object');
-  t.is(typeof env.CORALOGIX, 'object');
-  t.is(typeof env.TELEGRAM, 'object');
-  t.is(typeof env.PLOTLY, 'object');
-  t.is(typeof env.NALOGRU, 'object');
-  t.is(typeof env.FAT_SECRET, 'object');
-  t.is(typeof env.SENDGRID, 'object');
-  t.is(typeof env.OPEN_WEATHER, 'object');
-  t.is(typeof env.GOOGLE, 'object');
-  t.true(env.POSTGRES_CONNECTION_STRING.startsWith('postgres://'));
-  t.false(env.POSTGRES_CONNECTION_STRING.includes('undefined'));
+  const environment = require('../../src/environment');
+  t.is(typeof environment.DATABASE, 'object');
+  t.is(typeof environment.CORALOGIX, 'object');
+  t.is(typeof environment.TELEGRAM, 'object');
+  t.is(typeof environment.PLOTLY, 'object');
+  t.is(typeof environment.NALOGRU, 'object');
+  t.is(typeof environment.FAT_SECRET, 'object');
+  t.is(typeof environment.SENDGRID, 'object');
+  t.is(typeof environment.OPEN_WEATHER, 'object');
+  t.is(typeof environment.GOOGLE, 'object');
+  t.true(environment.POSTGRES_CONNECTION_STRING.startsWith('postgres://'));
+  t.false(environment.POSTGRES_CONNECTION_STRING.includes('undefined'));
   // fixme: GOOGLE.CREDENTIALS в CI отдает не object
-  if (typeof env.GOOGLE.CREDENTIALS !== 'object') {
+  if (typeof environment.GOOGLE.CREDENTIALS !== 'object') {
     t.log('WARN! unknown google credentials');
   }
-  t.is(typeof env.DIALOGFLOW, 'object');
+  t.is(typeof environment.DIALOGFLOW, 'object');
   // t.is(typeof env.DIALOGFLOW.CREDENTIALS, 'object');
-  t.is(typeof env.WOLFRAM_ALPHA.APP_ID, 'string');
+  t.is(typeof environment.WOLFRAM_ALPHA.APP_ID, 'string');
 };
