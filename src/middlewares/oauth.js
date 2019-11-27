@@ -3,7 +3,7 @@ const { client } = require('../core/jsonrpc');
 /**
  * @param {string} token - token
  * @param {TelegramMessage} message - telegram message
- * @returns {Promise<void>}
+ * @returns {Promise<undefined>}
  */
 const telegramSignInCallback = async (token, message) => {
   await client.request('signin', {
@@ -26,13 +26,11 @@ module.exports = async (request, response, next) => {
   try {
     const { grant } = request.session;
     switch (grant.provider) {
+      case 'yandex':
       case 'facebook': {
         if (grant.response.error) {
           return response.status(400).send(grant.response.error.error_message);
         }
-        break;
-      }
-      case 'yandex': {
         break;
       }
       default: {
@@ -50,9 +48,10 @@ module.exports = async (request, response, next) => {
       return response.status(400).send(error);
     }
     if (grant.dynamic && grant.dynamic.telegram) {
-      const checkCodeMessageValue = await bot.sendMessage(
+      await bot.sendMessage(grant.dynamic.telegram.chat.id, result);
+      const checkSecretValue = await bot.sendMessage(
         grant.dynamic.telegram.chat.id,
-        result,
+        'Ваш токен от двухфакторной аутентификации:',
         {
           reply_markup: {
             force_reply: true,
@@ -61,14 +60,14 @@ module.exports = async (request, response, next) => {
       );
       bot.onReplyToMessage(
         grant.dynamic.telegram.chat.id,
-        checkCodeMessageValue.message_id,
+        checkSecretValue.message_id,
         async ({ text }) => {
           await telegramSignInCallback(text, grant.dynamic.telegram);
         },
       );
       return response.redirect('tg://resolve?domain=ProstoDiary_bot');
     }
-    return response.redirect('https://prosto-diary.gotointeractive.com/');
+    return response.status(200).send(result);
   } catch (error) {
     next(error);
   }

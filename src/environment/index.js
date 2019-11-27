@@ -73,12 +73,6 @@ const ENV = {
     TOKEN: NGROK,
     URL: NGROK_URL,
   },
-  MAIL: {
-    USER: MAIL_USER,
-    PASSWORD: MAIL_PASSWORD,
-    HOST: MAIL_HOST,
-    PORT: MAIL_PORT,
-  },
   DATABASE: {
     host: PGHOST,
     name: PGDATABASE,

@@ -1,75 +1,39 @@
-const jsonld = require('jsonld');
 const package_ = require('../../../package');
-const { sql, pool } = require('../../core/database');
+const logger = require('../../services/logger.service');
+const { sql, pool, NotFoundError } = require('../../core/database');
 const { mail } = require('../../services/sendgridmail.service');
 const mailService = require('../../services/mail.service');
 const twoFactorAuthService = require('../../services/2fa.service');
 const oauthService = require('../../services/oauth.service');
-// todo использовать свои схемы - "https://gotointeractive.com/#organization",
-const yandexLD = async (parameters) => {
-  const compacted = await jsonld.compact(
-    {
-      'http://xmlns.com/foaf/0.1/name': parameters.real_name,
-      'http://schema.org/gender': parameters.sex,
-      'http://xmlns.com/foaf/0.1/nick': parameters.login,
-      'http://xmlns.com/foaf/0.1/mbox': {
-        '@id': `mailto://${parameters.default_email}`,
-      },
-      'http://xmlns.com/foaf/0.1/img': {
-        '@id': `https://avatars.mds.yandex.net/get-yapic/${parameters.default_avatar_id}/islands-middle`,
-      },
-      // fixme неправильно сериализуется
-      // 'http://schema.org/birthDate': {
-      //   '@id': parameters.birthday,
-      // },
-    },
-    'https://json-ld.org/contexts/person.jsonld',
-  );
-  return compacted;
-};
-const facebookLD = async (parameters) => {
-  const compacted = await jsonld.compact(
-    {
-      'http://xmlns.com/foaf/0.1/name': parameters.name,
-      // 'http://schema.org/gender': params.gender, // может не быть
-      'http://xmlns.com/foaf/0.1/mbox': {
-        '@id': `mailto://${parameters.email}`,
-      },
-      // "http://xmlns.com/foaf/0.1/homepage": {"@id": "http://denis.baskovsky.ru/"},
-      // "http://xmlns.com/foaf/0.1/title": "TeamLead",
-    },
-    'https://json-ld.org/contexts/person.jsonld',
-  );
-  return compacted;
-};
-// todo добавить JSON-LD из telegram
-
 /**
- * @param {number} passportId - gotois passport uid
- * @returns {Promise<*>}
+ * @param {*} transactionConnection - transactionConnection
+ * @param {string} passportId - passport guid
+ * @param {Array<string>} passportEmail - passport email
  */
-const registration = async (passportId) => {
+const registration = async (
+  transactionConnection,
+  passportId,
+  passportEmail,
+) => {
   const secret = await twoFactorAuthService.generateSecret({
     name: package_.name,
     symbols: true,
     length: 20,
   });
-  const output = await pool.connect(async ({ transaction }) => {
-    const result = await transaction(async (transactionConnection) => {
-      // на будущее, бот сам следит за своей почтой, периодически обновляя пароли. Пользователя вообще не касается что данные сохраняются у него в почте
-      const { email, password, uid } = await mailService.createYaMail(
-        passportId,
-      );
-      // todo добавлять uid почты в session
-      try {
-        await transactionConnection.query(sql`INSERT INTO bot (passport_id, email, password, secret_key, secret_password)
-    VALUES (${passportId}, ${email}, ${password}, ${secret.base32}, crypt(${secret.secretPassword}, gen_salt('bf', 8)))
+  // на будущее, бот сам следит за своей почтой, периодически обновляя пароли. Пользователя вообще не касается что данные сохраняются у него в почте
+  const { email, password, uid } = await mailService.createYaMail(passportId);
+  try {
+    await transactionConnection.query(sql`
+INSERT INTO bot
+    (passport_id, email, email_uid, password, secret_key, secret_password)
+VALUES 
+    (${passportId}, ${email}, ${uid}, ${password}, ${secret.base32}, crypt(${secret.secretPassword}, gen_salt('bf', 8)))
 `);
-        await mail.send({
-          to: passport.user_email,
-          from: email,
-          subject: `Passport ${package_.name}`,
-          html: `
+    await mail.send({
+      to: passportEmail,
+      from: email,
+      subject: `Passport ${package_.name}`,
+      html: `
         <h1>Добро пожаловать в систему ${package_.author.name}!</h1>
         <h2>Шаг 1: Настройте двухфакторную аутентификацию.</h2>
         <p>Используйте камеру для распознавания QR-кода в приложении для двухэтапной аутентификации, например, Google Authenticator.</p>
@@ -83,157 +47,170 @@ const registration = async (passportId) => {
         <h2>Шаг 3: Активируйте бота.</h2>
         <p>Пришлите <a href="https://prosto-diary.gotointeractive.com/">ProstoDiary_bot</a> сгенерированный токен от двухфакторной аутентификации.</p>
       `,
-        });
-        return `Вам отправлено письмо от вашего бота - ${email}. Пришлите сгенерированный токен от двухфакторной аутентификации.`;
-      } catch (error) {
-        await mailService.deleteYaMail(uid);
-        throw error;
-      }
     });
-    return result;
-  });
-  return output;
-};
-
-const compactedLD = async ({ yandex, facebook, telegram }) => {
-  let compacted = {};
-  if (yandex) {
-    const yaPassport = await oauthService.yandex(yandex.raw);
-    compacted = {
-      ...compacted,
-      ...(await yandexLD(yaPassport)),
-    };
+  } catch (error) {
+    await mailService.deleteYaMail(uid);
+    logger.error(error);
+    throw error;
   }
-  if (facebook) {
-    const fbPassport = await oauthService.facebook(facebook.response);
-    compacted = {
-      ...compacted,
-      ...(await facebookLD(fbPassport)),
-    };
-  }
-  return compacted;
 };
 /**
- * @param {*} transactionConnection
- * @param {*} passport_id
+ * @param {*} transactionConnection - transactionConnection
+ * @param {object} oauth - oauth providers
  * @returns {Promise<*>}
  */
-const getPassport = async (transactionConnection, passport_id) => {
+const getPassport = async (
+  transactionConnection,
+  { telegram_id = null, yandex_id = null, facebook_id = null },
+) => {
   const passportTable = await transactionConnection.maybeOne(sql`
-SELECT * FROM passport WHERE id = ${passport_id}
+SELECT *
+    FROM 
+passport 
+    WHERE
+telegram_id = ${telegram_id} OR
+yandex_id = ${yandex_id} OR
+facebook_id = ${facebook_id}
 `);
+  if (!passportTable) {
+    throw new NotFoundError('Passport not found');
+  }
   return passportTable;
 };
 /**
- * @param {*} transactionConnection
- * @param {*} telegram
- * @param {*} yandex
- * @param {*} facebook
+ * @fixme
+ * @param {*} transactionConnection - transactionConnection
+ * @param {object} oauth - oauth providers
  * @returns {Promise<*>}
  */
 const updatePassport = async (
   transactionConnection,
   { telegram, yandex, facebook },
 ) => {
+  // fixme: уязвимость, нужно усложнить выборку, используя oauth провайдеры
+  const passportTable = await getPassport(transactionConnection, {
+    telegram_id: telegram.from.id,
+  });
+  console.log('------', passportTable);
   if (telegram) {
-    const passportTable = await transactionConnection.query(sql`
-UPDATE 
+    await transactionConnection.query(sql`
+UPDATE
     passport
-SET 
-    telegram = ${JSON.stringify(telegram)}
-WHERE 
-    telegram = ${telegram.from.id}
+SET
+    telegram_id = ${telegram.from.id},
+    telegram_session = ${JSON.stringify(telegram.from)}
+WHERE
+    id = ${passportTable.id}
 `);
-    return passportTable;
   }
   if (yandex) {
-    const passportTable = await transactionConnection.query(sql`
+    const yaData = await oauthService.yandex(yandex.raw);
+    console.log('yaData', yaData);
+
+    await transactionConnection.query(sql`
 UPDATE
     passport
 SET
-    yandex = ${JSON.stringify(yandex)}
+    yandex_id = ${yaData.client_id},
+    yandex_session = ${JSON.stringify(yaData)}
 WHERE
-    yandex = ${yandex.xxxxxxxx}`);
-    return passportTable;
+    id = ${passportTable.id}
+`);
   }
   if (facebook) {
-    const passportTable = await transactionConnection.query(sql`
+    const fbData = await oauthService.facebook(facebook.raw);
+    await transactionConnection.query(sql`
 UPDATE
     passport
 SET
-    facebook = ${JSON.stringify(facebook)}
+    facebook_id = ${fbData.id},
+    facebook_session = ${JSON.stringify(fbData)}
 WHERE
-    facebook = ${facebook}`);
-    return passportTable;
+    id = ${passportTable.id}
+`);
   }
-  throw new Error('todo email or phone ...');
-};
-/**
- * @param {*} transactionConnection
- * @returns {Promise<*>}
- */
-const createPassport = async (
-  transactionConnection,
-  { yandex = null, facebook = null, telegram = null },
-) => {
-  const passportTable = await transactionConnection.query(sql`
-INSERT INTO passport (yandex, facebook, telegram)
-  VALUES (
-  ${JSON.stringify(yandex.raw)},
-  ${JSON.stringify(facebook)},
-  ${JSON.stringify(telegram.from)}
-)
-`);
-  const compacted = await compactedLD({ yandex, facebook, telegram });
-  await transactionConnection.query(sql`
-INSERT INTO ld (passport_id, jsonld)
-  VALUES (${passportTable.id}, ${JSON.stringify(compacted)})
-`);
+  console.log('passportTable', passportTable);
   return passportTable;
 };
 /**
- * @description блокировки чтения/приема и общей работы бота
+ * @param {*} transactionConnection
+ * @param {object} oauth - oauth providers
+ */
+const createPassport = async (
+  transactionConnection,
+  { yandex = {}, facebook = {}, telegram = {} },
+) => {
+  const passportEmails = [];
+  let yaData;
+  if (yandex.raw) {
+    yaData = await oauthService.yandex(yandex.raw);
+    passportEmails.push(yaData.emails);
+  }
+  let fbData;
+  if (facebook.raw) {
+    fbData = await oauthService.facebook(facebook.raw);
+    passportEmails.push(fbData.email);
+  }
+  let tgData;
+  if (telegram.from) {
+    tgData = telegram.from;
+  }
+  const passport = await transactionConnection.one(sql`
+INSERT INTO passport (
+  telegram_id,
+  telegram_session,
+  facebook_id,
+  facebook_session, 
+  yandex_id,
+  yandex_session
+)
+VALUES (
+  ${tgData ? tgData.id : null},
+  ${tgData ? JSON.stringify(tgData) : null},
+  ${fbData ? fbData.id : null},
+  ${fbData ? JSON.stringify(facebook.raw) : null},
+  ${yaData ? yaData.client_id : null},
+  ${yaData ? JSON.stringify(yandex.raw) : null}
+)
+RETURNING id
+`);
+  await registration(transactionConnection, passport.id, passportEmails.flat());
+};
+/**
+ * @description Обновление данных паспорта
  * @param {object} requestObject - request object
  * @returns {Promise<void>}
  */
 module.exports = async (requestObject) => {
-  const { passport_id, yandex, facebook, telegram } = requestObject;
-  if (yandex || facebook || telegram) {
-    throw new Error('Unknown request');
+  const { yandex, facebook, telegram } = requestObject;
+  if (!yandex && !facebook && !telegram) {
+    throw new Error('Unknown provider oauth');
   }
   const result = await pool.connect(async (connection) => {
-    const result = await connection.transaction(
+    const transactionResult = await connection.transaction(
       async (transactionConnection) => {
-        let passport = await getPassport(transactionConnection, passport_id);
-        if (passport) {
+        try {
           await updatePassport(transactionConnection, {
             telegram,
             yandex,
             facebook,
           });
-        } else {
-          passport = await createPassport(transactionConnection, {
-            telegram,
-            yandex,
-            facebook,
-          });
+          return 'Вы успешно обновили данные своего паспорта.';
+        } catch (error) {
+          if (error instanceof NotFoundError) {
+            await createPassport(transactionConnection, {
+              telegram,
+              yandex,
+              facebook,
+            });
+            return 'На привязанную почту вам отправлено письмо от вашего бота. Следуйте инструкциям в письме.';
+          }
+          logger.error(error);
+          throw error;
         }
-        const botTable = await transactionConnection.maybeOne(sql`
-SELECT
-    activated
-FROM
-    bot
-WHERE
-    activated = true AND passport_id = ${passport.id}
-`);
-        if (botTable.activated) {
-          return 'Вы успешно обновили данные своего паспорта';
-        }
-        const output = await registration(passport.id);
-        return output;
       },
     );
-    return result;
+    return transactionResult;
   });
   return result;
 };
