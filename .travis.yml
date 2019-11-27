@@ -44,12 +44,7 @@ install:
   - npm ci
 
 before_script:
-  - psql --version
-  - psql -U postgres -d postgres -a -f ./SQL/create_db.sql
-  - psql -U postgres -d postgres -a -f ./SQL/create_role.sql
-  - psql -U postgres -d postgres -a -f ./SQL/create_extensions.sql
-  - psql -U postgres -d postgres -a -f ./SQL/install.sql
-  - psql -U postgres -d postgres -a -f ./SQL/create_schemes.sql
+  - bash SQL/install.sh
   - git lfs pull
 
 script:
