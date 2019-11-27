@@ -1,8 +1,12 @@
 const sgMail = require('@sendgrid/mail');
-const { SENDGRID } = require('../environment');
+const { SENDGRID, IS_PRODUCTION } = require('../environment');
 const { patch } = require('../services/request.service');
 
-sgMail.setApiKey(SENDGRID.API_KEY);
+if (IS_PRODUCTION) {
+  sgMail.setApiKey(SENDGRID.API_KEY);
+} else {
+  sgMail.setApiKey(SENDGRID.API_KEY_DEV);
+}
 /**
  * @constant
  * @type {string}

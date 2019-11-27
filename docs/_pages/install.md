@@ -40,6 +40,7 @@ FAT_SECRET_API_ACCESS_KEY={ access key string }
 FAT_SECRET_API_SHARED_SECRET={ shared secret string }
 
 SENDGRID_API_KEY={ api key }
+SENDGRID_API_KEY_DEV={ api key }
 
 OPEN_WEATHER_KEY={ api key }
 

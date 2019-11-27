@@ -40,6 +40,7 @@ const {
   FAT_SECRET_API_SHARED_SECRET,
 
   SENDGRID_API_KEY,
+  SENDGRID_API_KEY_DEV,
 
   OPEN_WEATHER_KEY,
 
@@ -53,11 +54,6 @@ const {
 
   FOURSQUARE_CLIEND_ID,
   FOURSQUARE_CLIENT_SECRET,
-
-  MAIL_USER,
-  MAIL_PASSWORD,
-  MAIL_HOST,
-  MAIL_PORT,
 
   YA_PDD_TOKEN,
   YA_OAUTH_ID,
@@ -152,9 +148,15 @@ const ENV = {
   SENDGRID: {
     get API_KEY() {
       if (!SENDGRID_API_KEY) {
-        throw new Error('Env error SENDGRID_API_KEY is not initialized');
+        throw new Error('SENDGRID_API_KEY is not initialized');
       }
       return SENDGRID_API_KEY;
+    },
+    get API_KEY_DEV() {
+      if (!SENDGRID_API_KEY_DEV) {
+        throw new Error('SENDGRID_API_KEY_DEV is not initialized');
+      }
+      return SENDGRID_API_KEY_DEV;
     },
   },
   OPEN_WEATHER: {
