@@ -21,7 +21,6 @@ class Document extends TelegramBotRequest {
 /**
  * @description пример считывания zip архива; его распаковка; нахождение export.xml и его превращение в json
  * @param {TelegramMessage} message - msg
- * @param session
  * @returns {Promise<undefined>}
  */
 module.exports = async (message) => {

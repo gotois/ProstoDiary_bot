@@ -36,7 +36,7 @@ if (IS_AVA_OR_CI) {
 }
 /**
  * @param {TelegramMessage} message - message
- * @returns {?throws}
+ * @returns {?Error}
  */
 const checkMessage = (message) => {
   // Пропускаем команды бота

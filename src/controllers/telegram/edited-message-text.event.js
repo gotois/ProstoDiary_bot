@@ -19,11 +19,11 @@ class EditMessageText extends TelegramBotRequest {
       return;
     }
     // fixme
-    if (!isExist) {
-      // TODO: если записи нет - тогда спрашиваем пользователя, создавать ли новую запись?
-      await bot.sendMessage(this.message.chat.id, 'Запись не найдена');
-      return;
-    }
+    // if (!isExist) {
+    // TODO: если записи нет - тогда спрашиваем пользователя, создавать ли новую запись?
+    // await bot.sendMessage(this.message.chat.id, 'Запись не найдена');
+    // return;
+    // }
     // Сообщение удалено?
     if (
       EditMessageText.DELETE_VARIABLES.some((del) => {

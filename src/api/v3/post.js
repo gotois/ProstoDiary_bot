@@ -1,13 +1,12 @@
 const openpgp = require('openpgp');
-const pkg = require('../../../package');
+const package_ = require('../../../package');
+const { pool, sql } = require('../../core/database');
 const { IS_AVA_OR_CI } = require('../../environment');
 const { FakerText } = require('../../services/faker.service');
-const sgMail = require('../../services/sendgridmail.service');
-// todo отправка абстракта минуя формирование письма ?
-//  НЕТ! в этом случае отправляем письмо на специально сгенерированный ящик gotois и после прочтения VZOR'ом удаляем
+const { mail } = require('../../services/sendgridmail.service');
 /**
- * @description отправляем письмо
- * @param {RequestObject} requestObject - requestObject
+ * @description Отправляем сообщение. Попадает на почту на специально сгенерированный ящик gotois и после прочтения VZOR'ом удаляем
+ * @param {object} requestObject - requestObject
  * @returns {Promise<JsonRpc|JsonRpcError>}
  */
 module.exports = async (requestObject) => {
@@ -36,30 +35,45 @@ module.exports = async (requestObject) => {
   } else {
     throw new Error('Invalid params: text or buffer');
   }
+  const secretKey = await pool.connect(async (connection) => {
+    const botTable = await connection.one(sql`
+SELECT
+    secret_key
+FROM
+    bot
+WHERE
+    email = ${creator}
+`);
+    return botTable.secret_key;
+  });
   const encrypted = await openpgp.encrypt({
     message: openpgp.message.fromBinary(buffer),
-    passwords: [creator.secret], // todo брать из pgp_secret
+    passwords: [secretKey],
     compression: openpgp.enums.compression.zlib,
   });
   const content = Buffer.from(encrypted.data).toString('base64');
   const headers = {
-    'x-bot': pkg.name,
-    'x-bot-version': pkg.version,
+    'x-bot': package_.name,
+    'x-bot-version': package_.version,
   };
   const message = {
-    personalizations: [{
-      to: [{
-        email: creator.email,
-      }],
-      headers,
-      customArgs: {
-        timestamp: date,
-        test: IS_AVA_OR_CI,
-        chat_id: chat_id,
-        telegram_message_id: telegram_message_id,
+    personalizations: [
+      {
+        to: [
+          {
+            email: creator,
+          },
+        ],
+        headers,
+        customArgs: {
+          timestamp: date,
+          test: IS_AVA_OR_CI,
+          chat_id: chat_id,
+          telegram_message_id: telegram_message_id,
+        },
+        subject: 'todo subject',
       },
-      subject: 'todo subject',
-    }],
+    ],
     from: {
       email: publisher,
     },
@@ -78,11 +92,9 @@ module.exports = async (requestObject) => {
       //   "enable": true // todo set true for CI and test
       // },
     },
-    categories: [
-      'transaction',
-    ],
+    categories: ['transaction'],
   };
-  const [mailResult] = await sgMail.send(message);
+  const [mailResult] = await mail.send(message);
   if (!mailResult.complete) {
     throw new Error('sgMail send not completed');
   }

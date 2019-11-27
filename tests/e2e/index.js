@@ -3,7 +3,7 @@ const {
   skipTestForFastOrTravis,
   skipTestForFast,
 } = require('../helpers');
-const pkg = require('../../package');
+const package_ = require('../../package');
 const TelegramServer = require('telegram-test-api');
 const {
   IS_CI,
@@ -23,7 +23,6 @@ test.before(async (t) => {
   });
   await server.start();
   require('../../src/core/bot');
-  require('../../src/controllers/telegram');
   t.log(`TelegramServer: ${SERVER.HOST}:${SERVER.PORT} started`);
   const client = server.getClient(TELEGRAM.TOKEN);
   /*eslint-disable require-atomic-updates */
@@ -71,10 +70,10 @@ test.after.always('guaranteed cleanup', async (t) => {
   if (process.env.FAST_TEST || IS_CI || !IS_PRODUCTION) {
     return;
   }
-  const sgMail = require('../../src/services/sendgridmail.service');
-  const [mailResult] = await sgMail.send({
-    to: pkg.maintainers[0].email,
-    from: pkg.author.email,
+  const { mail } = require('../../src/services/sendgridmail.service');
+  const [mailResult] = await mail.send({
+    to: package_.maintainers[0].email,
+    from: package_.author.email,
     subject: '👾 ProstoDiary 🐛: E2E tests failed',
     text: JSON.stringify(failedTasks, null, 2),
   });

@@ -153,7 +153,7 @@
     "unicorn/filename-case": "error",
     "unicorn/import-index": "error",
     "unicorn/new-for-builtins": "error",
-    "unicorn/no-abusive-eslint-disable": "warn",
+    "unicorn/no-abusive-eslint-disable": "off",
     "unicorn/no-array-instanceof": "error",
     "unicorn/no-console-spaces": "error",
     "unicorn/no-fn-reference-in-iterator": "off",
