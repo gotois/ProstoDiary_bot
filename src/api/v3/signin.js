@@ -1,4 +1,6 @@
-const { sql, pool } = require('../../core/database');
+const { pool } = require('../../core/database');
+const passportQueries = require('../../db/passport');
+const botQueries = require('../../db/bot');
 const twoFactorAuthService = require('../../services/2fa.service');
 /**
  * @description Авторизация и разблокировка чтения/приема и общей работы бота
@@ -19,21 +21,12 @@ module.exports = async (requestObject) => {
   // todo в зависимости от связки возващается стандартный passport или расширенный
   const signInResult = await pool.connect(async (connection) => {
     try {
-      // todo: поддержать `... telegram = ${telegram} OR email = ${email}`
-      const passportTable = await connection.one(sql`SELECT
-    *
-FROM
-    passport
-WHERE
-    telegram = ${telegram}
-`);
-      const botTable = await connection.one(sql`SELECT
-    *
-FROM
-    bot
-WHERE
-    passport_id = ${passportTable.id}
-`);
+      const passportTable = await connection.one(
+        passportQueries.selectAll(telegram),
+      );
+      const botTable = await connection.one(
+        botQueries.selectByPassport(passportTable.id),
+      );
       const valid = await twoFactorAuthService.verify(
         botTable.secret_key,
         token,
@@ -45,14 +38,9 @@ WHERE
         throw new Error('Неверный ключ. Попробуйте снова');
       }
       if (!botTable.activated) {
-        await connection.query(sql`
-UPDATE
-    bot
-SET
-    activated = ${true}
-WHERE
-    passport_id = ${botTable.passport_id}
-`);
+        await connection.query(
+          botQueries.activateByPassportId(botTable.passport_id),
+        );
       }
       return 'Бот активирован';
     } catch (error) {

@@ -1,5 +1,8 @@
 const bot = require('../core/bot');
-const { pool, sql, NotFoundError } = require('../core/database');
+const { pool, NotFoundError } = require('../core/database');
+const passportQueries = require('../db/passport');
+const botQueries = require('../db/bot');
+const logger = require('../services/logger.service');
 
 module.exports = async (request, response, next) => {
   if (request.body.message.text.length === 1) {
@@ -9,12 +12,12 @@ module.exports = async (request, response, next) => {
   try {
     const gotoisCredentions = await pool.connect(async (connection) => {
       try {
-        const passportTable = await connection.one(sql`
-      SELECT id FROM passport WHERE telegram = ${request.body.message.from.id};
-    `);
-        const botTable = await connection.one(sql`
-      SELECT email FROM bot WHERE passport_id = ${passportTable.id};
-    `);
+        const passportTable = await connection.one(
+          passportQueries.selectIdByTelegramId(request.body.message.from.id),
+        );
+        const botTable = await connection.one(
+          botQueries.selectEmailByPassport(passportTable),
+        );
         return {
           id: passportTable.id,
           email: botTable.email,
@@ -36,6 +39,7 @@ module.exports = async (request, response, next) => {
     bot.processUpdate(body);
     response.sendStatus(200);
   } catch (error) {
+    logger.error(error);
     next(error);
   }
 };

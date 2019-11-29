@@ -31,6 +31,7 @@ const detectTextIntent = async (query) => {
 };
 /**
  * @example inputAnalyze('купил овощи 30 рублей');
+ *
  * @description получаем и разбираем Intent (если есть)
  * @param {string} rawMessage - raw message
  * @returns {Promise<string>}

@@ -1,5 +1,6 @@
 const auth = require('http-auth');
-const { sql, pool } = require('../core/database');
+const botQueries = require('../db/bot');
+const { pool } = require('../core/database');
 
 // example: demo@gotointeractive.com:demo
 const basic = auth.basic(
@@ -11,17 +12,11 @@ const basic = auth.basic(
       callback(true);
       return;
     }
-    // todo: поддержать 2auth авторизацию
     await pool.connect(async (connection) => {
       try {
-        const user = await connection.one(sql`SELECT
-    1
-FROM
-    bot
-WHERE
-    email = ${login}
-    AND secret_password = crypt(${password}, secret_password)
-`);
+        const user = await connection.one(
+          botQueries.checkByLoginAndPassword(login, password),
+        );
         callback(user);
       } catch {
         callback(false);

@@ -69,7 +69,7 @@ Tools
 ---
 #### Package upgrade
 ```bash
-npx ncu -u
+ncu -u
 ```
 
 #### Fix lint

@@ -17,6 +17,7 @@ const YANDEX_HOST = 'pddimp.yandex.ru';
 const DOMAIN = 'gotointeractive.com';
 
 /**
+ * todo перенести в отдельную модель - и сделать функцию статической
  * @param {Mail} mail - mail
  * @returns {Promise<Array<Abstract>>}
  */
@@ -161,14 +162,11 @@ const createYaMail = async (login) => {
   if (emailGetOauth.error) {
     throw new Error(emailAdd.error);
   }
-  await get(
-    'https://passport.yandex.ru/passport',
-    {
-      mode: 'oauth',
-      access_token: emailGetOauth['oauth-token'],
-      type: 'trusted-pdd-partner',
-    }
-  );
+  await get('https://passport.yandex.ru/passport', {
+    mode: 'oauth',
+    access_token: emailGetOauth['oauth-token'],
+    type: 'trusted-pdd-partner',
+  });
   return {
     ...emailAdd,
     ...emailGetOauth,

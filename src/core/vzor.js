@@ -1,29 +1,31 @@
 const notifier = require('mail-notifier');
-const Imap = require('imap');
 const { MailParser } = require('mailparser');
-const logger = require('./logger.service');
-const { MAIL, IS_CRON, IS_PRODUCTION } = require('../environment');
-const mailService = require('./mail.service');
-
-const imapOptions = {
-  host: MAIL.HOST,
-  port: MAIL.PORT,
-  user: MAIL.USER,
-  password: MAIL.PASSWORD,
-  tls: true,
-  tlsOptions: { rejectUnauthorized: false },
-  box: 'INBOX',
-};
+const Imap = require('imap');
+const { IS_CRON, IS_PRODUCTION } = require('../environment');
+const logger = require('../services/logger.service');
+const mailService = require('../services/mail.service');
 
 class Vzor {
   /**
    * @todo нужна функциональнось которая игнорирует те письма, которые уже были обработы ботом
    * @example search = ['ALL', ['UID', 2657]]; // search by uid
-   * @param {*} search - search param
+   *
+   * @param {*} imapOptions - imap options
    */
-  constructor(search = ['ALL']) {
+  constructor(imapOptions) {
+    // imapOptions = {
+    //   ...imapOptions,
+    //   search: ['ALL', ['UID', 2657]]
+    // };
+
     this.n = notifier(
-      { ...imapOptions, markSeen: false, search },
+      {
+        ...imapOptions,
+        tls: true,
+        markSeen: true,
+        tlsOptions: { rejectUnauthorized: false },
+        box: 'INBOX',
+      },
       (debugMessage) => {
         if (!IS_PRODUCTION) {
           logger.log('info', debugMessage);
@@ -34,7 +36,15 @@ class Vzor {
       .on('error', this.errorNListener)
       .on('mail', mailService.read)
       .on('end', this.endNListener);
-    this.n.start(); // запускаем считыватель писем
+  }
+  /**
+   * запускаем считыватель писем
+   */
+  listen() {
+    this.n.start();
+  }
+  stopListen() {
+    this.n.stop();
   }
   errorNListener(message) {
     logger.error(message);
@@ -45,7 +55,7 @@ class Vzor {
   endNListener() {
     // в случае если запускается через CRON - тогда не используем infinity loop
     if (IS_CRON) {
-      this.n.stop();
+      this.stopListen();
     } else {
       return this.n.start();
     }
@@ -54,16 +64,26 @@ class Vzor {
     logger.info('connected email notifier');
   }
   /**
+   * @param {Map} mailMap - mail map
+   */
+  static async readEmail(mailMap) {
+    for (const [_mapId, mail] of mailMap) {
+      await mailService.read(mail);
+    }
+  }
+  /**
+   * @param {object} imapOptions - imap options
    * @param {Array} search - imap search
    * @returns {Promise<Map>}
    */
-  static search(search) {
+  static search(imapOptions, search) {
     return new Promise((resolve, reject) => {
       const imap = new Imap({
         ...imapOptions,
-        markSeen: true,
+        host: 'imap.yandex.ru',
+        port: 993,
+        tls: true,
       });
-      imap.connect();
       imap.once('ready', () => {
         imap.openBox('INBOX', true, () => {
           imap.search(search, (error, results) => {
@@ -106,6 +126,10 @@ class Vzor {
           });
         });
       });
+      imap.once('error', (error) => {
+        reject(error);
+      });
+      imap.connect();
     });
   }
 }

@@ -5,6 +5,7 @@ const { pool, sql } = require('../src/core/database');
 const passportQueries = require('../src/db/passport');
 const botQueries = require('../src/db/bot');
 const { mail } = require('../src/services/sendgridmail.service');
+const logger = require('../src/services/logger.service');
 
 // todo использовать свои схемы - "https://gotointeractive.com/#organization",
 const yandexLD = async (parameters) => {
@@ -57,14 +58,20 @@ const telegramLD = async (parameters) => {
   await pool.connect(async (connection) => {
     try {
       // берем данные из паспорта
-      const passports = await connection.many(
-        passportQueries.getPassports(),
-      );
+      const passports = await connection.many(passportQueries.getPassports());
+      const currentDate = new Date().getTime() / 1000;
       for (const passport of passports) {
-        const botTable = await connection.one(botQueries.selectByPassport(passport.id));
+        const botTable = await connection.one(
+          botQueries.selectByPassport(passport.id),
+        );
+        if (!botTable.activated) {
+          continue;
+        }
         // уведомляем на почту если oauth сессия устарела на почту
-        const currentDate = new Date().getTime() / 1000;
-        if (passport.facebook_session && passport.facebook_session.expires_in < currentDate) {
+        if (
+          passport.facebook_session &&
+          passport.facebook_session.expires_in < currentDate
+        ) {
           await mail.send({
             to: passport.facebook_passport.email,
             from: botTable.email,
@@ -74,7 +81,10 @@ const telegramLD = async (parameters) => {
     `,
           });
         }
-        if (passport.yandex_session && passport.yandex_session.expires_in < currentDate) {
+        if (
+          passport.yandex_session &&
+          passport.yandex_session.expires_in < currentDate
+        ) {
           await mail.send({
             to: passport.yandex_passport.email,
             from: botTable.email,
@@ -99,7 +109,7 @@ INSERT INTO ld (passport_id, jsonld)
         `);
       }
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       process.exit(1);
     }
   });
