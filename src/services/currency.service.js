@@ -45,9 +45,8 @@ const exchangeratesapi = async ({
     symbols: symbols.toString(),
   });
   const url = `https://${EXCHANGERATES_API_HOST}/${date}` + parameters;
-  const siteBuffer = await get(url);
-  const html = siteBuffer.toString('utf8');
-  return JSON.parse(html);
+  const html = await get(url);
+  return html;
 };
 
 module.exports = {

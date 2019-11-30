@@ -10,11 +10,12 @@ const RESTCOUNTRIES_HOST = 'restcountries.eu';
  */
 const getFullName = async (name) => {
   const encodeName = encodeURI(name);
-  const restCountriesBuffer = await get(
-    `https://${RESTCOUNTRIES_HOST}/rest/v2/name/${encodeName}?fullText=true`,
+  const parsedRestCountries = await get(
+    `https://${RESTCOUNTRIES_HOST}/rest/v2/name/${encodeName}`,
+    {
+      fullText: true,
+    },
   );
-  const restCountriesBufferData = restCountriesBuffer.toString('utf8');
-  const parsedRestCountries = JSON.parse(restCountriesBufferData);
   if (!Array.isArray(parsedRestCountries)) {
     throw new ReferenceError('GEO: country not found');
   }

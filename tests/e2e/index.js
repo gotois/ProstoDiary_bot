@@ -88,7 +88,7 @@ skipTestForFastOrTravis('API: script', require('./script.test'));
 skipTestForFast('API: speller service', require('./speller-service.test'));
 skipTestForFast('API: request', require('./request.test'));
 skipTestForFast('API: Weather', require('./weather.test'));
-skipTestForFast('API: RestContries', require('./restcountries.test'));
+skipTestForFast('API: RestCountries', require('./restcountries.test'));
 skipTestForFast('API: plotly', require('./graph-service.test'));
 skipTestForFastOrTravis(
   'API: dialogflow',
@@ -102,7 +102,7 @@ skipTestForFastOrTravis('API: Todoist', require('./todoist-service.test'));
 skipTestForFast('API: Currency', require('./currency-service.test'));
 
 // Telegram commands
-skipTestForFast('/help', require('./help.test'));
+skipTestForFastOrTravis('/help', require('./help.test'));
 skipTestForFastOrTravis('/backup', require('./backup.test'));
 skipTestForFastOrTravis('/post', require('./post.test'));
 skipTestForFastOrTravis('/ping', require('./ping.test'));
@@ -118,5 +118,8 @@ skipTestForFastOrTravis('archive service', require('./archive-service.test'));
 skipTestForFastOrTravis('AppleHealth', require('./apple-health-service.test'));
 skipTestForFastOrTravis('Tinkoff', require('./tinkoff-service.test'));
 skipTestForFastOrTravis('foursquare', require('./foursquare-service.test'));
+
+// urls
+skipTestForFastOrTravis('/id/', require('./json-ld.test'));
 
 test('bot init', require('./telegram-bot.test'));
