@@ -18,6 +18,7 @@ const DOMAIN = 'gotointeractive.com';
 
 /**
  * todo перенести в отдельную модель - и сделать функцию статической
+ *
  * @param {Mail} mail - mail
  * @returns {Promise<Array<Abstract>>}
  */

@@ -41,11 +41,10 @@ function* generateEntries(rows, input) {
  * @returns {Promise<JsonRpc|JsonRpcError>}
  */
 module.exports = async (requestObject) => {
-// * onSearch (?string|?RegExp) -> поиск историй
-//   - [История работы в фирме], [История любви], [История болезни]
-//   * onStatus (enum) -> отображение статуса
-//   - [Жизненные показатели], [финансы]
-
+  // * onSearch (?string|?RegExp) -> поиск историй
+  //   - [История работы в фирме], [История любви], [История болезни]
+  //   * onStatus (enum) -> отображение статуса
+  //   - [Жизненные показатели], [финансы]
 
   const input = await correctionText(requestObject.params.input);
 

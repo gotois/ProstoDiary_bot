@@ -152,7 +152,7 @@ class Search extends TelegramBotRequest {
  * @param {TelegramMessage} message - message
  * @returns {Promise<undefined>}
  */
-module.exports = async (message, session) => {
-  const search = new Search(message, session);
+module.exports = async (message) => {
+  const search = new Search(message);
   await search.beginDialog();
 };

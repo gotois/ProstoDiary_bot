@@ -2,7 +2,7 @@ const logger = require('../../services/logger.service');
 const format = require('../../services/format.service');
 const UserStory = require('../../models/story/user-story');
 /**
- *  может не работать если абстракт уже натурализован
+ * может не работать если абстракт уже натурализован
  *
  * @param {RequestObject} requestObject - requestObject
  * @returns {JsonRpc|JsonRpcError}

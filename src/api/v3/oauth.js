@@ -77,7 +77,8 @@ const getPassport = async (
   return passportTable;
 };
 /**
- * @fixme есть уязвимость, нужно усложнить выборку, используя oauth провайдеры
+ * fixme есть уязвимость, нужно усложнить выборку, используя oauth провайдеры
+ *
  * @param {*} transactionConnection - transactionConnection
  * @param {object} oauth - oauth providers
  * @returns {Promise<*>}

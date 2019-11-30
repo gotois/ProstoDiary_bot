@@ -4,7 +4,7 @@
  * @returns {Promise<void>}
  */
 module.exports = async (requestObject) => {
-  const { telegram = -1, email = '', token } = requestObject;
+  const { email, token } = requestObject;
   // todo изменять флаг activated
   //  ...
   // todo: деактивировать почтовый ящик

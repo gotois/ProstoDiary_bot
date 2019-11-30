@@ -1,5 +1,4 @@
 const Story = require('.');
-const dbEntries = require('../../database/entities.database');
 
 class UserStory extends Story {
   constructor(abstract) {
@@ -21,7 +20,6 @@ class UserStory extends Story {
    * @returns {undefined}
    */
   async push() {
-    await dbEntries.post(this.toJSON());
   }
 }
 
