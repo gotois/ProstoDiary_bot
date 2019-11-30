@@ -4,3 +4,5 @@ created_at TIMESTAMP DEFAULT current_timestamp,
 -- JSONLD данные которые можно превратить в n-quads
 jsonld JSONB NOT NULL
 );
+
+GRANT ALL PRIVILEGES ON ld TO bot;

@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS bot (
 passport_id UUID REFERENCES passport (id) ON UPDATE CASCADE ON DELETE CASCADE,
-updated_at TIMESTAMP NOT NULL DEFAULT now(),
+updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
 created_at TIMESTAMP DEFAULT current_timestamp,
 -- активирован или деактиван бот
 activated BOOLEAN NOT NULL DEFAULT false,
@@ -15,3 +15,5 @@ secret_key TEXT NOT NULL,
 secret_password TEXT NOT NULL,
 UNIQUE (email)
 );
+
+GRANT ALL PRIVILEGES ON bot TO bot;

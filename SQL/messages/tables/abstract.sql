@@ -1,7 +1,7 @@
--- todo смержить abstract с message
+-- здесь находится первоначальный контекст сообщения
 CREATE TABLE IF NOT EXISTS abstract (
   id UUID DEFAULT uuid_generate_v4(), -- глобальная историческая ссылка. в идеале - blockchain ID
-  updated_at TIMESTAMP NOT NULL DEFAULT now(), -- время необходимое для того чтобы знать что оно было изменено
+  updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp, -- время необходимое для того чтобы знать что оно было изменено
   created_at TIMESTAMP DEFAULT current_timestamp, -- время записи публикации (может меняться если вычислено более правильное время)
   type ABSTRACT_TYPE NOT NULL,
   tags TAG ARRAY NOT NULL,
@@ -26,12 +26,11 @@ CREATE TABLE IF NOT EXISTS abstract (
   creator_id UUID REFERENCES passport (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за создание записи
   publisher_id UUID REFERENCES passport (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за публикацию записи, либо сам ProstoDiary_bot, либо внешний сторонний сервис, включая других ботов
 
-  -- todo возможно из sign можно будет получать ответственного за публикацию
--- sign SOMEHASH -- todo электронная подпись сгенерированная ботом, которая подтверждает что бот не был скомпроментирован. todo: попробвать через `MD5('string');`?
-
 PRIMARY KEY (id),
   UNIQUE(created_at)
 );
 CREATE UNIQUE INDEX ON abstract (tags);
 CREATE UNIQUE INDEX ON abstract (creator_id);
 CREATE UNIQUE INDEX ON abstract (publisher_id);
+
+GRANT ALL PRIVILEGES ON abstract TO bot;

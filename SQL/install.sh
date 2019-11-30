@@ -6,7 +6,6 @@ psql --version;
 psql -U postgres -d postgres -a -f database.sql;
 
 # passport
-psql -U postgres -d postgres -a -f passport/schemas/role.sql;
 psql -U postgres -d postgres -a -f passport/tables/passport.sql;
 psql -U postgres -d postgres -a -f passport/tables/ld.sql;
 psql -U postgres -d postgres -a -f passport/tables/bot.sql;
