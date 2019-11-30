@@ -203,7 +203,7 @@ class AbstractText extends Abstract {
         await transactionConnection.query(sql`
           INSERT INTO abstract 
           (created_at, type, tags, mime, version, context, message_id, creator_id, publisher_id)
-          VALUES (${this.timestamp}, ${this.type}, ${this.tags}, ${this.mime}, ${this.version}, ${this.context}, ${messageId}, ${creatorId}, ${publisherId})
+          VALUES (${this.timestamp}, ${this.type}, ${sql.array(this.tags, sql`text[]`)}, ${this.mime}, ${this.version}, ${this.context}, ${messageId}, ${creatorId}, ${publisherId})
           RETURNING *`
         );
       });

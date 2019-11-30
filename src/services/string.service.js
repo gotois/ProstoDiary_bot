@@ -116,6 +116,7 @@ const formatWord = (input) => {
  * @returns {RegExp}
  */
 const convertStringToRegexp = (input) => {
+  // eslint-disable-next-line unicorn/prefer-negative-index
   return new RegExp(input.slice(1, input.length - 1));
 };
 
