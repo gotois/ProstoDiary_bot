@@ -36,7 +36,7 @@
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "docs:serve": "cd docs/ ; bundle exec jekyll serve",
     "docs:openapi": "node ./scripts/api-generate",
-    "prepare": "npm run snyk-protect",
+    "prepare": "if [ \"$NODE_ENV\" = \"TRAVIS_CI\" ]; then echo skip prepare script; else npm run snyk-protect; fi",
     "snyk-protect": "snyk protect"
   },
   "engines": {
