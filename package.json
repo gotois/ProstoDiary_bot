@@ -104,7 +104,7 @@
     "grant-express": "4.6.4",
     "http-auth": "3.2.4",
     "jayson": "3.2.0",
-    "jimp": "0.8.5",
+    "jimp": "0.9.3",
     "jsonld": "1.8.1",
     "jsqr": "1.2.0",
     "mail-notifier": "0.5.0",
