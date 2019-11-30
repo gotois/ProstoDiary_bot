@@ -2,8 +2,7 @@
 
 psql --version;
 
-createuser -s $PGUSER
-psql -c 'create database $PGDATABASE ;' -U postgres
+psql -c 'create database $PGDATABASE ;' -U $PGUSER
 
 # create database with extensions
 psql -U $PGUSER -d $PGDATABASE -a -f database.sql;
