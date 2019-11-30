@@ -32,6 +32,9 @@ class Photo extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 module.exports = async (message) => {
+  if (!message.gotois.activated) {
+    throw new Error('Bot not activated');
+  }
   const photo = new Photo(message);
   await photo.beginDialog();
 };

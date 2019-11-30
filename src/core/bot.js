@@ -57,7 +57,7 @@ const checkMessage = (message) => {
  * @param {object} obj - matcher
  * @param {string} obj.type - matcher type
  */
-const messageListener = (message, { type }) => {
+const messageListener = async (message, { type }) => {
   try {
     if (message.reply_to_message instanceof Object) {
       if (!message.reply_to_message.from.is_bot) {
@@ -67,29 +67,34 @@ const messageListener = (message, { type }) => {
     switch (type) {
       case 'text': {
         checkMessage(message);
+        if (message.reply_to_message) {
+          return;
+        }
         for (const key of botCommands) {
           if (telegram[key].alias.test(message.text)) {
-            require('../controllers/telegram/' + telegram[key].event)(message);
+            await require('../controllers/telegram/' + telegram[key].event)(
+              message,
+            );
             return;
           }
         }
-        require('../controllers/telegram/text.event')(message);
+        await require('../controllers/telegram/text.event')(message);
         break;
       }
       case 'photo': {
-        require('../controllers/telegram/photo.event')(message);
+        await require('../controllers/telegram/photo.event')(message);
         break;
       }
       case 'document': {
-        require('../controllers/telegram/document.event')(message);
+        await require('../controllers/telegram/document.event')(message);
         break;
       }
       case 'location': {
-        require('../controllers/telegram/location.event')(message);
+        await require('../controllers/telegram/location.event')(message);
         break;
       }
       case 'voice': {
-        require('../controllers/telegram/voice.event')(message);
+        await require('../controllers/telegram/voice.event')(message);
         break;
       }
       default: {

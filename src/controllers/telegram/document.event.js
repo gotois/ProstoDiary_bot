@@ -24,6 +24,9 @@ class Document extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 module.exports = async (message) => {
+  if (!message.gotois.activated) {
+    throw new Error('Bot not activated');
+  }
   const document = new Document(message);
   await document.beginDialog();
 };

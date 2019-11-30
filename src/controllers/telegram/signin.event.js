@@ -1,30 +1,28 @@
 const bot = require('../../core/bot');
 const TelegramBotRequest = require('./telegram-bot-request');
-const { SERVER } = require('../../environment');
 
 class SignIn extends TelegramBotRequest {
+  async signInReplyMessage({ text }) {
+    const result = await this.request('signin', {
+      passportId: this.message.gotois.id,
+      token: text,
+    });
+    await bot.sendMessage(this.message.chat.id, result);
+  }
   async beginDialog() {
-    await bot.sendMessage(
+    const signInMessage = await bot.sendMessage(
       this.message.chat.id,
-      'Выберите способ авторизации:',
+      'Пришлите токен двухфакторной авторизации:',
       {
-        parse_mode: 'HTML',
         reply_markup: {
           force_reply: true,
-          inline_keyboard: [
-            [
-              {
-                text: 'Yandex',
-                url: `${SERVER.HOST}/connect/yandex`,
-              },
-              {
-                text: 'Facebook',
-                url: `${SERVER.HOST}/connect/facebook`,
-              },
-            ],
-          ],
         },
       },
+    );
+    bot.onReplyToMessage(
+      this.message.chat.id,
+      signInMessage.message_id,
+      this.signInReplyMessage.bind(this),
     );
   }
 }

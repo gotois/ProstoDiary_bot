@@ -3,8 +3,8 @@ for (const api of [
   // 'destroy',
   // 'edit',
   'signin',
+  'signout',
   'oauth',
-  // 'sign-out',
   'help',
   // 'naturalization',
   // 'notification',
@@ -12,7 +12,6 @@ for (const api of [
   'post',
   // 'remove',
   // 'search',
-  // 'sleep',
 ]) {
   /**
    * @returns {object}

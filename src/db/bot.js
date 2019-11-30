@@ -36,13 +36,13 @@ WHERE
     passport_id = ${passportId}
 `;
   },
-  selectByPassport(passportTable) {
+  selectByPassport(passportId) {
     return sql`SELECT
     *
 FROM
     bot
 WHERE
-    passport_id = ${passportTable.id}
+    passport_id = ${passportId}
 `;
   },
   createBot({ passportId, email, uid, password, secret }) {

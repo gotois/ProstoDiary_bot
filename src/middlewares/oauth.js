@@ -1,14 +1,22 @@
 const bot = require('../core/bot');
 const { client } = require('../core/jsonrpc');
+const { pool } = require('../core/database');
+const passportQueries = require('../db/passport');
 /**
  * @param {string} token - token
  * @param {TelegramMessage} message - telegram message
  * @returns {Promise<undefined>}
  */
 const telegramSignInCallback = async (token, message) => {
+  const passportId = await pool.connect(async (connection) => {
+    const passportTable = await connection.one(
+      passportQueries.selectAll(message.from.id),
+    );
+    return passportTable.id;
+  });
   await client.request('signin', {
     token,
-    telegram: message.from.id,
+    passportId,
   });
   const me = await bot.getMe();
   await bot.sendMessage(

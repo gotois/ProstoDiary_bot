@@ -1,7 +1,6 @@
 const bot = require('../core/bot');
 const Vzor = require('../core/vzor');
 const { pool, sql } = require('../core/database');
-const logger = require('../services/logger.service');
 /**
  * @param {object} info - mail info
  * @returns {Promise<void>}
@@ -66,7 +65,6 @@ module.exports = async (request, response, next) => {
     }
     response.sendStatus(200);
   } catch (error) {
-    logger.error(error);
     next(error);
   }
 };

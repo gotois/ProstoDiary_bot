@@ -2,7 +2,6 @@ const bot = require('../core/bot');
 const { pool, NotFoundError } = require('../core/database');
 const passportQueries = require('../db/passport');
 const botQueries = require('../db/bot');
-const logger = require('../services/logger.service');
 
 module.exports = async (request, response, next) => {
   if (request.body.message.text.length === 1) {
@@ -16,11 +15,12 @@ module.exports = async (request, response, next) => {
           passportQueries.selectIdByTelegramId(request.body.message.from.id),
         );
         const botTable = await connection.one(
-          botQueries.selectEmailByPassport(passportTable),
+          botQueries.selectByPassport(passportTable.id),
         );
         return {
           id: passportTable.id,
           email: botTable.email,
+          activated: botTable.activated,
         };
       } catch (error) {
         if (error instanceof NotFoundError) {
@@ -39,7 +39,6 @@ module.exports = async (request, response, next) => {
     bot.processUpdate(body);
     response.sendStatus(200);
   } catch (error) {
-    logger.error(error);
     next(error);
   }
 };

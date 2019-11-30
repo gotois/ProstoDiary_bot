@@ -21,6 +21,9 @@ class Location extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 module.exports = async (message) => {
+  if (!message.gotois.activated) {
+    throw new Error('Bot not activated');
+  }
   const location = new Location(message);
   await location.beginDialog();
 };
