@@ -1,4 +1,5 @@
-os: osx
+os:
+  - linux
 language: node_js
 sudo: false
 
@@ -46,10 +47,7 @@ install:
   - npm ci
 
 before_script:
-  - export PG_DATA=$(brew --prefix)/var/postgres
-  - pg_ctl -w start -l postgres.log --pgdata ${PG_DATA}
   - bash SQL/install.sh
-  - cat postgres.log
   - git lfs pull
 
 script:
