@@ -1,11 +1,11 @@
 /**
  * @todo дать возможность очищать не все, а только определенные истории
  * @description Удаление всей истории пользователя целиком
- * @param {RequestObject} requestObject - requestObject
- * @returns {JsonRpc|JsonRpcError}
+ * @param {object} requestObject - requestObject
+ * @returns {Promise<string>}
  */
 module.exports = async (requestObject) => {
   // TODO
   //  ...
-  return 'Данные очищены';
+  return Promise.resolve('Данные очищены');
 };

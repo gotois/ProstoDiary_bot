@@ -33,11 +33,12 @@ const getLocShortName = (parsedData) => {
   return parsedData[resultLength - 1].address_components[0].short_name;
 };
 /**
- * @param {RequestObject} requestObject - requestObject
- * @returns {JsonRpc|JsonRpcError}
+ * @description натурализация
+ * @param {object} requestObject - requestObject
+ * @returns {Promise<string>}
  */
 module.exports = async (requestObject) => {
-  const { location } = requestObject.params;
+  const { location } = requestObject;
   let formattedAddress;
   let currencySymbol;
   let currencyCode;

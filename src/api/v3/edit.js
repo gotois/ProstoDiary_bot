@@ -4,11 +4,12 @@ const UserStory = require('../../models/story/user-story');
 /**
  * может не работать если абстракт уже натурализован
  *
- * @param {RequestObject} requestObject - requestObject
- * @returns {JsonRpc|JsonRpcError}
+ * @description edit
+ * @param {object} requestObject - requestObject
+ * @returns {Promise<string>}
  */
 module.exports = async (requestObject) => {
-  const { text, date, message_id, telegram_user_id } = requestObject.params;
+  const { text, date, message_id, telegram_user_id } = requestObject;
   //fixme манипулировать Абстрактом, а не UserStory
   logger.log('warn', '!!!!!!!!!!');
   const story = new UserStory({

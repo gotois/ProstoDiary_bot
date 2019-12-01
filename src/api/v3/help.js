@@ -3,8 +3,9 @@ const { getCheckSum } = require('../../services/version.service');
 const { IS_PRODUCTION } = require('../../environment');
 const { telegram } = require('../../controllers');
 /**
+ * @description помощь
  * @param {object} parameters - param
- * @returns {SuccessObject}
+ * @returns {Promise<string>}
  */
 module.exports = (parameters) => {
   const { user } = parameters;

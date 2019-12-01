@@ -157,7 +157,7 @@ const createPassport = async (
 /**
  * @description Обновление данных паспорта
  * @param {object} requestObject - request object
- * @returns {Promise<void>}
+ * @returns {Promise<string>}
  */
 module.exports = async (requestObject) => {
   const { yandex, facebook, telegram } = requestObject;

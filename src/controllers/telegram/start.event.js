@@ -12,15 +12,12 @@ class Start extends TelegramBotRequest {
   }
   async beginDialog() {
     if (this.message.gotois) {
-      // для ускорения разработки вынес под флаг
-      if (IS_PRODUCTION) {
-        const message =
-          'Повторная установка не требуется\n\n' +
-          '/signin - включить бота \n' +
-          '/signout - выключить бота \n';
-        await bot.sendMessage(this.message.chat.id, message);
-        return;
-      }
+      const message =
+        'Повторная установка не требуется\n\n' +
+        '/signin - включить бота \n' +
+        '/signout - выключить бота \n';
+      await bot.sendMessage(this.message.chat.id, message);
+      return;
     }
     bot.on('callback_query', this.messageListener);
     await super.beginDialog();

@@ -37,8 +37,9 @@ function* generateEntries(rows, input) {
   }
 }
 /**
- * @param {RequestObject} requestObject - requestObject
- * @returns {Promise<JsonRpc|JsonRpcError>}
+ * @description поиск
+ * @param {object} requestObject - requestObject
+ * @returns {Promise<string>}
  */
 module.exports = async (requestObject) => {
   // * onSearch (?string|?RegExp) -> поиск историй
@@ -46,7 +47,7 @@ module.exports = async (requestObject) => {
   //   * onStatus (enum) -> отображение статуса
   //   - [Жизненные показатели], [финансы]
 
-  const input = await correctionText(requestObject.params.input);
+  const input = await correctionText(requestObject.input);
 
   // const rows = await dbEntries.get(currentUser.id, date);
 

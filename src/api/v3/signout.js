@@ -3,7 +3,7 @@ const botQueries = require('../../db/bot');
 /**
  * @description блокировки чтения/приема и общей работы бота
  * @param {object} requestObject - requestObject
- * @returns {Promise<void>}
+ * @returns {Promise<string>}
  */
 module.exports = async (requestObject) => {
   const { passportId } = requestObject;

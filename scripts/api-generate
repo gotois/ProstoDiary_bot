@@ -24,6 +24,7 @@ const { SERVER } = require('../src/environment');
     packageUrl: './package.json',
     files: './src/api/v3/*.js',
   });
+  // ping
   data.paths['/'] = {
     get: {
       responses: {
@@ -40,5 +41,13 @@ const { SERVER } = require('../src/environment');
       },
     },
   };
+  // todo /id/:uuid/:date
+  //  ...
+  // todo /mail
+  //  ...
+  // todo /assistants
+  //  ...
+  // todo /bot
+  //  ...
   fs.writeFileSync('docs/openapi.json', JSON.stringify(data, null, 2));
 })();

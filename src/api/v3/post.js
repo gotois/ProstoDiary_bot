@@ -7,7 +7,7 @@ const { mail } = require('../../services/sendgridmail.service');
 /**
  * @description Отправляем сообщение. Попадает на почту на специально сгенерированный ящик gotois и после прочтения VZOR'ом удаляем
  * @param {object} requestObject - requestObject
- * @returns {Promise<JsonRpc|JsonRpcError>}
+ * @returns {Promise<string>}
  */
 module.exports = async (requestObject) => {
   const {
