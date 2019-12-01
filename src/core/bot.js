@@ -16,27 +16,32 @@ if (IS_AVA_OR_CI) {
   });
   telegramBot.startPolling({ restart: false });
 } else if (IS_PRODUCTION) {
-  telegramBot = new TelegramBot(TELEGRAM.TOKEN, {
-    webHook: { port: SERVER.PORT },
+  telegramBot = new TelegramBot(TELEGRAM.TOKEN);
+  telegramBot.setWebHook(`${SERVER.HEROKUAPP}/bot${TELEGRAM.TOKEN}`, {
+    max_connections: 10,
   });
-  telegramBot.setWebHook(`${SERVER.HOST}/bot${TELEGRAM.TOKEN}`);
   telegramBot.on('webhook_error', (error) => {
     logger.log('error', error.toString());
   });
 } else {
   telegramBot = new TelegramBot(TELEGRAM.TOKEN);
   if (NGROK.URL) {
-    telegramBot.setWebHook(`${SERVER.HOST}/bot${TELEGRAM.TOKEN}`);
-    telegramBot.on('polling_error', (error) => {
+    telegramBot.setWebHook(`${SERVER.HOST}/bot${TELEGRAM.TOKEN}`, {
+      max_connections: 5,
+    });
+    telegramBot.on('webhook_error', (error) => {
       logger.log('error', error.toString());
     });
   } else {
     telegramBot.startPolling({ restart: false });
+    telegramBot.on('polling_error', (error) => {
+      logger.log('error', error.toString());
+    });
   }
 }
 /**
  * @param {TelegramMessage} message - message
- * @returns {?Error}
+ * @returns {undefined}
  */
 const checkMessage = (message) => {
   // Пропускаем команды бота
@@ -56,6 +61,7 @@ const checkMessage = (message) => {
  * @param {TelegramMessage} message - message
  * @param {object} obj - matcher
  * @param {string} obj.type - matcher type
+ * @returns {undefined}
  */
 const messageListener = async (message, { type }) => {
   try {

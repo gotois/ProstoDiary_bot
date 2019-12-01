@@ -5,6 +5,10 @@ const package_ = require('../package');
 const logger = require('./services/logger.service');
 const { IS_PRODUCTION, TELEGRAM, SERVER } = require('./environment');
 const authParser = require('./middlewares/auth');
+const telegramParser = require('./middlewares/telegram');
+const mailParser = require('./middlewares/mail');
+const oauthParser = require('./middlewares/oauth');
+const apiParser = require('./middlewares/jsonrpc');
 
 const app = express();
 
@@ -14,19 +18,15 @@ app.use(require('./middlewares/logger'));
 
 (async function main() {
   // подтверждение авторизации oauth. Сначала переходить сначала по ссылке вида https://cd0b2563.eu.ngrok.io/connect/yandex. Через localhost не будет работать
-  app.get('/oauth', require('./middlewares/oauth'));
+  app.get('/oauth', oauthParser);
   // JSON-LD пользователя/организации
   app.get('/id/:uuid/:date', authParser, require('./middlewares/id'));
   // sendgrid mail webhook server
-  app.post('/mail', jsonParser, require('./middlewares/mail'));
+  app.post('/mail', jsonParser, mailParser);
   // вебхуки нотификаций от ассистентов
   app.post('/assistants', jsonParser, require('./middlewares/assistants'));
   // telegram
-  app.post(
-    `/bot${TELEGRAM.TOKEN}`,
-    jsonParser,
-    require('./middlewares/telegram'),
-  );
+  app.post(`/bot${TELEGRAM.TOKEN}`, jsonParser, telegramParser);
   try {
     await new OpenApiValidator({
       apiSpec: './docs/openapi.json',
@@ -44,7 +44,7 @@ app.use(require('./middlewares/logger'));
   }
   app.get('/', authParser, require('./middlewares/ping'));
   // json rpc server
-  app.post('/api*', jsonParser, authParser, require('./middlewares/jsonrpc'));
+  app.post('/api*', jsonParser, authParser, apiParser);
   // 404 - not found
   app.get('*', require('./middlewares/not-found-handler'));
   // Express error handler
