@@ -2,9 +2,7 @@ const package_ = require('../../../package');
 const bot = require('../../core/bot');
 const format = require('../../services/format.service');
 const TelegramBotRequest = require('./telegram-bot-request');
-/**
- * @typedef {number} COMMANDS_ENUM
- **/
+
 class Text extends TelegramBotRequest {
   onError(error) {
     throw error;
@@ -21,16 +19,29 @@ class Text extends TelegramBotRequest {
       },
     );
     try {
-      const result = await this.request('post', {
+      await bot.sendChatAction(this.message.chat.id, 'typing');
+      // Валидация и формирование зашифрованного сообщения
+      const messageResult = await this.request('text', {
         text: this.message.text,
-        date: this.message.date,
-        mime: 'plain/text',
-        telegram_message_id: message_id,
-        chat_id: this.message.chat.id,
-        creator: this.message.gotois.email,
-        publisher: package_.author.email,
+        caption: this.message.caption,
+        passportId: this.message.gotois.id,
       });
-      await bot.editMessageText(result, {
+      // Отправка зашифрованного сообщения на почту бота
+      const postResult = await this.request('post', {
+        ...messageResult,
+        date: this.message.date,
+        chat_id: this.message.chat.id,
+        from: {
+          email: package_.author.email,
+        },
+        to: [
+          {
+            email: this.message.gotois.email,
+          },
+        ],
+        telegram_message_id: message_id,
+      });
+      await bot.editMessageText(postResult, {
         chat_id: this.message.chat.id,
         message_id: message_id,
       });
@@ -48,7 +59,7 @@ class Text extends TelegramBotRequest {
  */
 module.exports = async (message) => {
   if (!message.gotois.activated) {
-    throw new Error('Bot not activated');
+    throw new Error('Bot not activated. Please try /start or /signin');
   }
   const text = new Text(message);
   await text.beginDialog();

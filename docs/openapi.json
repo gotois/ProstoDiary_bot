@@ -700,7 +700,7 @@
         "operationId": "ping.js",
         "deprecated": false,
         "summary": "/ping",
-        "description": "проверка ping",
+        "description": "Проверка ping",
         "tags": [
           "JSONRPC"
         ],
@@ -820,6 +820,83 @@
                     "type": "string",
                     "default": "post",
                     "description": "API method post"
+                  },
+                  "id": {
+                    "type": "integer",
+                    "default": 1,
+                    "format": "int32",
+                    "description": "Request ID"
+                  },
+                  "jsonrpc": {
+                    "type": "string",
+                    "default": "2.0",
+                    "description": "JSON-RPC Version (2.0)"
+                  },
+                  "params": {
+                    "title": "Parameters",
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "id",
+                      "jsonrpc"
+                    ],
+                    "properties": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/read": {
+      "post": {
+        "operationId": "read.js",
+        "deprecated": false,
+        "summary": "/read",
+        "description": "Чтение письма и запись в БД",
+        "tags": [
+          "JSONRPC"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "id",
+                  "jsonrpc",
+                  "params"
+                ],
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "default": "read",
+                    "description": "API method read"
                   },
                   "id": {
                     "type": "integer",
@@ -1080,6 +1157,83 @@
         }
       }
     },
+    "/api/text": {
+      "post": {
+        "operationId": "text.js",
+        "deprecated": false,
+        "summary": "/text",
+        "description": "Генерация сообщения для почты",
+        "tags": [
+          "JSONRPC"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "method",
+                  "id",
+                  "jsonrpc",
+                  "params"
+                ],
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "default": "text",
+                    "description": "API method text"
+                  },
+                  "id": {
+                    "type": "integer",
+                    "default": 1,
+                    "format": "int32",
+                    "description": "Request ID"
+                  },
+                  "jsonrpc": {
+                    "type": "string",
+                    "default": "2.0",
+                    "description": "JSON-RPC Version (2.0)"
+                  },
+                  "params": {
+                    "title": "Parameters",
+                    "type": "object",
+                    "required": [
+                      "method",
+                      "id",
+                      "jsonrpc"
+                    ],
+                    "properties": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "responses": {
@@ -1096,18 +1250,11 @@
         }
       }
     },
-    "/oauth": {
+    "/oauth/*": {
       "get": {
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }

@@ -1,28 +1,21 @@
 const notifier = require('mail-notifier');
 const { MailParser } = require('mailparser');
 const Imap = require('imap');
+const { client } = require('./jsonrpc');
 const { IS_CRON, IS_PRODUCTION } = require('../environment');
 const logger = require('../services/logger.service');
-const mailService = require('../services/mail.service');
 
 class Vzor {
   /**
    * @todo нужна функциональнось которая игнорирует те письма, которые уже были обработы ботом
-   * @example search = ['ALL', ['UID', 2657]]; // search by uid
-   *
-   * @param {*} imapOptions - imap options
+   * @param {object} imapOptions - imap options
    */
   constructor(imapOptions) {
-    // imapOptions = {
-    //   ...imapOptions,
-    //   search: ['ALL', ['UID', 2657]]
-    // };
-
     this.n = notifier(
       {
         ...imapOptions,
         tls: true,
-        markSeen: true,
+        markSeen: false,
         tlsOptions: { rejectUnauthorized: false },
         box: 'INBOX',
       },
@@ -34,7 +27,14 @@ class Vzor {
     )
       .on('connected', this.connectedNListener)
       .on('error', this.errorNListener)
-      .on('mail', mailService.read)
+      .on('mail', async (mail) => {
+        const { error } = await client.request('read', {
+          mail,
+        });
+        if (error) {
+          throw error;
+        }
+      })
       .on('end', this.endNListener);
   }
   /**
@@ -64,17 +64,9 @@ class Vzor {
     logger.info('connected email notifier');
   }
   /**
-   * @param {Map} mailMap - mail map
-   */
-  static async readEmail(mailMap) {
-    for (const [_mapId, mail] of mailMap) {
-      await mailService.read(mail);
-    }
-  }
-  /**
    * @param {object} imapOptions - imap options
    * @param {Array} search - imap search
-   * @returns {Promise<Map>}
+   * @returns {Promise<Map<Mail>>}
    */
   static search(imapOptions, search) {
     return new Promise((resolve, reject) => {
@@ -83,6 +75,7 @@ class Vzor {
         host: 'imap.yandex.ru',
         port: 993,
         tls: true,
+        tlsOptions: { rejectUnauthorized: true },
       });
       imap.once('ready', () => {
         imap.openBox('INBOX', true, () => {

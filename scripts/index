@@ -11,6 +11,7 @@ const clipboardHelper = require('../src/helpers/clipboard');
     throw new Error('Please use `node src/server`');
   } else {
     await ngrok.authtoken(NGROK.TOKEN);
+    await ngrok.disconnect();
     let nodemonInstance;
     try {
       const url = await ngrok.connect({

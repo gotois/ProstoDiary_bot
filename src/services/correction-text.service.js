@@ -5,7 +5,6 @@ const logger = require('./logger.service');
 
 module.exports = async (text) => {
   const language = detectLang(text).language;
-
   // ёфикация текста
   if (isRUS(language)) {
     const safeEyo = new Eyo();
@@ -15,9 +14,8 @@ module.exports = async (text) => {
     // english rules ...
   } else {
     // пока только поддерживаем EN, RU
-    throw new Error('Unsupported language');
+    logger.warn('Unsupported language');
   }
-
   try {
     const yandexSpellLanguageCode = language.slice(0, 2);
     text = await spellText(text, yandexSpellLanguageCode);

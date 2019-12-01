@@ -49,5 +49,14 @@ const { SERVER } = require('../src/environment');
   //  ...
   // todo /bot
   //  ...
+  data.paths['/oauth/*'] = {
+    get: {
+      responses: {
+        '200': {
+          description: 'OK',
+        },
+      },
+    },
+  };
   fs.writeFileSync('docs/openapi.json', JSON.stringify(data, null, 2));
 })();

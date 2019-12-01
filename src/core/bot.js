@@ -27,7 +27,7 @@ if (IS_AVA_OR_CI) {
   telegramBot = new TelegramBot(TELEGRAM.TOKEN);
   if (NGROK.URL) {
     telegramBot.setWebHook(`${SERVER.HOST}/bot${TELEGRAM.TOKEN}`, {
-      max_connections: 5,
+      max_connections: 3,
     });
     telegramBot.on('webhook_error', (error) => {
       logger.log('error', error.toString());
@@ -109,7 +109,7 @@ const messageListener = async (message, { type }) => {
     }
   } catch (error) {
     logger.error(error.stack);
-    telegramBot.sendMessage(message.chat.id, error.message);
+    await telegramBot.sendMessage(message.chat.id, error.message);
   }
 };
 telegramBot.on('message', messageListener);

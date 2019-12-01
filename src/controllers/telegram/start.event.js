@@ -11,7 +11,7 @@ class Start extends TelegramBotRequest {
     this.messageListener = this.messageListener.bind(this);
   }
   async beginDialog() {
-    if (this.message.gotois) {
+    if (this.message.gotois.id) {
       const message =
         'Повторная установка не требуется\n\n' +
         '/signin - включить бота \n' +

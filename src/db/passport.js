@@ -6,7 +6,7 @@ module.exports = {
 SELECT 
     id 
 FROM 
-    passport 
+    passport.user 
 WHERE telegram_id = ${telegram_id};
     `;
   },
@@ -14,14 +14,14 @@ WHERE telegram_id = ${telegram_id};
     return sql`SELECT
     *
 FROM
-    passport
+    passport.user
 `;
   },
   selectAll(telegram_id, yandex_id, facebook_id) {
     return sql`
 SELECT *
     FROM 
-passport 
+passport.user 
     WHERE
 telegram_id = ${telegram_id} OR
 yandex_id = ${yandex_id} OR
@@ -31,7 +31,7 @@ facebook_id = ${facebook_id}
   updateTelegramPassportByPassportId(telegram, passportUID) {
     return sql`
 UPDATE
-    passport
+    passport.user
 SET
     telegram_id = ${telegram.from.id},
     telegram_passport = ${JSON.stringify(telegram.from)}
@@ -42,7 +42,7 @@ WHERE
   updateYandexPassportByPassportId(passport, session, passportUID) {
     return sql`
 UPDATE
-    passport
+    passport.user
 SET
     yandex_id = ${passport.client_id},
     yandex_passport = ${JSON.stringify(passport)},
@@ -54,7 +54,7 @@ WHERE
   updateFacebookPassportByPassportId(passport, session, passportUID) {
     return sql`
 UPDATE
-    passport
+    passport.user
 SET
     facebook_id = ${passport.id},
     facebook_passport = ${JSON.stringify(passport)},
@@ -64,6 +64,7 @@ WHERE
 `;
   },
   createPassport({
+    ld_id,
     telegramPassport,
     facebookPassport,
     yandexPassport,
@@ -71,7 +72,8 @@ WHERE
     yandexSession,
   }) {
     return sql`
-INSERT INTO passport (
+INSERT INTO passport.user (
+    ld_id,
     telegram_id,
     telegram_passport,
     facebook_id,
@@ -82,6 +84,7 @@ INSERT INTO passport (
     yandex_session
 )
 VALUES (
+    ${ld_id},
     ${telegramPassport ? telegramPassport.id : null},
     ${telegramPassport ? JSON.stringify(telegramPassport) : null},
     ${facebookPassport ? facebookPassport.id : null},

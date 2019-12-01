@@ -1,6 +1,9 @@
 const bot = require('../core/bot');
+const { pool } = require('../core/database');
+const { client } = require('../core/jsonrpc');
+const botQueries = require('../db/bot');
 const Vzor = require('../core/vzor');
-const { pool, sql } = require('../core/database');
+const logger = require('../services/logger.service');
 /**
  * @param {object} info - mail info
  * @returns {Promise<void>}
@@ -8,27 +11,33 @@ const { pool, sql } = require('../core/database');
 const processedMail = async (info) => {
   let resultMessage;
   try {
-    const { email, password } = await pool.connect(async (connection) => {
-      const botTable = await connection.one(sql`
-      SELECT password, email, passport_id FROM bot WHERE email = ${info.email};
-    `);
+    const botTable = await pool.connect(async (connection) => {
+      const botTable = await connection.one(
+        botQueries.selectByEmail(info.email),
+      );
       return botTable;
     });
     const mailMap = await Vzor.search(
       {
-        user: email,
-        password: password,
+        user: botTable.email,
+        password: botTable.password,
         markSeen: true, // нужно затем удалять просмотренные письма?
       },
       ['ALL', ['HEADER', 'MESSAGE-ID', info['smtp-id']]],
     );
-    // в зависимости от полученной категории выполняем разные действия
+    // в зависимости от полученной категории разная логика работы с письмом
     if (info.category.includes('transaction')) {
-      await Vzor.readEmail(mailMap);
-      resultMessage = '✅';
-    } else {
-      resultMessage = '❓';
+      for (const [_mapId, mail] of mailMap) {
+        const { error, result } = await client.request('read', {
+          mail,
+          secret_key: botTable.secret_key,
+        });
+        if (error) {
+          throw new Error(error);
+        }
+      }
     }
+    resultMessage = '✅';
   } catch (error) {
     resultMessage = '⚠️';
     throw error;

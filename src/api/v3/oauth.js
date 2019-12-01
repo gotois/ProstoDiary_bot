@@ -7,7 +7,9 @@ const twoFactorAuthService = require('../../services/2fa.service');
 const oauthService = require('../../services/oauth.service');
 const passportQueries = require('../../db/passport');
 const botQueries = require('../../db/bot');
+const ldQueries = require('../../db/ld');
 /**
+ * @description Регистрация письма
  * @param {*} transactionConnection - transactionConnection
  * @param {string} passportId - passport guid
  * @param {Array<string>} passportEmail - passport email
@@ -143,8 +145,11 @@ const createPassport = async (
   if (telegram.from) {
     tgData = telegram.from;
   }
+  // todo нужно устанавливать минимально рабочий json-ld
+  const linkedData = await transactionConnection.one(ldQueries.createLD({}));
   const passport = await transactionConnection.one(
     passportQueries.createPassport({
+      ld_id: linkedData.id,
       telegramPassport: tgData,
       facebookPassport: fbData,
       yandexPassport: yaData,

@@ -1,33 +1,28 @@
 const bot = require('../core/bot');
-const { pool, NotFoundError } = require('../core/database');
+const { pool } = require('../core/database');
 const passportQueries = require('../db/passport');
 const botQueries = require('../db/bot');
 
 module.exports = async (request, response, next) => {
-  if (request.body.message.text.length === 1) {
-    response.sendStatus(400);
-    return;
-  }
   try {
     const gotoisCredentions = await pool.connect(async (connection) => {
-      try {
-        const passportTable = await connection.one(
-          passportQueries.selectIdByTelegramId(request.body.message.from.id),
-        );
-        const botTable = await connection.one(
-          botQueries.selectByPassport(passportTable.id),
-        );
-        return {
-          id: passportTable.id,
-          email: botTable.email,
-          activated: botTable.activated,
-        };
-      } catch (error) {
-        if (error instanceof NotFoundError) {
-          return {};
-        }
-        throw error;
+      const passportTable = await connection.maybeOne(
+        passportQueries.selectIdByTelegramId(request.body.message.from.id),
+      );
+      if (!passportTable) {
+        return {};
       }
+      const botTable = await connection.maybeOne(
+        botQueries.selectByPassport(passportTable.id),
+      );
+      if (!botTable) {
+        return {};
+      }
+      return {
+        id: passportTable.id,
+        email: botTable.email,
+        activated: botTable.activated,
+      };
     });
     const body = {
       ...request.body,

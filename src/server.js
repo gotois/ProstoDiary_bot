@@ -9,6 +9,7 @@ const telegramParser = require('./middlewares/telegram');
 const mailParser = require('./middlewares/mail');
 const oauthParser = require('./middlewares/oauth');
 const apiParser = require('./middlewares/jsonrpc');
+const passportParser = require('./middlewares/id');
 
 const app = express();
 
@@ -20,7 +21,7 @@ app.use(require('./middlewares/logger'));
   // подтверждение авторизации oauth. Сначала переходить сначала по ссылке вида https://cd0b2563.eu.ngrok.io/connect/yandex. Через localhost не будет работать
   app.get('/oauth', oauthParser);
   // JSON-LD пользователя/организации
-  app.get('/id/:uuid/:date', authParser, require('./middlewares/id'));
+  app.get('/id/:uuid/:date', authParser, passportParser);
   // sendgrid mail webhook server
   app.post('/mail', jsonParser, mailParser);
   // вебхуки нотификаций от ассистентов
@@ -56,5 +57,28 @@ app.use(require('./middlewares/logger'));
         package_.version
       } started on port ${SERVER.PORT}`,
     );
+  });
+
+  // запускать инстанс vzor для каждого активного пользователя
+  const Vzor = require('./core/vzor');
+  const { pool } = require('./core/database');
+  const passportQueries = require('./db/passport');
+  const botQueries = require('./db/bot');
+  await pool.connect(async (connection) => {
+    const passportsTable = await connection.many(passportQueries.getPassports());
+    for (const passport of passportsTable) {
+      const botTable = await connection.one(
+        botQueries.selectByPassport(passport.id),
+      );
+      if (botTable.activated) {
+        const vzor = new Vzor({
+          host: 'imap.yandex.ru',
+          port: 993,
+          user: botTable.email,
+          password: botTable.password,
+        });
+        vzor.listen();
+      }
+    }
   });
 })();

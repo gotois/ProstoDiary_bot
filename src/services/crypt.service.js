@@ -1,3 +1,4 @@
+const openpgp = require('openpgp');
 const crypto = require('crypto');
 const masterSalt = '123123123';
 /**
@@ -9,6 +10,7 @@ const ALGORITHM = 'aes-256-ctr';
  */
 const BITES_LENGTH = 16;
 /**
+ * @deprecated
  * @param {string} text - entry
  * @returns {string}
  */
@@ -23,6 +25,7 @@ const decode = (text) => {
   return decipher.update(ciphertext) + decipher.final();
 };
 /**
+ * @deprecated
  * @param {string} text - text
  * @returns {string}
  */
@@ -39,7 +42,33 @@ const encode = (text) => {
   return Buffer.concat([iv, ciphertext, cipher.final()]).toString('base64');
 };
 
+const openpgpEncrypt = async (buffer, passwords) => {
+  if (Buffer.byteLength(buffer) === 0) {
+    throw new Error('Empty buffer');
+  }
+  const encrypted = await openpgp.encrypt({
+    message: openpgp.message.fromBinary(buffer),
+    passwords,
+    compression: openpgp.enums.compression.zlib,
+  });
+  return encrypted;
+};
+
+const openpgpDecrypt = async (buffer, passwords) => {
+  const utf8Content = buffer.toString('utf8');
+  if (utf8Content.startsWith('-----BEGIN PGP MESSAGE-----')) {
+    const rawDecrypt = await openpgp.decrypt({
+      message: await openpgp.message.readArmored(utf8Content),
+      passwords,
+    });
+    return rawDecrypt.data;
+  }
+  return utf8Content;
+};
+
 module.exports = {
   encode,
   decode,
+  openpgpEncrypt,
+  openpgpDecrypt,
 };
