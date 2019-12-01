@@ -65,7 +65,9 @@ app.use(require('./middlewares/logger'));
   const passportQueries = require('./db/passport');
   const botQueries = require('./db/bot');
   await pool.connect(async (connection) => {
-    const passportsTable = await connection.many(passportQueries.getPassports());
+    const passportsTable = await connection.many(
+      passportQueries.getPassports(),
+    );
     for (const passport of passportsTable) {
       const botTable = await connection.one(
         botQueries.selectByPassport(passport.id),
