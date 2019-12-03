@@ -62,6 +62,7 @@ app.use(require('./middlewares/logger'));
   // запускать инстанс vzor для каждого активного пользователя
   const Vzor = require('./core/vzor');
   const { pool } = require('./core/database');
+  const bot = require('./core/bot');
   const passportQueries = require('./db/passport');
   const botQueries = require('./db/bot');
   await pool.connect(async (connection) => {
@@ -72,6 +73,24 @@ app.use(require('./middlewares/logger'));
       const botTable = await connection.one(
         botQueries.selectByPassport(passport.id),
       );
+      try {
+        // пингуем тем самым проверяем пользователя
+        await bot.sendChatAction(passport.telegram_id, 'typing');
+      } catch (error) {
+        logger.error(error);
+        switch (error.response && error.response.statusCode) {
+          case 403: {
+            await connection.query(
+              botQueries.deactivateByPassportId(passport.id),
+            );
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+        return;
+      }
       if (botTable.activated) {
         const vzor = new Vzor({
           host: 'imap.yandex.ru',

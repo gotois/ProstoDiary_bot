@@ -23,7 +23,7 @@ env:
 notifications:
   email:
     recipients:
-      - denis@baskovsky.ru
+      - support@gotointeractive.com
     on_success: never
     on_failure: always
 
