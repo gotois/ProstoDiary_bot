@@ -1,8 +1,8 @@
 const notifier = require('mail-notifier');
-const { client } = require('./jsonrpc');
 const { IS_CRON, IS_PRODUCTION } = require('../environment');
 const logger = require('../services/logger.service');
 const imapService = require('../services/imap.service');
+const Story = require('../models/story');
 
 class Vzor {
   /**
@@ -28,18 +28,15 @@ class Vzor {
       .on('error', this.errorNListener)
       .on('mail', async (mail) => {
         const messages = await imapService.read(mail);
-        for (const { subject, body, contentType } of messages) {
-          const { error, result } = await client.request('story', {
-            subject,
-            body,
-            contentType,
-            uid: mail.uid,
-          });
-          logger.info('result', result)
-          if (error) {
-            throw new Error(error);
-          }
+        const story = new Story({
+          subject: mail.subject,
+          uid: mail.uid,
+        });
+        for (const { body, contentType } of messages) {
+          story.append(body, contentType);
         }
+        const { id } = await story.commit();
+        logger.info(id);
       })
       .on('end', this.endNListener);
   }

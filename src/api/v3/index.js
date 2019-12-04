@@ -9,7 +9,6 @@ for (const api of [
   // 'notify',
   'ping',
   'text',
-  'story',
   'post',
   // 'remove',
   // 'search',

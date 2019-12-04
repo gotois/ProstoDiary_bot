@@ -1,9 +1,9 @@
 const bot = require('../../core/bot');
 const { pool } = require('../../core/database');
-const { client } = require('../../core/jsonrpc');
 const botQueries = require('../../db/bot');
 const imapService = require('../../services/imap.service');
 const logger = require('../../services/logger.service');
+const Story = require('../../models/story');
 /**
  * @param {object} info - mail info
  * @returns {Promise<void>}
@@ -21,7 +21,8 @@ const processed = async (info) => {
       );
       return botTable;
     });
-    const mailMap = await imapService.search({
+    const mailMap = await imapService.search(
+      {
         user: botTable.email,
         password: botTable.password,
         markSeen: true, // нужно затем удалять просмотренные письма?
@@ -29,22 +30,18 @@ const processed = async (info) => {
       ['ALL', ['HEADER', 'MESSAGE-ID', info['smtp-id']]],
     );
     for (const [uid, mail] of mailMap) {
+      const story = new Story({
+        subject: mail.subject,
+        uid,
+      });
       const messages = await imapService.read(mail, botTable.secret_key);
-      for (const { subject, body, contentType } of messages) {
-        const { error, result } = await client.request('story', {
-          subject,
-          body,
-          contentType,
-          uid,
-        });
-        logger.info(result);
-        if (error) {
-          resultMessage = error.message;
-          throw new Error(error);
-        }
+      for (const { body, contentType } of messages) {
+        story.append(body, contentType);
       }
+      const { id } = await story.commit();
+      logger.info(id, story.toJSON());
     }
-    resultMessage = '✅';
+    resultMessage = '✅'; // 'Сообщение успешно сохранено ' + id;
   } catch (error) {
     resultMessage = '⚠️';
     throw error;

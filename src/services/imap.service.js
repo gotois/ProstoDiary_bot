@@ -72,31 +72,25 @@ const search = (imapOptions, search) => {
  */
 const read = async (mail, secretKey) => {
   const output = [];
-  const { from, headers } = mail;
   // Валидация письма
-  if (headers['x-bot'] || from[0].address === 'xxx@ya.ru') {
+  if (mail.headers['x-bot'] || mail.from[0].address === 'xxx@ya.ru') {
     if (mail.attachments) {
       for (const attachment of mail.attachments) {
-        if (attachment.transferEncoding === 'base64' || attachment.transferEncoding === 'quoted-printable') {
-          if (secretKey) {
-            const decryptMessage = await crypt.openpgpDecrypt(attachment.content, [
-              secretKey,
-            ]);
-            output.push({
-              subject: mail.subject,
-              body: decryptMessage,
-              contentType: attachment.contentType,
-            });
-          } else {
-            output.push({
-              subject: mail.subject,
-              body: attachment.content,
-              contentType: attachment.contentType,
-            });
-          }
+        if (
+          secretKey &&
+          (attachment.transferEncoding === 'base64' ||
+            attachment.transferEncoding === 'quoted-printable')
+        ) {
+          const decryptMessage = await crypt.openpgpDecrypt(
+            attachment.content,
+            [secretKey],
+          );
+          output.push({
+            body: decryptMessage,
+            contentType: attachment.contentType,
+          });
         } else {
           output.push({
-            subject: mail.subject,
             body: attachment.content,
             contentType: attachment.contentType,
           });
@@ -104,9 +98,8 @@ const read = async (mail, secretKey) => {
       }
     } else {
       output.push({
-        subject: mail.subject,
         body: mail.html,
-        contentType: headers['content-type'],
+        contentType: mail.headers['content-type'],
       });
     }
   } else {

@@ -198,7 +198,6 @@ const langISO = (language) => {
   return language.slice(0, 2);
 };
 
-
 module.exports = {
   analyzeEntities,
   analyzeEntitySentiment,
