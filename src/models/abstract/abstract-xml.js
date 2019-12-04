@@ -2,7 +2,6 @@ const Abstract = require('./abstract');
 const {
   uploadAppleHealthData,
 } = require('../../services/apple-health.service');
-const { readOFX } = require('../../services/tinkoff.service');
 
 class AbstractDocument extends Abstract {
   get context() {
@@ -16,8 +15,7 @@ class AbstractDocument extends Abstract {
     switch (this.mime) {
       // todo: парсинг
       case 'xxx_ofx': {
-        // const ofxResult = await readOFX(buffer);
-        // ofxResult.BANKMSGSRSV1.STMTTRNRS.STMTRS.BANKACCTFROM
+
         break;
       }
       case 'xxx_applehealth': {
