@@ -1,3 +1,4 @@
+// todo перенести в lib/weather.js
 const weather = require('openweather-apis');
 const { OPEN_WEATHER } = require('../environment');
 /**

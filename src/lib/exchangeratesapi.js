@@ -1,5 +1,6 @@
+// todo перенести в lib/exchangeratesapi.js
 // https://exchangeratesapi.io/
-const { get, toQueryString } = require('./request.service');
+const { get, toQueryString } = require('../services/request.service');
 /**
  * @constant
  * @type {string}
