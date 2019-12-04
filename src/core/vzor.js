@@ -1,9 +1,8 @@
 const notifier = require('mail-notifier');
-const { MailParser } = require('mailparser');
-const Imap = require('imap');
 const { client } = require('./jsonrpc');
 const { IS_CRON, IS_PRODUCTION } = require('../environment');
 const logger = require('../services/logger.service');
+const imapService = require('../services/imap.service');
 
 class Vzor {
   /**
@@ -28,11 +27,18 @@ class Vzor {
       .on('connected', this.connectedNListener)
       .on('error', this.errorNListener)
       .on('mail', async (mail) => {
-        const { error } = await client.request('read', {
-          mail,
-        });
-        if (error) {
-          throw error;
+        const messages = await imapService.read(mail);
+        for (const { subject, body, contentType } of messages) {
+          const { error, result } = await client.request('story', {
+            subject,
+            body,
+            contentType,
+            uid: mail.uid,
+          });
+          logger.info('result', result)
+          if (error) {
+            throw new Error(error);
+          }
         }
       })
       .on('end', this.endNListener);
@@ -62,68 +68,6 @@ class Vzor {
   }
   connectedNListener() {
     logger.info('connected email notifier');
-  }
-  /**
-   * @param {object} imapOptions - imap options
-   * @param {Array} search - imap search
-   * @returns {Promise<Map<Mail>>}
-   */
-  static search(imapOptions, search) {
-    return new Promise((resolve, reject) => {
-      const imap = new Imap({
-        ...imapOptions,
-        host: 'imap.yandex.ru',
-        port: 993,
-        tls: true,
-        tlsOptions: { rejectUnauthorized: true },
-      });
-      imap.once('ready', () => {
-        imap.openBox('INBOX', true, () => {
-          imap.search(search, (error, results) => {
-            if (error) {
-              reject(error);
-              return;
-            }
-            const mailMap = new Map();
-            if (results.length === 0) {
-              imap.end();
-              resolve(mailMap);
-              return mailMap;
-            }
-            const f = imap.fetch(results, { bodies: '' });
-            f.on('message', (message) => {
-              let uid;
-              let flags;
-              message.on('attributes', (attributes) => {
-                uid = attributes.uid;
-                flags = attributes.flags;
-              });
-              const mp = new MailParser();
-              mp.once('end', (mail) => {
-                mail.uid = uid;
-                mail.flags = flags;
-                mailMap.set(uid, mail);
-              });
-              message.once('body', (stream) => {
-                stream.pipe(mp);
-              });
-            });
-            f.once('error', (error) => {
-              imap.end();
-              reject(error);
-            });
-            f.once('end', () => {
-              imap.end();
-              resolve(mailMap);
-            });
-          });
-        });
-      });
-      imap.once('error', (error) => {
-        reject(error);
-      });
-      imap.connect();
-    });
   }
 }
 
