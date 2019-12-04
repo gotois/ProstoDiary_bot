@@ -5,7 +5,7 @@ module.exports = (t) => {
     isRUS,
     isENG,
     langISO,
-  } = require('../../src/services/detect-language.service');
+  } = require('../../src/services/nlp.service');
   t.true(isRUS('rus'));
   t.false(isRUS('eng'));
   t.true(isENG('eng'));

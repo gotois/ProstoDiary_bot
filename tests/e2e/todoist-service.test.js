@@ -1,5 +1,5 @@
 module.exports = async (t) => {
-  const todoist = require('../../src/services/todoist.service');
+  const todoist = require('../../src/lib/todoist');
   const result = await todoist.sync();
   t.log(result);
 

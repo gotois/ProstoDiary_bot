@@ -5,6 +5,7 @@ const {
 } = require('../helpers');
 const package_ = require('../../package');
 const TelegramServer = require('telegram-test-api');
+const { mail } = require('../../src/lib/sendgrid');
 const {
   IS_CI,
   IS_PRODUCTION,
@@ -52,12 +53,8 @@ test.afterEach((t) => {
 });
 
 // This runs after all tests
-test.after('cleanup', (t) => {
-  t.context.testPassed = true;
-});
-
 test.after.always('guaranteed cleanup', async (t) => {
-  if (t.context.testPassed || !t.context.tasks) {
+  if (!t.context.tasks) {
     return;
   }
   const failedTasks = Object.entries(t.context.tasks).map(([taskName]) => {
@@ -70,12 +67,13 @@ test.after.always('guaranteed cleanup', async (t) => {
   if (process.env.FAST_TEST || IS_CI || !IS_PRODUCTION) {
     return;
   }
-  const { mail } = require('../../src/services/sendgridmail.service');
   const [mailResult] = await mail.send({
     to: package_.maintainers[0].email,
     from: package_.author.email,
     subject: '👾 ProstoDiary 🐛: E2E tests failed',
-    text: JSON.stringify(failedTasks, null, 2),
+    html: `
+      <pre>${JSON.stringify(failedTasks, null, 2)}</pre>
+    `,
   });
   t.true(mailResult.statusCode >= 200 && mailResult.statusCode < 400);
 });
@@ -87,8 +85,7 @@ skipTestForFastOrTravis('DB: Foods', require('./database.test').databaseFoods);
 skipTestForFastOrTravis('API: script', require('./script.test'));
 skipTestForFast('API: speller service', require('./speller-service.test'));
 skipTestForFast('API: request', require('./request.test'));
-skipTestForFast('API: Weather', require('./weather.test'));
-skipTestForFast('API: RestCountries', require('./restcountries.test'));
+skipTestForFast('API: Location', require('./restcountries.test'));
 skipTestForFast('API: plotly', require('./graph-service.test'));
 skipTestForFastOrTravis(
   'API: dialogflow',
@@ -106,9 +103,9 @@ skipTestForFastOrTravis('/help', require('./help.test'));
 skipTestForFastOrTravis('/backup', require('./backup.test'));
 skipTestForFastOrTravis('/post', require('./post.test'));
 skipTestForFastOrTravis('/ping', require('./ping.test'));
+skipTestForFastOrTravis('Создать отдельного пользователя в БД', require('./passport-db.test'));
 test.todo('/start');
 test.todo('/dbclear');
-test.todo('Создать отдельного пользователя в БД'); // TODO: используя https://github.com/marak/Faker.js/
 test.todo('Проверка удаления своей записи');
 test.todo('/search'); // + Проверека построения графика
 

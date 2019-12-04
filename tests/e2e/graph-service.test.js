@@ -2,7 +2,7 @@ module.exports = async (t) => {
   const {
     createPhotoBuffer,
     deletePlot,
-  } = require('../../src/services/graph.service');
+  } = require('../../src/lib/plotly');
   t.true(typeof createPhotoBuffer === 'function');
   t.true(typeof deletePlot === 'function');
   const entryRows = [{ date: '2019-04-20T16:47:44.009Z' }];

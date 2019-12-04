@@ -2,7 +2,7 @@ module.exports = async (t) => {
   t.timeout(5000);
   const dateFns = require('date-fns');
   const { convertToNormalDate } = require('../../src/services/date.service');
-  const waApi = require('../../src/services/wolfram-alpha.service');
+  const waApi = require('../../src/lib/wolfram-alpha');
   const fullOutput = await waApi.getFull({
     input: 'today',
     output: 'json',

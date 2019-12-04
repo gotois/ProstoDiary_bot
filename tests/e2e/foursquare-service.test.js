@@ -1,6 +1,6 @@
 module.exports = async (t) => {
   t.timeout(3000);
-  const foursquareService = require('../../src/services/foursquare.service');
+  const foursquareService = require('../../src/lib/foursquare');
   // ll example
   const llData = await foursquareService.search({
     ll: '40.7,-74',

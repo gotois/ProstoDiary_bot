@@ -1,6 +1,6 @@
 module.exports = async (t) => {
   t.timeout(5000);
-  const { spellText } = require('../../src/services/speller.service');
+  const { spellText } = require('../../src/services/text.service');
   await t.throwsAsync(async () => {
     await spellText(undefined);
   });
