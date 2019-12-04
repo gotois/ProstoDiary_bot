@@ -1,6 +1,6 @@
 const crypt = require('../../services/crypt.service');
-const correctionText = require('../../services/correction-text.service');
-const dialogflowService = require('../../services/dialogflow.service');
+const dialogflowService = require('../../lib/dialogflow');
+const { correctionText } = require('../../services/text.service');
 const logger = require('../../services/logger.service');
 const { FakerText } = require('../../services/faker.service');
 const botQueries = require('../../db/bot');

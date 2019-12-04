@@ -1,5 +1,5 @@
 const logger = require('../../services/logger.service');
-const format = require('../../services/format.service');
+const format = require('../../services/text.service');
 const UserStory = require('../../models/story/user-story');
 /**
  * может не работать если абстракт уже натурализован

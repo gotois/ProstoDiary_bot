@@ -1,4 +1,3 @@
-// todo перенести в lib/google-translate.js
 const { Translate } = require('@google-cloud/translate');
 const { GOOGLE } = require('../environment');
 const client = new Translate({

@@ -1,100 +1,20 @@
 const validator = require('validator');
 const cryptoRandomString = require('crypto-random-string');
-const { unpack } = require('./archive.service');
-const logger = require('./logger.service');
 const { post, get } = require('./request.service');
-const AbstractText = require('../models/abstract/abstract-text');
-const AbstractPhoto = require('../models/abstract/abstract-photo');
-const AbstractDocument = require('../models/abstract/abstract-document');
 const { YANDEX } = require('../environment');
 /**
  * @constant
  */
-const YANDEX_HOST = 'pddimp.yandex.ru';
+const PDD_YANDEX_HOST = 'pddimp.yandex.ru';
 /**
  * @constant
  */
+const YANDEX_PASSPORT_HOST = 'passport.yandex.ru';
+/**
+ * @todo в environment
+ * @constant
+ */
 const DOMAIN = 'gotointeractive.com';
-
-/**
- * todo перенести в отдельную модель - и сделать функцию статической
- *
- * @param {Mail} mail - mail
- * @returns {Promise<Array<Abstract>>}
- */
-const createAbstract = async ({ attachments, date }) => {
-  const abstracts = [];
-  for (const attachment of attachments) {
-    const {
-      content,
-      contentType,
-      // transferEncoding,
-      // generatedFileName,
-      // contentId,
-      // checksum,
-      // length,
-      // contentDisposition,
-      // fileName,
-    } = attachment;
-    // if (transferEncoding !== 'base64') {
-    //   continue;
-    // }
-    switch (contentType) {
-      case 'plain/text': {
-        abstracts.push(new AbstractText(content, contentType, date));
-        break;
-      }
-      case 'image/png':
-      case 'image/jpeg': {
-        abstracts.push(new AbstractPhoto(content, contentType, date));
-        break;
-      }
-      case 'application/pdf':
-      case 'application/xml': {
-        abstracts.push(new AbstractDocument(content, contentType, date));
-        break;
-      }
-      case 'application/zip':
-      case 'multipart/x-zip': {
-        for await (const [_fileName, zipBuffer] of unpack(content)) {
-          abstracts.push(new AbstractDocument(zipBuffer, contentType, date));
-        }
-        break;
-      }
-      case 'application/octet-stream': {
-        abstracts.push(new AbstractText(content, contentType, date));
-        break;
-      }
-      default: {
-        // todo: тогда нужен разбора html и text самостоятельно из письма
-        logger.log('info', 'Unknown mime type ' + contentType);
-      }
-    }
-  }
-  return abstracts;
-};
-/**
- * @param {Mail} mail - mail
- * @returns {Promise<undefined>}
- */
-const read = async (mail) => {
-  const { from, headers, attachments } = mail;
-  // имя бота с которого было отправлено письмо. пока верим всем ботам с таким хедером
-  if (headers['x-bot']) {
-    if (attachments) {
-      for (const abstract of await createAbstract(mail)) {
-        // abstract.telegram_message_id = headers['x-bot-telegram-message-id'];
-        // abstract.creator = headers['x-bot-creator'];
-        abstract.publisher = from;
-        abstract.mail_uid = mail.uid;
-        await abstract.commit();
-      }
-    }
-  } else {
-    // todo когда приходит письмо не от бота, нужно разбирать адреса и прочее и делать новый post с отправкой письма в формате forward
-    //  ...разделить read в два метода - первый будет анализировать, второй читать и записывать
-  }
-};
 /**
  * @description удаление созданного почтового ящика
  * @param {number} uid - Yandex uid
@@ -102,7 +22,7 @@ const read = async (mail) => {
  */
 const deleteYaMail = async (uid) => {
   const emailDelete = await post(
-    `https://${YANDEX_HOST}/api2/admin/email/del`,
+    `https://${PDD_YANDEX_HOST}/api2/admin/email/del`,
     {
       domain: DOMAIN,
       uid: uid,
@@ -117,11 +37,9 @@ const deleteYaMail = async (uid) => {
   return emailDelete;
 };
 /**
- * https://yandex.ru/dev/pdd/doc/reference/email-add-docpage/
- *
- * @todo вообще думаю что можно заложить сценарий более читаемых имен
  * @param {string} login - login
  * @returns {Promise<string|Buffer|Error|*>}
+ * @see https://yandex.ru/dev/pdd/doc/reference/email-add-docpage/
  */
 const createYaMail = async (login) => {
   if (validator.isURL(login)) {
@@ -134,9 +52,11 @@ const createYaMail = async (login) => {
   } else {
     throw new Error('Login wrong type');
   }
+  // todo вообще думаю что нужно заложить сценарий более читаемых имен
+  //  ...
   const { email, password } = generateEmailName(login);
   const emailAdd = await post(
-    `https://${YANDEX_HOST}/api2/admin/email/add`,
+    `https://${PDD_YANDEX_HOST}/api2/admin/email/add`,
     {
       domain: DOMAIN,
       login,
@@ -150,7 +70,7 @@ const createYaMail = async (login) => {
     throw new Error(emailAdd.error);
   }
   const emailGetOauth = await post(
-    `https://${YANDEX_HOST}/api2/admin/email/get_oauth_token`,
+    `https://${PDD_YANDEX_HOST}/api2/admin/email/get_oauth_token`,
     {
       domain: DOMAIN,
       login: emailAdd.login,
@@ -163,7 +83,7 @@ const createYaMail = async (login) => {
   if (emailGetOauth.error) {
     throw new Error(emailAdd.error);
   }
-  await get('https://passport.yandex.ru/passport', {
+  await get(`https://${YANDEX_PASSPORT_HOST}/passport`, {
     mode: 'oauth',
     access_token: emailGetOauth['oauth-token'],
     type: 'trusted-pdd-partner',
@@ -184,9 +104,10 @@ const createYaMail = async (login) => {
 const generateEmailName = (login) => {
   const email = `${login}@${DOMAIN}`;
   const password = cryptoRandomString({
-    length: 30,
-    //🤘👍👌😎🤝😋😜✊💪🙏🆒🆕🆙🆓🆗⬆️🔝➕⭐️🌟💥🔥☀️🕺', todo - по какой-то причине яндекс пока не поддерживает эмодзи пароли
-    characters: '1234567890qwertyuiopasdfghjklzxcvbnm',
+    length: 20,
+    //🤘👍👌😎🤝😋😜✊💪🙏🆒🆕🆙🆓🆗⬆️🔝➕⭐️🌟💥🔥☀️🕺', todo - у яндекс стоят сильные ограничения, перейти потом на PhotonMail
+    characters:
+      '1234567890qwertyuiopasdfghjklzxcvbnm!@#$%^&*()-_=+[]{};:"\\|,.<>/?',
   });
   return {
     email,
@@ -195,8 +116,6 @@ const generateEmailName = (login) => {
 };
 
 module.exports = {
-  read,
   createYaMail,
   deleteYaMail,
-  generateEmailName,
 };

@@ -26,7 +26,7 @@ const clipboardHelper = require('../src/helpers/clipboard');
         },
       });
       nodemonInstance = nodemon(`-x 'NGROK_URL=${url} node' src/server`);
-      const { updateWebhook } = require('../src/services/sendgridmail.service');
+      const { updateWebhook } = require('../src/lib/sendgrid');
       await updateWebhook(url);
       clipboardHelper.copy(url);
     } catch (error) {

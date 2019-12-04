@@ -1,6 +1,6 @@
 const package_ = require('../../../package');
 const bot = require('../../core/bot');
-const format = require('../../services/format.service');
+const format = require('../../services/text.service');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Text extends TelegramBotRequest {

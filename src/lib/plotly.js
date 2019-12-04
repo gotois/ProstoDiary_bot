@@ -1,4 +1,3 @@
-// todo перенести в lib/plotly.js
 const { PLOTLY } = require('../environment');
 const plotly = require('plotly')(PLOTLY.LOGIN, PLOTLY.TOKEN);
 const { Writable } = require('stream');

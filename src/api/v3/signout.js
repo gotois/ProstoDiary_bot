@@ -15,8 +15,8 @@ module.exports = async (requestObject) => {
       if (!botTable.activated) {
         return 'Бот уже был деактивирован';
       }
-      // todo: деактивировать почтовый ящик
-      //  https://yandex.ru/dev/pdd/doc/reference/email-edit-docpage/
+      // todo: деактивировать почтовый ящик https://yandex.ru/dev/pdd/doc/reference/email-edit-docpage/
+      //  ...
       await connection.query(
         botQueries.deactivateByPassportId(passportId),
       );

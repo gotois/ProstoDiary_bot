@@ -1,5 +1,5 @@
 const package_ = require('../../../package');
-const { getCheckSum } = require('../../services/version.service');
+const { getCheckSum } = require('../../services/crypt.service');
 const { IS_PRODUCTION } = require('../../environment');
 const { telegram } = require('../../controllers');
 /**
@@ -31,6 +31,7 @@ module.exports = (parameters) => {
   if (IS_PRODUCTION) {
     message += ' - production\n';
   }
-  message += ' \n' + getCheckSum();
+  // todo нужно получать чексумму всего проекта - для этого настроить precommit хуку и создавать чексумму всех измененных файлов на гите, учитывая пользователя
+  message += ' \n' + getCheckSum(JSON.stringify(package_));
   return Promise.resolve(message);
 };

@@ -1,6 +1,6 @@
 const { pool } = require('../../core/database');
 const { pack } = require('../../services/archive.service');
-const format = require('../../services/format.service');
+const format = require('../../services/text.service');
 const twoFactorAuthService = require('../../services/2fa.service');
 
 /**

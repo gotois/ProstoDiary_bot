@@ -10,6 +10,18 @@ const ALGORITHM = 'aes-256-ctr';
  */
 const BITES_LENGTH = 16;
 /**
+ * @param {Buffer|string} buffer - file
+ * @param {string} algorithm - algorithm
+ * @param {string} encoding - encoding
+ * @returns {string}
+ */
+const getCheckSum = (buffer, algorithm = 'md5', encoding = 'hex') => {
+  return crypto
+    .createHash(algorithm)
+    .update(buffer, 'utf8')
+    .digest(encoding);
+};
+/**
  * @deprecated
  * @param {string} text - entry
  * @returns {string}
@@ -71,4 +83,5 @@ module.exports = {
   decode,
   openpgpEncrypt,
   openpgpDecrypt,
+  getCheckSum,
 };

@@ -65,6 +65,9 @@ const checkMessage = (message) => {
  */
 const messageListener = async (message, { type }) => {
   try {
+    if (!message.gotois) {
+      throw new Error('gotois message error');
+    }
     if (message.reply_to_message instanceof Object) {
       if (!message.reply_to_message.from.is_bot) {
         throw new Error('Reply message not supported');

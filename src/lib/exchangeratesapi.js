@@ -1,4 +1,3 @@
-// todo перенести в lib/exchangeratesapi.js
 // https://exchangeratesapi.io/
 const { get, toQueryString } = require('../services/request.service');
 /**

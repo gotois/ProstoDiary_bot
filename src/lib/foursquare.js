@@ -1,4 +1,3 @@
-// todo перенести в lib/foursquare.js
 /**
  * @description Foursquare node.js API
  * @see https://ru.foursquare.com/oauth2/authenticate?client_id=CLIENT_ID&response_type=token&redirect_uri=REDIRECT_URI
@@ -7,7 +6,6 @@ const request = require('request');
 const { FOURSQUARE } = require('../environment');
 const FOURSQUARE_HOST = 'api.foursquare.com';
 /**
- * @todo перенести в location.service.js
  * @param {object} parameters - params
  * @param {object} parameters.ll - ll
  * @param {object} parameters.query - query

@@ -4,7 +4,7 @@ const jsonld = require('jsonld');
 const { pool, sql } = require('../src/core/database');
 const passportQueries = require('../src/db/passport');
 const botQueries = require('../src/db/bot');
-const { mail } = require('../src/services/sendgridmail.service');
+const { mail } = require('../src/lib/sendgrid');
 const logger = require('../src/services/logger.service');
 
 // todo использовать свои схемы - "https://gotointeractive.com/#organization",

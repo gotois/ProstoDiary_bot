@@ -1,6 +1,6 @@
 const package_ = require('../../../package');
 const { IS_AVA_OR_CI } = require('../../environment');
-const { mail } = require('../../services/sendgridmail.service');
+const { mail } = require('../../lib/sendgrid');
 /**
  * @description Отправляем сообщение. Попадает на почту на специально сгенерированный ящик gotois и после прочтения VZOR'ом удаляем
  * @param {object} requestObject - requestObject

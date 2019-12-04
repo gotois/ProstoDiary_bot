@@ -20,9 +20,14 @@ class Device {
 }
 
 class FakerText {
-  static text(string) {
+  /**
+   * @todo заменять перед запросами конфиденциальную информацию фейками, не теряя контекста
+   * @param {string} text - text string
+   * @returns {*}
+   */
+  static text(text) {
     // todo: изменять значения строки таким образом, чтобы dialogflow отображал нужный интент, но на сервера приходили неверные данные
-    return string;
+    return text;
   }
 }
 

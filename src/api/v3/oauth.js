@@ -1,8 +1,8 @@
 const package_ = require('../../../package');
 const logger = require('../../services/logger.service');
 const { pool, NotFoundError } = require('../../core/database');
-const { mail } = require('../../services/sendgridmail.service');
-const mailService = require('../../services/mail.service');
+const { mail } = require('../../lib/sendgrid');
+const mailService = require('../../services/pdd.service');
 const twoFactorAuthService = require('../../services/2fa.service');
 const oauthService = require('../../services/oauth.service');
 const passportQueries = require('../../db/passport');

@@ -1,4 +1,3 @@
-// todo перенести в lib/jsonld.js
 const jsonld = require('jsonld');
 /**
  * @description сериализатор

@@ -1,11 +1,9 @@
 // todo Search тоже будет являться ассистентом. По умолчанию используется ассистент от gotois, при желании можно переопределить
 
 // https://github.com/gotois/ProstoDiary_bot/issues/160
-// const { decodeRows } = require('../../services/format.service');
-// const { createRegexInput } = require('../../services/string.service');
-const { createPhotoBuffer } = require('../../services/graph.service');
+const { createPhotoBuffer } = require('../../lib/plotly');
 const datetime = require('../../services/date.service');
-const correctionText = require('../../services/correction-text.service');
+const { correctionText } = require('../../services/text.service');
 /**
  * @constant
  * @type {number}

@@ -1,9 +1,8 @@
 const bot = require('../core/bot');
 const { pool } = require('../core/database');
-const { client } = require('../core/jsonrpc');
 const botQueries = require('../db/bot');
+const { client } = require('../core/jsonrpc');
 const Vzor = require('../core/vzor');
-const logger = require('../services/logger.service');
 /**
  * @param {object} info - mail info
  * @returns {Promise<void>}

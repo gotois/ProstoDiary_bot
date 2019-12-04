@@ -1,4 +1,3 @@
-// todo перенести в lib/todoist.js
 const TodoistAPI = require('todoist-js').default;
 const { TODOIST } = require('../environment');
 

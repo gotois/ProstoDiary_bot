@@ -1,7 +1,7 @@
 const bot = require('../../core/bot');
 const { telegram } = require('../../controllers');
 const logger = require('../../services/logger.service');
-const dialogflowService = require('../../services/dialogflow.service');
+const dialogflowService = require('../../lib/dialogflow');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Search extends TelegramBotRequest {
