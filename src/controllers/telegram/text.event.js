@@ -7,6 +7,26 @@ class Text extends TelegramBotRequest {
   onError(error) {
     throw error;
   }
+  /**
+   * fixme нужно пересылать в какое-то апи эти хэштеги для точной записи категорий
+   *
+   * @see https://github.com/gotois/ProstoDiary_bot/issues/74
+   * @returns {Array<string>}
+   */
+  get hashtags() {
+    const hashtags = [];
+    if (Array.isArray(this.message.entities)) {
+      this.message.entities
+        .filter((entity) => {
+          return entity.type === 'hashtag';
+        })
+        .forEach((entity) => {
+          const hashtag = this.message.text.slice(entity.offset, entity.length);
+          hashtags.push(hashtag);
+        });
+    }
+    return hashtags;
+  }
   async beginDialog() {
     await super.beginDialog();
     const { message_id } = await bot.sendMessage(
