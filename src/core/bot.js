@@ -42,8 +42,8 @@ if (IS_AVA_OR_CI || IS_CRON) {
 }
 const checkMentionMessage = (message) => {
   if (Array.isArray(message.entities)) {
-    return message.entities.some(entity => {
-      return entity.type === 'mention'
+    return message.entities.some((entity) => {
+      return entity.type === 'mention';
     });
   }
   return false;
@@ -121,11 +121,15 @@ const messageListener = async (message, { type }) => {
         break;
       }
       case 'group_chat_created': {
-        await require('../controllers/telegram/group-chat-created.event')(message);
+        await require('../controllers/telegram/group-chat-created.event')(
+          message,
+        );
         break;
       }
       case 'new_chat_members': {
-        await require('../controllers/telegram/new-chat-members.event')(message);
+        await require('../controllers/telegram/new-chat-members.event')(
+          message,
+        );
         break;
       }
       case 'migrate_from_chat_id': {

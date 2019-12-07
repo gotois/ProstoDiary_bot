@@ -13,13 +13,10 @@ const MAPS_HOST = 'maps.googleapis.com';
  * @returns {Promise<Array<object>|Error>}
  */
 const getGeoCode = async ({ latitude, longitude }) => {
-  const googleData = await get(
-    `https://${MAPS_HOST}/maps/api/geocode/json`,
-    {
-      latlng: `${latitude},${longitude}`,
-      key: GOOGLE.GOOGLE_MAPS_GEOCODING_API,
-    },
-  );
+  const googleData = await get(`https://${MAPS_HOST}/maps/api/geocode/json`, {
+    latlng: `${latitude},${longitude}`,
+    key: GOOGLE.GOOGLE_MAPS_GEOCODING_API,
+  });
   if (!googleData) {
     throw new Error('GEO: empty data');
   }
