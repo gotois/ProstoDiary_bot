@@ -93,7 +93,7 @@
     "crypto-random-string": "3.0.1",
     "date-fns": "2.8.1",
     "delay": "4.3.0",
-    "dialogflow": "0.14.1",
+    "dialogflow": "1.0.0",
     "dotenv": "8.2.0",
     "express": "4.17.1",
     "express-session": "1.17.0",
