@@ -1,7 +1,7 @@
 -- схема где храним соли, пароли и pgp ключи
 --CREATE SCHEMA IF NOT EXISTS private AUTHORIZATION bot;
 
-CREATE TABLE IF NOT EXISTS public.message (
+CREATE TABLE IF NOT EXISTS public.story (
 id UUID DEFAULT uuid_generate_v4(), -- глобальная историческая ссылка. в идеале - blockchain ID
 -- contentType TEXT,
 -- raw BINARY, -- здесь находится первоначальный текст/фото/видео сообщения - todo ожидается что raw не будет, что достать данные можно будет через письмо определенное время
@@ -11,6 +11,16 @@ uid INT, -- UID письма может повторяться, предусмо
 smtp_id TEXT UNIQUE, -- ссылка на email или messageId в почте
 telegram_message_id BIGINT CONSTRAINT must_be_different UNIQUE, -- id сообщение телеграмма
 
+-- тип записи, от неточного к точному
+-- 1 - сначала письмо отправленное пользователем.
+-- 2 - письмо из которого были сформированы JSON-LD документы
+-- 3 - отвалидированные JSON-LD документы подтвержденные другими людьми
+type ABSTRACT_TYPE NOT NULL,
+
+-- todo это массив
+ld_id BIGSERIAL REFERENCES data.ld (id) ON UPDATE CASCADE, -- структурированные данные в виде JSON-LD
+
+
 mime VARCHAR(20) NOT NULL CHECK (mime <> ''), -- mime тип сообщения
 version VARCHAR(20) NOT NULL CHECK (version <> ''), -- bot Version. отсюда же можно узнать и api version. Аналогичен version в package.json на момент записи - нужен для проверки необходимости обновить историю бота или изменению формата хранения
 
@@ -18,10 +28,7 @@ version VARCHAR(20) NOT NULL CHECK (version <> ''), -- bot Version. отсюда
 creator_id UUID REFERENCES passport.user (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за создание записи
 publisher_id UUID REFERENCES passport.user (id) ON UPDATE CASCADE ON DELETE CASCADE, -- ответственный за публикацию записи, сам gotois, либо внешний сторонний сервис, включая других ботов
 
-type ABSTRACT_TYPE NOT NULL, -- тип записи, от неточного к точному
 tags TAG ARRAY NOT NULL, -- ярлыки, указывающие что именно может находиться в сообщении todo переименовать на labels?
-
-ld_id BIGSERIAL REFERENCES data.ld (id) ON UPDATE CASCADE, -- структурированные данные в виде JSON-LD
 
 -- todo использовать свой date [from, until]?
 updated_at TIMESTAMP NOT NULL DEFAULT current_timestamp, -- время необходимое для того чтобы знать что оно было изменено

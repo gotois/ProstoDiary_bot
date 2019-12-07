@@ -1,9 +1,8 @@
+const parser = require('fast-xml-parser');
 const Abstract = require('./abstract');
-const {
-  uploadAppleHealthData,
-} = require('../../services/apple-health.service');
+const { unpack } = require('../../services/archive.service');
 
-class AbstractDocument extends Abstract {
+class AbstractXml extends Abstract {
   get context() {
     return {
       ...super.context,
@@ -11,27 +10,29 @@ class AbstractDocument extends Abstract {
   }
 
   async precommit() {
-    // todo: ofx|pdf|json|xml|AppleHealth(export.xml)
-    switch (this.mime) {
-      // todo: парсинг
-      case 'xxx_ofx': {
-
-        break;
-      }
-      case 'xxx_applehealth': {
-        // 'apple_health_export/export.xml'
-        // const healthObject = await uploadAppleHealthData(zipBuffer);
-        break;
-      }
-      default: {
-        break;
-      }
+    const mapBuffer = await unpack(buffer);
+    if (mapBuffer.size === 0) {
+      throw new Error('Empty file');
     }
+    const parserOptions = {
+      attributeNamePrefix: '',
+      ignoreAttributes: false,
+      ignoreNameSpace: false,
+      allowBooleanAttributes: true,
+      parseNodeValue: true,
+      parseAttributeValue: false,
+      trimValues: true,
+      parseTrueNumberOnly: false,
+    };
+    mapBuffer.forEach((buffer) => {
+      const string = buffer.toString('utf8');
+      const jsonObject = parser.parse(string, parserOptions);
+    });
   }
 
   async commit() {
-
+    await this.precommit();
   }
 }
 
-module.exports = AbstractDocument;
+module.exports = AbstractXml;

@@ -3,13 +3,14 @@ const logger = require('../services/logger.service');
 const { telegram, botCommands } = require('../controllers');
 const {
   IS_PRODUCTION,
+  IS_CRON,
   IS_AVA_OR_CI,
   TELEGRAM,
   SERVER,
   NGROK,
 } = require('../environment');
 let telegramBot;
-if (IS_AVA_OR_CI) {
+if (IS_AVA_OR_CI || IS_CRON) {
   telegramBot = new TelegramBot(TELEGRAM.TOKEN, {
     polling: true,
     baseApiUrl: TELEGRAM.API_URL,
@@ -39,6 +40,14 @@ if (IS_AVA_OR_CI) {
     });
   }
 }
+const checkMentionMessage = (message) => {
+  if (Array.isArray(message.entities)) {
+    return message.entities.some(entity => {
+      return entity.type === 'mention'
+    });
+  }
+  return false;
+};
 /**
  * @param {TelegramMessage} message - message
  * @returns {undefined}
@@ -59,8 +68,8 @@ const checkMessage = (message) => {
 };
 /**
  * @param {TelegramMessage} message - message
- * @param {object} obj - matcher
- * @param {string} obj.type - matcher type
+ * @param {object} matcher - matcher
+ * @param {string} matcher.type - matcher type
  * @returns {undefined}
  */
 const messageListener = async (message, { type }) => {
@@ -71,6 +80,11 @@ const messageListener = async (message, { type }) => {
     if (message.reply_to_message instanceof Object) {
       if (!message.reply_to_message.from.is_bot) {
         throw new Error('Reply message not supported');
+      }
+    }
+    if (message.chat.type === 'supergroup') {
+      if (!checkMentionMessage(message)) {
+        return;
       }
     }
     switch (type) {
@@ -104,6 +118,18 @@ const messageListener = async (message, { type }) => {
       }
       case 'voice': {
         await require('../controllers/telegram/voice.event')(message);
+        break;
+      }
+      case 'group_chat_created': {
+        await require('../controllers/telegram/group-chat-created.event')(message);
+        break;
+      }
+      case 'new_chat_members': {
+        await require('../controllers/telegram/new-chat-members.event')(message);
+        break;
+      }
+      case 'migrate_from_chat_id': {
+        // todo
         break;
       }
       default: {

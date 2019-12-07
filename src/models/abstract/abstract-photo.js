@@ -11,6 +11,7 @@ class AbstractPhoto extends Abstract {
   }
 
   async precommit () {
+    // todo проверка на QR будет выполняться в ассистенте
     // const { isQR } = await getPhotoDetection({
     //   caption: this.#caption,
     //   fileBuffer: this.buffer,

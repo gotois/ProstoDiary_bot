@@ -4,6 +4,12 @@ const logger = require('../../services/logger.service');
 
 class Story {
   /**
+   * @param {Tag} tagName - tag name
+   */
+  set tag(tagName) {
+    tagName = tagName.replace('Intent', '').toLowerCase();
+  }
+  /**
    * https://github.com/gotois/ProstoDiary_bot/issues/152#issuecomment-527747303
    *
    * @constant
@@ -17,6 +23,15 @@ class Story {
       CORE: 'CORE',
     };
   }
+  /**
+   * @todo: если есть более очевидный тип Hard или Core, то он заменяет прежний тип
+   * @param {INPUT_TYPE} inputType - type
+   */
+  // set type(inputType) {
+  //   if (!Object.values(INPUT_TYPE).includes(inputType)) {
+  //     throw new TypeError('Unknown story type');
+  //   }
+  // }
   // todo сверяем subject с установленными правилами и на основе их пересечения бот будет совершать то или иное действие
   analyzeSubject () {
     console.log('subject', this.subject);
@@ -30,6 +45,11 @@ class Story {
     switch (contentType) {
       case 'text/html': {
         // abstract = new AbstractHTML(body);
+        break;
+      }
+      case 'application/vnd.geo+json': {
+        // это передача GeoJSON
+        // see https://sgillies.net/2014/05/22/the-geojson-media-type.html
         break;
       }
       case 'plain/text': {
@@ -103,9 +123,12 @@ class Story {
       // todo: bot blockchain sign
     };
   }
+
+  // в данном блоке нужно вычислять субъект-действие и валидировать абстракт
   async precommit() {
     const action = this.analyzeSubject();
 
+    // FIXME: просто валидировать абстракты, не использовать натурализацию и создание JSON-LD (для этого нужна отдельный скрипт, который будет работать на основе контекста)
     for (const abstract of this.abstracts) {
       await abstract.commit(action);
     }

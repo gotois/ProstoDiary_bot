@@ -27,6 +27,7 @@ class AbstractScript extends Abstract {
   async commit() {
     await super.commit();
 
+    // todo выполнение cmd будет выполняться в ассистенте
     for (const stdin of this.#cmd) {
       const stdout = execSync(stdin);
       logger.log('info', stdout.toString());

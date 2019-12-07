@@ -45,3 +45,7 @@ curl --basic -u "email:password" -X POST -H "Content-Type: application/json" -H 
 ```sqlite-psql
 ALTER TYPE intent ADD VALUE 'intent_name';
 ```
+
+### Не приходят уведомления к боту через группу
+Нужно настроить `/setprivacy` ENABLED в @BotFather
+Сделать бота админом группы

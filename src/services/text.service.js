@@ -268,4 +268,5 @@ module.exports = {
   previousInput: formatterText,
   decodeRows,
   correctionText,
+  replaceBetween,
 };
