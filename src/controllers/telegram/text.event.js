@@ -8,24 +8,24 @@ class Text extends TelegramBotRequest {
     throw error;
   }
   /**
-   * fixme нужно пересылать в какое-то апи эти хэштеги для точной записи категорий
-   *
-   * @see https://github.com/gotois/ProstoDiary_bot/issues/74
    * @returns {Array<string>}
    */
   get hashtags() {
-    const hashtags = [];
+    const hashtags = new Set();
     if (Array.isArray(this.message.entities)) {
       this.message.entities
         .filter((entity) => {
           return entity.type === 'hashtag';
         })
         .forEach((entity) => {
-          const hashtag = this.message.text.slice(entity.offset, entity.length);
-          hashtags.push(hashtag);
+          const hashtag = this.message.text.substr(
+            entity.offset + 1,
+            entity.length - 1,
+          );
+          hashtags.add(hashtag);
         });
     }
-    return hashtags;
+    return [...hashtags];
   }
   async beginDialog() {
     await super.beginDialog();
@@ -45,8 +45,9 @@ class Text extends TelegramBotRequest {
         text: this.message.text,
         caption: this.message.caption,
         passportId: this.message.gotois.id,
+        categories: this.hashtags,
       });
-      // Отправка зашифрованного сообщения на почту бота
+      // если сообщение успешно отвалидировано, то отправка зашифрованного сообщения на почту бота
       const postResult = await this.request('post', {
         ...messageResult,
         date: this.message.date,

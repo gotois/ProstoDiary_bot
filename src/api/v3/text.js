@@ -11,7 +11,12 @@ const { pool } = require('../../core/database');
  * @returns {Promise<object>}
  */
 module.exports = async (requestObject) => {
-  const { text, caption = 'unknown', passportId } = requestObject;
+  const {
+    text,
+    caption = 'unknown',
+    passportId,
+    categories = [],
+  } = requestObject;
   let subject;
   // Автоматическое исправление опечаток
   const correction = await correctionText(text);
@@ -44,6 +49,6 @@ module.exports = async (requestObject) => {
     subject: subject || caption,
     content: encrypted.data,
     original: text,
-    categories: ['transaction'],
+    categories: ['transaction'].concat(categories),
   };
 };

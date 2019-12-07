@@ -44,7 +44,7 @@ class AbstractGeo extends Abstract {
           "type": "Point",
           "coordinates": [
             this.#latlng.latitude,
-            this.#latlng.latitude.longitude,
+            this.#latlng.longitude,
           ]
         },
         "properties": {
@@ -55,8 +55,12 @@ class AbstractGeo extends Abstract {
   }
 
   async precommit() {
+    let ll;
+    if (this.#latlng) {
+      ll = `${this.#latlng.latitude},${this.#latlng.longitude}`;
+    }
     this.fqData = await foursquare.search({
-      ll: `${this.#latlng.latitude},${this.#latlng.longitude}`,
+      ll,
       near: this.#near,
       limit: 1,
     });
