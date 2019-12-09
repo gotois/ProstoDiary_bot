@@ -21,24 +21,29 @@ const processed = async (info) => {
       );
       return botTable;
     });
-    const mailMap = await imapService.search(
+    const imap = imapService(
       {
         user: botTable.email,
         password: botTable.password,
-        markSeen: true, // нужно затем удалять просмотренные письма?
       },
-      ['ALL', ['HEADER', 'MESSAGE-ID', info['smtp-id']]],
+      botTable.secret_key,
     );
-    for (const [uid, mail] of mailMap) {
+
+    const mailMap = await imap.search([
+      'ALL',
+      ['HEADER', 'MESSAGE-ID', info['smtp-id']],
+    ]);
+
+    for (const mail of mailMap) {
       const story = new Story({
         subject: mail.subject,
-        uid,
+        uid: mail.uid,
       });
-      const messages = await imapService.read(mail, botTable.secret_key);
-      for (const { body, contentType } of messages) {
-        story.append(body, contentType);
+      for (const attachment of mail.attachments) {
+        story.append(attachment.content, attachment.contentType);
       }
       const { id } = await story.commit();
+      await imap.remove(mail.uid);
       logger.info(id, story.toJSON());
     }
     resultMessage = '✅'; // 'Сообщение успешно сохранено ' + id;

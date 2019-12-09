@@ -1,116 +1,189 @@
 const Imap = require('imap');
-const { MailParser } = require('mailparser');
+const { simpleParser } = require('mailparser');
 const crypt = require('./crypt.service');
 
-/**
- * @param {object} imapOptions - imap options
- * @param {Array} search - imap search
- * @returns {Promise<Map<Mail>>}
- */
-const search = (imapOptions, search) => {
-  return new Promise((resolve, reject) => {
-    const imap = new Imap({
+class Vzor extends Imap {
+  /**
+   * @param {object} imapOptions - imap options
+   * @param {?string} secretKey - secret key
+   */
+  constructor(imapOptions, secretKey) {
+    super({
       ...imapOptions,
       host: 'imap.yandex.ru',
       port: 993,
       tls: true,
+      markSeen: false,
       tlsOptions: { rejectUnauthorized: true },
     });
-    imap.once('ready', () => {
-      imap.openBox('INBOX', true, () => {
-        imap.search(search, (error, results) => {
+    this.secretKey = secretKey;
+  }
+
+  connect() {
+    return new Promise((resolve, reject) => {
+      this.once('ready', () => {
+        resolve();
+      });
+      this.once('error', (error) => {
+        reject(error);
+      });
+      super.connect();
+    });
+  }
+
+  close() {
+    return new Promise((resolve, reject) => {
+      this.closeBox((error) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve();
+      });
+    });
+  }
+
+  /**
+   * @description Удаление письма ящика
+   * @example `.remove('48')`
+   * @param {string} uid
+   * @returns {Promise<*>}
+   */
+  async remove(uid) {
+    await this.connect();
+    try {
+      const result = await new Promise((resolve, reject) => {
+        this.openBox('INBOX', false, (error) => {
           if (error) {
             reject(error);
             return;
           }
-          const mailMap = new Map();
-          if (results.length === 0) {
-            imap.end();
-            resolve(mailMap);
-            return mailMap;
-          }
-          const f = imap.fetch(results, { bodies: '' });
-          f.on('message', (message) => {
-            let uid;
-            let flags;
-            message.on('attributes', (attributes) => {
-              uid = attributes.uid;
-              flags = attributes.flags;
-            });
-            const mp = new MailParser();
-            mp.once('end', (mail) => {
-              mail.uid = uid;
-              mail.flags = flags;
-              mailMap.set(uid, mail);
-            });
-            message.once('body', (stream) => {
-              stream.pipe(mp);
-            });
-          });
-          f.once('error', (error) => {
-            imap.end();
-            reject(error);
-          });
-          f.once('end', () => {
-            imap.end();
-            resolve(mailMap);
+          this.addFlags(uid, 'Deleted', (error) => {
+            if (error) {
+              reject(error);
+              return;
+            }
+            resolve();
           });
         });
       });
-    });
-    imap.once('error', (error) => {
-      reject(error);
-    });
-    imap.connect();
-  });
-};
+      return result;
+      // eslint-disable-next-line no-useless-catch
+    } catch (error) {
+      throw error;
+    } finally {
+      await this.close();
+      this.end();
+    }
+  }
 
-/**
- * @param {Mail} mail - mail
- * @param {?string} secretKey - secret key
- * @returns {Promise<Array<{subject: string, body: *, contentType: string}>>}
- */
-const read = async (mail, secretKey) => {
-  const output = [];
-  // Валидация письма
-  if (mail.headers['x-bot'] || mail.from[0].address === 'xxx@ya.ru') {
-    if (mail.attachments) {
-      for (const attachment of mail.attachments) {
-        if (
-          secretKey &&
-          (attachment.transferEncoding === 'base64' ||
-            attachment.transferEncoding === 'quoted-printable')
-        ) {
-          const decryptMessage = await crypt.openpgpDecrypt(
-            attachment.content,
-            [secretKey],
-          );
-          output.push({
-            body: decryptMessage,
-            contentType: attachment.contentType,
+  /**
+   * @param {Array} search - imap search
+   * @returns {Promise<Set<Mail>>}
+   */
+  async search(search) {
+    await this.connect();
+    try {
+      const result = await new Promise((resolve, reject) => {
+        this.openBox('INBOX', true, () => {
+          super.search(search, async (error, results) => {
+            if (error) {
+              reject(error);
+              return;
+            }
+            const mailSet = new Set();
+            if (results.length > 0) {
+              for (const mailResult of results) {
+                const mail = await this.parser(mailResult);
+                await this.decryptAttachment(mail);
+                mailSet.add(mail);
+              }
+            }
+            resolve(mailSet);
           });
-        } else {
-          output.push({
-            body: attachment.content,
-            contentType: attachment.contentType,
-          });
+        });
+      });
+      return result;
+      // eslint-disable-next-line no-useless-catch
+    } catch (error) {
+      throw error;
+    } finally {
+      await this.close();
+      this.end();
+    }
+  }
+
+  // todo функция валидации по имейлу пользователя и по привязанным ботам/ассистентам
+  // async validateMail(mail) { ...
+
+  /**
+   * дешифровка
+   *
+   * @param {Mail} mail
+   * @returns {Promise<void>}
+   */
+  async decryptAttachment(mail) {
+    if (mail.headers.has('x-bot')) {
+      if (mail.attachments) {
+        let index = 0;
+        for (const attachment of mail.attachments) {
+          if (
+            this.secretKey &&
+            ['quoted-printable', 'base64'].includes(
+              attachment.headers.get('content-transfer-encoding'),
+            )
+          ) {
+            const decryptMessage = await crypt.openpgpDecrypt(
+              attachment.content,
+              [this.secretKey],
+            );
+            mail.attachments[index].content = decryptMessage;
+          }
+          index++;
         }
       }
-    } else {
-      output.push({
-        body: mail.html,
-        contentType: mail.headers['content-type'],
-      });
     }
-  } else {
-    // todo Иначе сразу удаляем
-    //  ...
-    throw new Error('Сообщение пользователя успешно удалено и помечено в спам');
   }
-  return output;
-};
 
-module.exports = {
-  search,
-  read,
+  /**
+   * Парсер возвращающий контент письма
+   *
+   * @param {number} uid
+   * @returns {Promise<Mail>}
+   */
+  parser(uid) {
+    return new Promise((resolve, reject) => {
+      const f = super.fetch(uid, { bodies: '', struct: true });
+      f.on('message', (message) => {
+        let attributes;
+        message.once('attributes', (attribute) => {
+          attributes = attribute;
+        });
+        message.on('body', (stream) => {
+          simpleParser(stream, (error, mail) => {
+            if (error) {
+              reject(error);
+              return;
+            }
+            resolve({
+              ...attributes,
+              ...mail,
+            });
+          });
+        });
+      });
+      f.once('error', (error) => {
+        reject(error);
+      });
+    });
+  }
+
+  fetch() {
+    return this.search(['ALL']);
+  }
+}
+
+module.exports = (imapOptions, secretKey) => {
+  const vzor = new Vzor(imapOptions, secretKey);
+  return vzor;
 };

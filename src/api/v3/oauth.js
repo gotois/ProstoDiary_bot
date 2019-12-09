@@ -2,7 +2,7 @@ const package_ = require('../../../package');
 const logger = require('../../services/logger.service');
 const { pool, NotFoundError } = require('../../core/database');
 const { mail } = require('../../lib/sendgrid');
-const mailService = require('../../services/pdd.service');
+const pddService = require('../../services/pdd.service');
 const twoFactorAuthService = require('../../services/2fa.service');
 const oauthService = require('../../services/oauth.service');
 const passportQueries = require('../../db/passport');
@@ -25,7 +25,7 @@ const registration = async (
     length: 20,
   });
   // на будущее, бот сам следит за своей почтой, периодически обновляя пароли. Пользователя вообще не касается что данные сохраняются у него в почте
-  const { email, password, uid } = await mailService.createYaMail(passportId);
+  const { email, password, uid } = await pddService.createYaMail(passportId);
   try {
     await transactionConnection.query(
       botQueries.createBot({
@@ -56,7 +56,7 @@ const registration = async (
       `,
     });
   } catch (error) {
-    await mailService.deleteYaMail(uid);
+    await pddService.deleteYaMail(uid);
     logger.error(error);
     throw error;
   }

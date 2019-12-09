@@ -3,6 +3,10 @@ CREATE SCHEMA passport;
 CREATE TABLE IF NOT EXISTS passport.user (
 -- специально используем gen_random_uuid, чтобы отслеживать по MAC адресу компьютер на котором было создание портрета пользователя
 id UUID NOT NULL DEFAULT gen_random_uuid(),
+-- todo все же я уверен что нужно чтобы пользователь ссылался на бота - bot_id
+-- ...
+
+
 ld_id BIGSERIAL REFERENCES data.ld (id) ON UPDATE CASCADE,
 telegram_id TEXT,
 telegram_passport JSONB,
