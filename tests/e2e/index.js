@@ -111,6 +111,8 @@ test.todo('/search'); // + Проверека построения график�
 
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
 
+skipTestForFastOrTravis('story', require('./story.test'));
+
 skipTestForFastOrTravis('archive service', require('./archive-service.test'));
 skipTestForFastOrTravis('AppleHealth', require('./apple-health-service.test'));
 skipTestForFastOrTravis('Tinkoff', require('./tinkoff-service.test'));

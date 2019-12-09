@@ -49,3 +49,22 @@ ALTER TYPE intent ADD VALUE 'intent_name';
 ### Не приходят уведомления к боту через группу
 Нужно настроить `/setprivacy` ENABLED в @BotFather
 Сделать бота админом группы
+
+### Очистить БД
+```sql
+DROP USER IF EXISTS bot;
+DROP ROLE IF EXISTS demo;
+
+DROP TYPE IF EXISTS TAG CASCADE;
+DROP TYPE IF EXISTS STATUS_TYPE CASCADE;
+
+DROP VIEW IF EXISTS person CASCADE;
+
+DROP TABLE IF EXISTS passport CASCADE;
+DROP TABLE IF EXISTS bot CASCADE;
+DROP TABLE IF EXISTS assistant CASCADE;
+DROP TABLE IF EXISTS ld CASCADE;
+
+DROP TABLE IF EXISTS abstract CASCADE;
+DROP TABLE IF EXISTS message CASCADE;
+``` 
