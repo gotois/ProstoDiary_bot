@@ -1,5 +1,6 @@
 const express = require('express');
 const Sentry = require('@sentry/node');
+const helmet = require('helmet');
 const jsonParser = require('body-parser').json();
 const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
 const package_ = require('../package');
@@ -23,6 +24,7 @@ Sentry.init({
 
 // The request handler must be the first middleware on the app
 app.use(Sentry.Handlers.requestHandler());
+app.use(helmet());
 app.use(require('./middlewares/session'));
 app.use(require('./middlewares/grant'));
 app.use(require('./middlewares/logger'));
@@ -123,7 +125,7 @@ app.use(Sentry.Handlers.errorHandler());
           'MMM dd, yyyy',
         );
         // eslint-disable-next-line no-unused-vars
-        const mailMap = await imap.search(['ALL', ['SINCE', today]]);
+        const emails = await imap.search(['ALL', ['SINCE', today]]);
         // todo сохранять необработанные письма в Story
         // ...
       }
