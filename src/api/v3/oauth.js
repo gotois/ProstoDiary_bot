@@ -48,7 +48,7 @@ const registration = async (
         <br>
         <h2>Шаг 2: Сохраните секретный ключ рекавери.</h2>
         <p>Сохраните ваш секретный ключ в надежном и секретном месте оффлайн: 
-          <strong>${secret.secretPassword}</strong>
+          <strong>${secret.masterPassword}</strong>
         </p>
         <br>
         <h2>Шаг 3: Активируйте бота.</h2>

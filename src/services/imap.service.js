@@ -5,7 +5,7 @@ const crypt = require('./crypt.service');
 class Vzor extends Imap {
   /**
    * @param {object} imapOptions - imap options
-   * @param {?string} secretKey - secret key
+   * @param {?string} secretKey - secret shared key
    */
   constructor(imapOptions, secretKey) {
     super({
@@ -45,8 +45,7 @@ class Vzor extends Imap {
 
   /**
    * @description Удаление письма ящика
-   * @example `.remove('48')`
-   * @param {string} uid
+   * @param {string} uid - uid message
    * @returns {Promise<*>}
    */
   async remove(uid) {

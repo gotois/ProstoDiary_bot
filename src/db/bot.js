@@ -13,7 +13,7 @@ FROM
     passport.bot
 WHERE
     email = ${login}
-    AND secret_password = crypt(${password}, secret_password)
+    AND master_password = crypt(${password}, master_password)
 `;
   },
   activateByPassportId(passportId) {
@@ -53,9 +53,9 @@ WHERE
   createBot({ passportId, email, uid, password, secret }) {
     return sql`
 INSERT INTO passport.bot
-    (passport_id, email, email_uid, password, secret_key, secret_password)
+    (passport_id, email, email_uid, password, secret_key, master_password)
 VALUES 
-    (${passportId}, ${email}, ${uid}, ${password}, ${secret.base32}, crypt(${secret.secretPassword}, gen_salt('bf', 8)))
+    (${passportId}, ${email}, ${uid}, ${password}, ${secret.base32}, crypt(${secret.masterPassword}, gen_salt('bf', 8)))
 `;
   },
 };

@@ -4,6 +4,7 @@
 /data
 /bin
 /SQL
+*.sh
 ava.config.js
 # fixme
 src/models/

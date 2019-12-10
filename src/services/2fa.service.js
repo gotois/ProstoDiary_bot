@@ -15,10 +15,10 @@ const generateSecret = async (options) => {
     ...options,
   });
   const qr = await QRCode.toDataURL(secret.otpauth_url);
-  const secretPassword = cryptoRandomString({ length: 72, type: 'url-safe' });
+  const masterPassword = cryptoRandomString({ length: 72, type: 'url-safe' });
   return {
     ...secret,
-    secretPassword,
+    masterPassword,
     qr,
   };
 };

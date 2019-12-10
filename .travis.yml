@@ -47,7 +47,7 @@ install:
   - npm ci
 
 before_script:
-  - bash SQL/install.sh
+  - bash scripts/sql.sh
   - git lfs pull
 
 script:
