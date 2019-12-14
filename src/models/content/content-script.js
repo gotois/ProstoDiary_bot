@@ -1,12 +1,12 @@
 const { execSync } = require('child_process');
 const { DATABASE } = require('../../environment');
 const logger = require('../../services/logger.service');
-const Abstract = require('./abstract');
+const Abstract = require('../abstract/index');
 
 // todo: это абстракция необходима только для бота - она оборачивает все внутренние запросы на его обновление
 //  боту не нужны сложные правила разбора естественного языка, он вполне может обойтись любым компьютерным языком.
 //  таким образом можно передавать не просто историю в StoryJSON, а некие запросы на выполнение этой истории (js, python, php, etc)
-class AbstractScript extends Abstract {
+class ContentScript extends Abstract {
   #cmd = [];
   async precommit() {
     switch (this.mime) {
@@ -35,4 +35,4 @@ class AbstractScript extends Abstract {
   }
 }
 
-module.exports = AbstractScript;
+module.exports = ContentScript;

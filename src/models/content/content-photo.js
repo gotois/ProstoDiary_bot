@@ -1,7 +1,7 @@
-const Abstract = require('./abstract');
+const Abstract = require('../abstract/index');
 // const { getPhotoDetection } = require('../../services/photo.service');
 
-class AbstractPhoto extends Abstract {
+class ContentPhoto extends Abstract {
   #caption;
   
   get context() {
@@ -23,4 +23,4 @@ class AbstractPhoto extends Abstract {
   }
 }
 
-module.exports = AbstractPhoto;
+module.exports = ContentPhoto;

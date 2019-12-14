@@ -1,4 +1,4 @@
-const Abstract = require('./abstract');
+const Abstract = require('../abstract/index');
 const { getWeather } = require('../../services/location.service');
 
 class AbstractWeather extends Abstract {
@@ -15,6 +15,7 @@ class AbstractWeather extends Abstract {
   get context() {
     return {
       ...super.context,
+      temperature: '...',
       description: this.weatherInfo.description,
     };
   }

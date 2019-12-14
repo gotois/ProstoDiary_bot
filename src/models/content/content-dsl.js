@@ -1,8 +1,9 @@
 const parser = require('fast-xml-parser');
-const Abstract = require('./abstract');
+const Abstract = require('../abstract/index');
 const { unpack } = require('../../services/archive.service');
 
-class AbstractXml extends Abstract {
+// html, xml, json и пр
+class ContentDsl extends Abstract {
   get context() {
     return {
       ...super.context,
@@ -35,4 +36,4 @@ class AbstractXml extends Abstract {
   }
 }
 
-module.exports = AbstractXml;
+module.exports = ContentDsl;

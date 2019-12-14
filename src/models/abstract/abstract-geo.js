@@ -1,4 +1,4 @@
-const Abstract = require('./abstract');
+const Abstract = require('../abstract/index');
 const foursquare = require('../../lib/foursquare');
 const { getFullName, getGeoCode } = require('../../services/location.service');
 
@@ -54,7 +54,7 @@ class AbstractGeo extends Abstract {
     };
   }
 
-  async precommit() {
+  async prepare() {
     let ll;
     if (this.#latlng) {
       ll = `${this.#latlng.latitude},${this.#latlng.longitude}`;
@@ -78,11 +78,6 @@ class AbstractGeo extends Abstract {
     // todo похоже на костыль
     // const locShortName = getLocShortName(this.geocode[0]);
     // this.currencies = await getFullName(locShortName);
-  }
-
-  async commit() {
-    await this.precommit();
-    return this.context;
   }
 }
 

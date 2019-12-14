@@ -1,13 +1,86 @@
 const { sql } = require('../core/database');
 
 module.exports = {
+  selectBotByUserEmail(email) {
+    return sql`
+SELECT
+    passport_id
+FROM
+    bot
+WHERE
+    email = ${email}
+`;
+  },
+  selectEmailByPassport(passportTable) {
+    return sql`
+      SELECT email FROM passport.bot WHERE passport_id = ${passportTable.id};
+    `;
+  },
+  checkByLoginAndPassword(login, password) {
+    return sql`SELECT
+    1
+FROM
+    passport.bot
+WHERE
+    email = ${login}
+    AND master_password = crypt(${password}, master_password)
+`;
+  },
+  activateByPassportId(passportId) {
+    return sql`
+UPDATE
+    passport.bot
+SET
+    activated = ${true}
+WHERE
+    passport_id = ${passportId}
+`;
+  },
+  deactivateByPassportId(passportId) {
+    return sql`
+UPDATE
+    passport.bot
+SET
+    activated = ${false}
+WHERE
+    passport_id = ${passportId}
+`;
+  },
+  selectUserByEmail(email) {
+    return sql`
+      SELECT * FROM passport.user WHERE email = ${email}
+    `;
+  },
+  selectBotByEmail(email) {
+    return sql`
+      SELECT * FROM passport.bot WHERE email = ${email} AND activated = true
+    `;
+  },
+  selectByPassport(passportId) {
+    return sql`SELECT
+    *
+FROM
+    passport.bot
+WHERE
+    passport_id = ${passportId}
+`;
+  },
+  createBot({ passportId, email, uid, password, secret }) {
+    return sql`
+INSERT INTO passport.bot
+    (passport_id, email, email_uid, password, secret_key, master_password)
+VALUES 
+    (${passportId}, ${email}, ${uid}, ${password}, ${secret.base32}, crypt(${secret.masterPassword}, gen_salt('bf', 8)))
+`;
+  },
   selectIdByTelegramId(telegram_id) {
     return sql`
 SELECT 
-    id 
+    id, email
 FROM 
     passport.user 
-WHERE telegram_id = ${telegram_id};
+WHERE telegram_id = ${String(telegram_id)}
+LIMIT 1
     `;
   },
   getPassports() {
@@ -17,11 +90,11 @@ FROM
     passport.user
 `;
   },
-  selectAll(telegram_id, yandex_id, facebook_id) {
+  selectAll(telegram_id, yandex_id = null, facebook_id = null) {
     return sql`
 SELECT *
     FROM 
-passport.user 
+passport.user
     WHERE
 telegram_id = ${telegram_id} OR
 yandex_id = ${yandex_id} OR
@@ -64,7 +137,7 @@ WHERE
 `;
   },
   createPassport({
-    ld_id,
+    email,
     telegramPassport,
     facebookPassport,
     yandexPassport,
@@ -73,7 +146,7 @@ WHERE
   }) {
     return sql`
 INSERT INTO passport.user (
-    ld_id,
+    email,
     telegram_id,
     telegram_passport,
     facebook_id,
@@ -84,7 +157,7 @@ INSERT INTO passport.user (
     yandex_session
 )
 VALUES (
-    ${ld_id},
+    ${email},
     ${telegramPassport ? telegramPassport.id : null},
     ${telegramPassport ? JSON.stringify(telegramPassport) : null},
     ${facebookPassport ? facebookPassport.id : null},
@@ -95,7 +168,7 @@ VALUES (
     ${yandexPassport ? JSON.stringify(yandexSession) : null}
 )
 RETURNING 
-    id
+    id, email
 `;
   },
 };
