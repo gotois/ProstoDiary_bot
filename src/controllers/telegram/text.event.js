@@ -18,6 +18,7 @@ class Text extends TelegramBotRequest {
           return entity.type === 'hashtag';
         })
         .forEach((entity) => {
+          // eslint-disable-next-line unicorn/prefer-string-slice
           const hashtag = this.message.text.substr(
             entity.offset + 1,
             entity.length - 1,
@@ -54,10 +55,12 @@ class Text extends TelegramBotRequest {
         chat_id: this.message.chat.id,
         from: {
           email: package_.author.email,
+          name: this.message.gotois.id,
         },
         to: [
           {
-            email: this.message.gotois.email,
+            email: this.message.gotois.botEmail,
+            name: this.message.gotois.botId,
           },
         ],
         telegram_message_id: message_id,

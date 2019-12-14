@@ -1,5 +1,5 @@
 const { pool } = require('../../core/database');
-const botQueries = require('../../db/bot');
+const passportQueries = require('../../db/passport');
 /**
  * @description блокировки чтения/приема и общей работы бота
  * @param {object} requestObject - requestObject
@@ -10,7 +10,7 @@ module.exports = async (requestObject) => {
   const signOutResult = await pool.connect(async (connection) => {
     try {
       const botTable = await connection.one(
-        botQueries.selectByPassport(passportId),
+        passportQueries.selectByPassport(passportId),
       );
       if (!botTable.activated) {
         return 'Бот уже был деактивирован';
@@ -18,7 +18,7 @@ module.exports = async (requestObject) => {
       // todo: деактивировать почтовый ящик https://yandex.ru/dev/pdd/doc/reference/email-edit-docpage/
       //  ...
       await connection.query(
-        botQueries.deactivateByPassportId(passportId),
+        passportQueries.deactivateByPassportId(passportId),
       );
       return 'Бот деактивирован';
     } catch (error) {

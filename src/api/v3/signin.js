@@ -1,5 +1,6 @@
 const { pool } = require('../../core/database');
-const botQueries = require('../../db/bot');
+const passportQueries = require('../../db/passport');
+const logger = require('../../services/logger.service');
 const twoFactorAuthService = require('../../services/2fa.service');
 /**
  * @description Авторизация и разблокировка чтения/приема и общей работы бота
@@ -17,12 +18,9 @@ module.exports = async (requestObject) => {
   const signInResult = await pool.connect(async (connection) => {
     try {
       const botTable = await connection.one(
-        botQueries.selectByPassport(passportId),
+        passportQueries.selectByPassport(passportId),
       );
-      const valid = await twoFactorAuthService.verify(
-        botTable.secret_key,
-        token,
-      );
+      const valid = twoFactorAuthService.verifyUser(botTable.secret_key, token);
       if (!valid) {
         // todo Превышено число попыток входа. Начните снова через N секунд
         //  ...
@@ -31,10 +29,11 @@ module.exports = async (requestObject) => {
       if (botTable.activated) {
         return 'Бот уже был активирован';
       }
-      await connection.query(botQueries.activateByPassportId(passportId));
+      await connection.query(passportQueries.activateByPassportId(passportId));
       return 'Бот активирован';
     } catch (error) {
-      return `Вход закончился ошибкой: ${error.message}`;
+      logger.error(error.message);
+      throw error;
     }
   });
   return signInResult;

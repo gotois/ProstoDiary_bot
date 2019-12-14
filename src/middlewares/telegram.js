@@ -1,7 +1,6 @@
 const bot = require('../core/bot');
 const { pool } = require('../core/database');
 const passportQueries = require('../db/passport');
-const botQueries = require('../db/bot');
 
 module.exports = async (request, response, next) => {
   try {
@@ -13,14 +12,16 @@ module.exports = async (request, response, next) => {
         return {};
       }
       const botTable = await connection.maybeOne(
-        botQueries.selectByPassport(passportTable.id),
+        passportQueries.selectByPassport(passportTable.id),
       );
       if (!botTable) {
         return {};
       }
       return {
-        id: passportTable.id,
-        email: botTable.email,
+        id: passportTable.id, // todo rename userId
+        botId: botTable.id,
+        userEmail: passportTable.email,
+        botEmail: botTable.email,
         activated: botTable.activated,
       };
     });

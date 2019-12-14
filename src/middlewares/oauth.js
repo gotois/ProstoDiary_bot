@@ -1,34 +1,6 @@
 const bot = require('../core/bot');
 const { client } = require('../core/jsonrpc');
-const { pool } = require('../core/database');
-const passportQueries = require('../db/passport');
-/**
- * @param {string} token - token
- * @param {TelegramMessage} message - telegram message
- * @returns {Promise<undefined>}
- */
-const telegramSignInCallback = async (token, message) => {
-  const passportId = await pool.connect(async (connection) => {
-    const passportTable = await connection.one(
-      passportQueries.selectAll(message.from.id),
-    );
-    return passportTable.id;
-  });
-  await client.request('signin', {
-    token,
-    passportId,
-  });
-  const me = await bot.getMe();
-  await bot.sendMessage(
-    message.chat.id,
-    `Приветствую ${message.chat.first_name}!\n` +
-      `Я твой персональный бот __${me.first_name}__.\n` +
-      'Узнай все мои возможности командой /help.',
-    {
-      parse_mode: 'Markdown',
-    },
-  );
-};
+const { SignIn } = require('../controllers/telegram/signin.event');
 
 module.exports = async (request, response, next) => {
   try {
@@ -57,23 +29,13 @@ module.exports = async (request, response, next) => {
     }
     if (grant.dynamic && grant.dynamic.telegram) {
       await bot.sendMessage(grant.dynamic.telegram.chat.id, result);
-      const checkSecretValue = await bot.sendMessage(
-        grant.dynamic.telegram.chat.id,
-        'Ваш токен от двухфакторной аутентификации:',
-        {
-          reply_markup: {
-            force_reply: true,
-          },
-        },
-      );
-      bot.onReplyToMessage(
-        grant.dynamic.telegram.chat.id,
-        checkSecretValue.message_id,
-        async ({ text }) => {
-          await telegramSignInCallback(text, grant.dynamic.telegram);
-        },
-      );
-      return response.redirect('tg://resolve?domain=ProstoDiary_bot');
+      try {
+        const signIn = new SignIn(grant.dynamic.telegram);
+        await signIn.beginDialog();
+      } finally {
+        response.redirect('tg://resolve?domain=ProstoDiary_bot');
+      }
+      return;
     }
     return response.status(200).send(result);
   } catch (error) {

@@ -1,17 +1,15 @@
 const jsonrpc = require('../core/jsonrpc');
-const { pool, sql } = require('../core/database');
+const { pool } = require('../core/database');
+const passportQueries = require('../db/passport');
 
 module.exports = async (request, response, next) => {
   try {
     const bot = await pool.connect(async (connection) => {
-      const data = await connection.maybeOne(sql`
-SELECT
-    passport_id
-FROM
-    bot
-WHERE
-    email = ${request.user + '@gotointeractive.com'}
-`);
+      const data = await connection.maybeOne(
+        passportQueries.selectBotByUserEmail(
+          request.user + '@gotointeractive.com',
+        ),
+      );
       return data;
     });
     if (!bot) {

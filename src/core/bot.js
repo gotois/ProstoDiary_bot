@@ -91,6 +91,11 @@ const messageListener = async (message, { type }) => {
       case 'text': {
         checkMessage(message);
         if (message.reply_to_message) {
+          if (message.gotois.activated) {
+            return;
+          }
+          // если бот не активирован, то проверяем что он прислал код авторизации
+          await require('../controllers/telegram/signin.event')(message);
           return;
         }
         for (const key of botCommands) {

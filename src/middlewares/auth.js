@@ -1,5 +1,5 @@
 const auth = require('http-auth');
-const botQueries = require('../db/bot');
+const passportQueries = require('../db/passport');
 const { pool } = require('../core/database');
 
 // example: demo@gotointeractive.com:demo
@@ -15,7 +15,7 @@ const basic = auth.basic(
     await pool.connect(async (connection) => {
       try {
         const user = await connection.one(
-          botQueries.checkByLoginAndPassword(login, password),
+          passportQueries.checkByLoginAndPassword(login, password),
         );
         callback(user);
       } catch {
