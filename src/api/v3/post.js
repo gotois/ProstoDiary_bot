@@ -31,7 +31,7 @@ module.exports = async (requestObject) => {
         subject,
         customArgs: {
           timestamp: date,
-          test: IS_AVA_OR_CI,
+          experimental: IS_AVA_OR_CI,
           chat_id: chat_id,
           telegram_message_id: telegram_message_id,
         },

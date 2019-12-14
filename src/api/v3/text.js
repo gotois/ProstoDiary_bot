@@ -3,7 +3,7 @@ const dialogflowService = require('../../lib/dialogflow');
 const { correctionText } = require('../../services/text.service');
 const logger = require('../../services/logger.service');
 const { FakerText } = require('../../services/faker.service');
-const botQueries = require('../../db/bot');
+const passportQueries = require('../../db/passport');
 const { pool } = require('../../core/database');
 /**
  * @description Генерация сообщения для почты
@@ -39,7 +39,7 @@ module.exports = async (requestObject) => {
   //  ...
   const secretKey = await pool.connect(async (connection) => {
     const botTable = await connection.one(
-      botQueries.selectByPassport(passportId),
+      passportQueries.selectByPassport(passportId),
     );
     return botTable.secret_key;
   });
@@ -49,6 +49,6 @@ module.exports = async (requestObject) => {
     subject: subject || caption,
     content: encrypted.data,
     original: text,
-    categories: ['transaction'].concat(categories),
+    categories: ['transaction-write'].concat(categories),
   };
 };

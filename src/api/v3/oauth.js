@@ -6,30 +6,26 @@ const pddService = require('../../services/pdd.service');
 const twoFactorAuthService = require('../../services/2fa.service');
 const oauthService = require('../../services/oauth.service');
 const passportQueries = require('../../db/passport');
-const botQueries = require('../../db/bot');
-const ldQueries = require('../../db/ld');
+// const ldQueries = require('../../db/ld');
 /**
  * @description Регистрация письма
  * @param {*} transactionConnection - transactionConnection
- * @param {string} passportId - passport guid
- * @param {Array<string>} passportEmail - passport email
+ * @param {object} passport - passport
+ * @param {uid} passport.id - passport uid
+ * @param {string} passport.email - passport email
  */
-const registration = async (
-  transactionConnection,
-  passportId,
-  passportEmail,
-) => {
-  const secret = await twoFactorAuthService.generateSecret({
+const registration = async (transactionConnection, passport) => {
+  const secret = await twoFactorAuthService.generateUserSecret({
     name: package_.name,
     symbols: true,
     length: 20,
   });
   // на будущее, бот сам следит за своей почтой, периодически обновляя пароли. Пользователя вообще не касается что данные сохраняются у него в почте
-  const { email, password, uid } = await pddService.createYaMail(passportId);
+  const { email, password, uid } = await pddService.createYaMail(passport.id);
   try {
     await transactionConnection.query(
-      botQueries.createBot({
-        passportId,
+      passportQueries.createBot({
+        passportId: passport.id,
         email,
         uid,
         password,
@@ -37,7 +33,7 @@ const registration = async (
       }),
     );
     await mail.send({
-      to: passportEmail,
+      to: passport.email,
       from: email,
       subject: `Passport ${package_.name}`,
       html: `
@@ -145,11 +141,15 @@ const createPassport = async (
   if (telegram.from) {
     tgData = telegram.from;
   }
+  if (passportEmails.length === 0) {
+    throw new Error('Empty email');
+  }
+  const [primaryEmail] = passportEmails.flat();
   // todo нужно устанавливать минимально рабочий json-ld
-  const linkedData = await transactionConnection.one(ldQueries.createLD({}));
+  // const linkedData = await transactionConnection.one(ldQueries.createLD({}));
   const passport = await transactionConnection.one(
     passportQueries.createPassport({
-      ld_id: linkedData.id,
+      email: primaryEmail,
       telegramPassport: tgData,
       facebookPassport: fbData,
       yandexPassport: yaData,
@@ -157,7 +157,7 @@ const createPassport = async (
       yandexSession: yandex.raw,
     }),
   );
-  await registration(transactionConnection, passport.id, passportEmails.flat());
+  await registration(transactionConnection, passport);
 };
 /**
  * @description Обновление данных паспорта

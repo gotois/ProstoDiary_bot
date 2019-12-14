@@ -26,7 +26,7 @@ module.exports = (parameters) => {
       return accumulator;
     }, '') +
     '\n\nF.A.Q.: ' +
-    'https://prosto-diary.gotointeractive.com/faq/';
+    'https://prosto-diary.gotointeractive.com/faq/\n\n';
   message += package_.version;
   if (IS_PRODUCTION) {
     message += ' - production\n';

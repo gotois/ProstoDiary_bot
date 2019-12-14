@@ -3,8 +3,8 @@ const { sql } = require('../core/database');
 module.exports = {
   refreshView() {
     return sql`
-      REFRESH MATERIALIZED VIEW public.story
-    `;
+REFRESH MATERIALIZED VIEW public.story
+`;
   },
   createAbstract({ category, context, contentId }) {
     return sql`

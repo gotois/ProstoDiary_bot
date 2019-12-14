@@ -37,7 +37,8 @@ const deleteYaMail = async (uid) => {
   return emailDelete;
 };
 /**
- * @param {string} login - login
+ * @todo вообще думаю что нужно заложить сценарий более читаемых имен
+ * @param {uid|string} login - login
  * @returns {Promise<string|Buffer|Error|*>}
  * @see https://yandex.ru/dev/pdd/doc/reference/email-add-docpage/
  */
@@ -52,8 +53,6 @@ const createYaMail = async (login) => {
   } else {
     throw new Error('Login wrong type');
   }
-  // todo вообще думаю что нужно заложить сценарий более читаемых имен
-  //  ...
   const { email, password } = generateEmailName(login);
   const emailAdd = await post(
     `https://${PDD_YANDEX_HOST}/api2/admin/email/add`,

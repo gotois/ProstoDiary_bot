@@ -50,6 +50,9 @@ ALTER TYPE intent ADD VALUE 'intent_name';
 Нужно настроить `/setprivacy` ENABLED в @BotFather
 Сделать бота админом группы
 
+### Не приходят данные созданные пользователем к боту
+Нужно зайти в почту бота и проверить что они не находятся в папке спам писем
+
 ### Очистить БД
 ```sql
 DROP USER IF EXISTS bot;
@@ -58,13 +61,10 @@ DROP ROLE IF EXISTS demo;
 DROP TYPE IF EXISTS TAG CASCADE;
 DROP TYPE IF EXISTS STATUS_TYPE CASCADE;
 
-DROP VIEW IF EXISTS person CASCADE;
+DROP SCHEMA passport CASCADE;
+DROP SCHEMA story CASCADE;
 
-DROP TABLE IF EXISTS passport CASCADE;
-DROP TABLE IF EXISTS bot CASCADE;
-DROP TABLE IF EXISTS assistant CASCADE;
-DROP TABLE IF EXISTS ld CASCADE;
-
-DROP TABLE IF EXISTS abstract CASCADE;
-DROP TABLE IF EXISTS message CASCADE;
+DROP TABLE IF EXISTS story.message CASCADE;
+DROP TABLE IF EXISTS passport.user CASCADE;
+DROP TABLE IF EXISTS passport.bot CASCADE;
 ``` 

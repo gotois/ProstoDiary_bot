@@ -10,7 +10,6 @@ const Story = require('../../models/story');
  */
 const delivered = async (info) => {
   logger.info(delivered.name);
-  console.log('info.email', info);
   let resultMessage;
   try {
     const botTable = await pool.connect(async (connection) => {

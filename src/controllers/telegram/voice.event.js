@@ -16,8 +16,8 @@ class Voice extends TelegramBotRequest {
       date: this.message.date,
       mime: 'plain/text',
       chat_id: this.message.chat.id,
-      creator: this.message.gotois.email,
-      publisher: package_.author.email,
+      creator: this.message.gotois.userEmail,
+      publisher: package_.author.botEmail,
     });
     await bot.sendMessage(this.message.chat.id, result);
   }
