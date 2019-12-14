@@ -107,7 +107,7 @@ UPDATE
     passport.user
 SET
     telegram_id = ${telegram.from.id},
-    telegram_passport = ${JSON.stringify(telegram.from)}
+    telegram_passport = ${sql.json(telegram.from)}
 WHERE
     id = ${passportUID}
 `;
@@ -118,8 +118,8 @@ UPDATE
     passport.user
 SET
     yandex_id = ${passport.client_id},
-    yandex_passport = ${JSON.stringify(passport)},
-    yandex_session = ${JSON.stringify(session)}
+    yandex_passport = ${sql.json(passport)},
+    yandex_session = ${sql.json(session)}
 WHERE
     id = ${passportUID}
 `;
@@ -130,8 +130,8 @@ UPDATE
     passport.user
 SET
     facebook_id = ${passport.id},
-    facebook_passport = ${JSON.stringify(passport)},
-    facebook_session = ${JSON.stringify(session)}
+    facebook_passport = ${sql.json(passport)},
+    facebook_session = ${sql.json(session)}
 WHERE
     id = ${passportUID}
 `;
@@ -159,13 +159,13 @@ INSERT INTO passport.user (
 VALUES (
     ${email},
     ${telegramPassport ? telegramPassport.id : null},
-    ${telegramPassport ? JSON.stringify(telegramPassport) : null},
+    ${telegramPassport ? sql.json(telegramPassport) : null},
     ${facebookPassport ? facebookPassport.id : null},
-    ${facebookPassport ? JSON.stringify(facebookPassport) : null},
-    ${facebookPassport ? JSON.stringify(facebookSession) : null},
+    ${facebookPassport ? sql.json(facebookPassport) : null},
+    ${facebookPassport ? sql.json(facebookSession) : null},
     ${yandexPassport ? yandexPassport.client_id : null},
-    ${yandexPassport ? JSON.stringify(yandexPassport) : null},
-    ${yandexPassport ? JSON.stringify(yandexSession) : null}
+    ${yandexPassport ? sql.json(yandexPassport) : null},
+    ${yandexPassport ? sql.json(yandexSession) : null}
 )
 RETURNING 
     id, email

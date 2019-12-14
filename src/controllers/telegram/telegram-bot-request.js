@@ -22,20 +22,12 @@ class TelegramBotRequest {
    * @returns {Promise<*>}
    */
   async request(method, params = []) {
+    logger.info(method);
     const { error, result } = await client.request(method, params);
     if (error) {
       logger.error(error);
       await this.onError(error);
     }
-    // todo: каждый результат должен логироваться дневником (может подойдет обычный logger?)
-    // const result = await this.request('post', {
-    //   text: signInResult,
-    //   mime: 'plain/text',
-    //   date: this.message.date,
-    //   creator: this.creator.email,
-    //   publisher: pkg.author.email,
-    //   telegram_message_id: this.message.message_id,
-    // });
     return result;
   }
   async onError(error) {

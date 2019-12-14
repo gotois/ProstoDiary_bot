@@ -4,15 +4,26 @@ module.exports = async (request, response, next) => {
   try {
     await pool.connect(async (connection) => {
       try {
-        const messageTable = await connection.one(sql`
+        const storyTable = await connection.one(sql`
 SELECT
-    * 
+    *
 FROM 
-    data.message
-WHERE 
+    public.story
+WHERE
     id = ${request.params.uuid}
 `);
-        return response.status(200).json(messageTable);
+        switch (request.headers.accept) {
+          case 'application/json': {
+            return response.status(200).json(storyTable);
+          }
+          default: {
+            return response.status(200).send(
+              `
+                <div>${storyTable.content.toString()}</div>
+              `,
+            );
+          }
+        }
       } catch (error) {
         return response.status(404).json({ message: error.message });
       }

@@ -4,8 +4,6 @@ category CATEGORY NOT NULL, -- ярлык, указывающий что име�
 context JSONB NOT NULL, -- структурированные данные которые можно превратить в n-quads / JSON-LD
 content_id BIGINT NOT NULL,
 
-created_at TIMESTAMP DEFAULT current_timestamp,
-
 PRIMARY KEY (id)
 );
 

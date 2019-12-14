@@ -7,7 +7,9 @@ content_type VARCHAR(20) NOT NULL CHECK (content_type <> ''), -- mime тип raw
 email_message_id TEXT CONSTRAINT must_be_different UNIQUE NOT NULL, -- сообщение почты
 telegram_message_id BIGINT UNIQUE DEFAULT NULL, -- сообщение телеграмма
 --uid INT, -- UID письма может повторяться, предусмотреть это. todo Вообще это можно удалять, нигде не использую
-created_at TIMESTAMP NOT NULL,
+created_at TIMESTAMPTZ NOT NULL,
+updated_at TIMESTAMP DEFAULT current_timestamp,
+
 status STATUS_TYPE NOT NULL DEFAULT 'draft',-- тип записи от неточного к точному
 
 PRIMARY KEY (id)

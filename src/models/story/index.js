@@ -1,14 +1,9 @@
-const INTENTS = require('../../core/intents');
-const AbstractText = require('../../models/abstract/abstract-text');
+const ContentText = require('../content/content-text');
 const logger = require('../../services/logger.service');
+const storyQueries = require('../../db/story');
+const { pool } = require('../../core/database');
 
 class Story {
-  /**
-   * @param {Tag} tagName - tag name
-   */
-  set tag(tagName) {
-    tagName = tagName.replace('Intent', '').toLowerCase();
-  }
   /**
    * https://github.com/gotois/ProstoDiary_bot/issues/152#issuecomment-527747303
    *
@@ -23,150 +18,105 @@ class Story {
       CORE: 'CORE',
     };
   }
-  /**
-   * @todo: если есть более очевидный тип Hard или Core, то он заменяет прежний тип
-   * @param {INPUT_TYPE} inputType - type
-   */
-  // set type(inputType) {
-  //   if (!Object.values(INPUT_TYPE).includes(inputType)) {
-  //     throw new TypeError('Unknown story type');
-  //   }
-  // }
   // todo сверяем subject с установленными правилами и на основе их пересечения бот будет совершать то или иное действие
   analyzeSubject () {
-    console.log('subject', this.subject);
+    // tagName = tagName.replace('Intent', '').toLowerCase();
+    console.log('subject', this.mail.subject);
   };
   /**
-   * @param {*} body
-   * @param {string}  contentType
+   * @param {Mail} mail mail
    */
-  append (body, contentType) {
-    let abstract;
-    switch (contentType) {
-      case 'text/html': {
-        // abstract = new AbstractHTML(body);
-        break;
+  constructor(mail) {
+    this.mail = mail;
+    this.from = mail.from;
+    this.to = mail.to;
+    this.uid = mail.uid;
+    this.contents = [];
+
+    for (const attachment of mail.attachments) {
+      let content;
+      switch (attachment.contentType) {
+        case 'plain/text': {
+          content = new ContentText({
+            ...attachment,
+            emailMessageId: mail.messageId,
+            telegramMessageId: mail.telegram_message_id,
+          });
+          break;
+        }
+        case 'text/html': {
+          // abstract = new AbstractHTML(attachment);
+          break;
+        }
+        case 'application/vnd.geo+json': {
+          // это передача GeoJSON
+          // see https://sgillies.net/2014/05/22/the-geojson-media-type.html
+          break;
+        }
+        case 'image/png':
+        case 'image/jpeg': {
+          break;
+        }
+        case 'application/pdf': {
+          break;
+        }
+        case 'application/xml': {
+          break;
+        }
+        case 'application/zip':
+        case 'multipart/x-zip': {
+          break;
+        }
+        case 'application/octet-stream': {
+          break;
+        }
+        default: {
+          logger.warn('info', 'Unknown mime type ' + contentType);
+        }
       }
-      case 'application/vnd.geo+json': {
-        // это передача GeoJSON
-        // see https://sgillies.net/2014/05/22/the-geojson-media-type.html
-        break;
-      }
-      case 'plain/text': {
-        abstract = new AbstractText(body);
-        break;
-      }
-      case 'image/png':
-      case 'image/jpeg': {
-        //  abstract = new AbstractPhoto(body);
-        break;
-      }
-      case 'application/pdf': {
-        //  abstract = new AbstractPDF(body);
-        break;
-      }
-      case 'application/xml': {
-        //  abstract = new AbstractXML(body);
-        break;
-      }
-      case 'application/zip':
-      case 'multipart/x-zip': {
-        //  abstract = new AbstractZip(body);
-        break;
-      }
-      case 'application/octet-stream': {
-        //  abstract = new AbstractText(body);
-        break;
-      }
-      default: {
-        logger.warn('info', 'Unknown mime type ' + contentType);
-      }
+      this.contents.push(content);
     }
-    this.abstracts.push(abstract);
-  }
-  /**
-   * @param {object} params - params
-   * @param {string} params.subject
-   * @param {string} params.contentType
-   * @param {uid} params.uid
-   */
-  constructor(subject, uid) {
-    this.subject = subject;
-    this.uid = uid;
-    this.abstracts = [];
-  }
-  /**
-   * @description Operation Definition (Типизация абстрактов в строгий структурный вид) - формируем Конечный состав параметров, включающий undefined если нигде не получилось ничего найти
-   * Единый ответ для записи истории как для бота, так и для пользователя
-   *
-   * @returns {object}
-   */
-  toJSON () {
-    return {
-      // type: this.type,
-      // tags: this.tags,
-      // raw: this.raw,
-      // version: this.version,
-      // jurisdiction: this.jurisdiction,
-      // timestamp: this.timestamp,
-      // creator: this.creator,
-      // publisher: this.publisher,
-      // telegram_bot_id: this.telegram_bot_id,
-      // telegram_user_id: this.telegram_user_id,
-      // telegram_message_id: this.telegram_message_id,
-      // email_message_id: this.email_message_id,
-      // telegram_user_id: this.telegram_user_id,
-      // telegram_message_id: this.telegram_message_id,
-      // todo: сюда же добавляется subject из письма
-      // todo: сюда же добавляется raw - ссылка на исходик (в письме аттача или типо того)
-      // todo: канонический урл - url
-      // todo: bot blockchain sign
-    };
   }
 
-  // в данном блоке нужно вычислять субъект-действие и валидировать абстракт
-  async precommit() {
+  async commit() {
     const action = this.analyzeSubject();
 
-    // FIXME: просто валидировать абстракты, не использовать натурализацию и создание JSON-LD (для этого нужна отдельный скрипт, который будет работать на основе контекста)
-    for (const abstract of this.abstracts) {
-      await abstract.commit(action);
-    }
-  }
-  // todo: прямо здесь делать запросы на сохранение в БД
-  async commit() {
-    await this.precommit();
-
-    console.log('next');
-
-    // todo save story.toJSON() to Database
-    // await pool.connect(async (connection) => {
-    //   await connection.transaction(async (transactionConnection) => {
-    //     const messageId = await transactionConnection.query(sql`
-    //       INSERT INTO message
-    //       (uid, url, telegram_message_id)
-    //       VALUES (${this.mail_uid}, ${2}, ${this.telegram_message_id})
-    //       RETURNING id`
-    //     );
-    //     const creatorId = transactionConnection.maybeOne(sql`
-    //       SELECT id FROM jsonld WHERE email = ${this.creator}`
-    //     );
-    //     if (!creatorId) {
-    //       // todo: делать заполнение jsonld новой персоной
-    //     }
-    //     const publisherId = transactionConnection.maybeOne(sql`
-    //       SELECT id FROM jsonld WHERE email = ${this.publisher}`
-    //     );
-    //     await transactionConnection.query(sql`
-    //       INSERT INTO abstract
-    //       (created_at, type, tags, mime, version, context, message_id, creator_id, publisher_id)
-    //       VALUES (${this.timestamp}, ${this.type}, ${sql.array(this.tags, sql`text[]`)}, ${this.mime}, ${this.version}, ${this.context}, ${messageId}, ${creatorId}, ${publisherId})
-    //       RETURNING *`
-    //     );
-    //   });
-    // });
-
-    return this.toJSON();
+    await pool.connect(async (connection) => {
+      await connection.transaction(async (transactionConnection) => {
+        // message
+        const messageTable = await transactionConnection.one(
+          storyQueries.createMessage({
+            creator: this.from.value[0].name,
+            publisher: this.to.value[0].name,
+            experimental: this.mail.experimental,
+            version: this.mail.headers['x-bot-version'],
+          })
+        );
+        // content
+        for (const content of this.contents) {
+          await content.prepare();
+          const contentTable = await transactionConnection.one(storyQueries.createContent({
+            content: content.content,
+            contentType: content.contentType,
+            date: this.mail.date,
+            emailMessageId: content.emailMessageId,
+            telegramMessageId: content.telegramMessageId,
+            messageId: messageTable.id,
+          }));
+          // abstract
+          for (const abstract of content.abstracts) {
+            await abstract.prepare();
+            await transactionConnection.query(storyQueries.createAbstract({
+              category: 'finance', // fixme undefined example
+              context: JSON.stringify(abstract.context),
+              contentId: contentTable.id,
+            }));
+          }
+        }
+        // refresh materialized view
+        await transactionConnection.query(storyQueries.refreshView());
+      });
+    });
   }
 }
 

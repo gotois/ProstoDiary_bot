@@ -25,6 +25,7 @@ module.exports = async (request, response, next) => {
           break;
         }
         case 'delivered': {
+          await require('../controllers/email/delivered')(info);
           break;
         }
         default: {
@@ -32,8 +33,9 @@ module.exports = async (request, response, next) => {
         }
       }
     }
-    response.sendStatus(200);
   } catch (error) {
     next(error);
+  } finally {
+    response.sendStatus(200);
   }
 };

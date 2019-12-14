@@ -44,9 +44,8 @@ const delivered = async (info) => {
           ...mail,
           ...info,
         });
-        const { id } = await story.commit();
+        await story.commit();
         await imap.remove(mail.uid);
-        logger.info(id, story.toJSON());
       } else if (info.category.includes('transaction-read')) {
         // todo если пришла transaction-read, то получаем возможность делать read
         //  ...

@@ -1,4 +1,4 @@
-CREATE MATERIALIZED VIEW story AS
+CREATE MATERIALIZED VIEW public.story AS
 SELECT
   story.message.id,
   story.message.version,

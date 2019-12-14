@@ -1,6 +1,8 @@
 const Imap = require('imap');
 const { simpleParser } = require('mailparser');
 const crypt = require('./crypt.service');
+const logger = require('./logger.service');
+// const tfa = require('./2fa.service');
 
 class Vzor extends Imap {
   /**
@@ -81,6 +83,7 @@ class Vzor extends Imap {
    * @returns {Promise<Set<Mail>>}
    */
   async search(search) {
+    logger.info('imap search');
     await this.connect();
     try {
       const result = await new Promise((resolve, reject) => {
@@ -94,7 +97,11 @@ class Vzor extends Imap {
             if (results.length > 0) {
               for (const mailResult of results) {
                 const mail = await this.parser(mailResult);
+                // todo валидация сообщения
+                // await this.validateEmail(mail.headerLines);
                 await this.decryptAttachment(mail);
+                mail.headers = Object.fromEntries([...mail.headers]);
+                delete mail.headerLines;
                 mailSet.add(mail);
               }
             }
@@ -112,11 +119,15 @@ class Vzor extends Imap {
     }
   }
 
-  // todo функция валидации по имейлу пользователя и по привязанным ботам/ассистентам
-  // async validateMail(mail) { ...
+  // todo валидация полученного сообщения от привязанных к боту ассистентам
+  // @see https://github.com/gotois/ProstoDiary_bot/issues/346
+  // validateEmail(mail, secret) {
+  //   const time = mail.date
+  //   return tfa.verifyBot(secret, token, 1453667720);
+  // }
 
   /**
-   * дешифровка
+   * @description дешифровка
    *
    * @param {Mail} mail
    * @returns {Promise<void>}
@@ -145,9 +156,8 @@ class Vzor extends Imap {
   }
 
   /**
-   * Парсер возвращающий контент письма
-   *
-   * @param {number} uid
+   * @description Парсер возвращающий контент письма
+   * @param {number} uid - mail uid
    * @returns {Promise<Mail>}
    */
   parser(uid) {

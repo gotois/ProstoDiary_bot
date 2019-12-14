@@ -1,6 +1,11 @@
 const { sql } = require('../core/database');
 
 module.exports = {
+  refreshView() {
+    return sql`
+      REFRESH MATERIALIZED VIEW public.story
+    `;
+  },
   createAbstract({ category, context, contentId }) {
     return sql`
           INSERT INTO story.abstract
@@ -16,7 +21,6 @@ module.exports = {
           )
           RETURNING id`;
   },
-
   createContent({
     content,
     contentType,
@@ -38,7 +42,7 @@ module.exports = {
           VALUES (
             ${sql.binary(content)}, 
             ${contentType}, 
-            ${date},
+            ${date.toUTCString()}::timestamptz,
             ${emailMessageId},
             ${telegramMessageId},
             ${messageId}
@@ -46,7 +50,6 @@ module.exports = {
           RETURNING id
           `;
   },
-
   createMessage({ creator, publisher, version, experimental = false }) {
     return sql`
           INSERT INTO story.message
