@@ -96,11 +96,11 @@ const onAgree = async (message) => {
           [
             {
               text: 'Yandex',
-              url: `${SERVER.HEROKUAPP}/connect/yandex?${callbackValues}`,
+              url: `${SERVER.HOST}/connect/yandex?${callbackValues}`,
             },
             {
               text: 'Facebook',
-              url: `${SERVER.HEROKUAPP}/connect/facebook?${callbackValues}`,
+              url: `${SERVER.HOST}/connect/facebook?${callbackValues}`,
             },
           ],
         ],

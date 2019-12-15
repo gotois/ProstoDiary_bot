@@ -13,13 +13,12 @@ const { TELEGRAM } = require('../environment');
 module.exports = (app) => {
   // подтверждение авторизации oauth. Сначала переходить сначала по ссылке вида https://cd0b2563.eu.ngrok.io/connect/yandex. Через localhost не будет работать
   app.get('/oauth', oauthParser);
-
   // JSON-LD пользователя/организации
   // todo добавить список историй сылками и пагинацией <Array>
   //  список сообщений истории определенного пользователя
   app.get('/user/:uuid/:date', authParser, passportParser);
   // отображение прикрепленных некий глобальный JSON-LD включающий ссылки на остальные документы
-  // todo делать читаемыми только для того пользователя и бота кто создал
+  // todo делать читаемыми только для того пользователя кто создал. Нужны роли для этого
   app.get('/message/:uuid', authParser, messageController);
   // вебхуки нотификаций о почте, включая ассистентов
   app.post('/mail', jsonParser, mailController);

@@ -122,6 +122,8 @@ const ENV = {
         throw new Error('TELEGRAM_TOKEN not found');
       } else if (ENV.NGROK.URL) {
         return ENV.NGROK.URL;
+      } else if (ENV.IS_PRODUCTION) {
+        return ENV.SERVER.HEROKUAPP;
       } else if (HOST) {
         return HOST;
       }
