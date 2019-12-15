@@ -34,7 +34,7 @@
     "e2e:fast": "cross-env FAST_TEST=FAST_TEST ava tests/e2e/index.js",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "docs:serve": "cd docs/ ; bundle exec jekyll serve",
-    "docs:openapi": "node ./scripts/api-generate",
+    "docs:openapi": "node ./scripts/openapi",
     "prepare": "if [ \"$NODE_ENV\" = \"TRAVIS_CI\" ]; then echo skip prepare script; else npm run snyk-protect; fi",
     "snyk-protect": "snyk protect"
   },

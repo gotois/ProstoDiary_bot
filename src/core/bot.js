@@ -83,10 +83,11 @@ const onAgree = async (message) => {
       remove_keyboard: true,
     },
   });
+  logger.info(`${SERVER.HOST}/connect/facebook?${callbackValues}`);
+  logger.info(`${SERVER.HOST}/connect/yandex?${callbackValues}`);
   await telegramBot.sendMessage(
     message.chat.id,
-    'Выберите способ авторизации: ' +
-      `\n${SERVER.HOST}/connect/yandex?${callbackValues}`, // todo debug
+    'Выберите способ авторизации:',
     {
       parse_mode: 'HTML',
       reply_markup: {
@@ -95,11 +96,11 @@ const onAgree = async (message) => {
           [
             {
               text: 'Yandex',
-              url: `${SERVER.HOST}/connect/yandex?${callbackValues}`,
+              url: `${SERVER.HEROKUAPP}/connect/yandex?${callbackValues}`,
             },
             {
               text: 'Facebook',
-              url: `${SERVER.HOST}/connect/facebook?${callbackValues}`,
+              url: `${SERVER.HEROKUAPP}/connect/facebook?${callbackValues}`,
             },
           ],
         ],
@@ -107,7 +108,6 @@ const onAgree = async (message) => {
     },
   );
 };
-// const replyListener = ()
 /**
  * @param {TelegramMessage} message - message
  * @param {object} matcher - matcher
