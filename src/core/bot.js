@@ -73,6 +73,7 @@ const checkMessage = (message) => {
  * @returns {undefined}
  */
 const messageListener = async (message, { type }) => {
+  logger.info('telegram.message');
   try {
     if (!message.gotois) {
       throw new Error('gotois message error');
@@ -82,7 +83,7 @@ const messageListener = async (message, { type }) => {
         throw new Error('Reply message not supported');
       }
     }
-    if (message.chat.type === 'supergroup') {
+    if (message.chat && message.chat.type === 'supergroup') {
       if (!checkMentionMessage(message)) {
         return;
       }

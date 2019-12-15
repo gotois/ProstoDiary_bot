@@ -2,6 +2,7 @@ const fs = require('fs');
 const qs = require('qs');
 const bot = require('../../core/bot');
 const { SERVER, IS_PRODUCTION } = require('../../environment');
+const logger = require('../../services/logger.service');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Start extends TelegramBotRequest {
@@ -30,6 +31,7 @@ class Start extends TelegramBotRequest {
   async messageListener(query) {
     switch (query.data) {
       case 'CANCEL': {
+        logger.info('start.cancel');
         await bot.sendMessage(
           this.message.chat.id,
           'Попробовать сначала /start',
@@ -38,6 +40,7 @@ class Start extends TelegramBotRequest {
         break;
       }
       case 'AGREE': {
+        logger.info('start.agree');
         await this.dialog.next().value;
         break;
       }

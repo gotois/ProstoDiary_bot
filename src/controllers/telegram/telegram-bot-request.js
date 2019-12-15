@@ -1,6 +1,6 @@
-const logger = require('../../services/logger.service');
 const bot = require('../../core/bot');
 const { client } = require('../../core/jsonrpc');
+const logger = require('../../services/logger.service');
 
 class TelegramBotRequest {
   #message;
@@ -15,7 +15,7 @@ class TelegramBotRequest {
   }
   async beginDialog() {
     const instanceProto = Object.getPrototypeOf(this);
-    logger.log('info', instanceProto.constructor.name);
+    logger.info('telegram:' + instanceProto.constructor.name);
   }
   /**
    * @param {RequestObject|NotificationObject} requestObject - requestObject
@@ -31,6 +31,7 @@ class TelegramBotRequest {
     return result;
   }
   async onError(error) {
+    logger.info('telegram:error');
     await bot.sendMessage(this.message.chat.id, error.message);
     throw error;
   }

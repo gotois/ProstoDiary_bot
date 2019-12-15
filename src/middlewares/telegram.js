@@ -4,9 +4,10 @@ const passportQueries = require('../db/passport');
 
 module.exports = async (request, response, next) => {
   try {
+    const message = request.body.message || request.body.callback_query.message;
     const gotoisCredentions = await pool.connect(async (connection) => {
       const userTable = await connection.maybeOne(
-        passportQueries.selectIdByTelegramId(request.body.message.from.id),
+        passportQueries.selectIdByTelegramId(message.from.id),
       );
       if (!userTable) {
         return {};
@@ -28,7 +29,7 @@ module.exports = async (request, response, next) => {
     const body = {
       ...request.body,
       message: {
-        ...request.body.message,
+        ...message,
         // todo rename passport
         gotois: gotoisCredentions, // расширяем встроенный TelegramMessage
       },
