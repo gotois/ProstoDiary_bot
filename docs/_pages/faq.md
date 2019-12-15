@@ -11,13 +11,17 @@ permalink: /faq/
 В Event Notification Mail Settings надо указать путь вида `https://7d4a7fb7.eu.ngrok.io/mail`. Настроить https://app.sendgrid.com/settings/mail_settings
 
 ### Хочу делать API запросы через cURL 
-Пример запроса без параметров:
+Пример API запроса без параметров:
 ```
 curl --basic -u "demo:demo" -X POST -H "Content-Type: application/json" -H "Accept: application/json" --data '{"jsonrpc":"2.0","method":"ping","id":1}' http://127.0.0.1:9000/api/ping
 ```
-Пример запроса с параметрами:
+Пример API запроса с параметрами:
 ```
-curl --basic -u "email:password" -X POST -H "Content-Type: application/json" -H "Accept: application/json" --data '{"jsonrpc":"2.0","method":"help","params":{"id":1},"id":1}' http://127.0.0.1:9000/api
+curl --basic -u "bot_email:master_password" -X POST -H "Content-Type: application/json" -H "Accept: application/json" --data '{"jsonrpc":"2.0","backup":"help","params":{"token":123456},"id":1}' http://127.0.0.1:9000/api
+```
+Пример получения JSON данных истории
+```
+curl --basic -u "demo:demo" -H "Accept: application/json" http://0.0.0.0:9000/message/73050f7c-2781-4f1a-b9f7-992f1d65f22e
 ```
 
 ### Падает CI с неизвестной ошибкой
@@ -60,6 +64,8 @@ DROP ROLE IF EXISTS demo;
 
 DROP TYPE IF EXISTS TAG CASCADE;
 DROP TYPE IF EXISTS STATUS_TYPE CASCADE;
+
+DROP MATERIALIZED VIEW public.story;
 
 DROP SCHEMA passport CASCADE;
 DROP SCHEMA story CASCADE;

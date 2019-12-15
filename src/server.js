@@ -1,18 +1,11 @@
 const express = require('express');
 const Sentry = require('@sentry/node');
 const helmet = require('helmet');
-const jsonParser = require('body-parser').json();
-const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
+// const Provider = require('oidc-provider');
+// const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
 const package_ = require('../package');
 const logger = require('./services/logger.service');
-const { IS_PRODUCTION, SENTRY, TELEGRAM, SERVER } = require('./environment');
-const authParser = require('./middlewares/auth');
-const telegramParser = require('./middlewares/telegram');
-const mailParser = require('./middlewares/mail');
-const oauthParser = require('./middlewares/oauth');
-const apiParser = require('./middlewares/jsonrpc');
-const passportParser = require('./middlewares/id');
-const messageParser = require('./middlewares/message');
+const { IS_PRODUCTION, SENTRY, SERVER } = require('./environment');
 const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
 
@@ -21,7 +14,6 @@ Sentry.init({
   dsn: SENTRY.DSN,
   debug: IS_PRODUCTION,
 });
-
 // The request handler must be the first middleware on the app
 app.use(Sentry.Handlers.requestHandler());
 app.use(helmet());
@@ -30,48 +22,55 @@ app.use(require('./middlewares/grant'));
 app.use(require('./middlewares/logger'));
 // The error handler must be before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());
+require('./routes')(app);
+// Express error handler
+app.use(require('./middlewares/error-handler'));
 
 (async function main() {
-  // подтверждение авторизации oauth. Сначала переходить сначала по ссылке вида https://cd0b2563.eu.ngrok.io/connect/yandex. Через localhost не будет работать
-  app.get('/oauth', oauthParser);
-  // JSON-LD пользователя/организации
-  // todo добавить список историй сылками и пагинацией <Array>
-  //  список сообщений истории определенного пользователя
-  app.get('/user/:uuid/:date', authParser, passportParser);
-  // отображение прикрепленных некий глобальный JSON-LD включающий ссылки на остальные документы
-  app.get('/message/:uuid', authParser, messageParser);
-  // вебхуки нотификаций о почте, включая ассистентов
-  app.post('/mail', jsonParser, mailParser);
-  // telegram
-  app.post(`/bot${TELEGRAM.TOKEN}`, jsonParser, telegramParser);
-  try {
-    await new OpenApiValidator({
-      apiSpec: './docs/openapi.json',
-      validateRequests: true,
-      validateResponses: true,
-      unknownFormats: ['uuid'],
-      securityHandlers: {
-        BasicAuth: (_request, _scopes, _schema) => {
-          return Promise.resolve(true);
-        },
-      },
-    }).install(app);
-  } catch {
-    logger.error('OpenApiValidator');
-  }
-  app.get('/', authParser, require('./middlewares/ping'));
-  // json rpc server
-  app.post('/api*', jsonParser, authParser, apiParser);
-  // 404 - not found
-  app.get('*', require('./middlewares/not-found-handler'));
-  // Express error handler
-  app.use(require('./middlewares/error-handler'));
+  // fixme перестал работать, возможно новая версия поломала API
+  // try {
+  //   await new OpenApiValidator({
+  //     apiSpec: './docs/openapi.json',
+  //     validateRequests: {
+  //       allowUnknownQueryParameters: true,
+  //     },
+  //     validateResponses: true,
+  //     unknownFormats: ['uuid'],
+  //     validateSecurity: {
+  //       handlers: {
+  //         ApiKeyAuth: (req, scopes, schema) => {
+  //           throw { status: 401, message: 'sorry' }
+  //         },
+  //         BasicAuth: (_request, _scopes, _schema) => {
+  //           return Promise.resolve(true);
+  //         },
+  //       },
+  //     },
+  //   }).install(app);
+  // } catch {
+  //   logger.error('OpenApiValidator');
+  // }
+
+  // todo авторизоваться
+  //  сделать в express.js миддлваре
+  // @see https://github.com/panva/node-oidc-provider-example/tree/master/00-oidc-minimal
+  // http://0.0.0.0:9998/auth?client_id=foo&response_type=code&scope=openid
+  // const oidc = new Provider(SERVER.HOST, {
+  //   clients: [{
+  //     client_id: 'foo',
+  //     client_secret: 'bar',
+  //     redirect_uris: ['https://fee986e8.ngrok.io/cb'],
+  //   }],
+  // });
+  // oidc.proxy = true;
+  // oidc.listen(9998);
+
   app.listen(SERVER.PORT, () => {
     logger.log(
       'info',
       `${IS_PRODUCTION ? 'Production' : 'Dev'} server ${
         package_.version
-      } started on port ${SERVER.PORT}`,
+      } started on ${SERVER.HOST}:${SERVER.PORT}`,
     );
   });
 
@@ -80,24 +79,23 @@ app.use(Sentry.Handlers.errorHandler());
   const { pool } = require('./core/database');
   const bot = require('./core/bot');
   const passportQueries = require('./db/passport');
-  const botQueries = require('./db/bot');
   await pool.connect(async (connection) => {
     const passportsTable = await connection.many(
       passportQueries.getPassports(),
     );
     for (const passport of passportsTable) {
       const botTable = await connection.one(
-        botQueries.selectByPassport(passport.id),
+        passportQueries.selectByPassport(passport.id),
       );
       try {
-        // пингуем тем самым проверяем пользователя
+        // пингуем тем самым проверяем что пользователь активен
         await bot.sendChatAction(passport.telegram_id, 'typing');
       } catch (error) {
         logger.error(error);
         switch (error.response && error.response.statusCode) {
           case 403: {
             await connection.query(
-              botQueries.deactivateByPassportId(passport.id),
+              passportQueries.deactivateByPassportId(passport.id),
             );
             break;
           }
@@ -108,6 +106,7 @@ app.use(Sentry.Handlers.errorHandler());
         return;
       }
       if (botTable.activated) {
+        // eslint-disable-next-line no-unused-vars
         const imap = imapService(
           {
             host: 'imap.yandex.ru',
@@ -117,15 +116,14 @@ app.use(Sentry.Handlers.errorHandler());
           },
           botTable.secret_key,
         );
-
         // находим письма за сегодняшний день
         // считываем их содержимое и записываем в БД
+        // eslint-disable-next-line no-unused-vars
         const today = format(
           fromUnixTime(Math.round(new Date().getTime() / 1000)),
           'MMM dd, yyyy',
         );
-        // eslint-disable-next-line no-unused-vars
-        const emails = await imap.search(['ALL', ['SINCE', today]]);
+        // const emails = await imap.search(['ALL', ['SINCE', today]]);
         // todo сохранять необработанные письма в Story
         // ...
       }

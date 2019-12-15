@@ -244,83 +244,6 @@
         }
       }
     },
-    "/api/naturalization": {
-      "post": {
-        "operationId": "naturalization.js",
-        "deprecated": false,
-        "summary": "/naturalization",
-        "description": "натурализация",
-        "tags": [
-          "JSONRPC"
-        ],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "method",
-                  "id",
-                  "jsonrpc",
-                  "params"
-                ],
-                "properties": {
-                  "method": {
-                    "type": "string",
-                    "default": "naturalization",
-                    "description": "API method naturalization"
-                  },
-                  "id": {
-                    "type": "integer",
-                    "default": 1,
-                    "format": "int32",
-                    "description": "Request ID"
-                  },
-                  "jsonrpc": {
-                    "type": "string",
-                    "default": "2.0",
-                    "description": "JSON-RPC Version (2.0)"
-                  },
-                  "params": {
-                    "title": "Parameters",
-                    "type": "object",
-                    "required": [
-                      "method",
-                      "id",
-                      "jsonrpc"
-                    ],
-                    "properties": {}
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/backup": {
       "post": {
         "operationId": "backup.js",
@@ -629,11 +552,11 @@
         }
       }
     },
-    "/api/notification": {
+    "/api/notify": {
       "post": {
-        "operationId": "notification.js",
+        "operationId": "notify.js",
         "deprecated": false,
-        "summary": "/notification",
+        "summary": "/notify",
         "description": "аналогичны push-notification",
         "tags": [
           "JSONRPC"
@@ -674,8 +597,8 @@
                 "properties": {
                   "method": {
                     "type": "string",
-                    "default": "notification",
-                    "description": "API method notification"
+                    "default": "notify",
+                    "description": "API method notify"
                   },
                   "id": {
                     "type": "integer",
@@ -777,7 +700,7 @@
         "operationId": "post.js",
         "deprecated": false,
         "summary": "/post",
-        "description": "Отправляем сообщение. Попадает на почту на специально сгенерированный ящик gotois и после прочтения VZOR'ом удаляем",
+        "description": "Отправляем сообщение. Попадает на почту на специально сгенерированный ящик gotois и после прочтения ботом удаляем",
         "tags": [
           "JSONRPC"
         ],
@@ -820,83 +743,6 @@
                     "type": "string",
                     "default": "post",
                     "description": "API method post"
-                  },
-                  "id": {
-                    "type": "integer",
-                    "default": 1,
-                    "format": "int32",
-                    "description": "Request ID"
-                  },
-                  "jsonrpc": {
-                    "type": "string",
-                    "default": "2.0",
-                    "description": "JSON-RPC Version (2.0)"
-                  },
-                  "params": {
-                    "title": "Parameters",
-                    "type": "object",
-                    "required": [
-                      "method",
-                      "id",
-                      "jsonrpc"
-                    ],
-                    "properties": {}
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/read": {
-      "post": {
-        "operationId": "read.js",
-        "deprecated": false,
-        "summary": "/read",
-        "description": "Чтение письма и запись в БД",
-        "tags": [
-          "JSONRPC"
-        ],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "method",
-                  "id",
-                  "jsonrpc",
-                  "params"
-                ],
-                "properties": {
-                  "method": {
-                    "type": "string",
-                    "default": "read",
-                    "description": "API method read"
                   },
                   "id": {
                     "type": "integer",

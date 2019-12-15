@@ -60,11 +60,6 @@ npm run dev
 npm start
 ```
 
-### CRON: запуск считывателя письма
-```bash
-npm run start:vzor
-```
-
 Tools
 ---
 #### Package upgrade
