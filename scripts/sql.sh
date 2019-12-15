@@ -20,3 +20,5 @@ psql -U $PGUSER -d $PGDATABASE -a -f SQL/stories/types/tag.sql;
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/stories/tables/message.sql;
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/stories/tables/content.sql;
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/stories/tables/abstract.sql;
+psql -U $PGUSER -d $PGDATABASE -a -f SQL/stories/views/history.sql;
+

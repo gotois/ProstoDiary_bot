@@ -1,3 +1,4 @@
+const qs = require('qs');
 const TelegramBot = require('node-telegram-bot-api');
 const logger = require('../services/logger.service');
 const { telegram, botCommands } = require('../controllers');
@@ -66,6 +67,47 @@ const checkMessage = (message) => {
     }
   }
 };
+const onAgree = async (message) => {
+  logger.info('start.agree');
+  // TODO: эти данные лучше не передавать на сторонний сервер.
+  //  Лучше использовать какой-то безобидный id -
+  //  например id текущей сессии, которая после колбэка будет уничтожаться в oauth.js
+  const callbackValues = qs.stringify({
+    telegram: {
+      ...message,
+    },
+  });
+  await telegramBot.deleteMessage(message.chat.id, message.message_id);
+  await telegramBot.sendMessage(message.chat.id, 'Договор подписан', {
+    reply_markup: {
+      remove_keyboard: true,
+    },
+  });
+  await telegramBot.sendMessage(
+    message.chat.id,
+    'Выберите способ авторизации: ' +
+      `\n${SERVER.HOST}/connect/yandex?${callbackValues}`, // todo debug
+    {
+      parse_mode: 'HTML',
+      reply_markup: {
+        force_reply: true,
+        inline_keyboard: [
+          [
+            {
+              text: 'Yandex',
+              url: `${SERVER.HOST}/connect/yandex?${callbackValues}`,
+            },
+            {
+              text: 'Facebook',
+              url: `${SERVER.HOST}/connect/facebook?${callbackValues}`,
+            },
+          ],
+        ],
+      },
+    },
+  );
+};
+// const replyListener = ()
 /**
  * @param {TelegramMessage} message - message
  * @param {object} matcher - matcher
@@ -74,6 +116,15 @@ const checkMessage = (message) => {
  */
 const messageListener = async (message, { type }) => {
   logger.info('telegram.message');
+  // подтверждение договора и первичная валидация установки через телеграм
+  if (
+    type === 'contact' &&
+    !message.from.is_bot &&
+    message.contact.user_id === message.from.id
+  ) {
+    await onAgree(message);
+    return;
+  }
   try {
     if (!message.gotois) {
       throw new Error('gotois message error');
