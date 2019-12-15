@@ -5,6 +5,36 @@ module.exports = {
     return sql`REFRESH MATERIALIZED VIEW public.story
 `;
   },
+  selectStory() {
+    return sql`SELECT
+    *
+FROM
+    story
+`;
+  },
+  selectStoryByDate({
+    publisherEmail,
+    from = '2000-01-01',
+    until = sql.raw('now()'),
+    sorting,
+  }) {
+    let orderBy;
+    // hack - при проброске напрямую возникает ошибка
+    if (sorting === 'DESC') {
+      orderBy = sql`ORDER BY
+    created_at DESC
+`;
+    } else {
+      orderBy = sql`ORDER BY
+    created_at ASC
+`;
+    }
+    return sql`SELECT * FROM story 
+       WHERE publisher_email = ${publisherEmail}
+       AND created_at BETWEEN ${from} AND ${until}
+       ${orderBy}
+       `;
+  },
   createAbstract({ category, context, contentId }) {
     return sql`
           INSERT INTO story.abstract

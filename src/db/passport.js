@@ -1,14 +1,15 @@
 const { sql } = require('../core/database');
 
 module.exports = {
-  selectBotByUserEmail(email) {
+  selectBotByUserEmail(login) {
     return sql`
 SELECT
+    email,
     passport_id
 FROM
-    bot
+    passport.bot
 WHERE
-    email = ${email}
+    email = ${login} OR email = ${login + '@gotointeractive.com'}
 `;
   },
   selectEmailByPassport(passportTable) {
@@ -22,7 +23,7 @@ WHERE
 FROM
     passport.bot
 WHERE
-    email = ${login}
+    email = ${login} OR email = ${login + '@gotointeractive.com'}
     AND master_password = crypt(${password}, master_password)
 `;
   },
@@ -49,6 +50,11 @@ WHERE
   selectUserByEmail(email) {
     return sql`
       SELECT * FROM passport.user WHERE email = ${email}
+    `;
+  },
+  selectUserById(userId) {
+    return sql`
+      SELECT * FROM passport.user WHERE id = ${userId}
     `;
   },
   selectBotByEmail(email) {

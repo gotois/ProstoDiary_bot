@@ -22,7 +22,7 @@ class TelegramBotRequest {
    * @returns {Promise<*>}
    */
   async request(method, params = []) {
-    logger.info(method);
+    logger.info('request:' + method);
     const { error, result } = await client.request(method, params);
     if (error) {
       logger.error(error);

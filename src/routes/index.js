@@ -1,11 +1,13 @@
 const jsonParser = require('body-parser').json();
 const authParser = require('../middlewares/auth');
-const telegramParser = require('../middlewares/telegram');
-const mailParser = require('../middlewares/mail');
+const telegramController = require('../middlewares/telegram');
+const mailController = require('../middlewares/mail');
 const oauthParser = require('../middlewares/oauth');
-const apiParser = require('../middlewares/jsonrpc');
+const apiController = require('../middlewares/jsonrpc');
 const passportParser = require('../middlewares/id');
-const messageParser = require('../middlewares/message');
+const messageController = require('../middlewares/message');
+const pingController = require('../middlewares/ping');
+const notFoundController = require('../middlewares/not-found-handler');
 const { TELEGRAM } = require('../environment');
 
 module.exports = (app) => {
@@ -18,20 +20,18 @@ module.exports = (app) => {
   app.get('/user/:uuid/:date', authParser, passportParser);
   // отображение прикрепленных некий глобальный JSON-LD включающий ссылки на остальные документы
   // todo делать читаемыми только для того пользователя и бота кто создал
-  app.get('/message/:uuid', authParser, messageParser);
+  app.get('/message/:uuid', authParser, messageController);
   // вебхуки нотификаций о почте, включая ассистентов
-  app.post('/mail', jsonParser, mailParser);
+  app.post('/mail', jsonParser, mailController);
   // telegram
-  app.post(`/bot${TELEGRAM.TOKEN}`, jsonParser, telegramParser);
-
-  app.get('/', authParser, require('./middlewares/ping'));
-
+  app.post(`/bot${TELEGRAM.TOKEN}`, jsonParser, telegramController);
+  app.get('/', authParser, pingController);
   // example oidc
   // app.get('/cb', (request) => {
   //   console.log(request);
   // });
   // json rpc server
-  app.post('/api*', jsonParser, authParser, apiParser);
+  app.post('/api*', jsonParser, authParser, apiController);
   // 404 - not found
-  app.get('*', require('../middlewares/not-found-handler'));
+  app.get('*', notFoundController);
 };

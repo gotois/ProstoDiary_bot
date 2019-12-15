@@ -1,84 +1,81 @@
+const package_ = require('../../../package');
+const { mail } = require('../../lib/sendgrid');
 const { pool } = require('../../core/database');
 const { pack } = require('../../services/archive.service');
-const format = require('../../services/text.service');
 const twoFactorAuthService = require('../../services/2fa.service');
-
+const storyQueries = require('../../db/story');
+const { convertIn2DigitFormat } = require('../../services/date.service');
+const passportQueries = require('../../db/passport');
 /**
- * @param {number} telegram_user_id - user id
- * @param {string|Date} date - date
- * @example
- * get(111, '2016-12-01');
- *
- * @returns {Promise<Array>}
+ * @param {Array} stories - entries
+ * @returns {buffer}
  */
-// const _get = async (telegram_user_id, date) => {
-//   switch (date.constructor) {
-//     case Date: {
-//       date = date.toJSON().slice(0, 10);
-//       break;
-//     }
-//     case String: {
-//       break;
-//     }
-//     default: {
-//       throw new TypeError('Wrong type');
-//     }
-//   }
-//   // todo: День начинается с рассвета и до следующего рассвета (вместо привычного дня времени)
-//   // fixme: лучше сделать -12 часов и +12 часов
-//   const from = `${date} 00:00:00`;
-//   const until = `${date} 23:59:59`;
-//   const result = await $$(
-//     `SELECT DISTINCT user_t.context->>'queryText' AS TEXT, user_t.telegram_message_id
-//      FROM user_story as user_t, history as history_t, bot_story as bot_t
-//      WHERE bot_t.telegram_user_id = $1 AND history_t.created_at BETWEEN $2 AND $3`,
-//     [telegram_user_id, from, until],
-//   );
-//   // TODO: надо сразу декодировать
-//   // const decodeRows = rows.map(({ entry }) => {
-//   //   return crypt.decode(entry);
-//   // });
-//   return result.rows;
-// };
+const getTextFromStories = (stories) => {
+  let currentDateString = '';
+  const data = stories
+    .reduce((accumulator, { created_at, content }) => {
+      const date = new Date(created_at);
+      const DD = convertIn2DigitFormat(date.getDate());
+      const MM = convertIn2DigitFormat(date.getMonth() + 1);
+      const YYYY = date.getFullYear();
+      const dateString = `${DD}.${MM}.${YYYY}`;
 
+      if (dateString !== currentDateString) {
+        accumulator += `\n${dateString}\n`;
+      }
+      currentDateString = dateString;
+      accumulator += content.toString() + '\n';
+      return accumulator;
+    }, '')
+    .trim();
+  return Buffer.from(data, 'utf8')
+};
 /**
- * @todo тексты брать из почты используя Vzor.search
- * @todo должен в том числе содержать StoryJSON в полном объеме и храниться в отдельном файле: story.json
  * @description backup
  * @param {object} requestObject - requestObject
- * @returns {Promise<*>}
+ * @param {?object} passport - passport gotois
+ * @returns {Promise<string>}
  */
-module.exports = async (requestObject) => {
-  const { user, date, passcode, token, sorting = 'ASC' } = requestObject;
-  const valid = await twoFactorAuthService.verify(passcode, token);
-  if (!valid) {
-    throw new Error('Wrong token');
-  }
-  const filename = `backup_${date}.txt`;
-  const rows = await pool.connect(async (connection) => {
-    // const rows = await connection.many(
-    //   sql`SELECT 1 FROM jsonld WHERE telegram = ${telegram}`,
-    // );
-    // return rows;
+module.exports = async (requestObject, { passport } = {}) => {
+  const { date, token, sorting = 'ASC' } = requestObject;
+  const passportId = requestObject.passportId || passport.id;
+  const stories = await pool.connect(async (connection) => {
+    const botTable = await connection.one(
+      passportQueries.selectByPassport(passportId),
+    );
+    const valid = twoFactorAuthService.verifyUser(botTable.secret_key, token);
+    if (!valid) {
+      throw new Error('Wrong token');
+    }
+    const rows = await connection.many(
+      storyQueries.selectStoryByDate({
+        publisherEmail: botTable.email,
+        sorting,
+      }),
+    );
+    return rows;
   });
-
-  // const result = await $$(
-  //   `SELECT DISTINCT abstract_t.context->>'text' AS TEXT, abstract.created_at AS DATE
-  //    FROM abstract AS abstract_t, message AS message_t
-  //    JOIN history
-  //    ON history.user_story_id = user_t.id
-  //    WHERE bot_t.telegram_user_id = $1
-  //    ORDER BY history.created_at ${sorting}`,
-  //   [id],
-  // );
-
-  if (rows.length === 0) {
-    throw new Error('Backup data is empty');
-  }
-  const formatData = format.formatRows(rows);
-  const fileBuffer = await pack(formatData, filename);
-  return {
-    filename,
-    fileBuffer,
-  };
+  const txtPack = await pack([
+    {
+      buffer: getTextFromStories(stories),
+      filename: `backup_${date}.txt`
+    }
+  ]);
+  await mail.send({
+    from: package_.author.email,
+    to: passport.userEmail,
+    subject: 'Backup ProstoDiary',
+    html: `
+      <h1>Your story backup</h1>
+    `,
+    attachments: [
+      {
+        content: txtPack.toString('base64'),
+        filename: 'backup.zip',
+        type: 'application/zip',
+        disposition: 'attachment',
+      },
+    ],
+  });
+  return 'Данные успешно отправлены на вашу почту';
 };

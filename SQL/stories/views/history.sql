@@ -2,7 +2,8 @@ CREATE MATERIALIZED VIEW public.story AS
 SELECT
   story.message.id,
   story.message.version,
-  story.message.updated_at,
+  story.content.created_at::DATE,
+  story.message.updated_at::DATE,
   story.message.revision,
   passport.user.email AS creator_email,
   passport.bot.email AS publisher_email,
@@ -11,7 +12,7 @@ SELECT
 FROM story.message
 INNER JOIN passport.user ON passport.user.id = story.message.creator
 INNER JOIN passport.bot ON passport.bot.id = story.message.publisher
-INNER JOIN story.content ON story.content.message_id = story.message.id
+INNER JOIN story.content ON story.content.message_id = story.message.id;
 
 -- TODO: для селекта роли bot делаем ограничения на доступ к определенным полям
 

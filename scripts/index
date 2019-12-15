@@ -36,14 +36,14 @@ const clipboardHelper = require('../src/helpers/clipboard');
     }
     nodemonInstance
       .on('start', () => {
-        logger.log('info', 'Nodemon has started');
+        logger.warn('info', 'Nodemon has started');
       })
       .on('quit', () => {
-        logger.log('info', 'App has quit');
+        logger.warn('info', 'App has quit');
         process.exit(0);
       })
       .on('restart', (files) => {
-        logger.log('info', 'App restarted due to: ' + files);
+        logger.warn('info', 'App restarted due to: ' + files);
       });
   }
 })();

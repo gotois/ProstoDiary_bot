@@ -2,11 +2,10 @@ const archiver = require('archiver');
 const yauzl = require('yauzl');
 const { Writable } = require('stream');
 /**
- * @param {string|Buffer} input - input
- * @param {string} fileName - file name
+ * @param {Array<object>} inputs - input
  * @returns {Promise<any>}
  */
-const pack = (input, fileName) => {
+const pack = (inputs) => {
   return new Promise((resolve, reject) => {
     const archive = archiver('zip', {
       zlib: { level: 5 },
@@ -24,10 +23,8 @@ const pack = (input, fileName) => {
       next();
     };
     archive.pipe(ws);
-    if (typeof input === 'string') {
-      archive.append(Buffer.from(input, 'utf8'), { name: fileName });
-    } else {
-      archive.append(input, { name: fileName });
+    for (const input of inputs) {
+      archive.append(input.buffer, { name: input.filename });
     }
     archive.finalize();
   });

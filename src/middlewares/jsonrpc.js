@@ -1,26 +1,30 @@
 const jsonrpc = require('../core/jsonrpc');
 const { pool } = require('../core/database');
 const passportQueries = require('../db/passport');
+const logger = require('../services/logger.service');
 
 module.exports = async (request, response, next) => {
+  logger.info(`RPC:${request.body.method}`);
   try {
-    const bot = await pool.connect(async (connection) => {
-      const data = await connection.maybeOne(
-        passportQueries.selectBotByUserEmail(
-          request.user + '@gotointeractive.com',
-        ),
+    const gotoisCredentions = await pool.connect(async (connection) => {
+      const botTable = await connection.maybeOne(
+        passportQueries.selectBotByUserEmail(request.user),
       );
-      return data;
+      const userTable = await connection.maybeOne(
+        passportQueries.selectUserById(botTable.passport_id),
+      );
+      return {
+        id: userTable.id, // todo rename userId
+        userEmail: userTable.email,
+      };
     });
-    if (!bot) {
+    if (!gotoisCredentions) {
       return response.sendStatus(401).send('401 Unauthorized');
     }
     jsonrpc.server.call(
       request.body,
       {
-        gotois: {
-          id: bot.passport_id,
-        },
+        passport: gotoisCredentions,
       },
       (error, result) => {
         if (error) {

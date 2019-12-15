@@ -2,25 +2,19 @@ const bot = require('../../core/bot');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Backup extends TelegramBotRequest {
-  // запрашиваем ключ от двухфакторной аутентификации
+  /**
+   * запрашиваем ключ от двухфакторной аутентификации
+   *
+   * @param {string} text - tfa token
+   * @returns {Promise<void>}
+   */
   async authReplyMessage({ text }) {
-    const { filename, fileBuffer } = await this.request('backup', {
-      user: this.creator.telegram,
-      passcode: this.creator.passcode,
+    const result = await this.request('backup', {
+      passportId: this.message.gotois.id,
       token: text,
       date: this.message.date,
     });
-    await bot.sendDocument(
-      this.message.chat.id,
-      fileBuffer,
-      {
-        caption: filename,
-      },
-      {
-        filename: filename + '.zip',
-        contentType: 'application/zip',
-      },
-    );
+    await bot.sendMessage(this.message.chat.id, result);
   }
   async beginDialog() {
     await super.beginDialog();

@@ -1,5 +1,5 @@
 for (const api of [
-  // 'backup',
+  'backup',
   // 'destroy',
   // 'edit',
   'signin',
