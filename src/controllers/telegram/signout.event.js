@@ -4,7 +4,7 @@ const TelegramBotRequest = require('./telegram-bot-request');
 class SignOut extends TelegramBotRequest {
   async beginDialog() {
     const result = await this.request('signout', {
-      passportId: this.message.gotois.id,
+      passportId: this.message.passport.id,
     });
     await bot.sendMessage(this.message.chat.id, result);
   }
@@ -14,7 +14,7 @@ class SignOut extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 module.exports = async (message) => {
-  if (!message.gotois.activated) {
+  if (!message.passport.activated) {
     throw new Error('Bot not activated');
   }
   const signIn = new SignOut(message);

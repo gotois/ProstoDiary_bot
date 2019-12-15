@@ -30,8 +30,7 @@ module.exports = async (request, response, next) => {
       ...request.body,
       message: {
         ...message,
-        // todo rename passport
-        gotois: gotoisCredentions, // расширяем встроенный TelegramMessage
+        passport: gotoisCredentions, // расширяем встроенный TelegramMessage
       },
     };
     bot.processUpdate(body);

@@ -10,7 +10,7 @@ class Backup extends TelegramBotRequest {
    */
   async authReplyMessage({ text }) {
     const result = await this.request('backup', {
-      passportId: this.message.gotois.id,
+      passportId: this.message.passport.id,
       token: text,
       date: this.message.date,
     });
@@ -37,12 +37,11 @@ class Backup extends TelegramBotRequest {
 }
 /**
  * @description Скачивание файла БД на устройство
- * @todo https://github.com/gotois/ProstoDiary_bot/issues/162
  * @param {TelegramMessage} message - message
  * @returns {Promise<undefined>}
  */
 module.exports = async (message) => {
-  if (!message.gotois.activated) {
+  if (!message.passport.activated) {
     throw new Error('Bot not activated');
   }
   const backup = new Backup(message);

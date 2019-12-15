@@ -29,7 +29,7 @@ VALUES (
         
         INSERT INTO passport (id) VALUES ('00000000-0000-0000-0000-000000000000');
         
-        INSERT INTO bot (passport_id, activated, email, password, secret_key, secret_password)
+        INSERT INTO bot (passport_id, activated, email, password, secret_key, master_password)
         VALUES (
         '00000000-0000-0000-0000-000000000000',
         true,

@@ -18,8 +18,16 @@ class Photo extends TelegramBotRequest {
       mime: this.message.document.mime_type, // todo: возможно надо брать иным способом
       caption: this.message.caption,
       date: this.message.date,
-      creator: this.message.from.id,
-      publisher: package_.author.email,
+      from: {
+        email: package_.author.email,
+        name: this.message.passport.id,
+      },
+      to: [
+        {
+          email: this.message.passport.botEmail,
+          name: this.message.passport.botId,
+        },
+      ],
       telegram_message_id: this.message.message_id,
     });
     await bot.sendMessage(this.message.chat.id, result, {
@@ -32,7 +40,7 @@ class Photo extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 module.exports = async (message) => {
-  if (!message.gotois.activated) {
+  if (!message.passport.activated) {
     throw new Error('Bot not activated');
   }
   const photo = new Photo(message);

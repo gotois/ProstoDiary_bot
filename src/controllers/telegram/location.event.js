@@ -13,8 +13,16 @@ class Location extends TelegramBotRequest {
       text: JSON.stringify(locationGeoJSON.geo),
       mime: 'application/vnd.geo+json',
       date: this.message.date,
-      creator: this.message.from.id,
-      publisher: package_.author.email,
+      from: {
+        email: package_.author.email,
+        name: this.message.passport.id,
+      },
+      to: [
+        {
+          email: this.message.passport.botEmail,
+          name: this.message.passport.botId,
+        },
+      ],
       telegram_message_id: this.message.message_id,
     });
     await bot.sendMessage(this.message.chat.id, result);
@@ -25,7 +33,7 @@ class Location extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 module.exports = async (message) => {
-  if (!message.gotois.activated) {
+  if (!message.passport.activated) {
     throw new Error('Bot not activated');
   }
   const location = new Location(message);

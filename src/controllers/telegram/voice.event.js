@@ -16,8 +16,16 @@ class Voice extends TelegramBotRequest {
       date: this.message.date,
       mime: 'plain/text',
       chat_id: this.message.chat.id,
-      creator: this.message.gotois.userEmail,
-      publisher: package_.author.botEmail,
+      from: {
+        email: package_.author.email,
+        name: this.message.passport.id,
+      },
+      to: [
+        {
+          email: this.message.passport.botEmail,
+          name: this.message.passport.botId,
+        },
+      ],
     });
     await bot.sendMessage(this.message.chat.id, result);
   }
@@ -27,7 +35,7 @@ class Voice extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 module.exports = async (message) => {
-  if (!message.gotois.activated) {
+  if (!message.passport.activated) {
     throw new Error('Bot not activated');
   }
   const voice = new Voice(message);

@@ -126,7 +126,7 @@ const messageListener = async (message, { type }) => {
     return;
   }
   try {
-    if (!message.gotois) {
+    if (!message.passport) {
       throw new Error('gotois message error');
     }
     if (message.reply_to_message instanceof Object) {
@@ -143,7 +143,7 @@ const messageListener = async (message, { type }) => {
       case 'text': {
         checkMessage(message);
         if (message.reply_to_message) {
-          if (message.gotois.activated) {
+          if (message.passport.activated) {
             return;
           }
           // если бот не активирован, то проверяем что он прислал код авторизации

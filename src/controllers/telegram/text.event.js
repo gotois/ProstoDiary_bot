@@ -45,7 +45,7 @@ class Text extends TelegramBotRequest {
       const messageResult = await this.request('text', {
         text: this.message.text,
         caption: this.message.caption,
-        passportId: this.message.gotois.id,
+        passportId: this.message.passport.id,
         categories: this.hashtags,
       });
       // если сообщение успешно отвалидировано, то отправка зашифрованного сообщения на почту бота
@@ -55,12 +55,12 @@ class Text extends TelegramBotRequest {
         chat_id: this.message.chat.id,
         from: {
           email: package_.author.email,
-          name: this.message.gotois.id,
+          name: this.message.passport.id,
         },
         to: [
           {
-            email: this.message.gotois.botEmail,
-            name: this.message.gotois.botId,
+            email: this.message.passport.botEmail,
+            name: this.message.passport.botId,
           },
         ],
         telegram_message_id: message_id,
@@ -82,7 +82,7 @@ class Text extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 module.exports = async (message) => {
-  if (!message.gotois.activated) {
+  if (!message.passport.activated) {
     throw new Error('Bot not activated. Please try /start or /signin');
   }
   const text = new Text(message);
