@@ -22,6 +22,8 @@
     "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js --serial",
     "start": "node ./src/server.js",
     "start:jsonld": "./scripts/jsonld",
+    "build": "",
+    "heroku-postbuild": "./scripts/sendgrid-update-webhook",
     "debug": "cross-env NODE_ENV=production node --inspect ./scripts/index",
     "clean": "rm -rf .nyc_output && ava tests/e2e/index.js --serial --reset-cache",
     "check": "node -r dotenv/config src/server.js --check",

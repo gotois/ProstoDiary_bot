@@ -54,6 +54,9 @@ ALTER TYPE intent ADD VALUE 'intent_name';
 Нужно настроить `/setprivacy` ENABLED в @BotFather
 Сделать бота админом группы
 
+## При Oauth Yandex ошибка 400 Required parameter 'client_id' missing
+Проверьте правильность Environments
+
 ### Не приходят данные созданные пользователем к боту
 Нужно зайти в почту бота и проверить что они не находятся в папке спам писем
 

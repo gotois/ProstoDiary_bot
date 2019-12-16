@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+const { website } = require('../app.json');
+const { updateWebhook } = require('../src/lib/sendgrid');
+const logger = require('../src/services/logger.service');
+
+(async function main() {
+  logger.info('sendgrid-update-webhook');
+  await updateWebhook(website);
+})();

@@ -13,7 +13,7 @@ if (IS_PRODUCTION) {
  */
 const HOST = 'api.sendgrid.com';
 /**
- * @description update Event Webhook settings
+ * @description sendgrid update Event Webhook settings
  * @param {string} url - url
  * @returns {Promise<void>}
  */
