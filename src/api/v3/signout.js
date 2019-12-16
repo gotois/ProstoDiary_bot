@@ -5,7 +5,7 @@ const passportQueries = require('../../db/passport');
  * @param {object} requestObject - requestObject
  * @returns {Promise<string>}
  */
-module.exports = async (requestObject) => {
+module.exports = async function(requestObject) {
   const { passportId } = requestObject;
   const signOutResult = await pool.connect(async (connection) => {
     try {

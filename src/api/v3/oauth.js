@@ -164,36 +164,40 @@ const createPassport = async (
  * @param {object} requestObject - request object
  * @returns {Promise<string>}
  */
-module.exports = async (requestObject) => {
+module.exports = async function(requestObject) {
   const { yandex, facebook, telegram } = requestObject;
   if (!yandex && !facebook && !telegram) {
     throw new Error('Unknown provider oauth');
   }
-  const result = await pool.connect(async (connection) => {
-    const transactionResult = await connection.transaction(
-      async (transactionConnection) => {
-        try {
-          await updatePassport(transactionConnection, {
-            telegram,
-            yandex,
-            facebook,
-          });
-          return 'Вы успешно обновили данные своего паспорта.';
-        } catch (error) {
-          if (error instanceof NotFoundError) {
-            await createPassport(transactionConnection, {
+  try {
+    const result = await pool.connect(async (connection) => {
+      const transactionResult = await connection.transaction(
+        async (transactionConnection) => {
+          try {
+            await updatePassport(transactionConnection, {
               telegram,
               yandex,
               facebook,
             });
-            return 'На привязанную почту вам отправлено письмо от вашего бота. Следуйте инструкциям в письме.';
+            return 'Вы успешно обновили данные своего паспорта.';
+          } catch (error) {
+            if (error instanceof NotFoundError) {
+              await createPassport(transactionConnection, {
+                telegram,
+                yandex,
+                facebook,
+              });
+              return 'На привязанную почту вам отправлено письмо от вашего бота. Следуйте инструкциям в письме.';
+            }
+            logger.error(error);
+            throw error;
           }
-          logger.error(error);
-          throw error;
-        }
-      },
-    );
-    return transactionResult;
-  });
-  return result;
+        },
+      );
+      return transactionResult;
+    });
+    return result;
+  } catch (error) {
+    return Promise.reject(this.error(400, 'db error'));
+  }
 };

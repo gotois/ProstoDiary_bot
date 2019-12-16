@@ -6,7 +6,7 @@ const { mail } = require('../../lib/sendgrid');
  * @param {object} requestObject - requestObject
  * @returns {Promise<string>}
  */
-module.exports = async (requestObject) => {
+module.exports = async function(requestObject) {
   const {
     content,
     subject,
@@ -57,7 +57,7 @@ module.exports = async (requestObject) => {
   };
   const [mailResult] = await mail.send(message);
   if (!mailResult.complete) {
-    throw new Error('Mail send not completed');
+    return Promise.reject(this.error(400, 'Mail send not completed'));
   }
   return '📨';
 };

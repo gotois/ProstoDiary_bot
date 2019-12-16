@@ -9,11 +9,10 @@ const twoFactorAuthService = require('../../services/2fa.service');
  * @param {string} requestObject.token - two auth generated token
  * @returns {Promise<string>}
  */
-module.exports = async (requestObject) => {
-  // email можно брать из запроса через basic auth
+module.exports = async function(requestObject) {
   const { passportId, token } = requestObject;
   if (!token) {
-    throw new Error('Unknown token argument');
+    return Promise.reject(this.error(400, 'Unknown token argument'));
   }
   const signInResult = await pool.connect(async (connection) => {
     try {

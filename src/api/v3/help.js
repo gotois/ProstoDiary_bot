@@ -7,7 +7,7 @@ const { telegram } = require('../../controllers');
  * @param {object} parameters - param
  * @returns {Promise<string>}
  */
-module.exports = (parameters) => {
+module.exports = function(parameters) {
   const { user } = parameters;
   const helpData = Object.entries(telegram).reduce(
     (accumulator, [command, object]) => {

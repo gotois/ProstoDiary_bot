@@ -10,7 +10,7 @@ const { pool } = require('../../core/database');
  * @param {object} requestObject - requestObject
  * @returns {Promise<object>}
  */
-module.exports = async (requestObject) => {
+module.exports = async function(requestObject) {
   const {
     text,
     caption = 'unknown',

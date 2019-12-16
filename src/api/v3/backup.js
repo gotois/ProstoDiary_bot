@@ -36,25 +36,30 @@ const getTextFromStories = (stories) => {
  * @param {?object} passport - passport gotois
  * @returns {Promise<string>}
  */
-module.exports = async (requestObject, { passport } = {}) => {
+module.exports = async function(requestObject, { passport } = {}) {
   const { date, token, sorting = 'ASC' } = requestObject;
   const passportId = requestObject.passportId || passport.id;
-  const stories = await pool.connect(async (connection) => {
-    const botTable = await connection.one(
-      passportQueries.selectByPassport(passportId),
-    );
-    const valid = twoFactorAuthService.verifyUser(botTable.secret_key, token);
-    if (!valid) {
-      throw new Error('Wrong token');
-    }
-    const rows = await connection.many(
-      storyQueries.selectStoryByDate({
-        publisherEmail: botTable.email,
-        sorting,
-      }),
-    );
-    return rows;
-  });
+  let stories;
+  try {
+    stories = await pool.connect(async (connection) => {
+      const botTable = await connection.one(
+        passportQueries.selectByPassport(passportId),
+      );
+      const valid = twoFactorAuthService.verifyUser(botTable.secret_key, token);
+      if (!valid) {
+        throw new Error('Wrong token');
+      }
+      const rows = await connection.many(
+        storyQueries.selectStoryByDate({
+          publisherEmail: botTable.email,
+          sorting,
+        }),
+      );
+      return rows;
+    });
+  } catch (error) {
+    return Promise.reject(this.error(400, 'db error'))
+  }
   const txtPack = await pack([
     {
       buffer: getTextFromStories(stories),

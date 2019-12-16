@@ -8,7 +8,7 @@ const UserStory = require('../../models/story/user-story');
  * @param {object} requestObject - requestObject
  * @returns {Promise<string>}
  */
-module.exports = async (requestObject) => {
+module.exports = async function(requestObject) {
   const { text, date, message_id, telegram_user_id } = requestObject;
   //fixme манипулировать Абстрактом, а не UserStory
   logger.log('warn', '!!!!!!!!!!');

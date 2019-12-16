@@ -116,16 +116,16 @@ const onAgree = async (message) => {
  */
 const messageListener = async (message, { type }) => {
   logger.info('telegram.message');
-  // подтверждение договора и первичная валидация установки через телеграм
-  if (
-    type === 'contact' &&
-    !message.from.is_bot &&
-    message.contact.user_id === message.from.id
-  ) {
-    await onAgree(message);
-    return;
-  }
   try {
+    // подтверждение договора и первичная валидация установки через телеграм
+    if (
+      type === 'contact' &&
+      !message.from.is_bot &&
+      message.contact.user_id === message.from.id
+    ) {
+      await onAgree(message);
+      return;
+    }
     if (!message.passport) {
       throw new Error('gotois message error');
     }
