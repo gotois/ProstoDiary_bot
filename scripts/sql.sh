@@ -5,6 +5,9 @@ psql --version;
 # create database with extensions
 psql -U $PGUSER -d postgres -a -f SQL/database.sql;
 
+# session
+psql -U $PGUSER -d $PGDATABASE -a -f SQL/session/tables/sessions.sql;
+
 # linked data
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/linked-data/tables/ld.sql;
 
