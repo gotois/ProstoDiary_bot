@@ -128,8 +128,7 @@ class Vzor extends Imap {
 
   /**
    * @description дешифровка
-   *
-   * @param {Mail} mail
+   * @param {Mail} mail - email
    * @returns {Promise<void>}
    */
   async decryptAttachment(mail) {

@@ -1,5 +1,7 @@
 const jsQR = require('jsqr');
 const Jimp = require('jimp');
+const fileType = require('file-type');
+const crypt = require('./crypt.service');
 const visionService = require('./vision.service');
 /**
  * @param {Buffer} buffer - buffer
@@ -72,7 +74,21 @@ const getPhotoDetection = async ({ caption, fileBuffer }) => {
   }
 };
 
+const prepareImage = async (requestObject) => {
+  const { imageBuffer, secretKey, caption } = requestObject;
+  const { mime } = fileType(imageBuffer);
+  const encrypted = await crypt.openpgpEncrypt(imageBuffer, [secretKey]);
+  return {
+    mime,
+    subject: caption || 'unknown',
+    content: encrypted.data,
+    original: imageBuffer,
+    categories: [], // поддержать детектирование категорий через vision
+  };
+};
+
 module.exports = {
   getPhotoDetection,
+  prepareImage,
   readQR,
 };

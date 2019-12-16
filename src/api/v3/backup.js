@@ -58,7 +58,7 @@ module.exports = async function(requestObject, { passport } = {}) {
       return rows;
     });
   } catch (error) {
-    return Promise.reject(this.error(400, 'db error'))
+    return Promise.reject(this.error(400, error.message || 'db error'));
   }
   const txtPack = await pack([
     {

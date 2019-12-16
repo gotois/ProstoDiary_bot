@@ -1,25 +1,23 @@
-const Abstract = require('../abstract/index');
+const Content = require('./index');
 // const { getPhotoDetection } = require('../../services/photo.service');
 
-class ContentPhoto extends Abstract {
+class ContentPhoto extends Content {
   #caption;
-  
-  get context() {
-    return {
-      ...super.context,
-    }
+
+  constructor(data) {
+    super(data);
   }
 
-  async precommit () {
+  async prepare () {
+    // todo детектировать через vision
+    // @see https://github.com/gotois/ProstoDiary_bot/issues/310
+    // ...
     // todo проверка на QR будет выполняться в ассистенте
     // const { isQR } = await getPhotoDetection({
     //   caption: this.#caption,
     //   fileBuffer: this.buffer,
     // });
-  }
-  
-  async commit() {
-
+    // todo добавлять после детектирования необходимые абстракты (QR, Face, etc)
   }
 }
 

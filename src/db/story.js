@@ -12,6 +12,16 @@ FROM
     story
 `;
   },
+  selectStoryById(id) {
+    return sql`
+SELECT
+    *
+FROM 
+    public.story
+WHERE
+    id = ${id}
+`;
+  },
   selectStoryByDate({
     publisherEmail,
     from = '2000-01-01',

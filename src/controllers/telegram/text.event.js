@@ -1,38 +1,19 @@
 const package_ = require('../../../package');
 const bot = require('../../core/bot');
-const format = require('../../services/text.service');
+const { pool } = require('../../core/database');
+const passportQueries = require('../../db/passport');
+const textService = require('../../services/text.service');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Text extends TelegramBotRequest {
   onError(error) {
     throw error;
   }
-  /**
-   * @returns {Array<string>}
-   */
-  get hashtags() {
-    const hashtags = new Set();
-    if (Array.isArray(this.message.entities)) {
-      this.message.entities
-        .filter((entity) => {
-          return entity.type === 'hashtag';
-        })
-        .forEach((entity) => {
-          // eslint-disable-next-line unicorn/prefer-string-slice
-          const hashtag = this.message.text.substr(
-            entity.offset + 1,
-            entity.length - 1,
-          );
-          hashtags.add(hashtag);
-        });
-    }
-    return [...hashtags];
-  }
   async beginDialog() {
     await super.beginDialog();
     const { message_id } = await bot.sendMessage(
       this.message.chat.id,
-      `_${format.previousInput(this.message.text)}_ 📝`,
+      `_${textService.previousInput(this.message.text)}_ 📝`,
       {
         parse_mode: 'Markdown',
         disable_notification: true,
@@ -41,16 +22,23 @@ class Text extends TelegramBotRequest {
     );
     try {
       await bot.sendChatAction(this.message.chat.id, 'typing');
+      const secretKey = await pool.connect(async (connection) => {
+        const botTable = await connection.one(
+          passportQueries.selectByPassport(this.message.passport.id),
+        );
+        return botTable.secret_key;
+      });
       // Валидация и формирование зашифрованного сообщения
-      const messageResult = await this.request('text', {
+      const messageResult = await textService.prepareText({
+        secretKey,
         text: this.message.text,
         caption: this.message.caption,
         passportId: this.message.passport.id,
-        categories: this.hashtags,
       });
       // если сообщение успешно отвалидировано, то отправка зашифрованного сообщения на почту бота
       const postResult = await this.request('post', {
         ...messageResult,
+        categories: ['transaction-write'].concat(this.hashtags),
         date: this.message.date,
         chat_id: this.message.chat.id,
         from: {

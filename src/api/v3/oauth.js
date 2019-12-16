@@ -198,6 +198,6 @@ module.exports = async function(requestObject) {
     });
     return result;
   } catch (error) {
-    return Promise.reject(this.error(400, 'db error'));
+    return Promise.reject(this.error(400, error.message || 'db error'));
   }
 };

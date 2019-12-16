@@ -8,7 +8,6 @@ for (const api of [
   'help',
   // 'notify',
   'ping',
-  'text',
   'post',
   // 'remove',
   // 'search',

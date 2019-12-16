@@ -1,4 +1,5 @@
 const ContentText = require('../content/content-text');
+const ContentPhoto = require('../content/content-photo');
 const logger = require('../../services/logger.service');
 const storyQueries = require('../../db/story');
 const { pool } = require('../../core/database');
@@ -55,6 +56,11 @@ class Story {
         }
         case 'image/png':
         case 'image/jpeg': {
+          content = new ContentPhoto({
+            ...attachment,
+            emailMessageId: mail.messageId,
+            telegramMessageId: mail.telegram_message_id,
+          });
           break;
         }
         case 'application/pdf': {
@@ -74,7 +80,9 @@ class Story {
           logger.warn('info', 'Unknown mime type ' + contentType);
         }
       }
-      this.contents.push(content);
+      if (content) {
+        this.contents.push(content);
+      }
     }
   }
 

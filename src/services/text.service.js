@@ -1,8 +1,10 @@
 const Eyo = require('eyo-kernel');
+const dialogflowService = require('../lib/dialogflow');
 const { detectLang, isRUS, isENG } = require('./nlp.service');
 const logger = require('./logger.service');
 const { post } = require('./request.service');
 const crypt = require('./crypt.service');
+const { FakerText } = require('./faker.service');
 /**
  * @param {string} string - string
  * @param {number} start - start
@@ -72,29 +74,6 @@ const spellText = async (text, lang) => {
   }
 
   return out;
-};
-/**
- * .5 -> 0.5
- *
- * @param {string} match - match
- * @param {number} matchIndex - index
- * @param {string} text - text
- * @returns {string}
- */
-const dotNumberReplacer = (match, matchIndex, text) => {
-  if (matchIndex === 0) {
-    match = '0' + match;
-  } else if ([' '].includes(text[matchIndex - 1])) {
-    match = '0' + match;
-  }
-  return match;
-};
-/**
- * @param {string} query - query
- * @returns {string}
- */
-const formatQuery = (query) => {
-  return query.trim().replace(/\.\d+/gm, dotNumberReplacer);
 };
 /**
  *
@@ -232,10 +211,41 @@ const correctionText = async (text) => {
   // ...
   return text;
 };
+/**
+ * @param {object} requestObject - requestObject
+ * @returns {Promise<object>}
+ */
+const prepareText = async (requestObject) => {
+  const { text, secretKey, caption = 'unknown' } = requestObject;
+  let subject;
+  // Автоматическое исправление опечаток
+  const correction = await correctionText(text);
+  const fakeText = FakerText.text(text);
+  if (fakeText.length <= 256) {
+    try {
+      const dialogflowResult = await dialogflowService.detectTextIntent(
+        fakeText,
+      );
+      subject = dialogflowResult.intent.displayName;
+    } catch (error) {
+      logger.error(error.message);
+    }
+  }
+  const buffer = Buffer.from(correction);
+  // todo Исправление кастомных типов
+  //  найденных параметров (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
+  // ...
+  const encrypted = await crypt.openpgpEncrypt(buffer, [secretKey]);
+  return {
+    mime: 'plain/text',
+    subject: subject || caption,
+    content: encrypted.data,
+    original: text,
+  };
+};
 
 module.exports = {
   spellText,
-  formatQuery,
   createRegexInput,
   formatWord,
   isRegexString,
@@ -243,4 +253,5 @@ module.exports = {
   decodeRows,
   correctionText,
   replaceBetween,
+  prepareText,
 };

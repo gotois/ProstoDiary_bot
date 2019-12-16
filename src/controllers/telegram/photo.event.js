@@ -1,7 +1,10 @@
 const package_ = require('../../../package');
 const bot = require('../../core/bot');
 const { getTelegramFile } = require('../../services/file.service');
+const photoService = require('../../services/photo.service');
 const TelegramBotRequest = require('./telegram-bot-request');
+const { pool } = require('../../core/database');
+const passportQueries = require('../../db/passport');
 
 class Photo extends TelegramBotRequest {
   async beginDialog() {
@@ -11,13 +14,23 @@ class Photo extends TelegramBotRequest {
       await bot.sendMessage(this.message.chat.id, 'Wrong photo');
       return;
     }
-    this.photo = mediumPhoto;
-    const fileBuffer = await getTelegramFile(this.photo.file_id);
-    const result = await this.request('post', {
-      file: fileBuffer,
-      mime: this.message.document.mime_type, // todo: возможно надо брать иным способом
+    await bot.sendChatAction(this.message.chat.id, 'typing');
+    const imageBuffer = await getTelegramFile(mediumPhoto.file_id);
+    const secretKey = await pool.connect(async (connection) => {
+      const botTable = await connection.one(
+        passportQueries.selectByPassport(this.message.passport.id),
+      );
+      return botTable.secret_key;
+    });
+    const messageResult = await photoService.prepareImage({
+      imageBuffer,
+      secretKey,
       caption: this.message.caption,
+    });
+    const result = await this.request('post', {
+      ...messageResult,
       date: this.message.date,
+      categories: ['transaction-write'],
       from: {
         email: package_.author.email,
         name: this.message.passport.id,

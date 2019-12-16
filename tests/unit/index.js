@@ -14,6 +14,7 @@ test('text service', require('./text-service.test'));
 test('detect lang', require('./detect-lang.test'));
 test('env', require('./environment.test'));
 test('faker', require('./faker.test'));
+test('dialogflow', require('./dialogflow.test'));
 skipTestForFastOrTravis('QR test', require('./qr.test'));
 test('request', require('./request.test'));
 skipTestForFast('config', require('./config.test'));

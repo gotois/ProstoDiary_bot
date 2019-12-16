@@ -72,6 +72,7 @@ const openpgpDecrypt = async (buffer, passwords) => {
     const rawDecrypt = await openpgp.decrypt({
       message: await openpgp.message.readArmored(utf8Content),
       passwords,
+      format: 'binary',
     });
     return rawDecrypt.data;
   }
