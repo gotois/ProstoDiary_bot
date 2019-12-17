@@ -1,7 +1,6 @@
 const express = require('express');
 const Sentry = require('@sentry/node');
 const helmet = require('helmet');
-// const Provider = require('oidc-provider');
 // const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
 const package_ = require('../package');
 const logger = require('./services/logger.service');
@@ -50,20 +49,6 @@ app.use(require('./middlewares/error-handler'));
   // } catch {
   //   logger.error('OpenApiValidator');
   // }
-
-  // todo авторизоваться
-  //  сделать в express.js миддлваре
-  // @see https://github.com/panva/node-oidc-provider-example/tree/master/00-oidc-minimal
-  // http://0.0.0.0:9998/auth?client_id=foo&response_type=code&scope=openid
-  // const oidc = new Provider(SERVER.HOST, {
-  //   clients: [{
-  //     client_id: 'foo',
-  //     client_secret: 'bar',
-  //     redirect_uris: ['https://fee986e8.ngrok.io/cb'],
-  //   }],
-  // });
-  // oidc.proxy = true;
-  // oidc.listen(9998);
 
   app.listen(SERVER.PORT, () => {
     logger.log(
