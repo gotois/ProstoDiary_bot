@@ -85,7 +85,7 @@ skipTestForFastOrTravis('DB: Foods', require('./database.test').databaseFoods);
 skipTestForFastOrTravis('API: script', require('./script.test'));
 skipTestForFast('API: speller service', require('./speller-service.test'));
 skipTestForFast('API: request', require('./request.test'));
-skipTestForFast('API: Location', require('./restcountries.test'));
+skipTestForFast('API: Location', require('./location.test'));
 skipTestForFast('API: plotly', require('./graph-service.test'));
 skipTestForFastOrTravis(
   'API: dialogflow',

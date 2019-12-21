@@ -1,4 +1,3 @@
-// todo переименовать в location.test.js
 module.exports = async (t) => {
   t.timeout(4000);
   const { getFullName, getWeather } = require('../../src/services/location.service');
