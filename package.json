@@ -100,7 +100,7 @@
     "express": "4.17.1",
     "express-openapi-validator": "3.2.3",
     "express-session": "1.17.0",
-    "express-winston": "4.0.1",
+    "express-winston": "4.0.2",
     "eyo-kernel": "2.5.6",
     "fast-xml-parser": "3.15.1",
     "file-type": "12.4.0",
