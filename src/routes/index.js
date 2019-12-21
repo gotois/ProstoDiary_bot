@@ -45,7 +45,8 @@ module.exports = (app) => {
   app.get('/', authParser, pingController);
   // json rpc server
   app.post('/api*', jsonParser, authParser, apiController);
-  app.use(oidsParser.callback);
+  // oids server
+  app.use('/oidc', oidsParser.callback);
   // 404 - not found - todo благодаря использованию oidsParser это не используется
   app.get('*', notFoundController);
 };

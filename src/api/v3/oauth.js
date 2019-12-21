@@ -6,6 +6,7 @@ const pddService = require('../../services/pdd.service');
 const twoFactorAuthService = require('../../services/2fa.service');
 const oauthService = require('../../services/oauth.service');
 const passportQueries = require('../../db/passport');
+const cryptService = require('../../services/crypt.service');
 // const ldQueries = require('../../db/ld');
 /**
  * @description Регистрация письма
@@ -23,6 +24,9 @@ const registration = async (transactionConnection, passport) => {
   // на будущее, бот сам следит за своей почтой, периодически обновляя пароли. Пользователя вообще не касается что данные сохраняются у него в почте
   const { email, password, uid } = await pddService.createYaMail(passport.id);
   try {
+    // todo нужно сохранять ключи в БД
+    // eslint-disable-next-line no-unused-vars
+    const { publicKey, privateKey } = await cryptService.generateRSA();
     await transactionConnection.query(
       passportQueries.createBot({
         passportId: passport.id,
@@ -42,10 +46,13 @@ const registration = async (transactionConnection, passport) => {
         <p>Используйте камеру для распознавания QR-кода в приложении для двухэтапной аутентификации, например, Google Authenticator.</p>
         <img src="${secret.qr}" alt="${secret.base32}">
         <br>
-        <h2>Шаг 2: Сохраните секретный ключ рекавери.</h2>
+        <h2>Шаг 2: Запомните ваши ключи.</h2>
+        <h3>Сохраните секретный ключ рекавери</h3>
         <p>Сохраните ваш секретный ключ в надежном и секретном месте оффлайн: 
           <strong>${secret.masterPassword}</strong>
         </p>
+        <h3>Сохраните открытый ключ SSL</h3>
+        <p>${JSON.stringify(publicKey)}</p>
         <br>
         <h2>Шаг 3: Активируйте бота.</h2>
         <p>Пришлите <a href="https://prosto-diary.gotointeractive.com/">ProstoDiary_bot</a> сгенерированный токен от двухфакторной аутентификации.</p>

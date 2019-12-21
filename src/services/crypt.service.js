@@ -79,10 +79,42 @@ const openpgpDecrypt = async (buffer, passwords) => {
   return utf8Content;
 };
 
+const generateRSA = () => {
+  return new Promise((resolve, reject) => {
+    const { generateKeyPair } = crypto;
+    generateKeyPair(
+      'rsa',
+      {
+        modulusLength: 4096,
+        publicKeyEncoding: {
+          type: 'spki',
+          format: 'pem',
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem',
+          cipher: 'aes-256-cbc',
+          passphrase: 'top secret',
+        },
+      },
+      (error, publicKey, privateKey) => {
+        if (error) {
+          return reject(error);
+        }
+        resolve({
+          publicKey,
+          privateKey,
+        });
+      },
+    );
+  });
+};
+
 module.exports = {
   encode,
   decode,
   openpgpEncrypt,
   openpgpDecrypt,
   getCheckSum,
+  generateRSA,
 };
