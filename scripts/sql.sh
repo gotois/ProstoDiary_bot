@@ -15,6 +15,7 @@ psql -U $PGUSER -d $PGDATABASE -a -f SQL/linked-data/tables/ld.sql;
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/passports/schemas/passport.sql;
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/passports/tables/user.sql;
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/passports/tables/bot.sql;
+psql -U $PGUSER -d $PGDATABASE -a -f SQL/passports/views/roles.sql;
 
 # message
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/stories/schemas/story.sql;

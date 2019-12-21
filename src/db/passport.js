@@ -1,6 +1,11 @@
 const { sql } = require('../core/database');
 
 module.exports = {
+  selectRoleByEmail(email) {
+    return sql`
+        SELECT role FROM passport.roles WHERE email = ${email}
+    `;
+  },
   selectBotByUserEmail(login) {
     return sql`
 SELECT
