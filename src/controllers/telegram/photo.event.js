@@ -30,7 +30,7 @@ class Photo extends TelegramBotRequest {
     const result = await this.request('post', {
       ...messageResult,
       date: this.message.date,
-      categories: ['transaction-write'],
+      categories: ['transaction-write'].concat(messageResult.categories),
       from: {
         email: package_.author.email,
         name: this.message.passport.id,

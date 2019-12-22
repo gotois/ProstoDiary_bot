@@ -216,7 +216,11 @@ const correctionText = async (text) => {
  * @returns {Promise<object>}
  */
 const prepareText = async (requestObject) => {
-  const { text, secretKey, caption = 'unknown' } = requestObject;
+  const { text, secretKey, caption } = requestObject;
+  const categories = [];
+  if (caption) {
+    categories.push(caption.toLowerCase());
+  }
   let subject;
   // Автоматическое исправление опечаток
   const correction = await correctionText(text);
@@ -226,21 +230,24 @@ const prepareText = async (requestObject) => {
       const dialogflowResult = await dialogflowService.detectTextIntent(
         fakeText,
       );
+      // todo выбирать только те параметры в которых есть вхождения
+      categories.push(...Object.keys(dialogflowResult.parameters.fields));
       subject = dialogflowResult.intent.displayName;
     } catch (error) {
       logger.error(error.message);
     }
   }
   const buffer = Buffer.from(correction);
-  // todo Исправление кастомных типов
+  // todo Автоисправление кастомных типов
   //  найденных параметров (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
   // ...
   const encrypted = await crypt.openpgpEncrypt(buffer, [secretKey]);
   return {
     mime: 'plain/text',
-    subject: subject || caption,
+    subject: subject || 'undefinedIntent',
     content: encrypted.data,
     original: text,
+    categories,
   };
 };
 

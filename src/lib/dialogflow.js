@@ -64,13 +64,8 @@ const inputAnalyze = async (rawMessage) => {
   return response.queryResult;
 };
 
-const detectIntentAudio = () => {
-  // todo
-};
-
 module.exports = {
   detectTextIntent: inputAnalyze,
-  detectIntentAudio,
   formatQuery,
   // todo: расширить встроенными методами https://github.com/googleapis/nodejs-dialogflow
   // todo add createContext

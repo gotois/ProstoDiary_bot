@@ -2,6 +2,7 @@
 require('dotenv').config();
 const nodemon = require('nodemon');
 const ngrok = require('ngrok');
+const { spawnSync } = require('child_process');
 const logger = require('../src/services/logger.service');
 const { IS_PRODUCTION, SERVER, NGROK } = require('../src/environment');
 const clipboardHelper = require('../src/helpers/clipboard');
@@ -10,12 +11,16 @@ const clipboardHelper = require('../src/helpers/clipboard');
   if (IS_PRODUCTION) {
     throw new Error('Please use `node src/server`');
   } else {
-    await ngrok.authtoken(NGROK.TOKEN);
-    await ngrok.disconnect();
+    try {
+      spawnSync('killall ngrok');
+    } catch (error) {
+      logger.warn(error);
+    }
     let nodemonInstance;
     try {
       const url = await ngrok.connect({
         addr: SERVER.PORT,
+        authtoken: NGROK.TOKEN,
         proto: 'http',
         // region: 'eu', // uncomment if needs
         onStatusChange(status) {
