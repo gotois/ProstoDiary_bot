@@ -13,6 +13,7 @@ Sentry.init({
   dsn: SENTRY.DSN,
   debug: IS_PRODUCTION,
 });
+app.set('trust proxy', true);
 // The request handler must be the first middleware on the app
 app.use(Sentry.Handlers.requestHandler());
 app.use(helmet());

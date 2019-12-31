@@ -21,14 +21,10 @@ PGPASSWORD={ database password }
 PGDATABASE={ database name }
 PGPORT={ database port }
 
-PLOTLY_LOGIN={ plotly login }
-PLOTLY_TOKEN={ plotly token }
-
 GOOGLE_MAPS_GEOCODING_API={ geocoding key }
 GOOGLE_APPLICATION_CREDENTIALS={ one line stringify object } 
 
 DIALOGFLOW_CREDENTIALS={ one line stringify object } 
-DIALOGFLOW_PROJECT_ID={ project_id }
 
 NALOGRU_EMAIL={ nalog.ru email }
 NALOGRU_NAME={ nalog.ru имя }

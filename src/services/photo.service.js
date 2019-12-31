@@ -52,7 +52,7 @@ const prepareImage = async (requestObject) => {
   const encrypted = await crypt.openpgpEncrypt(imageBuffer, [secretKey]);
   return {
     mime,
-    subject: 'undefinedIntent', // todo распознавать интент-намерение в самой картинке
+    subject: 'Save to Diary', // todo распознавать интент-намерение в самой картинке
     content: encrypted.data,
     original: imageBuffer,
     categories,

@@ -187,6 +187,7 @@ class Vzor extends Imap {
   }
 
   fetch() {
+    logger.info('imap-fetch');
     return this.search(['ALL']);
   }
 }

@@ -1,3 +1,4 @@
+// todo перейти на node-fetch?
 const request = require('request');
 /**
  * @param {any} body - response body
@@ -39,35 +40,38 @@ const get = (url, qs = {}, headers = {}, encoding = null) => {
  * @param {string} url - url
  * @param {object} form - form
  * @param {object|undefined} headers - headers
+ * @param {any} encoding - encoding
  * @returns {Promise<string|Buffer|Error>}
  */
 const post = (
   url,
   form,
   headers = { 'content-type': 'application/json; charset=UTF-8' },
+  encoding = undefined,
 ) => {
   return new Promise((resolve, reject) => {
-    request(
-      {
-        method: 'POST',
-        url,
-        headers,
-        form,
-        json: true,
-      },
-      (error, response, body) => {
-        if (error) {
-          return reject(error);
-        }
-        if (response.statusCode >= 400) {
-          return reject({
-            message: formatMessage(body),
-            statusCode: response.statusCode,
-          });
-        }
-        return resolve(body);
-      },
-    );
+    const parameters = {
+      method: 'POST',
+      url,
+      headers,
+      form,
+      json: true,
+    };
+    if (encoding !== undefined) {
+      parameters.encoding = encoding;
+    }
+    request(parameters, (error, response, body) => {
+      if (error) {
+        return reject(error);
+      }
+      if (response.statusCode >= 400) {
+        return reject({
+          message: formatMessage(body),
+          statusCode: response.statusCode,
+        });
+      }
+      return resolve(body);
+    });
   });
 };
 

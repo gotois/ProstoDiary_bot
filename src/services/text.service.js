@@ -244,7 +244,7 @@ const prepareText = async (requestObject) => {
   const encrypted = await crypt.openpgpEncrypt(buffer, [secretKey]);
   return {
     mime: 'plain/text',
-    subject: subject || 'undefinedIntent',
+    subject: subject || 'Save to Diary',
     content: encrypted.data,
     original: text,
     categories,

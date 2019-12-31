@@ -110,11 +110,12 @@ const onAgree = async (message) => {
 };
 /**
  * @param {TelegramMessage} message - message
- * @param {object} matcher - matcher
- * @param {string} matcher.type - matcher type
+ * @param {object} metadata - matcher
+ * @param {string} metadata.type - matcher type
  * @returns {undefined}
  */
-const messageListener = async (message, { type }) => {
+const messageListener = async (message, metadata) => {
+  const { type } = metadata;
   logger.info('telegram.message');
   try {
     // подтверждение договора и первичная валидация установки через телеграм
@@ -132,6 +133,9 @@ const messageListener = async (message, { type }) => {
     if (message.reply_to_message instanceof Object) {
       if (!message.reply_to_message.from.is_bot) {
         throw new Error('Reply message not supported');
+      } else {
+        telegramBot.emit('reply_to_message', message, metadata);
+        return;
       }
     }
     if (message.chat && message.chat.type === 'supergroup') {

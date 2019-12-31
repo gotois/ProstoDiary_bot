@@ -44,8 +44,8 @@ const telegram = {
   },
   SEARCH: {
     event: 'search.event',
-    alias: /^\/(search|найти)(\s)/,
-    description: 'Поиск вхождения `String | RegExp`',
+    alias: /^бот|bot(\s)/,
+    description: 'Бот список вхождения `String | RegExp`',
   },
   SIGNIN: {
     event: 'signin.event',

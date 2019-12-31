@@ -60,6 +60,11 @@ ALTER TYPE intent ADD VALUE 'intent_name';
 ### Не приходят данные созданные пользователем к боту
 Нужно зайти в почту бота и проверить что они не находятся в папке спам писем
 
+## Хочу напрямую из БД узнать какой текст записался в историю
+```sql
+select encode(content, 'escape') as text_content from story where id = 'b8ea5534-7a39-4846-a559-fb480f57bc14'
+``
+
 ### Очистить БД
 ```sql
 DROP USER IF EXISTS bot;
