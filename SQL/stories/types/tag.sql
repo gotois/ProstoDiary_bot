@@ -1,3 +1,4 @@
+-- эти категории должны быть продублированы в Search ассистенте в Dialogflow Intents
 CREATE TYPE CATEGORY AS ENUM (
 'undefined',
 'text',

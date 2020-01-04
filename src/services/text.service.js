@@ -1,5 +1,5 @@
 const Eyo = require('eyo-kernel');
-const dialogflowService = require('../lib/dialogflow');
+const dialogService = require('./dialog.service');
 const { detectLang, isRUS, isENG } = require('./nlp.service');
 const logger = require('./logger.service');
 const { post } = require('./request.service');
@@ -227,9 +227,7 @@ const prepareText = async (requestObject) => {
   const fakeText = FakerText.text(text);
   if (fakeText.length <= 256) {
     try {
-      const dialogflowResult = await dialogflowService.detectTextIntent(
-        fakeText,
-      );
+      const dialogflowResult = await dialogService.detect(fakeText);
       // todo выбирать только те параметры в которых есть вхождения
       categories.push(...Object.keys(dialogflowResult.parameters.fields));
       subject = dialogflowResult.intent.displayName;

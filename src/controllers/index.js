@@ -44,6 +44,7 @@ const telegram = {
   },
   SEARCH: {
     event: 'search.event',
+    // todo добавить еще сценарий когда пользователь вводить вопрос в конце предложения `?`
     alias: /^бот|bot(\s)/,
     description: 'Бот список вхождения `String | RegExp`',
   },

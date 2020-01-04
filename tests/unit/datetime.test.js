@@ -3,7 +3,6 @@ module.exports = (t) => {
     isValidDate,
     convertToNormalDate,
     checkDateLaterThanNow,
-    fillRangeTimes,
   } = require('../../src/services/date.service');
   // isValidDate
   t.true(isValidDate('1.1.2016'));
@@ -33,17 +32,4 @@ module.exports = (t) => {
   t.false(checkDateLaterThanNow(new Date('31.12.2001')));
   t.false(checkDateLaterThanNow(new Date('32.12.2016')));
   t.false(checkDateLaterThanNow(new Date()));
-
-  // fillRangeTimes
-  t.throws(() => {
-    fillRangeTimes(undefined, null);
-  });
-  t.throws(() => {
-    fillRangeTimes('02.01.2001', '01.01.2001');
-  });
-  t.is(fillRangeTimes('01.01.1971', '01.05.1971').length, 5);
-  t.is(
-    fillRangeTimes(new Date('01.01.1971'), new Date('01.05.1971')).length,
-    5,
-  );
 };

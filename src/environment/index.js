@@ -1,5 +1,4 @@
 const validator = require('validator');
-const { version } = require('../../package');
 const herokuAPP = require('../../app');
 
 const {
@@ -27,32 +26,17 @@ const {
   PORT,
 
   DIALOGFLOW_CREDENTIALS,
-  DIALOGFLOW_PROJECT_ID,
-
-  PLOTLY_LOGIN,
-  PLOTLY_TOKEN,
+  DIALOGFLOW_CREDENTIALS_SEARCH,
 
   NALOGRU_EMAIL,
   NALOGRU_NAME,
   NALOGRU_PHONE,
   NALOGRU_KP_PASSWORD,
 
-  FAT_SECRET_APPNAME,
-  FAT_SECRET_API_ACCESS_KEY,
-  FAT_SECRET_API_SHARED_SECRET,
-
   SENDGRID_API_KEY,
   SENDGRID_API_KEY_DEV,
 
   OPEN_WEATHER_KEY,
-
-  WOLFRAM_ALPHA_APP_NAME,
-  WOLFRAM_ALPHA_APPID,
-  WOLRFRAM_ALPHA_USAGE_TYPE,
-
-  TODOIST_CLIENT_ID,
-  TODOIST_CLIENT_SECRET,
-  TODOIST_ACCESS_TOKEN,
 
   FOURSQUARE_CLIEND_ID,
   FOURSQUARE_CLIENT_SECRET,
@@ -130,24 +114,11 @@ const ENV = {
       return 'localhost';
     },
   },
-  PLOTLY: {
-    get LOGIN() {
-      return PLOTLY_LOGIN;
-    },
-    get TOKEN() {
-      return PLOTLY_TOKEN;
-    },
-  },
   NALOGRU: {
     NALOGRU_EMAIL,
     NALOGRU_NAME,
     NALOGRU_PHONE,
     NALOGRU_KP_PASSWORD,
-  },
-  FAT_SECRET: {
-    FAT_SECRET_APPNAME,
-    FAT_SECRET_API_ACCESS_KEY,
-    FAT_SECRET_API_SHARED_SECRET,
   },
   SENDGRID: {
     get API_KEY() {
@@ -181,9 +152,8 @@ const ENV = {
     },
   },
   DIALOGFLOW: {
-    DIALOGFLOW_PROJECT_ID,
-    get sessionId() {
-      return 'prostodiary-session-' + version;
+    get DIALOGFLOW_CREDENTIALS_SEARCH() {
+      return JSON.parse(DIALOGFLOW_CREDENTIALS_SEARCH);
     },
     get CREDENTIALS() {
       if (!DIALOGFLOW_CREDENTIALS) {
@@ -193,28 +163,6 @@ const ENV = {
         return JSON.parse(DIALOGFLOW_CREDENTIALS);
       }
       return DIALOGFLOW_CREDENTIALS;
-    },
-  },
-  WOLFRAM_ALPHA: {
-    get APP_NAME() {
-      return WOLFRAM_ALPHA_APP_NAME;
-    },
-    get APP_ID() {
-      return WOLFRAM_ALPHA_APPID || 'DEMO';
-    },
-    get USAGE_TYPE() {
-      return WOLRFRAM_ALPHA_USAGE_TYPE;
-    },
-  },
-  TODOIST: {
-    get CLIENT_ID() {
-      return TODOIST_CLIENT_ID;
-    },
-    get CLIENT_SECRET() {
-      return TODOIST_CLIENT_SECRET;
-    },
-    get ACCESS_TOKEN() {
-      return TODOIST_ACCESS_TOKEN;
     },
   },
   FOURSQUARE: {

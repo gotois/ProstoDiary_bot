@@ -78,15 +78,11 @@ test.after.always('guaranteed cleanup', async (t) => {
   t.true(mailResult.statusCode >= 200 && mailResult.statusCode < 400);
 });
 
-// Database
-skipTestForFastOrTravis('DB: Foods', require('./database.test').databaseFoods);
-
 // API
 skipTestForFastOrTravis('API: script', require('./script.test'));
 skipTestForFast('API: speller service', require('./speller-service.test'));
 skipTestForFast('API: request', require('./request.test'));
 skipTestForFast('API: Location', require('./location.test'));
-skipTestForFast('API: plotly', require('./graph-service.test'));
 skipTestForFastOrTravis(
   'API: dialogflow',
   require('./dialogflow-service.test'),
@@ -94,8 +90,6 @@ skipTestForFastOrTravis(
 skipTestForFastOrTravis('API: googleapis Geocode', require('./geocode.test'));
 skipTestForFastOrTravis('API: Google Vision', require('./vision.test'));
 skipTestForFastOrTravis('API: Translate', require('./translate.test'));
-skipTestForFast('API: Wolfram Alpha', require('./wolfram-alpha.test'));
-skipTestForFastOrTravis('API: Todoist', require('./todoist-service.test'));
 skipTestForFast('API: Currency', require('./currency-service.test'));
 
 // Telegram commands

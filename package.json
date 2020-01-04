@@ -120,16 +120,14 @@
     "oidc-provider": "6.18.0",
     "openpgp": "4.7.2",
     "openweather-apis": "4.1.0",
-    "plotly": "1.0.6",
     "qrcode": "1.4.4",
     "qs": "6.9.1",
     "slonik": "21.4.1",
     "snyk": "^1.258.2",
     "speakeasy": "2.0.0",
-    "todoist-js": "0.3.1",
+    "uuid": "3.3.3",
     "validator": "12.1.0",
     "winston": "3.2.1",
-    "wolfram-alpha-api": "git+https://github.com/qertis/wolfram-alpha-api.git",
     "yauzl": "2.10.0"
   },
   "devDependencies": {

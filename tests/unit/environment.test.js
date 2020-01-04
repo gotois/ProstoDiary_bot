@@ -3,7 +3,6 @@ module.exports = (t) => {
   t.is(typeof environment.DATABASE, 'object');
   t.is(typeof environment.CORALOGIX, 'object');
   t.is(typeof environment.TELEGRAM, 'object');
-  t.is(typeof environment.PLOTLY, 'object');
   t.is(typeof environment.NALOGRU, 'object');
   t.is(typeof environment.FAT_SECRET, 'object');
   t.is(typeof environment.SENDGRID, 'object');

@@ -52,10 +52,9 @@ const search = async (rawMessage, uid) => {
  * @example 'купил овощи 30 рублей';
  * @description получаем и разбираем Intent (если есть)
  * @param {string} rawMessage - raw message
- * @param {GUID} uid - uuid
+ * @param {GUID|undefined} uid - uuid
  * @returns {Promise<string>}
  */
-// detectTextIntent
 const detect = async (rawMessage, uid) => {
   const query = formatQuery(rawMessage);
   const languageCode = detectLang(query).dialogflow;
