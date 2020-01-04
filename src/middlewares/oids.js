@@ -1,32 +1,45 @@
 const Provider = require('oidc-provider');
 const { SERVER } = require('../environment');
+const Account = require('../models/account');
 
-// @see https://github.com/panva/node-oidc-provider-example/tree/master/00-oidc-minimal
-// /.well-known/openid-configuration # to see your openid-configuration
-// /auth?client_id=foo&response_type=code&scope=openid # to start your first Authentication Request
 const oidc = new Provider(SERVER.HOST, {
-  // todo configure Provider to use the adapter PostgreSQL
-  // adapter: xxx,
-
+  // adapter: RedisAdapter,
   clients: [
     {
-      client_id: 'foo',
-      client_secret: 'bar',
+      client_id: 'search',
+      client_secret: 'bar', // todo upd
       redirect_uris: [SERVER.HOST + '/oidcallback'],
-      // response_types: ['id_token'],
+      token_endpoint_auth_method: 'none',
       // grant_types: ['implicit'],
-      // token_endpoint_auth_method: 'none',
+      // response_types: ['code'],
     },
+    // todo: new assistants here
   ],
+
   // jwks, // todo add
   // formats: {
   //   AccessToken: 'jwt',
   // },
-  // features: {
-  //   encryption: { enabled: true },
-  //   introspection: { enabled: true },
-  //   revocation: { enabled: true },
-  // },
+
+  findAccount: Account.findAccount,
+  claims: {
+    openid: ['sub'],
+    email: ['email', 'email_verified'],
+  },
+  features: {
+    devInteractions: { enabled: false }, // defaults to true
+    deviceFlow: { enabled: true }, // defaults to false
+    introspection: { enabled: true }, // defaults to false
+    encryption: { enabled: true },
+    revocation: { enabled: true },
+  },
+  ttl: {
+    AccessToken: 1 * 60 * 60, // 1 hour in seconds
+    AuthorizationCode: 10 * 60, // 10 minutes in seconds
+    IdToken: 1 * 60 * 60, // 1 hour in seconds
+    DeviceCode: 10 * 60, // 10 minutes in seconds
+    RefreshToken: 1 * 24 * 60 * 60, // 1 day in seconds
+  },
 });
 oidc.proxy = true;
 
