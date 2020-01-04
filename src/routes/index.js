@@ -1,5 +1,8 @@
 const jsonParser = require('body-parser').json();
+const { TELEGRAM } = require('../environment');
 const authParser = require('../middlewares/auth');
+const robotsParser = require('../middlewares/robots');
+const sitemapParser = require('../middlewares/sitemap');
 const oidsParser = require('../middlewares/oids');
 const telegramController = require('../middlewares/telegram');
 const mailController = require('../middlewares/mail');
@@ -9,7 +12,6 @@ const passportParser = require('../middlewares/id');
 const messageController = require('../middlewares/message');
 const pingController = require('../middlewares/ping');
 const notFoundController = require('../middlewares/not-found-handler');
-const { TELEGRAM } = require('../environment');
 
 module.exports = (app) => {
   // todo - oids перенести в контроллер
@@ -38,6 +40,8 @@ module.exports = (app) => {
   // отображение прикрепленных некий глобальный JSON-LD включающий ссылки на остальные документы
   // todo делать читаемыми только для того пользователя кто создал. Нужны роли для этого
   app.get('/message/:uuid', authParser, messageController);
+  app.get('/robots.txt', robotsParser);
+  app.get('/sitemap.txt', sitemapParser);
   // вебхуки нотификаций о почте, включая ассистентов
   app.post('/mail', jsonParser, mailController);
   // telegram
