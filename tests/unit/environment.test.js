@@ -4,7 +4,6 @@ module.exports = (t) => {
   t.is(typeof environment.CORALOGIX, 'object');
   t.is(typeof environment.TELEGRAM, 'object');
   t.is(typeof environment.NALOGRU, 'object');
-  t.is(typeof environment.FAT_SECRET, 'object');
   t.is(typeof environment.SENDGRID, 'object');
   t.is(typeof environment.OPEN_WEATHER, 'object');
   t.is(typeof environment.GOOGLE, 'object');
@@ -16,5 +15,4 @@ module.exports = (t) => {
   }
   t.is(typeof environment.DIALOGFLOW, 'object');
   // t.is(typeof env.DIALOGFLOW.CREDENTIALS, 'object');
-  t.is(typeof environment.WOLFRAM_ALPHA.APP_ID, 'string');
 };

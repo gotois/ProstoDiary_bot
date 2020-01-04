@@ -19,8 +19,6 @@ module.exports = (t) => {
   t.true(typeof EDITED_MESSAGE_TEXT.alias === 'string');
   t.true(typeof LOCATION.alias === 'string');
 
-  t.true(SEARCH.alias.test('/search something'));
-
   t.true(BACKUP.alias.test('/backup'));
   t.false(BACKUP.alias.test('/backup 1'));
 

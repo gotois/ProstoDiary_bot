@@ -108,8 +108,6 @@ skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
 skipTestForFastOrTravis('story', require('./story.test'));
 
 skipTestForFastOrTravis('archive service', require('./archive-service.test'));
-skipTestForFastOrTravis('AppleHealth', require('./apple-health-service.test'));
-skipTestForFastOrTravis('Tinkoff', require('./tinkoff-service.test'));
 skipTestForFastOrTravis('foursquare', require('./foursquare-service.test'));
 
 // urls

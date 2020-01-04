@@ -1,8 +1,12 @@
+const uuidv1 = require('uuid/v1');
 const bot = require('../../core/bot');
+const { pool, sql } = require('../../core/database');
 const { telegram } = require('../../controllers');
 const logger = require('../../services/logger.service');
-const dialogflowService = require('../../lib/dialogflow');
+const requestService = require('../../services/request.service');
+const dialogService = require('../../services/dialog.service');
 const TelegramBotRequest = require('./telegram-bot-request');
+const { IS_PRODUCTION } = require('../../environment');
 
 class Search extends TelegramBotRequest {
   /**
@@ -21,35 +25,65 @@ class Search extends TelegramBotRequest {
       .toLowerCase();
     super(message);
 
+    this.uuid = uuidv1();
     this.messageListener = this.messageListener.bind(this);
     bot.on('callback_query', this.messageListener);
   }
 
   async beginDialog() {
     await super.beginDialog();
-    const dialogResult = await dialogflowService.detectTextIntent(
-      '{search} ' + this.message.text,
-    );
-    if (dialogResult.intent.displayName !== 'SearchIntent') {
-      // todo: логировать такой варнинг - чтобы знать что ищу
-      await bot.sendMessage(this.message.chat.id, 'Unknown Search');
+    logger.info(`Поиск ${this.message.text}`);
+
+    const dialogResult = await dialogService.search(this.message.text, this.uuid);
+    if (dialogResult.intent.displayName === 'Unknown' || !dialogResult.outputContexts) {
+      logger.warn('undefined intent: ' + dialogResult.queryText);
+      await bot.sendMessage(this.message.chat.id, dialogResult.fulfillmentText);
       return;
     }
-    await bot.sendMessage(this.message.chat.id, `Поиск ${this.message.text}`, {
+
+    const { message_id } = await bot.sendMessage(this.message.chat.id, dialogResult.fulfillmentText, {
       reply_markup: {
         force_reply: true,
-        inline_keyboard: [
-          [
-            { text: 'Все записи ASC', callback_data: 'ASC' },
-            { text: 'Все записи DESC', callback_data: 'DESC' },
-          ],
-          [
-            { text: 'Расходы', callback_data: 'COUNT -' },
-            { text: 'Доходы', callback_data: 'COUNT +' },
-          ],
-          [{ text: 'Введите дополняющий текст', callback_data: 'DETAIL' }],
-        ],
-      },
+      }
+    });
+
+    bot.onReplyToMessage(this.message.chat.id, message_id, async ({ text }) => {
+      const dialogResultInner = await dialogService.search(text, this.uuid);
+      // пример: 'health', 'graph'
+      const [intentName, actionName] = dialogResultInner.action.toLowerCase().split('.');
+
+      // todo валидировать параметры (dialogResult.parameters) и на основе них формировать лучшую выборку
+      // берем максимум позволительных данных из открытого БД
+      const rows = await pool.connect(async (connection) => {
+        const result = await connection.many(sql`
+    select * from story where
+    '{${sql.identifier([intentName])}}' <@ categories
+    `);// todo add :  `AND created_at between '2019-12-15' AND '2019-12-15'`
+        return result;
+      });
+
+      // todo ссылки на ассистента должны браться из БД
+      // бот отправляет ассистенту необработанные табличные данные JSON rows посредством HTTP POST
+      const searchURL = IS_PRODUCTION ?
+        'https://us-central1-prostodiary.cloudfunctions.net/xxx' :
+        'http://localhost:5000/prostodiary/us-central1/xxx';
+      const photo = await requestService.post(searchURL, {
+        data: rows,
+        action: actionName,
+      }, {
+        'content-type': 'image/png'
+      }, null);
+
+      // todo нужен switch по action
+      if (photo) {
+        // для графика
+        await bot.sendPhoto(this.message.chat.id, Buffer.from(photo), {
+          caption: dialogResultInner.fulfillmentText,
+        }, {
+          filename: 'graph',
+          contentType: 'image/png',
+        });
+      }
     });
   }
   async showMessageByOne() {
@@ -83,6 +117,7 @@ class Search extends TelegramBotRequest {
       );
     }
   }
+  // todo поддержать, сейчас не используется
   async messageListener({ data }) {
     switch (data) {
       case Search.enum.NEXT_PAGE: {
@@ -97,14 +132,6 @@ class Search extends TelegramBotRequest {
       case 'ASC': {
         const searchResult = await this.request('search', {});
 
-        // todo использовать этот контроллер для понимания что отображать пользователю - если есть возможность отобразить график - отображать и прочее
-        if (searchResult.graph) {
-          // await bot.sendPhoto(
-          //   message.chat.id,
-          //   searchResult.graph.buffer,
-          //   searchResult.graph.options,
-          // );
-        }
         if (searchResult.generator) {
           this._searchGenerator = searchResult.generator;
           await this.showMessageByOne();
@@ -131,7 +158,7 @@ class Search extends TelegramBotRequest {
           this.message.chat.id,
           botMessageMore.message_id,
           async ({ text }) => {
-            const dialogResult = await dialogflowService.detectTextIntent(text);
+            const dialogResult = await dialogService.search(text);
             logger.log(':::', dialogResult);
             await bot.sendMessage(
               this.message.chat.id,
