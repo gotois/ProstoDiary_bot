@@ -43,6 +43,8 @@ const document = (text, language) => {
   };
 };
 /**
+ * Русский язык пока не поддерживается
+ *
  * @description Detects the sentiment of the document
  * @param {string} text - text
  * @returns {Promise<object>}
@@ -64,6 +66,8 @@ const classifyText = async (text) => {
   return classification;
 };
 /**
+ * Русский язык пока не поддерживается
+ *
  * @param {string} text - text
  * @returns {Promise<object>}
  */

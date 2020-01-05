@@ -1,6 +1,7 @@
 const uuidv1 = require('uuid/v1');
 const bot = require('../../core/bot');
-const { pool, sql } = require('../../core/database');
+const { pool } = require('../../core/database');
+const storyQueries = require('../../db/story');
 const { telegram } = require('../../controllers');
 const logger = require('../../services/logger.service');
 const requestService = require('../../services/request.service');
@@ -26,8 +27,6 @@ class Search extends TelegramBotRequest {
     super(message);
 
     this.uuid = uuidv1();
-    this.messageListener = this.messageListener.bind(this);
-    bot.on('callback_query', this.messageListener);
   }
 
   async beginDialog() {
@@ -53,12 +52,10 @@ class Search extends TelegramBotRequest {
       const [intentName, actionName] = dialogResultInner.action.toLowerCase().split('.');
 
       // todo валидировать параметры (dialogResult.parameters) и на основе них формировать лучшую выборку
-      // берем максимум позволительных данных из открытого БД
       const rows = await pool.connect(async (connection) => {
-        const result = await connection.many(sql`
-    select * from story where
-    '{${sql.identifier([intentName])}}' <@ categories
-    `);// todo add :  `AND created_at between '2019-12-15' AND '2019-12-15'`
+        const result = await connection.many(
+          storyQueries.selectCategories(intentName)
+        );
         return result;
       });
 
@@ -67,22 +64,34 @@ class Search extends TelegramBotRequest {
       const searchURL = IS_PRODUCTION ?
         'https://us-central1-prostodiary.cloudfunctions.net/xxx' :
         'http://localhost:5000/prostodiary/us-central1/xxx';
-      const photo = await requestService.post(searchURL, {
-        data: rows,
-        action: actionName,
-      }, {
-        'content-type': 'image/png'
-      }, null);
-
-      // todo нужен switch по action
-      if (photo) {
-        // для графика
-        await bot.sendPhoto(this.message.chat.id, Buffer.from(photo), {
-          caption: dialogResultInner.fulfillmentText,
-        }, {
-          filename: 'graph',
-          contentType: 'image/png',
-        });
+      try {
+        switch (actionName) {
+          // для графика
+          case 'graph': {
+            const photo = await requestService.post(searchURL, {
+              data: rows,
+              action: actionName,
+            }, {
+              'content-type': 'image/png'
+            }, null);
+            await bot.sendPhoto(this.message.chat.id, Buffer.from(photo), {
+              caption: dialogResultInner.fulfillmentText,
+            }, {
+              filename: 'graph',
+              contentType: 'image/png',
+            });
+            break;
+          }
+          default: {
+            // todo показать текстом с пагинацией
+            // todo задать вопрос насчет сортировки asc/desc
+            await this.showMessageByOne();
+            break;
+          }
+        }
+      } catch (error) {
+        logger.error(error);
+        await bot.sendMessage(this.message.chat.id, `Ассистент ${intentName} недоступен`);
       }
     });
   }
@@ -101,78 +110,15 @@ class Search extends TelegramBotRequest {
         ],
       };
     }
-    // fixme: форвардить сообщения, если они есть
-    //  if (false) {
-    //  await bot.forwardMessage(chatId, userId, row.telegram_message_id);
-    //  } else
-    {
-      this.botMessage = await bot.sendMessage(
-        this.message.chat.id,
-        generatorResult.value,
-        {
-          disable_web_page_preview: true,
-          parse_mode: 'Markdown',
-          reply_markup: replyMarkup,
-        },
-      );
-    }
-  }
-  // todo поддержать, сейчас не используется
-  async messageListener({ data }) {
-    switch (data) {
-      case Search.enum.NEXT_PAGE: {
-        await bot.deleteMessage(
-          this.message.chat.id,
-          this.botMessage.message_id,
-        );
-        await this.showMessageByOne();
-        break;
-      }
-      // Показ всех записей сортировка ASC
-      case 'ASC': {
-        const searchResult = await this.request('search', {});
-
-        if (searchResult.generator) {
-          this._searchGenerator = searchResult.generator;
-          await this.showMessageByOne();
-        }
-        break;
-      }
-      // Показ всех записей сортировка DESC
-      case 'DESC': {
-        const searchResult = await this.request('search', {});
-        break;
-      }
-      // детальный поиск через follow-up intent
-      case 'DETAIL': {
-        const botMessageMore = await bot.sendMessage(
-          this.message.chat.id,
-          'Детальный поиск [SEARCH]',
-          {
-            reply_markup: {
-              force_reply: true,
-            },
-          },
-        );
-        bot.onReplyToMessage(
-          this.message.chat.id,
-          botMessageMore.message_id,
-          async ({ text }) => {
-            const dialogResult = await dialogService.search(text);
-            logger.log(':::', dialogResult);
-            await bot.sendMessage(
-              this.message.chat.id,
-              dialogResult.fulfillmentText,
-            );
-          },
-        );
-        break;
-      }
-      default: {
-        bot.off('callback_query', this.messageListener);
-        break;
-      }
-    }
+    await bot.sendMessage(
+      this.message.chat.id,
+      generatorResult.value,
+      {
+        disable_web_page_preview: true,
+        parse_mode: 'Markdown',
+        reply_markup: replyMarkup,
+      },
+    );
   }
 }
 /**

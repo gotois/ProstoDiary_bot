@@ -1,6 +1,19 @@
 const { sql } = require('../core/database');
 
 module.exports = {
+  // берем максимум позволительных данных из открытого БД
+  selectCategories(intentName) {
+    return sql`
+    select * from story where
+    '{${sql.identifier([intentName])}}' <@ categories
+    `;
+    // todo `AND created_at between '2019-12-15' AND '2019-12-15'`
+  },
+  /**
+   * refresh materialized view
+   *
+   * @returns {*}
+   */
   refreshView() {
     return sql`REFRESH MATERIALIZED VIEW public.story
 `;

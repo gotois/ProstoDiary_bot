@@ -3,8 +3,10 @@ const Content = require('./index');
 const AbstractText = require('../abstract/abstract-text');
 const AbstractGeo = require('../abstract/abstract-geo');
 const languageService = require('../../services/nlp.service');
-
-// plain text
+const logger = require('../../services/logger.service');
+/**
+ * plain text
+ */
 class ContentText extends Content {
   #text;
   constructor(data) {
@@ -18,7 +20,10 @@ class ContentText extends Content {
    * @returns {Promise<object>}
    */
   async prepare() {
-    const { categories, documentSentiment, entities, language, sentences, tokens } = await languageService.annotateText(this.#text);
+    logger.info('content-text prepare');
+
+    const { entities, language } = await languageService.analyzeEntities(this.#text);
+    const { tokens } = await languageService.analyzeSyntax(this.#text);
 
     this.abstracts.push(new AbstractText({
       language,

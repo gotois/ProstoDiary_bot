@@ -1,8 +1,8 @@
 const Eyo = require('eyo-kernel');
+const speller = require('../lib/speller');
 const dialogService = require('./dialog.service');
 const { detectLang, isRUS, isENG } = require('./nlp.service');
 const logger = require('./logger.service');
-const { post } = require('./request.service');
 const crypt = require('./crypt.service');
 const { FakerText } = require('./faker.service');
 /**
@@ -16,44 +16,8 @@ const replaceBetween = (string, start, end, what) => {
   return string.slice(0, start) + what + string.slice(end);
 };
 /**
- * @constant
- * @type {string}
- */
-const SPELLER_HOST = 'speller.yandex.net';
-/**
- * @param {object} obj - object
- * @param {string} obj.text - Текст для проверки
- * @param {string} obj.lang - Языки проверки
- * @param {string} obj.format - Формат проверяемого текста
- * @param {number} obj.options - Опции Яндекс.Спеллера. Значением параметра является сумма значений требуемых опций
- * @returns {Promise<Array|ReferenceError>}
- */
-const spellCheck = async ({
-  text,
-  lang = 'ru,en',
-  options = 0,
-  format = 'plain',
-}) => {
-  const result = await post(
-    `https://${SPELLER_HOST}/services/spellservice.json/checkText`,
-    {
-      format,
-      lang,
-      text,
-      options,
-    },
-  );
-  if (!Array.isArray(result)) {
-    throw new ReferenceError('spellCheck API changes');
-  }
-  return result;
-};
-/**
- * Исправляем очевидные ошибки
- *
- * await spellText('рублкй') -> рублей
- * Важно! Данные берутся относительно текущего месторасположения, включая VPN
- *
+ * @description Исправляем очевидные ошибки. Важно! Данные берутся относительно текущего месторасположения, включая VPN
+ * @example 'await spellText('рублкй')' -> рублей
  * @param {string} text - user text
  * @param {string} [lang] - text language
  * @returns {Promise<string>}
@@ -63,14 +27,14 @@ const spellText = async (text, lang) => {
     throw new Error('Text is undefined');
   }
   let out = text;
-  const array = await spellCheck({
+  const array = await speller({
     text,
     lang,
   });
 
-  for (const a of array) {
-    const [replacedWord] = a.s;
-    out = replaceBetween(out, a.pos, a.pos + a.len, replacedWord);
+  for (const { s, len, pos } of array) {
+    const [replacedWord] = s;
+    out = replaceBetween(out, pos, pos + len, replacedWord);
   }
 
   return out;
@@ -165,12 +129,11 @@ const convertStringToRegexp = (input) => {
 };
 
 /**
- * Message updated text
- *
+ * @description Message updated text
  * @param {string} input - user input text
  * @returns {string}
  */
-const formatterText = (input) => {
+const previousInput = (input) => {
   return `${input.replace(/\n/g, ' ').slice(0, 6)}…`;
 };
 /**
@@ -212,11 +175,12 @@ const correctionText = async (text) => {
   return text;
 };
 /**
+ * @description Валидация и формирование зашифрованного сообщения
  * @param {object} requestObject - requestObject
  * @returns {Promise<object>}
  */
 const prepareText = async (requestObject) => {
-  const { text, secretKey, caption } = requestObject;
+  const { text, secretKey, caption, uid } = requestObject;
   const categories = [];
   if (caption) {
     categories.push(caption.toLowerCase());
@@ -224,10 +188,10 @@ const prepareText = async (requestObject) => {
   let subject;
   // Автоматическое исправление опечаток
   const correction = await correctionText(text);
-  const fakeText = FakerText.text(text);
-  if (fakeText.length <= 256) {
+  if (correction.length <= 256) {
+    const fakeText = FakerText.text(correction);
     try {
-      const dialogflowResult = await dialogService.detect(fakeText);
+      const dialogflowResult = await dialogService.detect(fakeText, uid);
       // todo выбирать только те параметры в которых есть вхождения
       categories.push(...Object.keys(dialogflowResult.parameters.fields));
       subject = dialogflowResult.intent.displayName;
@@ -244,7 +208,6 @@ const prepareText = async (requestObject) => {
     mime: 'plain/text',
     subject: subject || 'Save to Diary',
     content: encrypted.data,
-    original: text,
     categories,
   };
 };
@@ -254,7 +217,7 @@ module.exports = {
   createRegexInput,
   formatWord,
   isRegexString,
-  previousInput: formatterText,
+  previousInput,
   decodeRows,
   correctionText,
   replaceBetween,

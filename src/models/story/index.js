@@ -87,11 +87,13 @@ class Story {
   }
 
   async commit() {
+    logger.info('story.commit');
     const action = this.analyzeSubject();
 
+    let id;
     await pool.connect(async (connection) => {
       await connection.transaction(async (transactionConnection) => {
-        // message
+        logger.info('story.createMessage');
         const messageTable = await transactionConnection.one(
           storyQueries.createMessage({
             creator: this.from.value[0].name,
@@ -100,9 +102,10 @@ class Story {
             version: this.mail.headers['x-bot-version'],
           })
         );
-        // content
+        id = messageTable.id;
         for (const content of this.contents) {
           await content.prepare();
+          logger.info('story.createContent');
           const contentTable = await transactionConnection.one(storyQueries.createContent({
             content: content.content,
             contentType: content.contentType,
@@ -111,9 +114,9 @@ class Story {
             telegramMessageId: content.telegramMessageId,
             messageId: messageTable.id,
           }));
-          // abstract
           for (const abstract of content.abstracts) {
             await abstract.prepare();
+            logger.info('story.createAbstract');
             await transactionConnection.query(storyQueries.createAbstract({
               category: 'finance', // fixme undefined example
               context: JSON.stringify(abstract.context),
@@ -121,10 +124,12 @@ class Story {
             }));
           }
         }
-        // refresh materialized view
         await transactionConnection.query(storyQueries.refreshView());
       });
     });
+    if (id) {
+      return id;
+    }
   }
 }
 

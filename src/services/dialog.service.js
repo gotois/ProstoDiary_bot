@@ -25,7 +25,11 @@ const formatQuery = (query) => {
   }
   return query.trim().replace(/\.\d+/gm, dotNumberReplacer);
 };
-
+/**
+ * @param {string} rawMessage - raw message
+ * @param {GUID|undefined} uid - uuid
+ * @returns {Promise<string>}
+ */
 const search = async (rawMessage, uid) => {
   const query = formatQuery(rawMessage);
   const languageCode = detectLang(query).dialogflow;
@@ -52,7 +56,7 @@ const search = async (rawMessage, uid) => {
  * @example 'купил овощи 30 рублей';
  * @description получаем и разбираем Intent (если есть)
  * @param {string} rawMessage - raw message
- * @param {GUID|undefined} uid - uuid
+ * @param {string} uid - uuid
  * @returns {Promise<string>}
  */
 const detect = async (rawMessage, uid) => {

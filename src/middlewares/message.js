@@ -9,6 +9,10 @@ module.exports = async (request, response, next) => {
       const role = await connection.maybeOne(
         passportQueries.selectRoleByEmail(request.user),
       );
+      if (!role) {
+        response.status(403).json({ message: 'forbidden' });
+        return;
+      }
       try {
         const storyTable = await connection.one(
           storyQueries.selectStoryById(request.params.uuid),

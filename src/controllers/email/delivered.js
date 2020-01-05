@@ -10,6 +10,9 @@ const Story = require('../../models/story');
  */
 const delivered = async (info) => {
   logger.info(delivered.name);
+  // todo проверять хуку по `info.sg_event_id` === 'ZGVsaXZlcmVkLTAtOTk2MjYyMC1aM090YUpKZFRGcTg2RkhEQm9xREFnLTA'
+  // @see https://github.com/gotois/ProstoDiary_bot/issues/358
+  // ...
   let resultMessage;
   try {
     const botTable = await pool.connect(async (connection) => {
@@ -43,8 +46,9 @@ const delivered = async (info) => {
           ...mail,
           ...info,
         });
-        await story.commit();
+        const id = await story.commit();
         await imap.remove(mail.uid);
+        bot.sendMessage(info.chat_id, `0.0.0.0:9000/message/${id}`);
       } else if (info.category.includes('transaction-read')) {
         // todo если пришла transaction-read, то получаем возможность делать read
         //  ...

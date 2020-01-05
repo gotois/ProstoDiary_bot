@@ -28,14 +28,14 @@ class Text extends TelegramBotRequest {
         );
         return botTable.secret_key;
       });
-      // Валидация и формирование зашифрованного сообщения
       const messageResult = await textService.prepareText({
         secretKey,
+        uid: this.userHash,
         text: this.message.text,
         caption: this.message.caption,
         passportId: this.message.passport.id,
       });
-      // если сообщение успешно отвалидировано, то отправка зашифрованного сообщения на почту бота
+      // отправка зашифрованного сообщения на почту бота
       const postResult = await this.request('post', {
         ...messageResult,
         categories: ['transaction-write'].concat(

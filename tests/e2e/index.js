@@ -90,7 +90,6 @@ skipTestForFastOrTravis(
 skipTestForFastOrTravis('API: googleapis Geocode', require('./geocode.test'));
 skipTestForFastOrTravis('API: Google Vision', require('./vision.test'));
 skipTestForFastOrTravis('API: Translate', require('./translate.test'));
-skipTestForFast('API: Currency', require('./currency-service.test'));
 
 // Telegram commands
 skipTestForFastOrTravis('/help', require('./help.test'));
@@ -112,5 +111,19 @@ skipTestForFastOrTravis('foursquare', require('./foursquare-service.test'));
 
 // urls
 skipTestForFastOrTravis('/id/', require('./json-ld.test'));
+
+test('language service', async t => {
+  const languageService = require('../../src/services/nlp.service');
+
+  const { entities, language } = await languageService.analyzeEntities('я поел салат');
+  const { tokens } = await languageService.analyzeSyntax('я поел салат')
+
+  t.is(!!entities, true);
+  t.is(!!language, true);
+  t.is(!!tokens, true);
+
+  // todo или единый запрос. Пока только поддерживатеся английский
+  // const { categories, documentSentiment, } = await languageService.annotateText('I was play in Angry Birds ');
+});
 
 test('bot init', require('./telegram-bot.test'));

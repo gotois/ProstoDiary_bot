@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const bot = require('../../core/bot');
 const { client } = require('../../core/jsonrpc');
 const logger = require('../../services/logger.service');
@@ -9,6 +10,7 @@ class TelegramBotRequest {
    */
   constructor(message) {
     this.#message = message;
+    this.userHash = crypto.createHash('md5').update(String(message.from.id)).digest("hex");
   }
   get message() {
     return this.#message;
