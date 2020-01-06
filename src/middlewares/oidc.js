@@ -1,6 +1,5 @@
 const Provider = require('oidc-provider');
 const { SERVER } = require('../environment');
-const Account = require('../models/account');
 
 const oidc = new Provider(SERVER.HOST, {
   // adapter: RedisAdapter,
@@ -8,10 +7,19 @@ const oidc = new Provider(SERVER.HOST, {
     {
       client_id: 'search',
       client_secret: 'bar', // todo upd
+      // todo редирект должен находиться на ассистенте,
+      //  тогда ассистент будет получать ключ который детектирует id бота в его базе
       redirect_uris: [SERVER.HOST + '/oidcallback'],
       token_endpoint_auth_method: 'none',
       // grant_types: ['implicit'],
-      // response_types: ['code'],
+      response_types: ['code'],
+    },
+    {
+      client_id: 'health',
+      client_secret: 'bar',
+      redirect_uris: [SERVER.HOST + '/oidcallback'],
+      token_endpoint_auth_method: 'none',
+      response_types: ['code'],
     },
     // todo: new assistants here
   ],
@@ -21,7 +29,22 @@ const oidc = new Provider(SERVER.HOST, {
   //   AccessToken: 'jwt',
   // },
 
-  findAccount: Account.findAccount,
+  // This interface is required by oidc-provider
+  // todo This would ideally be just a check whether the account is still in your storage
+  findAccount(/* context, id */) {
+    return undefined;
+    // return {
+    //   accountId: id,
+    //   and this claims() method would actually query to retrieve the account claims
+    //   async claims() {
+    //     return {
+    //       sub: id,
+    //       email: account.email,
+    //       email_verified: account.email_verified,
+    //     };
+    //   },
+    // };
+  },
   claims: {
     openid: ['sub'],
     email: ['email', 'email_verified'],

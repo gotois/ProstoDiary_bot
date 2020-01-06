@@ -1,7 +1,7 @@
-const { pool } = require('../core/database');
-const ac = require('../core/rbac');
-const storyQueries = require('../db/story');
-const passportQueries = require('../db/passport');
+const { pool } = require('../../core/database');
+const ac = require('../../core/rbac');
+const storyQueries = require('../../db/story');
+const passportQueries = require('../../db/passport');
 
 module.exports = async (request, response, next) => {
   try {

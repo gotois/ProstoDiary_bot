@@ -68,9 +68,15 @@ https://6a810e4f.ngrok.io/oidc/.well-known/openid-configuration
 - Назначьте client_id
 
 2) Передайте ключ client_id в запросе
-- https://6a810e4f.ngrok.io/oidc/auth?client_id=search&response_type=code&scope=openid
 
-3) Введите email/password вашего OpenID Connect вашего клиента
+Примеры
+Search assistant
+- http://0.0.0.0:9000/oidc/auth?client_id=search&response_type=code&scope=openid
 
-4) Вы перейдете на https://6a810e4f.ngrok.io/oidcallback?code=EOB2dYP9V6ZO7H1fFVFVS81LAfLPTzXVFeiZDNXJQZ2
-- Обновите code
+Health assistant
+- http://0.0.0.0:9000/oidc/auth?client_id=health&response_type=code&scope=openid
+
+3) Введите email/password вашего бота в OpenID Connect
+
+4) Вы перейдете на http://0.0.0.0:9000/oidcallback?code=EOB2dYP9V6ZO7H1fFVFVS81LAfLPTzXVFeiZDNXJQZ2
+- Ассистент получает code

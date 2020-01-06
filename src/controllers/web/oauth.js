@@ -1,6 +1,6 @@
-const bot = require('../core/bot');
-const { client } = require('../core/jsonrpc');
-const { SignIn } = require('../controllers/telegram/signin.event');
+const bot = require('../../core/bot');
+const { client } = require('../../core/jsonrpc');
+const { SignIn } = require('../telegram/signin.event');
 
 module.exports = async (request, response, next) => {
   try {

@@ -1,4 +1,4 @@
-const { sql, pool } = require('../core/database');
+const { sql, pool } = require('../../core/database');
 
 module.exports = async (request, response, next) => {
   try {

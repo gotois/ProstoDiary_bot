@@ -12,16 +12,13 @@ const basic = auth.basic(
       callback(true);
       return;
     }
-    await pool.connect(async (connection) => {
-      try {
-        const user = await connection.one(
-          passportQueries.checkByLoginAndPassword(login, password),
-        );
-        callback(user);
-      } catch {
-        callback(false);
-      }
+    const botId = await pool.connect(async (connection) => {
+      const botId = await connection.maybeOne(
+        passportQueries.checkByLoginAndPassword(login, password),
+      );
+      return botId;
     });
+    callback(Boolean(botId));
   },
 );
 
