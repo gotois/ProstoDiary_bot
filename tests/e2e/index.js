@@ -128,7 +128,7 @@ test('dictionary', async t => {
   t.true(Array.isArray(synonyms));
 });
 
-test('language service', async t => {
+skipTestForFastOrTravis('language service', async t => {
   const languageService = require('../../src/services/nlp.service');
 
   const analyzedEntities = await languageService.analyzeEntities('я поел салат');
