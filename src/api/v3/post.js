@@ -9,6 +9,7 @@ const logger = require('../../services/logger.service');
  */
 module.exports = async function(requestObject) {
   const {
+    tags,
     content,
     subject,
     mime,
@@ -22,6 +23,7 @@ module.exports = async function(requestObject) {
   const headers = {
     'x-bot': package_.name,
     'x-bot-version': package_.version,
+    'x-bot-tags': JSON.stringify(tags), // todo лучше перенести в отдельный attachment
     // todo: x-bot-sign - уникальная подпись бота
   };
   const message = {
@@ -56,6 +58,7 @@ module.exports = async function(requestObject) {
     },
     categories,
   };
+  logger.info('mail.send');
   try {
     const [mailResult] = await mail.send(message);
     if (!mailResult.complete) {

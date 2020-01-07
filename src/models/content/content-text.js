@@ -28,8 +28,12 @@ class ContentText extends Content {
     const categories = new Set();
     tokens.forEach(token => {
       if (token.partOfSpeech.tag === 'VERB') {
-        categories.add(token.lemma);
+        categories.add(token.lemma); // fixme здесь использовать существительное
       }
+    });
+
+    this.tags.forEach(tag => {
+      categories.add(tag);
     });
 
     // для каждой категории формируем свою ноду
@@ -67,7 +71,6 @@ class ContentText extends Content {
       // TODO: behavior; анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
       //  ...
     }
-    // console.log(entities, sentences, tokens)
 
     for (let entity of entities) {
       if (entity.type === 'LOCATION') {

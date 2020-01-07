@@ -38,10 +38,8 @@ class Text extends TelegramBotRequest {
       // отправка зашифрованного сообщения на почту бота
       const postResult = await this.request('post', {
         ...messageResult,
-        categories: ['transaction-write'].concat(
-          this.hashtags,
-          messageResult.categories,
-        ),
+        tags: [].concat(this.hashtags, messageResult.tags),
+        categories: ['user-transaction-write'],
         date: this.message.date,
         chat_id: this.message.chat.id,
         from: {

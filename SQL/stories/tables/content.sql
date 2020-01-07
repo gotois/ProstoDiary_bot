@@ -8,7 +8,7 @@ email_message_id TEXT CONSTRAINT must_be_different UNIQUE NOT NULL, -- сооб�
 telegram_message_id BIGINT UNIQUE DEFAULT NULL, -- сообщение телеграмма
 created_at TIMESTAMPTZ NOT NULL,
 updated_at TIMESTAMP DEFAULT current_timestamp,
-
+schema SCHEMA NOT NULL, -- ярлык, указывающий что именно может находиться в сообщении. отвечает за того ассистента которому будет передаваться
 status STATUS_TYPE NOT NULL DEFAULT 'draft',-- тип записи от неточного к точному
 
 PRIMARY KEY (id)

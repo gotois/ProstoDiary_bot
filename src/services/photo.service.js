@@ -41,21 +41,24 @@ const readQR = async (buffer) => {
 const prepareImage = async (requestObject) => {
   const { imageBuffer, secretKey, caption } = requestObject;
   const { mime } = fileType(imageBuffer);
-  const categories = [];
+  const tags = [];
+  let subject;
   if (caption) {
-    categories.push(caption.toLowerCase());
+    // fixme отправляю subject в DialogFlow для детектирования Action
+    caption.toLowerCase();
   }
   const visionResult = await visionService.labelDetection(imageBuffer);
   visionResult.labelAnnotations.forEach((annotation) => {
-    categories.push(annotation.description);
+    tags.push(annotation.description);
   });
   const encrypted = await crypt.openpgpEncrypt(imageBuffer, [secretKey]);
   return {
     mime,
-    subject: 'Save to Diary', // todo распознавать интент-намерение в самой картинке
+    // eslint-disable-next-line
+    subject: subject || 'UndefinedPhoto', // todo распознавать интент-намерение в самой картинке через Vision
     content: encrypted.data,
     original: imageBuffer,
-    categories,
+    tags,
   };
 };
 

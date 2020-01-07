@@ -35,6 +35,19 @@ class Story {
             ...attachment,
             emailMessageId: mail.messageId,
             telegramMessageId: mail.telegram_message_id,
+            schema: mail.subject,
+            tags: mail.headers['x-bot-tags'] ? JSON.parse(mail.headers['x-bot-tags']) : [],
+          });
+          break;
+        }
+        case 'image/png':
+        case 'image/jpeg': {
+          content = new ContentPhoto({
+            ...attachment,
+            emailMessageId: mail.messageId,
+            telegramMessageId: mail.telegram_message_id,
+            schema: mail.subject,
+            tags: mail.headers['x-bot-tags'] ? JSON.parse(mail.headers['x-bot-tags']) : [],
           });
           break;
         }
@@ -45,15 +58,6 @@ class Story {
         case 'application/vnd.geo+json': {
           // это передача GeoJSON
           // see https://sgillies.net/2014/05/22/the-geojson-media-type.html
-          break;
-        }
-        case 'image/png':
-        case 'image/jpeg': {
-          content = new ContentPhoto({
-            ...attachment,
-            emailMessageId: mail.messageId,
-            telegramMessageId: mail.telegram_message_id,
-          });
           break;
         }
         case 'application/pdf': {
@@ -104,13 +108,14 @@ class Story {
             emailMessageId: content.emailMessageId,
             telegramMessageId: content.telegramMessageId,
             messageId: messageTable.id,
+            schema: content.schema.toLowerCase().replace(/intent$/, ''),
           }));
           for (const abstract of content.abstracts) {
             logger.info('story.createAbstract');
             await abstract.prepare();
             await transactionConnection.query(storyQueries.createAbstract({
               category: abstract.category,
-              context: JSON.stringify(abstract.context),
+              context: JSON.stringify(abstract.context), // todo переделать под формат JSON-LD
               contentId: contentTable.id,
             }));
           }

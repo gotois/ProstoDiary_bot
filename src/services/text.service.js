@@ -180,11 +180,8 @@ const correctionText = async (text) => {
  * @returns {Promise<object>}
  */
 const prepareText = async (requestObject) => {
-  const { text, secretKey, caption, uid } = requestObject;
-  const categories = [];
-  if (caption) {
-    categories.push(caption.toLowerCase());
-  }
+  const { text, secretKey, uid } = requestObject;
+  const tags = [];
   let subject;
   // Автоматическое исправление опечаток
   const correction = await correctionText(text);
@@ -192,23 +189,22 @@ const prepareText = async (requestObject) => {
     const fakeText = FakerText.text(correction);
     try {
       const dialogflowResult = await dialogService.detect(fakeText, uid);
-      // todo выбирать только те параметры в которых есть вхождения
-      categories.push(...Object.keys(dialogflowResult.parameters.fields));
+      // todo Автоисправление кастомных типов в "dialogflowResult.parameters.fields"
+      //  найденных параметров (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
+      // ...
       subject = dialogflowResult.intent.displayName;
     } catch (error) {
       logger.error(error.message);
     }
   }
   const buffer = Buffer.from(correction);
-  // todo Автоисправление кастомных типов
-  //  найденных параметров (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
-  // ...
+
   const encrypted = await crypt.openpgpEncrypt(buffer, [secretKey]);
   return {
     mime: 'plain/text',
-    subject: subject || 'Save to Diary',
+    subject: subject || 'UndefinedText',
     content: encrypted.data,
-    categories,
+    tags,
   };
 };
 

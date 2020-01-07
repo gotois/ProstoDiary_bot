@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS story.abstract (
 id BIGSERIAL,
-category CATEGORY NOT NULL, -- ярлык, указывающий что именно может находиться в сообщении. отвечает за того ассистента которому будет передаваться
+category TEXT NOT NULL,
 context JSONB NOT NULL, -- структурированные данные которые можно превратить в n-quads / JSON-LD
 content_id BIGINT NOT NULL,
 

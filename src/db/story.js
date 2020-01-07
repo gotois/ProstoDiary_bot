@@ -86,6 +86,7 @@ WHERE
     date,
     telegramMessageId,
     messageId,
+    schema,
   }) {
     return sql`
           INSERT INTO story.content
@@ -95,7 +96,8 @@ WHERE
             created_at,
             email_message_id,
             telegram_message_id,
-            message_id
+            message_id,
+            schema
           )
           VALUES (
             ${sql.binary(content)}, 
@@ -103,7 +105,8 @@ WHERE
             ${date.toUTCString()}::timestamptz,
             ${emailMessageId},
             ${telegramMessageId},
-            ${messageId}
+            ${messageId},
+            ${schema}
           )
           RETURNING id
           `;
