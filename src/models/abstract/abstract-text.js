@@ -6,6 +6,7 @@ class AbstractText extends Abstract {
     super(data);
     this.language = languageService.langISO(data.language);
     this.text = data.text;
+    this.category = data.category;
   }
 
   get context() {

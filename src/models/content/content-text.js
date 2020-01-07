@@ -25,10 +25,31 @@ class ContentText extends Content {
     const { entities, language } = await languageService.analyzeEntities(this.#text);
     const { tokens } = await languageService.analyzeSyntax(this.#text);
 
-    this.abstracts.push(new AbstractText({
-      language,
-      text: this.#text,
-    }));
+    const categories = new Set();
+    tokens.forEach(token => {
+      if (token.partOfSpeech.tag === 'VERB') {
+        categories.add(token.lemma);
+      }
+    });
+
+    // для каждой категории формируем свою ноду
+    if (categories.size) {
+      Array.from(categories).forEach(category => {
+        this.abstracts.push(new AbstractText({
+          language,
+          text: this.#text,
+          category,
+        }));
+      });
+    } else {
+      // todo костыль. в случае если нет глагола. по хорошему нужно так или иначе получить хоть что-то, а если невозможно, то кидать ошибку
+      this.abstracts.push(new AbstractText({
+        language,
+        text: this.#text,
+        category: 'undefined',
+      }));
+    }
+
     for (let { lemma } of tokens) {
       if (validator.isEmail(lemma)) {
         // this.abstracts.push(new AbstractEmail(lemma));

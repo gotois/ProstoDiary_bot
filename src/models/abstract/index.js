@@ -13,14 +13,6 @@ class Abstract {
     };
   }
   /**
-   * @param {INPUT_TYPE} inputType - type
-   */
-  // set categories(inputType) {
-  //   if (!Object.values(INPUT_TYPE).includes(inputType)) {
-  //     throw new TypeError('Unknown story type');
-  //   }
-  // }
-  /**
    * Это правовое поле действий бота/ассистента. Это значит что часть абстрактов может не быть включено в историю по неким причинам
    * Intended jurisdiction for operation definition
    *
@@ -44,9 +36,6 @@ class Abstract {
    * @override
    */
   async prepare() {
-    // todo здесь происходит разбор category.
-    //  категория валидируются и исправляется
-    //  например, пользователь ошибся и ввел #searchind, здесь исправится на #searching, найдется ассистент #search и отправится ему
   }
 }
 

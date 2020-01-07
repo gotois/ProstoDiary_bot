@@ -37,6 +37,8 @@ SENDGRID_API_KEY_DEV={ api key }
 
 OPEN_WEATHER_KEY={ api key }
 
+YA_DICTIONARY={ api key }
+
 FOURSQUARE_CLIEND_ID={ string }
 FOURSQUARE_CLIENT_SECRET={ string }
 FOURSQUARE_PUSH_SECRET={ string }

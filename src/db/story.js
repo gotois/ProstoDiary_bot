@@ -1,13 +1,19 @@
 const { sql } = require('../core/database');
 
 module.exports = {
-  // берем максимум позволительных данных из открытого БД
-  selectCategories(intentName) {
+  selectCategories(categories) {
     return sql`
-    select * from story where
-    '{${sql.identifier([intentName])}}' <@ categories
+    SELECT * FROM story WHERE
+    ARRAY[${sql.array(categories, 'text')}] @> ARRAY[categories]
     `;
     // todo `AND created_at between '2019-12-15' AND '2019-12-15'`
+  },
+  // @deprecated
+  selectCategory(intentName) {
+    return sql`
+    SELECT * FROM story WHERE
+    '{${sql.identifier([intentName])}}' <@ categories
+    `;
   },
   /**
    * refresh materialized view

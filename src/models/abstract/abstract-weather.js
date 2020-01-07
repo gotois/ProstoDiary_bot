@@ -20,13 +20,8 @@ class AbstractWeather extends Abstract {
     };
   }
 
-  async precommit() {
+  async prepare() {
     this.weatherInfo = await getWeather(this.#latlng);
-  }
-
-  async commit() {
-    await this.precommit();
-    return this.context;
   }
 }
 

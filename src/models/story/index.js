@@ -6,8 +6,6 @@ const { pool } = require('../../core/database');
 
 class Story {
   /**
-   * https://github.com/gotois/ProstoDiary_bot/issues/152#issuecomment-527747303
-   *
    * @constant
    * @type {{CORE: string, HARD: string, SOFT: string, UNTRUSTED: string}}
    */
@@ -19,11 +17,6 @@ class Story {
       CORE: 'CORE',
     };
   }
-  // todo сверяем subject с установленными правилами и на основе их пересечения бот будет совершать то или иное действие
-  analyzeSubject () {
-    // tagName = tagName.replace('Intent', '').toLowerCase();
-    console.log('subject', this.mail.subject);
-  };
   /**
    * @param {Mail} mail mail
    */
@@ -88,7 +81,6 @@ class Story {
 
   async commit() {
     logger.info('story.commit');
-    const action = this.analyzeSubject();
 
     let id;
     await pool.connect(async (connection) => {
@@ -102,10 +94,9 @@ class Story {
             version: this.mail.headers['x-bot-version'],
           })
         );
-        id = messageTable.id;
         for (const content of this.contents) {
-          await content.prepare();
           logger.info('story.createContent');
+          await content.prepare();
           const contentTable = await transactionConnection.one(storyQueries.createContent({
             content: content.content,
             contentType: content.contentType,
@@ -115,21 +106,23 @@ class Story {
             messageId: messageTable.id,
           }));
           for (const abstract of content.abstracts) {
-            await abstract.prepare();
             logger.info('story.createAbstract');
+            await abstract.prepare();
             await transactionConnection.query(storyQueries.createAbstract({
-              category: 'finance', // fixme undefined example
+              category: abstract.category,
               context: JSON.stringify(abstract.context),
               contentId: contentTable.id,
             }));
           }
         }
+        id = messageTable.id;
         await transactionConnection.query(storyQueries.refreshView());
       });
     });
     if (id) {
       return id;
     }
+    throw new Error('story returns undefined id');
   }
 }
 

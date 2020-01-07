@@ -1,6 +1,7 @@
 const package_ = require('../../../package');
 const { IS_AVA_OR_CI } = require('../../environment');
 const { mail } = require('../../lib/sendgrid');
+const logger = require('../../services/logger.service');
 /**
  * @description Отправляем сообщение. Попадает на почту на специально сгенерированный ящик gotois и после прочтения ботом удаляем
  * @param {object} requestObject - requestObject
@@ -55,9 +56,14 @@ module.exports = async function(requestObject) {
     },
     categories,
   };
-  const [mailResult] = await mail.send(message);
-  if (!mailResult.complete) {
-    return Promise.reject(this.error(400, 'Mail send not completed'));
+  try {
+    const [mailResult] = await mail.send(message);
+    if (!mailResult.complete) {
+      return Promise.reject(this.error(400, 'Mail send not completed'));
+    }
+    return '📨';
+  } catch (error) {
+    logger.error(error.response.body.errors);
+    return Promise.reject(this.error(error.code, 'Email bad request'));
   }
-  return '📨';
 };

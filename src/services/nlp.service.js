@@ -56,6 +56,8 @@ const analyzeSentiment = async (text) => {
   return result;
 };
 /**
+ * Русский язык не поддерживается
+ *
  * @param {string} text - text
  * @returns {Promise<object>}
  */
@@ -88,6 +90,8 @@ const analyzeEntities = async (text) => {
   return result;
 };
 /**
+ * Русский язык не поддерживается
+ *
  * @param {string} text - text
  * @param {string} language - language
  * @returns {Promise<object>}

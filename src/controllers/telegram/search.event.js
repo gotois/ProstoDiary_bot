@@ -1,4 +1,5 @@
 const uuidv1 = require('uuid/v1');
+const dictionary = require('../../lib/dictionary');
 const bot = require('../../core/bot');
 const { pool } = require('../../core/database');
 const storyQueries = require('../../db/story');
@@ -28,7 +29,86 @@ class Search extends TelegramBotRequest {
 
     this.uuid = uuidv1();
   }
+  async showResult (dialogResultInner) {
+    logger.info('dialogResultInner', dialogResultInner);
+    let category;
+    // пример: 'health', 'graph'
+    const [intentName, actionName] = dialogResultInner.action.toLowerCase().split('.');
 
+    if (intentName) {
+      category = intentName;
+    } else {
+      category = dialogResultInner.intent.displayName.toLowerCase();
+    }
+    category = category.replace(/action$/i, '');
+
+    const { def } = await dictionary({ text: category });
+    const synonyms = [];
+    for (const d of def) {
+      synonyms.push(d.tr[0].text);
+      d.tr[0].syn.forEach(syn => {
+        synonyms.push(syn.text);
+      });
+    }
+
+    // todo валидировать параметры (dialogResult.parameters) и на основе них формировать лучшую выборку
+    const rows = await pool.connect(async (connection) => {
+      const result = await connection.many(
+        storyQueries.selectCategories(synonyms)
+      );
+      return result;
+    });
+    // todo ссылки на ассистента должны браться из БД по oidc client_id
+    // бот отправляет ассистенту необработанные табличные данные JSON rows посредством HTTP POST
+    const searchURL = IS_PRODUCTION ?
+      'https://us-central1-prostodiary.cloudfunctions.net/xxx' :
+      'http://localhost:5000/prostodiary/us-central1/xxx';
+    try {
+      switch (actionName) {
+        // для графика
+        case 'graph': {
+          const photo = await requestService.post(searchURL, {
+            data: rows,
+            action: actionName,
+          }, {
+            'content-type': 'image/png'
+          }, null);
+          await bot.sendPhoto(this.message.chat.id, Buffer.from(photo), {
+            caption: dialogResultInner.fulfillmentText,
+          }, {
+            filename: 'graph',
+            contentType: 'image/png',
+          });
+          break;
+        }
+        default: {
+          const text = await requestService.post(searchURL, {
+            data: rows,
+            action: 'table',
+          }, {
+            // 'content-type': 'image/png' // todo использовать plain text или markdown для таблиц
+          }, null);
+          // todo показать текстом с пагинацией
+          // todo задать вопрос насчет сортировки asc/desc
+          // ...
+          await bot.sendMessage(
+            this.message.chat.id,
+            JSON.stringify(text, null, 2),
+            {
+              disable_web_page_preview: true,
+              parse_mode: 'Markdown',
+              // reply_markup: replyMarkup,
+            },
+          );
+          // await this.showMessageByOne();
+          break;
+        }
+      }
+    } catch (error) {
+      logger.error(error);
+      await bot.sendMessage(this.message.chat.id, `Ассистент ${intentName} недоступен`);
+    }
+  }
   async beginDialog() {
     await super.beginDialog();
     logger.info(`Поиск ${this.message.text}`);
@@ -40,61 +120,23 @@ class Search extends TelegramBotRequest {
       return;
     }
 
-    const { message_id } = await bot.sendMessage(this.message.chat.id, dialogResult.fulfillmentText, {
-      reply_markup: {
-        force_reply: true,
-      }
-    });
-
-    bot.onReplyToMessage(this.message.chat.id, message_id, async ({ text }) => {
-      const dialogResultInner = await dialogService.search(text, this.uuid);
-      // пример: 'health', 'graph'
-      const [intentName, actionName] = dialogResultInner.action.toLowerCase().split('.');
-
-      // todo валидировать параметры (dialogResult.parameters) и на основе них формировать лучшую выборку
-      const rows = await pool.connect(async (connection) => {
-        const result = await connection.many(
-          storyQueries.selectCategories(intentName)
-        );
-        return result;
-      });
-
-      // todo ссылки на ассистента должны браться из БД
-      // бот отправляет ассистенту необработанные табличные данные JSON rows посредством HTTP POST
-      const searchURL = IS_PRODUCTION ?
-        'https://us-central1-prostodiary.cloudfunctions.net/xxx' :
-        'http://localhost:5000/prostodiary/us-central1/xxx';
-      try {
-        switch (actionName) {
-          // для графика
-          case 'graph': {
-            const photo = await requestService.post(searchURL, {
-              data: rows,
-              action: actionName,
-            }, {
-              'content-type': 'image/png'
-            }, null);
-            await bot.sendPhoto(this.message.chat.id, Buffer.from(photo), {
-              caption: dialogResultInner.fulfillmentText,
-            }, {
-              filename: 'graph',
-              contentType: 'image/png',
-            });
-            break;
-          }
-          default: {
-            // todo показать текстом с пагинацией
-            // todo задать вопрос насчет сортировки asc/desc
-            await this.showMessageByOne();
-            break;
-          }
+    // start todo это в рекурсию
+    if (dialogResult.diagnosticInfo && dialogResult.diagnosticInfo.fields.end_conversation) {
+      await this.showResult(dialogResult);
+    } else {
+      const { message_id } = await bot.sendMessage(this.message.chat.id, dialogResult.fulfillmentText, {
+        reply_markup: {
+          force_reply: true,
         }
-      } catch (error) {
-        logger.error(error);
-        await bot.sendMessage(this.message.chat.id, `Ассистент ${intentName} недоступен`);
-      }
-    });
+      });
+      bot.onReplyToMessage(this.message.chat.id, message_id, async ({ text }) => {
+        const dialogResultInner = await dialogService.search(text, this.uuid);
+        await this.showResult(dialogResultInner);
+      });
+    }
+    // end
   }
+  // @deprecated
   async showMessageByOne() {
     const generatorResult = this._searchGenerator.next();
     if (generatorResult.done || !generatorResult.value) {

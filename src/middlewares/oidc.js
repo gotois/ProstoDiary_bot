@@ -25,9 +25,9 @@ const oidc = new Provider(SERVER.HOST, {
   ],
 
   // jwks, // todo add
-  // formats: {
-  //   AccessToken: 'jwt',
-  // },
+  formats: {
+    AccessToken: 'jwt',
+  },
 
   // This interface is required by oidc-provider
   // todo This would ideally be just a check whether the account is still in your storage

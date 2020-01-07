@@ -112,11 +112,28 @@ skipTestForFastOrTravis('foursquare', require('./foursquare-service.test'));
 // urls
 skipTestForFastOrTravis('/id/', require('./json-ld.test'));
 
+test('dictionary', async t => {
+  const dictionary = require('../../src/lib/dictionary');
+  const { def } = await dictionary({ text: 'eat'});
+
+  const synonyms = [];
+  for (const d of def) {
+    synonyms.push(d.tr[0].text);
+
+    d.tr[0].syn.forEach(syn => {
+      synonyms.push(syn.text);
+    });
+  }
+
+  t.true(Array.isArray(synonyms));
+});
+
 test('language service', async t => {
   const languageService = require('../../src/services/nlp.service');
 
-  const { entities, language } = await languageService.analyzeEntities('я поел салат');
-  const { tokens } = await languageService.analyzeSyntax('я поел салат')
+  const analyzedEntities = await languageService.analyzeEntities('я поел салат');
+  const { entities, language } = analyzedEntities;
+  const { tokens } = await languageService.analyzeSyntax('я поел салат');
 
   t.is(!!entities, true);
   t.is(!!language, true);

@@ -45,8 +45,8 @@ const telegram = {
   SEARCH: {
     event: 'search.event',
     // todo добавить еще сценарий когда пользователь вводить вопрос в конце предложения `?`
-    alias: /^бот|bot(\s)/,
-    description: 'Бот список вхождения `String | RegExp`',
+    alias: /^бот|bot(\s)|\?$/,
+    description: 'Бот список вхождения?',
   },
   SIGNIN: {
     event: 'signin.event',
@@ -65,6 +65,8 @@ const telegram = {
   },
   TEXT: {
     event: 'text.event',
+    // todo. правильным будет сделать если на конце будет точка, тогда записывать предложение боту
+    //  todo если будет восклицательный знак, значит это поручение выполнить боту
     alias: /^\/$/,
     description: '',
   },
