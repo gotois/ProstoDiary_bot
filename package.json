@@ -115,7 +115,7 @@
     "jsonld": "2.0.1",
     "jsqr": "1.2.0",
     "mailparser": "2.7.7",
-    "music-metadata": "5.4.3",
+    "music-metadata": "6.1.1",
     "node-telegram-bot-api": "0.40.0",
     "oidc-provider": "6.18.0",
     "openpgp": "4.7.2",
