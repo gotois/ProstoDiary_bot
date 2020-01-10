@@ -79,8 +79,31 @@ const detect = async (rawMessage, uid) => {
   return responses[0].queryResult;
 };
 
+/**
+ * @param {Buffer} audio - audio buffer
+ * @param {object} audioConfig - dialogflow audio config
+ * @param {string} uid - uid session
+ * @returns {Promise<*>}
+ */
+const detectAudio = async (audio, audioConfig, uid) => {
+  const sessionClient = new dialogflow.SessionsClient({
+    credentials: DIALOGFLOW.CREDENTIALS,
+  });
+  const sessionPath = sessionClient.sessionPath('prostodiary', uid);
+  const request = {
+    session: sessionPath,
+    queryInput: {
+      audioConfig: audioConfig,
+    },
+    inputAudio: audio,
+  };
+  const responses = await sessionClient.detectIntent(request);
+  return responses[0].queryResult;
+};
+
 module.exports = {
-  detect,
+  detect, // todo rename detectText
+  detectAudio,
   search,
 
   formatQuery,

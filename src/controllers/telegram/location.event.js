@@ -10,7 +10,7 @@ class Location extends TelegramBotRequest {
     const locationGeo = new AbstractGeo({ latitude, longitude });
     const locationGeoJSON = await locationGeo.commit();
     const result = await this.request('post', {
-      text: JSON.stringify(locationGeoJSON.geo),
+      text: JSON.stringify(locationGeoJSON.geo), // todo это поле уже не используется
       mime: 'application/vnd.geo+json',
       date: this.message.date,
       from: {

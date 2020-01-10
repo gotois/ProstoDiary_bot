@@ -8,7 +8,7 @@ class Document extends TelegramBotRequest {
     await super.beginDialog();
     const fileBuffer = await getTelegramFile(this.message.document.file_id);
     const result = await this.request('post', {
-      file: fileBuffer,
+      file: fileBuffer, // todo это поле уже не используется
       mime: this.message.document.mime_type,
       date: this.message.date,
       from: {
