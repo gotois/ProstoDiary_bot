@@ -28,7 +28,7 @@ const getTextFromStories = (stories) => {
       return accumulator;
     }, '')
     .trim();
-  return Buffer.from(data, 'utf8')
+  return Buffer.from(data, 'utf8');
 };
 /**
  * @description backup
@@ -63,8 +63,8 @@ module.exports = async function(requestObject, { passport } = {}) {
   const txtPack = await pack([
     {
       buffer: getTextFromStories(stories),
-      filename: `backup_${date}.txt`
-    }
+      filename: `backup_${date}.txt`,
+    },
   ]);
   await mail.send({
     from: package_.author.email,

@@ -1,5 +1,5 @@
 const languageService = require('../../services/nlp.service');
-const Abstract = require('./index');
+const Abstract = require('.');
 
 class AbstractText extends Abstract {
   constructor(data) {

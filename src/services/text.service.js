@@ -185,6 +185,7 @@ const prepareText = async (requestObject) => {
   let subject;
   // Автоматическое исправление опечаток
   const correction = await correctionText(text);
+  // todo: если текст большой, нужно обрабатывать отдельно каждое предложение которое заканчивается знаками (.) и впоследствии мержить их в один space
   if (correction.length <= 256) {
     const fakeText = FakerText.text(correction);
     try {

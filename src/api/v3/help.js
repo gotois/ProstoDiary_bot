@@ -8,6 +8,7 @@ const { telegram } = require('../../controllers');
  * @returns {Promise<string>}
  */
 module.exports = function(parameters) {
+  // eslint-disable-next-line
   const { user } = parameters;
   const helpData = Object.entries(telegram).reduce(
     (accumulator, [command, object]) => {

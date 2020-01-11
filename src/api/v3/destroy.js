@@ -4,7 +4,9 @@
  * @param {object} requestObject - requestObject
  * @returns {Promise<string>}
  */
-module.exports = async (requestObject) => {
+module.exports = (requestObject) => {
+  // eslint-disable-next-line
+  requestObject;
   // TODO
   //  ...
   return Promise.resolve('Данные очищены');

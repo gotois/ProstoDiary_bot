@@ -6,14 +6,7 @@
 /SQL
 *.sh
 ava.config.js
-# fixme
+# todo remove when eslint supports private params
 src/models/
 src/controllers/telegram/telegram-bot-request.js
 tests/
-src/api/v3/search.js
-src/api/v3/signout.js
-src/api/v3/backup.js
-src/api/v3/destroy.js
-src/api/v3/help.js
-src/api/v3/ping.js
-src/controllers/telegram/search.event.js

@@ -1,5 +1,5 @@
 const parser = require('fast-xml-parser');
-const Content = require('./index');
+const Content = require('.');
 const { unpack } = require('../../services/archive.service');
 
 // html, xml, json и пр

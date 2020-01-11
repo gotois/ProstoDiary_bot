@@ -1,12 +1,12 @@
 class Content {
   constructor({
-                content,
-                contentType,
-                emailMessageId,
-                telegramMessageId,
-                schema,
-                tags = [],
-              }) {
+    content,
+    contentType,
+    emailMessageId,
+    telegramMessageId,
+    schema,
+    tags = [],
+  }) {
     this.content = Buffer.from(content); // rename raw
     this.contentType = contentType;
     this.emailMessageId = emailMessageId;

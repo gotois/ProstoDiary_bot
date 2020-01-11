@@ -41,8 +41,9 @@ class TelegramBotRequest {
     logger.info('telegram:' + instanceProto.constructor.name);
   }
   /**
-   * @param {RequestObject|NotificationObject} requestObject - requestObject
-   * @returns {Promise<*>}
+   * @param {string} method - api method
+   * @param {array} params - api params
+   * @returns {Promise<string>}
    */
   async request(method, params = []) {
     logger.info('request:' + method);

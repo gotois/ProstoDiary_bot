@@ -1,10 +1,11 @@
--- эти категории должны быть продублированы в Search ассистенте в Dialogflow Intents
-CREATE TYPE CATEGORY AS ENUM (
+-- категории поддерживаемый черзе словарь schema.org (должны быть продублированы в Search ассистенте в Dialogflow Intents)
+CREATE TYPE SCHEMA AS ENUM (
 'undefined',
 'text',
 'video',
 'photo',
 'location',
+'search',
 'script',
 'weather',
 'todo',

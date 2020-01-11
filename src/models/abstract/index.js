@@ -1,7 +1,7 @@
 const { publisher } = require('../../../package');
 
 class Abstract {
-  constructor (data) {
+  constructor(data) {
     // this.storyId = data.storyId;
     // this.contentId = data.contentId;
     // this.category = data.category;
@@ -21,11 +21,11 @@ class Abstract {
   get jurisdiction() {
     return JSON.stringify([
       {
-        'publisher': publisher,
-        'coding': [
+        publisher: publisher,
+        coding: [
           {
-            'system': 'urn:iso:std:iso:3166',
-            'code': 'GB',
+            system: 'urn:iso:std:iso:3166',
+            code: 'GB',
             // "display": "United Kingdom of Great Britain and Northern Ireland (the)"
           },
         ],
@@ -35,8 +35,7 @@ class Abstract {
   /**
    * @override
    */
-  async prepare() {
-  }
+  async prepare() {}
 }
 
 module.exports = Abstract;

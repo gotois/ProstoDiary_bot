@@ -1,5 +1,5 @@
 const { unpack } = require('../../services/archive.service');
-const Content = require('./index');
+const Content = require('.');
 
 // zip, gzip, rar,  ..
 class ContentArchive extends Content {

@@ -29,11 +29,14 @@ class Search extends TelegramBotRequest {
 
     this.uuid = uuidv1();
   }
-  async showResult (dialogResultInner) {
+  async showResult(dialogResultInner) {
     logger.info('dialogResultInner', dialogResultInner);
     let category;
     // пример: 'health', 'graph'
-    const [intentName, actionName] = dialogResultInner.action.toLowerCase().split('.');
+    const [
+      intentName,
+      actionName,
+    ] = dialogResultInner.action.toLowerCase().split('.');
 
     if (intentName) {
       category = intentName;
@@ -46,7 +49,7 @@ class Search extends TelegramBotRequest {
     const synonyms = [];
     for (const d of def) {
       synonyms.push(d.tr[0].text);
-      d.tr[0].syn.forEach(syn => {
+      d.tr[0].syn.forEach((syn) => {
         synonyms.push(syn.text);
       });
     }
@@ -54,40 +57,55 @@ class Search extends TelegramBotRequest {
     // todo валидировать параметры (dialogResult.parameters) и на основе них формировать лучшую выборку
     const rows = await pool.connect(async (connection) => {
       const result = await connection.many(
-        storyQueries.selectCategories(synonyms)
+        storyQueries.selectCategories(synonyms),
       );
       return result;
     });
     // todo ссылки на ассистента должны браться из БД по oidc client_id
     // бот отправляет ассистенту необработанные табличные данные JSON rows посредством HTTP POST
-    const searchURL = IS_PRODUCTION ?
-      'https://us-central1-prostodiary.cloudfunctions.net/xxx' :
-      'http://localhost:5000/prostodiary/us-central1/xxx';
+    const searchURL = IS_PRODUCTION
+      ? 'https://us-central1-prostodiary.cloudfunctions.net/xxx'
+      : 'http://localhost:5000/prostodiary/us-central1/xxx';
     try {
       switch (actionName) {
         // для графика
         case 'graph': {
-          const photo = await requestService.post(searchURL, {
-            data: rows,
-            action: actionName,
-          }, {
-            'content-type': 'image/png'
-          }, null);
-          await bot.sendPhoto(this.message.chat.id, Buffer.from(photo), {
-            caption: dialogResultInner.fulfillmentText,
-          }, {
-            filename: 'graph',
-            contentType: 'image/png',
-          });
+          const photo = await requestService.post(
+            searchURL,
+            {
+              data: rows,
+              action: actionName,
+            },
+            {
+              'content-type': 'image/png',
+            },
+            null,
+          );
+          await bot.sendPhoto(
+            this.message.chat.id,
+            Buffer.from(photo),
+            {
+              caption: dialogResultInner.fulfillmentText,
+            },
+            {
+              filename: 'graph',
+              contentType: 'image/png',
+            },
+          );
           break;
         }
         default: {
-          const text = await requestService.post(searchURL, {
-            data: rows,
-            action: 'table',
-          }, {
-            // 'content-type': 'image/png' // todo использовать plain text или markdown для таблиц
-          }, null);
+          const text = await requestService.post(
+            searchURL,
+            {
+              data: rows,
+              action: 'table',
+            },
+            {
+              // 'content-type': 'image/png' // todo использовать plain text или markdown для таблиц
+            },
+            null,
+          );
           // todo показать текстом с пагинацией
           // todo задать вопрос насчет сортировки asc/desc
           // ...
@@ -106,33 +124,53 @@ class Search extends TelegramBotRequest {
       }
     } catch (error) {
       logger.error(error);
-      await bot.sendMessage(this.message.chat.id, `Ассистент ${intentName} недоступен`);
+      await bot.sendMessage(
+        this.message.chat.id,
+        `Assistant ${intentName} unavailable`,
+      );
     }
   }
   async beginDialog() {
     await super.beginDialog();
     logger.info(`Поиск ${this.message.text}`);
 
-    const dialogResult = await dialogService.search(this.message.text, this.uuid);
-    if (dialogResult.intent.displayName === 'Unknown' || !dialogResult.outputContexts) {
+    const dialogResult = await dialogService.search(
+      this.message.text,
+      this.uuid,
+    );
+    if (
+      dialogResult.intent.displayName === 'Unknown' ||
+      !dialogResult.outputContexts
+    ) {
       logger.warn('undefined intent: ' + dialogResult.queryText);
       await bot.sendMessage(this.message.chat.id, dialogResult.fulfillmentText);
       return;
     }
 
-    // start todo это в рекурсию
-    if (dialogResult.diagnosticInfo && dialogResult.diagnosticInfo.fields.end_conversation) {
+    // start todo это в рекурсивную функцию
+    if (
+      dialogResult.diagnosticInfo &&
+      dialogResult.diagnosticInfo.fields.end_conversation
+    ) {
       await this.showResult(dialogResult);
     } else {
-      const { message_id } = await bot.sendMessage(this.message.chat.id, dialogResult.fulfillmentText, {
-        reply_markup: {
-          force_reply: true,
-        }
-      });
-      bot.onReplyToMessage(this.message.chat.id, message_id, async ({ text }) => {
-        const dialogResultInner = await dialogService.search(text, this.uuid);
-        await this.showResult(dialogResultInner);
-      });
+      const { message_id } = await bot.sendMessage(
+        this.message.chat.id,
+        dialogResult.fulfillmentText,
+        {
+          reply_markup: {
+            force_reply: true,
+          },
+        },
+      );
+      bot.onReplyToMessage(
+        this.message.chat.id,
+        message_id,
+        async ({ text }) => {
+          const dialogResultInner = await dialogService.search(text, this.uuid);
+          await this.showResult(dialogResultInner);
+        },
+      );
     }
     // end
   }
@@ -152,15 +190,11 @@ class Search extends TelegramBotRequest {
         ],
       };
     }
-    await bot.sendMessage(
-      this.message.chat.id,
-      generatorResult.value,
-      {
-        disable_web_page_preview: true,
-        parse_mode: 'Markdown',
-        reply_markup: replyMarkup,
-      },
-    );
+    await bot.sendMessage(this.message.chat.id, generatorResult.value, {
+      disable_web_page_preview: true,
+      parse_mode: 'Markdown',
+      reply_markup: replyMarkup,
+    });
   }
 }
 /**
