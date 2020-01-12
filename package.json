@@ -103,7 +103,7 @@
     "express-session": "1.17.0",
     "express-winston": "4.0.2",
     "eyo-kernel": "2.5.6",
-    "fast-xml-parser": "3.15.1",
+    "fast-xml-parser": "3.16.0",
     "file-type": "13.0.3",
     "franc": "4.1.1",
     "grant-express": "4.6.6",
