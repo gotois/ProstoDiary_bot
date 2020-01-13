@@ -9,4 +9,6 @@ plugins:
 
 exclude_patterns:
   - docs/
+  - data/
+  - SQL/
   - tests/**/*

@@ -40,6 +40,7 @@
     "prepare": "if [ \"$NODE_ENV\" = \"TRAVIS_CI\" ]; then echo skip prepare script; else npm run snyk-protect; fi",
     "snyk-protect": "snyk protect"
   },
+  "engineStrict" : true,
   "engines": {
     "node": "12.x",
     "npm": "6.x"
