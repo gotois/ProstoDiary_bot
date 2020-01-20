@@ -11,7 +11,8 @@ class AbstractWeather extends Abstract {
     this.#latlng = latlng;
   }
 
-  // todo взять какой-нибудь стандарт выдачи погоды
+  // todo переделать под schema.org
+  //  https://github.com/schemaorg/schemaorg/issues/362#issuecomment-154098889
   get context() {
     return {
       ...super.context,

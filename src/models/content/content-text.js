@@ -28,7 +28,7 @@ class ContentText extends Content {
     const categories = new Set();
     tokens.forEach(token => {
       if (token.partOfSpeech.tag === 'VERB') {
-        categories.add(token.lemma); // fixme здесь использовать существительное
+        categories.add(token.lemma); // fixme здесь использовать существительное tag === 'NOUN'
       }
     });
 

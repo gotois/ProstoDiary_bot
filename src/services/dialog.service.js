@@ -2,6 +2,14 @@ const dialogflow = require('dialogflow');
 const { DIALOGFLOW } = require('../environment');
 const { detectLang } = require('./nlp.service');
 
+const formatParameters = (dialogflowResult) => {
+  const { fields } = dialogflowResult.parameters;
+  const values = Object.keys(fields).reduce((accumulator, field) => {
+    accumulator[field] = fields[field][fields[field].kind];
+    return accumulator;
+  }, {});
+  return values;
+};
 /**
  * @param {string} query - query
  * @returns {string}
@@ -53,6 +61,8 @@ const search = async (rawMessage, uid) => {
   return responses[0].queryResult;
 };
 /**
+ * Детектируем actions
+ *
  * @example 'купил овощи 30 рублей';
  * @description получаем и разбираем Intent (если есть)
  * @param {string} rawMessage - raw message
@@ -107,4 +117,5 @@ module.exports = {
   search,
 
   formatQuery,
+  formatParameters,
 };

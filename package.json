@@ -40,7 +40,7 @@
     "prepare": "if [ \"$NODE_ENV\" = \"TRAVIS_CI\" ]; then echo skip prepare script; else npm run snyk-protect; fi",
     "snyk-protect": "snyk protect"
   },
-  "engineStrict" : true,
+  "engineStrict": true,
   "engines": {
     "node": "12.x",
     "npm": "6.x"
@@ -123,6 +123,7 @@
     "openweather-apis": "4.1.0",
     "qrcode": "1.4.4",
     "qs": "6.9.1",
+    "schema.org": "3.1.1",
     "slonik": "21.4.2",
     "snyk": "^1.277.3",
     "speakeasy": "2.0.0",

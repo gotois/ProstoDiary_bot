@@ -5,6 +5,9 @@ const jsonld = require('jsonld');
  * @returns {Promise<*>}
  */
 const toRDF = async (compacted) => {
+  if (!compacted) {
+    throw new Error('Empty compacted');
+  }
   const nquads = await jsonld.toRDF(compacted, {
     format: 'application/n-quads',
   });
@@ -20,7 +23,16 @@ const fromRDF = async (nquads) => {
   return data;
 };
 
+const canonize = async (document) => {
+  const canonized = await jsonld.canonize(document, {
+    algorithm: 'URDNA2015',
+    format: 'application/n-quads',
+  });
+  return canonized;
+};
+
 module.exports = {
   toRDF,
   fromRDF,
+  canonize,
 };
