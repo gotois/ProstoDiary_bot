@@ -36,3 +36,6 @@ patch:
   SNYK-JS-TREEKILL-536781:
     - snyk > snyk-sbt-plugin > tree-kill:
         patched: '2019-12-11T21:03:59.520Z'
+  'npm:lodash:20180130':
+    - jsonld-signatures > bitcore-message > bitcore-lib > lodash:
+        patched: '2020-01-25T16:42:25.546Z'
