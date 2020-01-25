@@ -128,7 +128,7 @@
     "snyk": "^1.277.3",
     "speakeasy": "2.0.0",
     "uuid": "3.4.0",
-    "validator": "12.1.0",
+    "validator": "12.2.0",
     "winston": "3.2.1",
     "yauzl": "2.10.0"
   },
