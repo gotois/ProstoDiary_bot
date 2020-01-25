@@ -13,26 +13,25 @@ module.exports = async (request, response, next) => {
       const userTable = await connection.maybeOne(
         passportQueries.selectUserById(botTable.passport_id),
       );
+      // fixme: эти данные надо расширить до паспорта целиком (userEmail, botEmail, activated...)
       return {
-        id: userTable.id, // todo rename userId
+        id: userTable.id,
         userEmail: userTable.email,
       };
     });
     if (!gotoisCredentions) {
       return response.sendStatus(401).send('401 Unauthorized');
     }
-    jsonrpc.server.call(
-      request.body,
-      {
-        passport: gotoisCredentions,
-      },
-      (error, result) => {
-        if (error) {
-          return response.status(500).json(error);
-        }
-        return response.send(result);
-      },
-    );
+    try {
+      const result = await jsonrpc.rpcRequest(
+        request.body.method,
+        request.body.params,
+        gotoisCredentions,
+      );
+      return response.send(result);
+    } catch (error) {
+      return response.status(500).json(error);
+    }
   } catch (error) {
     next(error);
   }

@@ -7,63 +7,6 @@ const twoFactorAuthService = require('../../services/2fa.service');
 const oauthService = require('../../services/oauth.service');
 const passportQueries = require('../../db/passport');
 const cryptService = require('../../services/crypt.service');
-// const ldQueries = require('../../db/ld');
-/**
- * @description Регистрация письма
- * @param {*} transactionConnection - transactionConnection
- * @param {object} passport - passport
- * @param {uid} passport.id - passport uid
- * @param {string} passport.email - passport email
- */
-const registration = async (transactionConnection, passport) => {
-  const secret = await twoFactorAuthService.generateUserSecret({
-    name: package_.name,
-    symbols: true,
-    length: 20,
-  });
-  // на будущее, бот сам следит за своей почтой, периодически обновляя пароли. Пользователя вообще не касается что данные сохраняются у него в почте
-  const { email, password, uid } = await pddService.createYaMail(passport.id);
-  try {
-    // todo нужно сохранять ключи в БД
-    // eslint-disable-next-line no-unused-vars
-    const { publicKey, privateKey } = await cryptService.generateRSA();
-    await transactionConnection.query(
-      passportQueries.createBot({
-        passportId: passport.id,
-        email,
-        uid,
-        password,
-        secret,
-      }),
-    );
-    await mail.send({
-      to: passport.email,
-      from: email,
-      subject: `Passport ${package_.name}`,
-      html: `
-        <h1>Добро пожаловать в систему ${package_.author.name}!</h1>
-        <h2>Шаг 1: Настройте двухфакторную аутентификацию.</h2>
-        <p>Используйте камеру для распознавания QR-кода в приложении для двухэтапной аутентификации, например, Google Authenticator.</p>
-        <img src="${secret.qr}" alt="${secret.base32}">
-        <br>
-        <h2>Шаг 2: Запомните ваши ключи.</h2>
-        <h3>Сохраните секретный ключ рекавери</h3>
-        <p>Сохраните ваш секретный ключ в надежном и секретном месте оффлайн: 
-          <strong>${secret.masterPassword}</strong>
-        </p>
-        <h3>Сохраните открытый ключ SSL</h3>
-        <p>${JSON.stringify(publicKey)}</p>
-        <br>
-        <h2>Шаг 3: Активируйте бота.</h2>
-        <p>Пришлите <a href="https://prosto-diary.gotointeractive.com/">ProstoDiary_bot</a> сгенерированный токен от двухфакторной аутентификации.</p>
-      `,
-    });
-  } catch (error) {
-    await pddService.deleteYaMail(uid);
-    logger.error(error);
-    throw error;
-  }
-};
 /**
  * @param {*} transactionConnection - transactionConnection
  * @param {object} oauth - oauth providers
@@ -88,7 +31,7 @@ const getPassport = async (
  * @param {object} oauth - oauth providers
  * @returns {Promise<*>}
  */
-const updatePassport = async (
+const updateOauthPassport = async (
   transactionConnection,
   { telegram, yandex, facebook },
 ) => {
@@ -126,10 +69,10 @@ const updatePassport = async (
   return passportTable;
 };
 /**
- * @param {*} transactionConnection
+ * @param {*} transactionConnection - sql transaction
  * @param {object} oauth - oauth providers
  */
-const createPassport = async (
+const createOauthPassport = async (
   transactionConnection,
   { yandex = {}, facebook = {}, telegram = {} },
 ) => {
@@ -164,14 +107,81 @@ const createPassport = async (
       yandexSession: yandex.raw,
     }),
   );
-  await registration(transactionConnection, passport);
+
+  // Регистрация письма
+
+  const secret = await twoFactorAuthService.generateUserSecret({
+    name: package_.name,
+    symbols: true,
+    length: 20,
+  });
+  // на будущее, бот сам следит за своей почтой, периодически обновляя пароли. Пользователя вообще не касается что данные сохраняются у него в почте
+  const { email, password, uid } = await pddService.createYaMail(passport.id);
+  try {
+    const { publicKey, privateKey } = await cryptService.generateRSA();
+    await transactionConnection.query(
+      passportQueries.createBot({
+        passportId: passport.id,
+        email,
+        emailUID: uid,
+        emailPassword: password,
+        secretKey: secret.base32,
+        masterPassword: secret.masterPassword,
+        publicKeyCert: Buffer.from(publicKey),
+        privateKeyCert: Buffer.from(privateKey),
+      }),
+    );
+    // использовать v3/notify здесь не получится из-за того что только здесь насыщается passport
+    await mail.send({
+      to: passport.email,
+      from: email,
+      subject: `Passport ${package_.name}`,
+      html: `
+        <h1>Добро пожаловать в систему ${package_.author.name}!</h1>
+        <h2>Шаг 1: Настройте двухфакторную аутентификацию.</h2>
+        <p>Используйте камеру для распознавания QR-кода в приложении для двухэтапной аутентификации, например, Google Authenticator.</p>
+        <img src="${secret.qr}" alt="${secret.base32}">
+        <br>
+        <h2>Шаг 2: Сохраните ваш мастер ключ.</h2>
+        <p>Сохраните ваш секретный ключ в надежном и секретном месте оффлайн:
+          <strong>${secret.masterPassword}</strong>
+        </p>
+        <h3>Сохраните открытые и закрытые ключи SSL</h3>
+        <p>Находятся в атачменте</p>
+        <br>
+        <h2>Шаг 3: Активируйте бота.</h2>
+        <p>Пришлите <a href="https://prosto-diary.gotointeractive.com/">ProstoDiary_bot</a> сгенерированный токен от двухфакторной аутентификации.</p>
+      `,
+      attachments: [
+        {
+          content: publicKey.toString('base64'),
+          filename: 'public_key.pem',
+          type: 'text/plain',
+          disposition: 'attachment',
+        },
+        {
+          content: privateKey.toString('base64'),
+          filename: 'private_key.pem',
+          type: 'text/plain',
+          disposition: 'attachment',
+        },
+      ],
+    });
+  } catch (error) {
+    await pddService.deleteYaMail(uid);
+    logger.error(error);
+    throw error;
+  }
 };
 /**
  * @description Обновление данных паспорта
  * @param {object} requestObject - request object
+ * @param {object} passport - passport gotoisCredentions
  * @returns {Promise<string>}
  */
-module.exports = async function(requestObject) {
+module.exports = async function(requestObject, { passport }) {
+  // eslint-disable-next-line
+  passport;
   const { yandex, facebook, telegram } = requestObject;
   if (!yandex && !facebook && !telegram) {
     throw new Error('Unknown provider oauth');
@@ -181,7 +191,7 @@ module.exports = async function(requestObject) {
       const transactionResult = await connection.transaction(
         async (transactionConnection) => {
           try {
-            await updatePassport(transactionConnection, {
+            await updateOauthPassport(transactionConnection, {
               telegram,
               yandex,
               facebook,
@@ -189,7 +199,7 @@ module.exports = async function(requestObject) {
             return 'Вы успешно обновили данные своего паспорта.';
           } catch (error) {
             if (error instanceof NotFoundError) {
-              await createPassport(transactionConnection, {
+              await createOauthPassport(transactionConnection, {
                 telegram,
                 yandex,
                 facebook,

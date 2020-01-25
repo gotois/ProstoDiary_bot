@@ -3,6 +3,8 @@ const { IS_AVA_OR_CI } = require('../../environment');
 const { mail } = require('../../lib/sendgrid');
 const logger = require('../../services/logger.service');
 /**
+ * Нотификация боту. Текст нечитаем для пользователя
+ *
  * @description Отправляем сообщение. Попадает на почту на специально сгенерированный ящик gotois и после прочтения ботом удаляем
  * @param {object} requestObject - requestObject
  * @returns {Promise<string>}

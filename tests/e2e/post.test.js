@@ -11,6 +11,7 @@ module.exports = async (t) => {
   // END
 
   {
+    // fixme переделать на jsonrpc.rpcRequest
     const { error, result } = await client.request('post', {
       text: 'поел салат с сыром',
       mime: 'plain/text',

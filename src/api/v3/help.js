@@ -9,7 +9,7 @@ const { telegram } = require('../../controllers');
  */
 module.exports = function(parameters) {
   // eslint-disable-next-line
-  const { user } = parameters;
+  parameters;
   const helpData = Object.entries(telegram).reduce(
     (accumulator, [command, object]) => {
       if (object.description.length === 0) {

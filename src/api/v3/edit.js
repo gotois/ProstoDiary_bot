@@ -6,9 +6,12 @@ const UserStory = require('../../models/story/user-story');
  *
  * @description edit
  * @param {object} requestObject - requestObject
+ * @param {object} passport - passport gotoisCredentions
  * @returns {Promise<string>}
  */
-module.exports = async function(requestObject) {
+module.exports = async function(requestObject, { passport }) {
+  // eslint-disable-next-line
+  passport;
   const { text, date, message_id, telegram_user_id } = requestObject;
   //fixme манипулировать Абстрактом, а не UserStory
   logger.log('warn', '!!!!!!!!!!');

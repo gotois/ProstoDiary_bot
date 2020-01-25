@@ -1,5 +1,3 @@
-const package_ = require('../../../package');
-const { mail } = require('../../lib/sendgrid');
 const { pool } = require('../../core/database');
 const { pack } = require('../../services/archive.service');
 const twoFactorAuthService = require('../../services/2fa.service');
@@ -33,17 +31,16 @@ const getTextFromStories = (stories) => {
 /**
  * @description backup
  * @param {object} requestObject - requestObject
- * @param {?object} passport - passport gotois
+ * @param {object} passport - passport gotoisCredentions
  * @returns {Promise<string>}
  */
-module.exports = async function(requestObject, { passport } = {}) {
+module.exports = async function(requestObject, { passport }) {
   const { date, token, sorting = 'ASC' } = requestObject;
-  const passportId = requestObject.passportId || passport.id;
   let stories;
   try {
     stories = await pool.connect(async (connection) => {
       const botTable = await connection.one(
-        passportQueries.selectByPassport(passportId),
+        passportQueries.selectByPassport(passport.id),
       );
       const valid = twoFactorAuthService.verifyUser(botTable.secret_key, token);
       if (!valid) {
@@ -66,21 +63,28 @@ module.exports = async function(requestObject, { passport } = {}) {
       filename: `backup_${date}.txt`,
     },
   ]);
-  await mail.send({
-    from: package_.author.email,
-    to: passport.userEmail,
-    subject: 'Backup ProstoDiary',
-    html: `
+  // пример вызова API метода из другого
+  try {
+    await this._methods.notify.handler(
+      {
+        provider: 'mailto',
+        subject: 'Backup ProstoDiary',
+        html: `
       <h1>Your story backup</h1>
     `,
-    attachments: [
-      {
-        content: txtPack.toString('base64'),
-        filename: 'backup.zip',
-        type: 'application/zip',
-        disposition: 'attachment',
+        attachments: [
+          {
+            content: txtPack.toString('base64'),
+            filename: 'backup.zip',
+            type: 'application/zip',
+            disposition: 'attachment',
+          },
+        ],
       },
-    ],
-  });
-  return 'Данные успешно отправлены на вашу почту';
+      { passport },
+    );
+    return 'Данные успешно отправлены на вашу почту';
+  } catch (error) {
+    return Promise.reject(this.error(400, error.message));
+  }
 };

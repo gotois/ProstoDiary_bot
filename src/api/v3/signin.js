@@ -5,19 +5,18 @@ const twoFactorAuthService = require('../../services/2fa.service');
 /**
  * @description Авторизация и разблокировка чтения/приема и общей работы бота
  * @param {object} requestObject - params
- * @param {string} requestObject.passportId - passport id
- * @param {string} requestObject.token - two auth generated token
+ * @param {object} passport - passport gotoisCredentions
  * @returns {Promise<string>}
  */
-module.exports = async function(requestObject) {
-  const { passportId, token } = requestObject;
+module.exports = async function(requestObject, { passport }) {
+  const { token } = requestObject;
   if (!token) {
     return Promise.reject(this.error(400, 'Unknown token argument'));
   }
   const signInResult = await pool.connect(async (connection) => {
     try {
       const botTable = await connection.one(
-        passportQueries.selectByPassport(passportId),
+        passportQueries.selectByPassport(passport.id),
       );
       const valid = twoFactorAuthService.verifyUser(botTable.secret_key, token);
       if (!valid) {
@@ -28,7 +27,7 @@ module.exports = async function(requestObject) {
       if (botTable.activated) {
         return 'Бот уже был активирован';
       }
-      await connection.query(passportQueries.activateByPassportId(passportId));
+      await connection.query(passportQueries.activateByPassportId(passport.id));
       return 'Бот активирован';
     } catch (error) {
       logger.error(error.message);

@@ -6,7 +6,7 @@ for (const api of [
   'signout',
   'oauth',
   'help',
-  // 'notify',
+  'notify',
   'ping',
   'post',
   // 'remove',

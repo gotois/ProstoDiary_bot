@@ -3,14 +3,14 @@ const passportQueries = require('../../db/passport');
 /**
  * @description блокировки чтения/приема и общей работы бота
  * @param {object} requestObject - requestObject
+ * @param {object} passport - passport gotoisCredentions
  * @returns {Promise<string>}
  */
-module.exports = async function(requestObject) {
-  const { passportId } = requestObject;
+module.exports = async function(requestObject, { passport }) {
   const signOutResult = await pool.connect(async (connection) => {
     try {
       const botTable = await connection.one(
-        passportQueries.selectByPassport(passportId),
+        passportQueries.selectByPassport(passport.id),
       );
       if (!botTable.activated) {
         return 'Бот уже был деактивирован';
@@ -18,7 +18,7 @@ module.exports = async function(requestObject) {
       // todo: деактивировать почтовый ящик https://yandex.ru/dev/pdd/doc/reference/email-edit-docpage/
       //  ...
       await connection.query(
-        passportQueries.deactivateByPassportId(passportId),
+        passportQueries.deactivateByPassportId(passport.id),
       );
       return 'Бот деактивирован';
     } catch (error) {

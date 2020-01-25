@@ -1,8 +1,10 @@
+// @deprecated
 module.exports = async (t) => {
   t.timeout(10000);
   const { client } = require('../../src/core/jsonrpc');
 
   {
+    // fixme переделать на jsonrpc.rpcRequest
     const { result } = await client.request('post', {
       // eslint-disable-next-line sql/no-unsafe-query
       buffer: Buffer.from(`INSERT INTO user_story (salt) VALUES (${'123'})`),

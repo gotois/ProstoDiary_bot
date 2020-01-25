@@ -76,20 +76,50 @@ WHERE
     passport_id = ${passportId}
 `;
   },
-  createBot({ passportId, email, uid, password, secret }) {
+  /**
+   * @param {object} obj - bot object
+   * @param {uid} obj.passportId - passport ID
+   * @param {string} obj.email - email
+   * @param {uid} obj.emailUID - email id
+   * @param {string} obj.emailPassword - email password
+   * @param {string} obj.masterPassword - master password
+   * @param {string} obj.secretKey - secret key
+   * @param {buffer} obj.publicKeyCert - public key pem
+   * @param {buffer} obj.privateKeyCert - private key pem
+   * @returns {*}
+   */
+  createBot({
+    passportId,
+    email,
+    emailUID,
+    emailPassword,
+    secretKey,
+    masterPassword,
+    publicKeyCert,
+    privateKeyCert,
+  }) {
     return sql`
 INSERT INTO passport.bot
-    (passport_id, email, email_uid, password, secret_key, master_password)
-VALUES 
-    (${passportId}, ${email}, ${uid}, ${password}, ${secret.base32}, crypt(${secret.masterPassword}, gen_salt('bf', 8)))
+    (passport_id, email, email_uid, email_password, secret_key, master_password, public_key_cert, private_key_cert)
+VALUES
+    (
+    ${passportId},
+    ${email},
+    ${emailUID},
+    ${emailPassword},
+    ${secretKey},
+    crypt(${masterPassword}, gen_salt('bf', 8)),
+    ${publicKeyCert},
+    ${privateKeyCert}
+    )
 `;
   },
   selectIdByTelegramId(telegram_id) {
     return sql`
-SELECT 
+SELECT
     id, email
-FROM 
-    passport.user 
+FROM
+    passport.user
 WHERE telegram_id = ${String(telegram_id)}
 LIMIT 1
     `;
@@ -104,7 +134,7 @@ FROM
   selectAll(telegram_id, yandex_id = null, facebook_id = null) {
     return sql`
 SELECT *
-    FROM 
+    FROM
 passport.user
     WHERE
 telegram_id = ${telegram_id} OR
@@ -161,8 +191,8 @@ INSERT INTO passport.user (
     telegram_id,
     telegram_passport,
     facebook_id,
-    facebook_passport, 
-    facebook_session, 
+    facebook_passport,
+    facebook_session,
     yandex_id,
     yandex_passport,
     yandex_session
@@ -178,7 +208,7 @@ VALUES (
     ${yandexPassport ? sql.json(yandexPassport) : null},
     ${yandexPassport ? sql.json(yandexSession) : null}
 )
-RETURNING 
+RETURNING
     id, email
 `;
   },

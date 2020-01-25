@@ -1,11 +1,7 @@
 /**
  * @description Проверка ping
- * @param {object} parameters - jsonrpc params
- * @param {?object} passport - auth
  * @returns {Promise<string>}
  */
-module.exports = function(parameters, { passport }) {
-  // eslint-disable-next-line
-  passport;
+module.exports = function() {
   return Promise.resolve('pong');
 };

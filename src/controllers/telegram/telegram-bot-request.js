@@ -1,6 +1,5 @@
 const crypto = require('crypto');
-const bot = require('../../core/bot');
-const { client } = require('../../core/jsonrpc');
+const jsonrpc = require('../../core/jsonrpc');
 const logger = require('../../services/logger.service');
 
 class TelegramBotRequest {
@@ -47,12 +46,13 @@ class TelegramBotRequest {
    */
   async request(method, params = []) {
     logger.info('request:' + method);
-    const { error, result } = await client.request(method, params);
-    if (error) {
+    try {
+      const message = await jsonrpc.rpcRequest(method, params, this.message.passport);
+      return message;
+    } catch (error) {
       this.onError(error);
       return error.message;
     }
-    return result;
   }
   /**
    * @override

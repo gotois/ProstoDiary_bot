@@ -19,11 +19,12 @@ module.exports = async (request, response, next) => {
         return {};
       }
       return {
-        id: userTable.id, // todo rename userId
+        id: userTable.id, // todo rename id => userId
         botId: botTable.id,
         userEmail: userTable.email,
         botEmail: botTable.email,
         activated: botTable.activated,
+        telegram_chat_id: userTable.telegram_chat_id,
       };
     });
     const body = {
