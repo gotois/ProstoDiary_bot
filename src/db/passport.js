@@ -86,6 +86,7 @@ WHERE
    * @param {string} obj.secretKey - secret key
    * @param {buffer} obj.publicKeyCert - public key pem
    * @param {buffer} obj.privateKeyCert - private key pem
+   * @param {?string} obj.telegram_chat_id - chat id
    * @returns {*}
    */
   createBot({
@@ -97,10 +98,11 @@ WHERE
     masterPassword,
     publicKeyCert,
     privateKeyCert,
+    chatId = null,
   }) {
     return sql`
 INSERT INTO passport.bot
-    (passport_id, email, email_uid, email_password, secret_key, master_password, public_key_cert, private_key_cert)
+    (passport_id, email, email_uid, email_password, secret_key, master_password, public_key_cert, private_key_cert, telegram_chat_id)
 VALUES
     (
     ${passportId},
@@ -109,8 +111,9 @@ VALUES
     ${emailPassword},
     ${secretKey},
     crypt(${masterPassword}, gen_salt('bf', 8)),
-    ${publicKeyCert},
-    ${privateKeyCert}
+    ${sql.binary(publicKeyCert)},
+    ${sql.binary(privateKeyCert)},
+    ${chatId}
     )
 `;
   },

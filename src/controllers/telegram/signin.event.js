@@ -1,5 +1,5 @@
 const bot = require('../../core/bot');
-const { client } = require('../../core/jsonrpc');
+const jsonrpc = require('../../core/jsonrpc');
 const { pool } = require('../../core/database');
 const TelegramBotRequest = require('./telegram-bot-request');
 const passportQueries = require('../../db/passport');
@@ -12,17 +12,24 @@ class SignIn extends TelegramBotRequest {
    * @returns {Promise<undefined>}
    */
   async signInReplyMessage({ text }) {
-    const passportId = await pool.connect(async (connection) => {
+    const passportTable = await pool.connect(async (connection) => {
       const passportTable = await connection.one(
         passportQueries.selectAll(this.message.from.id),
       );
-      return passportTable.id;
+      return passportTable;
     });
-    const { error } = await client.request('signin', {
-      passportId: passportId,
-      token: text,
-    });
-    if (error) {
+    try {
+      await jsonrpc.rpcRequest(
+        'signin',
+        {
+          token: text,
+          telegram_chat_id: this.message.chat.id,
+        },
+        {
+          ...passportTable,
+        },
+      );
+    } catch (error) {
       await bot.sendMessage(this.message.chat.id, error.message);
       return;
     }

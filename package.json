@@ -114,6 +114,7 @@
     "jayson": "3.2.0",
     "jimp": "0.9.3",
     "jsonld": "2.0.2",
+    "jsonld-signatures": "4.6.0",
     "jsqr": "1.2.0",
     "mailparser": "2.7.7",
     "music-metadata": "6.3.0",

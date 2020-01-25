@@ -25,7 +25,7 @@ const telegram = {
   HELP: {
     event: 'help.event',
     alias: /^\/help|man|помощь$/,
-    description: '',
+    description: 'Помощь',
   },
   LOCATION: {
     event: 'location.event',
@@ -44,24 +44,23 @@ const telegram = {
   },
   SEARCH: {
     event: 'search.event',
-    // todo добавить еще сценарий когда пользователь вводить вопрос в конце предложения `?`
     alias: /^бот|bot(\s)|\?$/,
     description: 'Бот список вхождения?',
   },
   SIGNIN: {
     event: 'signin.event',
     alias: /^\/signin$/,
-    description: '',
+    description: 'Войти в систему',
   },
   SIGNOUT: {
     event: 'signout.event',
     alias: /^\/signout$/,
-    description: '',
+    description: 'Выйти из системы',
   },
   START: {
     event: 'start.event',
     alias: /^\/start|начать$/,
-    description: '',
+    description: 'Start',
   },
   TEXT: {
     event: 'text.event',

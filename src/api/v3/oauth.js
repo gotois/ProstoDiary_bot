@@ -1,12 +1,14 @@
 const package_ = require('../../../package');
-const logger = require('../../services/logger.service');
 const { pool, NotFoundError } = require('../../core/database');
+const passportQueries = require('../../db/passport');
 const { mail } = require('../../lib/sendgrid');
+const logger = require('../../services/logger.service');
 const pddService = require('../../services/pdd.service');
 const twoFactorAuthService = require('../../services/2fa.service');
 const oauthService = require('../../services/oauth.service');
-const passportQueries = require('../../db/passport');
 const cryptService = require('../../services/crypt.service');
+const { pack } = require('../../services/archive.service');
+const { IS_PRODUCTION } = require('../../environment');
 /**
  * @param {*} transactionConnection - transactionConnection
  * @param {object} oauth - oauth providers
@@ -76,6 +78,7 @@ const createOauthPassport = async (
   transactionConnection,
   { yandex = {}, facebook = {}, telegram = {} },
 ) => {
+  logger.info('createOauthPassport');
   const passportEmails = [];
   let yaData;
   if (yandex.raw) {
@@ -95,6 +98,7 @@ const createOauthPassport = async (
     throw new Error('Empty email');
   }
   const [primaryEmail] = passportEmails.flat();
+  logger.info('pre.createPassport');
   // todo нужно устанавливать минимально рабочий json-ld
   // const linkedData = await transactionConnection.one(ldQueries.createLD({}));
   const passport = await transactionConnection.one(
@@ -111,7 +115,7 @@ const createOauthPassport = async (
   // Регистрация письма
 
   const secret = await twoFactorAuthService.generateUserSecret({
-    name: package_.name,
+    name: package_.name + (IS_PRODUCTION ? '' : ' DEV'),
     symbols: true,
     length: 20,
   });
@@ -119,6 +123,9 @@ const createOauthPassport = async (
   const { email, password, uid } = await pddService.createYaMail(passport.id);
   try {
     const { publicKey, privateKey } = await cryptService.generateRSA();
+    logger.info('pre.createBot');
+    const publicKeyCert = Buffer.from(publicKey);
+    const privateKeyCert = Buffer.from(privateKey);
     await transactionConnection.query(
       passportQueries.createBot({
         passportId: passport.id,
@@ -127,10 +134,24 @@ const createOauthPassport = async (
         emailPassword: password,
         secretKey: secret.base32,
         masterPassword: secret.masterPassword,
-        publicKeyCert: Buffer.from(publicKey),
-        privateKeyCert: Buffer.from(privateKey),
+        publicKeyCert,
+        privateKeyCert,
+        chatId: telegram.chat && telegram.chat.id,
       }),
     );
+    logger.info('pre.pack');
+    const keys = await pack([
+      {
+        buffer: publicKeyCert,
+        filename: 'public_key.pem',
+      },
+      {
+        buffer: privateKey,
+        filename: 'private_key.pem',
+      },
+    ]);
+
+    logger.info('pre.mail');
     // использовать v3/notify здесь не получится из-за того что только здесь насыщается passport
     await mail.send({
       to: passport.email,
@@ -154,32 +175,27 @@ const createOauthPassport = async (
       `,
       attachments: [
         {
-          content: publicKey.toString('base64'),
-          filename: 'public_key.pem',
-          type: 'text/plain',
-          disposition: 'attachment',
-        },
-        {
-          content: privateKey.toString('base64'),
-          filename: 'private_key.pem',
-          type: 'text/plain',
+          content: keys.toString('base64'),
+          filename: 'keys.zip',
+          type: 'application/zip',
           disposition: 'attachment',
         },
       ],
     });
   } catch (error) {
-    await pddService.deleteYaMail(uid);
     logger.error(error);
+    await pddService.deleteYaMail(uid);
     throw error;
   }
 };
 /**
  * @description Обновление данных паспорта
  * @param {object} requestObject - request object
- * @param {object} passport - passport gotoisCredentions
+ * @param {?object} passport - passport gotoisCredentions
  * @returns {Promise<string>}
  */
 module.exports = async function(requestObject, { passport }) {
+  logger.info('oauth');
   // eslint-disable-next-line
   passport;
   const { yandex, facebook, telegram } = requestObject;

@@ -44,7 +44,9 @@ module.exports = async function(requestObject, { passport }) {
       );
       const valid = twoFactorAuthService.verifyUser(botTable.secret_key, token);
       if (!valid) {
-        throw new Error('Wrong token');
+        return Promise.reject(
+          this.error(400, 'Неверный ключ. Попробуйте снова'),
+        );
       }
       const rows = await connection.many(
         storyQueries.selectStoryByDate({

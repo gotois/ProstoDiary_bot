@@ -35,18 +35,17 @@ FROM
     return sql`
 SELECT
     *
-FROM 
+FROM
     public.story
 WHERE
     id = ${id}
 `;
   },
-  selectStoryByDate({
-    publisherEmail,
-    from = '2000-01-01',
-    until = sql.raw('now()'),
-    sorting,
-  }) {
+  selectStoryByDate({ publisherEmail, from = '2000-01-01', until, sorting }) {
+    if (!until) {
+      // todo раньше был sql.raw('now()') но он перестал работать
+      until = 'now()';
+    }
     let orderBy;
     // hack - при проброске напрямую возникает ошибка
     if (sorting === 'DESC') {
@@ -58,7 +57,7 @@ WHERE
     created_at ASC
 `;
     }
-    return sql`SELECT * FROM story 
+    return sql`SELECT * FROM story
        WHERE publisher_email = ${publisherEmail}
        AND created_at BETWEEN ${from} AND ${until}
        ${orderBy}
@@ -73,7 +72,7 @@ WHERE
             content_id
           )
           VALUES (
-            ${category}, 
+            ${category},
             ${context},
             ${contentId}
           )
@@ -92,7 +91,7 @@ WHERE
           INSERT INTO story.content
           (
             content,
-            content_type, 
+            content_type,
             created_at,
             email_message_id,
             telegram_message_id,
@@ -100,8 +99,8 @@ WHERE
             schema
           )
           VALUES (
-            ${sql.binary(content)}, 
-            ${contentType}, 
+            ${sql.binary(content)},
+            ${contentType},
             ${date.toUTCString()}::timestamptz,
             ${emailMessageId},
             ${telegramMessageId},
@@ -115,14 +114,14 @@ WHERE
     return sql`
           INSERT INTO story.message
           (
-            creator, 
-            publisher, 
+            creator,
+            publisher,
             version,
             experimental
           )
           VALUES (
-          ${creator}, 
-          ${publisher}, 
+          ${creator},
+          ${publisher},
           ${version},
           ${experimental}
           )
