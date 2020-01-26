@@ -5,7 +5,14 @@ const { detectLang } = require('./nlp.service');
 const formatParameters = (dialogflowResult) => {
   const { fields } = dialogflowResult.parameters;
   const values = Object.keys(fields).reduce((accumulator, field) => {
-    accumulator[field] = fields[field][fields[field].kind];
+    const value = fields[field][fields[field].kind];
+    // пропускаем пустые значения
+    if (value.length > 0) {
+      accumulator[field] = value;
+    }
+    // todo Автоисправление кастомных типов
+    //  Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius"
+    // ...
     return accumulator;
   }, {});
   return values;

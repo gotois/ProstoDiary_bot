@@ -1,10 +1,10 @@
 const Eyo = require('eyo-kernel');
 const speller = require('../lib/speller');
-const dialogService = require('./dialog.service');
+// const dialogService = require('./dialog.service');
 const { detectLang, isRUS, isENG } = require('./nlp.service');
 const logger = require('./logger.service');
 const crypt = require('./crypt.service');
-const { FakerText } = require('./faker.service');
+// const { FakerText } = require('./faker.service');
 /**
  * @param {string} string - string
  * @param {number} start - start
@@ -148,6 +148,11 @@ const decodeRows = (rows = []) => {
     };
   });
 };
+/**
+ * @description Автоматическое исправление опечаток
+ * @param {string} text - text
+ * @returns {Promise<string>}
+ */
 const correctionText = async (text) => {
   const language = detectLang(text).language;
   // ёфикация текста
@@ -180,30 +185,28 @@ const correctionText = async (text) => {
  * @returns {Promise<object>}
  */
 const prepareText = async (requestObject) => {
-  const { text, secretKey, uid } = requestObject;
+  const { text, secretKey /*, uid */ } = requestObject;
   const tags = [];
-  let subject;
-  // Автоматическое исправление опечаток
   const correction = await correctionText(text);
-  // todo: если текст большой, нужно обрабатывать отдельно каждое предложение которое заканчивается знаками (.) и впоследствии мержить их в один space
-  if (correction.length <= 256) {
-    const fakeText = FakerText.text(correction);
-    try {
-      const dialogflowResult = await dialogService.detect(fakeText, uid);
-      // todo Автоисправление кастомных типов в "dialogflowResult.parameters.fields"
-      //  найденных параметров (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
-      // ...
-      subject = dialogflowResult.intent.displayName;
-    } catch (error) {
-      logger.error(error.message);
-    }
-  }
+
+  // todo: переосмыслить логику, учитывая что передавать теперь нужно JSON-LD
+  //  используя text-to-jsonld.js
+  // let subject;
+  // const fakeText = FakerText.text(correction);
+  // if (correction.length <= 256) {
+  //   try {
+  //     const dialogflowResult = await dialogService.detect(fakeText, uid);
+  //     subject = dialogflowResult.intent.displayName;
+  //   } catch (error) {
+  //     logger.error(error.message);
+  //   }
+  // }
   const buffer = Buffer.from(correction);
 
   const encrypted = await crypt.openpgpEncrypt(buffer, [secretKey]);
   return {
     mime: 'plain/text',
-    subject: subject || 'UndefinedText',
+    subject: /*subject || */ 'UndefinedText',
     content: encrypted.data,
     tags,
   };

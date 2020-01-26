@@ -206,6 +206,20 @@ const langISO = (language) => {
   return language.slice(0, 2);
 };
 
+/**
+ * @description Разделяем большое предложение на множество маленьких
+ * @param {string} text - text
+ * @returns {Array}
+ */
+const splitTextBySentences = (text) => {
+  // обрабатываем отдельно каждое предложение которое заканчивается знаками (.)
+  const sentenses = text.split('.').map((sentense) => {
+    return sentense.trim();
+  });
+
+  return sentenses;
+};
+
 module.exports = {
   analyzeEntities,
   analyzeEntitySentiment,
@@ -217,6 +231,7 @@ module.exports = {
   isRUS,
   isENG,
   langISO,
+  splitTextBySentences,
   languages: {
     ENG,
     RUS,
