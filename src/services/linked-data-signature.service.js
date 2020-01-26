@@ -1,32 +1,35 @@
 const jsigs = require('jsonld-signatures');
 const { RSAKeyPair } = require('crypto-ld');
-// const { documentLoaders } = require('jsonld');
 
 // sign the document as a simple assertion
 const { RsaSignature2018 } = jsigs.suites;
 const { AssertionProofPurpose } = jsigs.purposes;
 
-const fs = require('fs');
-const publicKeyPem = fs.readFileSync('./public.key.txt').toString('utf8');
-const privateKeyPem = fs.readFileSync('./private.key.txt').toString('utf8');
+const getControllerId = (user) => {
+  return 'https://gotointeractive.com/i/' + user;
+};
 
-const publicKey = {
-  '@context': jsigs.SECURITY_CONTEXT_URL,
-  'type': 'RsaVerificationKey2018',
-  'id': 'https://example.com/i/alice/keys/1',
-  'controller': 'https://example.com/i/alice',
-  publicKeyPem,
+const getPublicKey = (publicKeyPem, controller) => {
+  const controllerKey = controller + '/keys/1'; // todo насыщать из БД
+  return {
+    '@context': jsigs.SECURITY_CONTEXT_URL,
+    'type': 'RsaVerificationKey2018',
+    'id': controllerKey,
+    'controller': controller,
+    publicKeyPem,
+  };
 };
 
 // specify the public key object
-const keyPair = () => {
+const keyPair = (publicKeyPem, privateKeyPem, controller) => {
+  const publicKey = getPublicKey(publicKeyPem, controller);
   const key = new RSAKeyPair({ ...publicKey, privateKeyPem });
   return key;
 };
-const key = keyPair();
 
 // create the JSON-LD document that should be signed
-async function signDocument(document) {
+async function signDocument(document, publicKeyPem, privateKeyPem, userId) {
+  const key = keyPair(publicKeyPem, privateKeyPem, getControllerId(userId));
   const signed = await jsigs.sign(document, {
     suite: new RsaSignature2018({ key }),
     purpose: new AssertionProofPurpose(),
@@ -34,26 +37,26 @@ async function signDocument(document) {
   return signed;
 }
 
-async function verifyDocument(signed) {
+// todo передалать верификацию через website на основе урла контроллера
+async function verifyDocument(signed, publicKeyPem, privateKeyPem, userId) {
+  const publicKey = getPublicKey(publicKeyPem, getControllerId(userId));
+  const key = keyPair(publicKeyPem, privateKeyPem, getControllerId(userId));
   // specify the public key controller object
   const controller = {
     '@context': jsigs.SECURITY_CONTEXT_URL,
-    'id': 'https://example.com/i/alice',
+    'id': getControllerId(userId),
     'publicKey': [publicKey],
     // this authorizes this key to be used for making assertions
     'assertionMethod': [publicKey.id],
   };
-
-  // const { node: documentLoader } = documentLoaders;
+  const controllerKey = controller.id + '/keys/1'; // todo насыщать из БД
 
   // we will need the documentLoader to verify the controller
   // verify the signed document
   const result = await jsigs.verify(signed, {
-    // documentLoader,
-    // todo по идее надо наследовать и переложить эту выдачу на отдельный сервер
     documentLoader: (url) => {
       const CONTEXTS = {
-        'https://example.com/i/alice/keys/1': publicKey,
+        [controllerKey]: publicKey,
       };
       return {
         contextUrl: null, // this is for a context via a link header
@@ -64,10 +67,7 @@ async function verifyDocument(signed) {
     suite: new RsaSignature2018(key),
     purpose: new AssertionProofPurpose({ controller }),
   });
-  if (!result.verified) {
-    throw result.error;
-  }
-  return result;
+  return result.verified;
 }
 
 module.exports = {
