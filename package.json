@@ -83,7 +83,7 @@
     }
   },
   "dependencies": {
-    "@google-cloud/language": "3.7.0",
+    "@google-cloud/language": "3.7.1",
     "@google-cloud/speech": "3.5.4",
     "@google-cloud/translate": "5.1.4",
     "@google-cloud/vision": "1.8.0",
