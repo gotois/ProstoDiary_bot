@@ -28,6 +28,7 @@ module.exports = async (request, response, next) => {
         }
         // todo показывать отдельный список для пользователя/бота, и для сторонних людей - https://github.com/gotois/ProstoDiary_bot/issues/280#issuecomment-558048329
         switch (request.headers.accept) {
+          case 'application/schema+json':
           case 'application/json': {
             return response.status(200).json(storyTable);
           }

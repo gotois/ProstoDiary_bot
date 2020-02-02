@@ -8,17 +8,17 @@ const basic = auth.basic(
     realm: 'Web.', // for website
   },
   async (login, password, callback) => {
-    if (login === 'demo' && password === 'demo') {
-      callback(true);
-      return;
+    try {
+      const botId = await pool.connect(async (connection) => {
+        const botId = await connection.maybeOne(
+          passportQueries.checkByEmailAndMasterPassword(login, password),
+        );
+        return botId;
+      });
+      callback(Boolean(botId));
+    } catch (error) {
+      callback(false);
     }
-    const botId = await pool.connect(async (connection) => {
-      const botId = await connection.maybeOne(
-        passportQueries.checkByLoginAndPassword(login, password),
-      );
-      return botId;
-    });
-    callback(Boolean(botId));
   },
 );
 

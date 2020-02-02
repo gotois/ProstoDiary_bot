@@ -54,6 +54,7 @@ const encode = (text) => {
   return Buffer.concat([iv, ciphertext, cipher.final()]).toString('base64');
 };
 
+// в идеале надо генерировать новую пару PGP ключей на каждый запрос, но это оверхед на данном этапе
 const openpgpEncrypt = async (buffer, passwords) => {
   if (Buffer.byteLength(buffer) === 0) {
     throw new Error('Empty buffer');
@@ -85,7 +86,7 @@ const generateRSA = () => {
     generateKeyPair(
       'rsa',
       {
-        modulusLength: 4096,
+        modulusLength: 2048,
         publicKeyEncoding: {
           type: 'spki',
           format: 'pem',
@@ -93,8 +94,6 @@ const generateRSA = () => {
         privateKeyEncoding: {
           type: 'pkcs8',
           format: 'pem',
-          cipher: 'aes-256-cbc',
-          passphrase: 'top secret',
         },
       },
       (error, publicKey, privateKey) => {

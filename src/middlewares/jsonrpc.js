@@ -5,33 +5,37 @@ const logger = require('../services/logger.service');
 
 module.exports = async (request, response, next) => {
   logger.info(`RPC:${request.body.method}`);
+  let passport;
   try {
-    const gotoisCredentions = await pool.connect(async (connection) => {
-      const botTable = await connection.maybeOne(
-        passportQueries.selectBotByUserEmail(request.user),
-      );
+    passport = await pool.connect(async (connection) => {
       const userTable = await connection.maybeOne(
-        passportQueries.selectUserById(botTable.passport_id),
+        passportQueries.selectUserByEmail(request.user),
       );
-      // fixme: эти данные надо расширить до паспорта целиком (userEmail, botEmail, activated...)
-      return {
-        id: userTable.id,
-        userEmail: userTable.email,
-      };
+      if (!userTable) {
+        return {};
+      }
+      const botTable = await connection.maybeOne(
+        passportQueries.selectByPassport(userTable.id),
+      );
+      if (!botTable) {
+        return {};
+      }
+      return botTable;
     });
-    if (!gotoisCredentions) {
-      return response.sendStatus(401).send('401 Unauthorized');
-    }
-    try {
-      const result = await jsonrpc.rpcRequest(
-        request.body.method,
-        request.body.params,
-        gotoisCredentions,
-      );
-      return response.send(result);
-    } catch (error) {
-      return response.status(500).json(error);
-    }
+  } catch (error) {
+    logger.error(error);
+    return response.status(500).json('Bad error :/');
+  }
+  if (!passport) {
+    return response.sendStatus(401).send('401 Unauthorized');
+  }
+  try {
+    const result = await jsonrpc.rpcRequest(
+      request.body.method,
+      request.body.params,
+      passport,
+    );
+    return response.send(result);
   } catch (error) {
     next(error);
   }

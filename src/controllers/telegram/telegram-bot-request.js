@@ -41,14 +41,14 @@ class TelegramBotRequest {
   }
   /**
    * @param {string} method - api method
-   * @param {array} params - api params
+   * @param {jsonld} document - jsonld params
    * @returns {Promise<string>}
    */
-  async request(method, params = []) {
+  async request(method, document = {}) {
     logger.info('request:' + method);
     try {
-      const message = await jsonrpc.rpcRequest(method, params, this.message.passport);
-      return message;
+      const jsonldMessage = await jsonrpc.rpcRequest(method, document, this.message.passport);
+      return jsonldMessage;
     } catch (error) {
       this.onError(error);
       return error.message;

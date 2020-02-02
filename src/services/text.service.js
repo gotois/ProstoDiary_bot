@@ -179,38 +179,6 @@ const correctionText = async (text) => {
   // ...
   return text;
 };
-/**
- * @description Валидация и формирование зашифрованного сообщения
- * @param {object} requestObject - requestObject
- * @returns {Promise<object>}
- */
-const prepareText = async (requestObject) => {
-  const { text, secretKey /*, uid */ } = requestObject;
-  const tags = [];
-  const correction = await correctionText(text);
-
-  // todo: переосмыслить логику, учитывая что передавать теперь нужно JSON-LD
-  //  используя text-to-jsonld.js
-  // let subject;
-  // const fakeText = FakerText.text(correction);
-  // if (correction.length <= 256) {
-  //   try {
-  //     const dialogflowResult = await dialogService.detect(fakeText, uid);
-  //     subject = dialogflowResult.intent.displayName;
-  //   } catch (error) {
-  //     logger.error(error.message);
-  //   }
-  // }
-  const buffer = Buffer.from(correction);
-
-  const encrypted = await crypt.openpgpEncrypt(buffer, [secretKey]);
-  return {
-    mime: 'plain/text',
-    subject: /*subject || */ 'UndefinedText',
-    content: encrypted.data,
-    tags,
-  };
-};
 
 module.exports = {
   spellText,
@@ -221,5 +189,4 @@ module.exports = {
   decodeRows,
   correctionText,
   replaceBetween,
-  prepareText,
 };

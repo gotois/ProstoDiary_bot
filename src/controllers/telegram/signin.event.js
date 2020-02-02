@@ -1,8 +1,6 @@
 const bot = require('../../core/bot');
-const jsonrpc = require('../../core/jsonrpc');
-const { pool } = require('../../core/database');
+const signinMessage = require('../../core/functions/signin');
 const TelegramBotRequest = require('./telegram-bot-request');
-const passportQueries = require('../../db/passport');
 
 class SignIn extends TelegramBotRequest {
   /**
@@ -12,25 +10,11 @@ class SignIn extends TelegramBotRequest {
    * @returns {Promise<undefined>}
    */
   async signInReplyMessage({ text }) {
-    const passportTable = await pool.connect(async (connection) => {
-      const passportTable = await connection.one(
-        passportQueries.selectAll(this.message.from.id),
-      );
-      return passportTable;
-    });
     try {
-      await jsonrpc.rpcRequest(
-        'signin',
-        {
-          token: text,
-          telegram_chat_id: this.message.chat.id,
-        },
-        {
-          ...passportTable,
-        },
-      );
+      const signinAction = signinMessage({ token: text });
+      await this.request('signin', signinAction);
     } catch (error) {
-      await bot.sendMessage(this.message.chat.id, error.message);
+      await bot.sendMessage(this.message.chat.id, error.purpose.text);
       return;
     }
     const me = await bot.getMe();

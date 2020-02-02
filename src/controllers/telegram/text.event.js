@@ -1,9 +1,7 @@
-const package_ = require('../../../package');
 const bot = require('../../core/bot');
-const { pool } = require('../../core/database');
-const passportQueries = require('../../db/passport');
 const textService = require('../../services/text.service');
 const TelegramBotRequest = require('./telegram-bot-request');
+const textMessage = require('../../core/functions/text');
 
 class Text extends TelegramBotRequest {
   onError(error) {
@@ -22,39 +20,16 @@ class Text extends TelegramBotRequest {
     );
     try {
       await bot.sendChatAction(this.message.chat.id, 'typing');
-      const secretKey = await pool.connect(async (connection) => {
-        const botTable = await connection.one(
-          passportQueries.selectByPassport(this.message.passport.id),
-        );
-        return botTable.secret_key;
-      });
-      const messageResult = await textService.prepareText({
-        secretKey,
-        uid: this.userHash,
-        text: this.message.text,
-        caption: this.message.caption,
-        passportId: this.message.passport.id,
-      });
-      // отправка зашифрованного сообщения на почту бота
-      const postResult = await this.request('post', {
-        ...messageResult,
-        tags: [].concat(this.hashtags, messageResult.tags),
-        categories: ['user-transaction-write'],
-        date: this.message.date,
-        chat_id: this.message.chat.id,
-        from: {
-          email: package_.author.email,
-          name: this.message.passport.id,
-        },
-        to: [
-          {
-            email: this.message.passport.botEmail,
-            name: this.message.passport.botId,
-          },
-        ],
-        telegram_message_id: message_id,
-      });
-      await bot.editMessageText(postResult, {
+      const text = await textService.correctionText(this.message.text);
+      const textAction = await textMessage(
+        this.message.passport,
+        text,
+        this.hashtags,
+        this.message.chat.id,
+        message_id,
+      );
+      const result = await this.request('text', textAction);
+      await bot.editMessageText(result.purpose.abstract, {
         chat_id: this.message.chat.id,
         message_id: message_id,
       });

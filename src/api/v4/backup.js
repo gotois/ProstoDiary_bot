@@ -1,9 +1,12 @@
+const package_ = require('../../../package');
+const logger = require('../../services/logger.service');
+const passportQueries = require('../../db/passport');
 const { pool } = require('../../core/database');
 const { pack } = require('../../services/archive.service');
 const twoFactorAuthService = require('../../services/2fa.service');
 const storyQueries = require('../../db/story');
 const { convertIn2DigitFormat } = require('../../services/date.service');
-const passportQueries = require('../../db/passport');
+
 /**
  * @param {Array} stories - entries
  * @returns {buffer}
@@ -28,15 +31,26 @@ const getTextFromStories = (stories) => {
     .trim();
   return Buffer.from(data, 'utf8');
 };
+
 /**
- * @description backup
- * @param {object} requestObject - requestObject
+ * @param {jsonld} jsonld - parameters
  * @param {object} passport - passport gotoisCredentions
- * @returns {Promise<string>}
+ * @returns {Promise<*>}
  */
-module.exports = async function(requestObject, { passport }) {
-  const { date, token, sorting = 'ASC' } = requestObject;
+module.exports = async function(jsonld, { passport }) {
+  logger.info('ping');
+
+  const date = jsonld.startTime;
+  const tokenValue = jsonld.subjectOf.find((subject) => {
+    return subject.name === 'token';
+  });
+  const token = tokenValue.abstract;
+  const sortingValue = jsonld.subjectOf.find((subject) => {
+    return subject.name === 'sorting';
+  });
+  const sorting = sortingValue.abstract;
   let stories;
+
   try {
     stories = await pool.connect(async (connection) => {
       const botTable = await connection.one(
@@ -65,28 +79,43 @@ module.exports = async function(requestObject, { passport }) {
       filename: `backup_${date}.txt`,
     },
   ]);
-  // пример вызова API метода из другого
-  try {
-    await this._methods.notify.handler(
-      {
-        provider: 'mailto',
-        subject: 'Backup ProstoDiary',
-        html: `
-      <h1>Your story backup</h1>
-    `,
-        attachments: [
-          {
-            content: txtPack.toString('base64'),
-            filename: 'backup.zip',
-            type: 'application/zip',
-            disposition: 'attachment',
-          },
-        ],
+
+  // todo отправка на почту теперь будет делаться через ассистента
+  const document = {
+    '@context': 'http://schema.org',
+    '@type': 'AssignAction',
+    'agent': {
+      '@type': 'Person',
+      'name': package_.name,
+    },
+    'purpose': {
+      '@type': 'EmailMessage',
+      'sender': {
+        '@type': 'Person',
+        'name': 'Dom Portwood',
+        'email': 'dportwood@example.com',
       },
-      { passport },
-    );
-    return 'Данные успешно отправлены на вашу почту';
-  } catch (error) {
-    return Promise.reject(this.error(400, error.message));
-  }
+      'toRecipient': {
+        '@type': 'Person',
+        'name': 'Peter Gibbons',
+        'email': 'pgibbons@example.com',
+      },
+      'about': {
+        '@type': 'Thing',
+        'name': 'Backup ProstoDiary: Your story backup',
+      },
+      'messageAttachment': {
+        '@type': 'CreativeWork',
+        'name': 'backup.zip',
+        // 'text': 'xxxxx', // используется для фолбека если нет возможности отправить html
+        'abstract': txtPack.toString('base64'),
+        'encodingFormat': 'application/zip',
+      },
+    },
+    'result': {
+      '@type': 'Answer',
+      'text': 'Данные успешно отправлены на вашу почту',
+    },
+  };
+  return Promise.resolve(document);
 };

@@ -1,11 +1,11 @@
 const bot = require('../../core/bot');
+const signoutMessage = require('../../core/functions/signout');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class SignOut extends TelegramBotRequest {
   async beginDialog() {
-    const result = await this.request('signout', {
-      passportId: this.message.passport.id,
-    });
+    const signoutAction = signoutMessage();
+    const result = await this.request('post', signoutAction);
     await bot.sendMessage(this.message.chat.id, result);
   }
 }

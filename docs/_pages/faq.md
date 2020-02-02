@@ -13,15 +13,15 @@ permalink: /faq/
 ### Хочу делать API запросы через cURL 
 Пример API запроса без параметров:
 ```
-curl --basic -u "demo:demo" -X POST -H "Content-Type: application/json" -H "Accept: application/json" --data '{"jsonrpc":"2.0","method":"ping","id":1}' http://127.0.0.1:9000/api/ping
+curl --basic -u "user_email:master_password" -X POST -H "Content-Type: application/json" -H "Accept: application/schema+json" --data '{"jsonrpc":"2.0","method":"ping","id":1}' http://127.0.0.1:9000/api/ping
 ```
 Пример API запроса с параметрами:
 ```
-curl --basic -u "bot_email:master_password" -X POST -H "Content-Type: application/json" -H "Accept: application/json" --data '{"jsonrpc":"2.0","backup":"help","params":{"token":123456},"id":1}' http://127.0.0.1:9000/api
+curl --basic -u "user_email:master_password" -X POST -H "Content-Type: application/json" -H "Accept: application/schema+json" --data '{"jsonrpc":"2.0","method":"help","params":'{"jsonrpc":"2.0","method":"ping","params":{"@context":{"schema":"http://schema.org/","agent":"schema:agent","name":"schema:name"},"@type":"AllocateAction","agent":{"@type":"Person","name":"prosto-diary"},"name":"Ping", ... }}}},"id":1}'' http://127.0.0.1:9000/api
 ```
 Пример получения JSON данных истории
 ```
-curl --basic -u "demo:demo" -H "Accept: application/json" http://0.0.0.0:9000/message/73050f7c-2781-4f1a-b9f7-992f1d65f22e
+curl --basic -u "user_email:master_password" -H "Accept: application/json" http://0.0.0.0:9000/message/73050f7c-2781-4f1a-b9f7-992f1d65f22e
 ```
 
 ### Падает CI с неизвестной ошибкой

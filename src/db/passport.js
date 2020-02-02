@@ -6,6 +6,16 @@ module.exports = {
         SELECT role FROM passport.roles WHERE email = ${email}
     `;
   },
+  selectIdByTelegramId(telegram_id) {
+    return sql`
+SELECT
+    id, email
+FROM
+    passport.user
+WHERE telegram_id = ${String(telegram_id)}
+LIMIT 1
+    `;
+  },
   selectBotByUserEmail(login) {
     return sql`
 SELECT
@@ -21,6 +31,13 @@ WHERE
     return sql`
       SELECT email FROM passport.bot WHERE passport_id = ${passportTable.id};
     `;
+  },
+  checkByEmailAndMasterPassword(login, password) {
+    return sql`select 1 from passport.user AS passportUser, passport.bot AS passportBot
+where passportUser.email = ${login}
+AND
+passportBot.master_password = crypt(${password}, master_password)
+`;
   },
   checkByLoginAndPassword(login, password) {
     return sql`SELECT
@@ -116,16 +133,6 @@ VALUES
     ${chatId}
     )
 `;
-  },
-  selectIdByTelegramId(telegram_id) {
-    return sql`
-SELECT
-    id, email
-FROM
-    passport.user
-WHERE telegram_id = ${String(telegram_id)}
-LIMIT 1
-    `;
   },
   getPassports() {
     return sql`SELECT

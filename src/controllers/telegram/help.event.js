@@ -1,10 +1,12 @@
 const bot = require('../../core/bot');
+const helpMessage = require('../../core/functions/help');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Help extends TelegramBotRequest {
   async beginDialog() {
     await super.beginDialog();
-    const result = await this.request('help');
+    const helpAction = helpMessage();
+    const result = await this.request('help', helpAction);
     await bot.sendMessage(this.message.chat.id, result, {
       parse_mode: 'Markdown',
     });

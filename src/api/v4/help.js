@@ -1,15 +1,18 @@
 const package_ = require('../../../package');
-const { getCheckSum } = require('../../services/crypt.service');
-const { IS_PRODUCTION } = require('../../environment');
+const logger = require('../../services/logger.service');
 const { telegram } = require('../../controllers');
+const { IS_PRODUCTION } = require('../../environment');
+const { getCheckSum } = require('../../services/crypt.service');
+
 /**
- * @description помощь
- * @param {object} parameters - param
- * @returns {Promise<string>}
+ * @param {jsonld} jsonld - parameters
+ * @param {object} passport - passport gotoisCredentions
+ * @returns {Promise<*>}
  */
-module.exports = function(parameters) {
-  // eslint-disable-next-line
-  parameters;
+// eslint-disable-next-line
+module.exports = function(jsonld, { passport }) {
+  logger.info('ping');
+
   const helpData = Object.entries(telegram).reduce(
     (accumulator, [command, object]) => {
       if (object.description.length === 0) {
@@ -26,6 +29,9 @@ module.exports = function(parameters) {
       accumulator += result;
       return accumulator;
     }, '') +
+    // todo ссылку перенести в reply_markup: {
+    //           inline_keyboard: [links],
+    //         },
     '\n\nF.A.Q.: ' +
     'https://prosto-diary.gotointeractive.com/faq/\n\n';
   message += package_.version;
@@ -34,5 +40,20 @@ module.exports = function(parameters) {
   }
   // todo нужно получать чексумму всего проекта - для этого настроить precommit хуку и создавать чексумму всех измененных файлов на гите, учитывая пользователя
   message += ' \n' + getCheckSum(JSON.stringify(package_));
-  return Promise.resolve(message);
+
+  const document = {
+    '@context': 'http://schema.org',
+    '@type': 'AcceptAction',
+    'agent': {
+      '@type': 'Person',
+      'name': package_.name,
+    },
+    'purpose': {
+      '@type': 'Answer',
+      'abstract': message.toString('base64'),
+      'encodingFormat': 'text/markdown',
+    },
+  };
+
+  return Promise.resolve(document);
 };

@@ -22,7 +22,7 @@ const { SERVER } = require('../src/environment');
       },
     ],
     packageUrl: './package.json',
-    files: './src/api/v3/*.js',
+    files: './src/api/v4/*.js',
   });
   // ping
   data.paths['/'] = {

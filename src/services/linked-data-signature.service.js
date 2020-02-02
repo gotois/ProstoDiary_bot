@@ -27,6 +27,7 @@ const keyPair = (publicKeyPem, privateKeyPem, controller) => {
   return key;
 };
 
+// todo перенести функционал подписи документа внутрь core
 // create the JSON-LD document that should be signed
 async function signDocument(document, publicKeyPem, privateKeyPem, userId) {
   const key = keyPair(publicKeyPem, privateKeyPem, getControllerId(userId));
@@ -67,7 +68,9 @@ async function verifyDocument(signed, publicKeyPem, privateKeyPem, userId) {
     suite: new RsaSignature2018(key),
     purpose: new AssertionProofPurpose({ controller }),
   });
-  return result.verified;
+  if (!result.verified) {
+    throw new Error(result.error);
+  }
 }
 
 module.exports = {

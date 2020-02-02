@@ -2,6 +2,11 @@ const dialogflow = require('dialogflow');
 const { DIALOGFLOW } = require('../environment');
 const { detectLang } = require('./nlp.service');
 
+/**
+ * @todo перенести в core
+ * @param {object} dialogflowResult - dialogflow result object
+ * @returns {object}
+ */
 const formatParameters = (dialogflowResult) => {
   const { fields } = dialogflowResult.parameters;
   const values = Object.keys(fields).reduce((accumulator, field) => {
@@ -70,6 +75,7 @@ const search = async (rawMessage, uid) => {
 /**
  * Детектируем actions
  *
+ * @todo перенести в core
  * @example 'купил овощи 30 рублей';
  * @description получаем и разбираем Intent (если есть)
  * @param {string} rawMessage - raw message

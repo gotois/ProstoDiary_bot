@@ -1,9 +1,9 @@
+const package_ = require('../../../package');
 const SchemaOrg = require('schema.org');
 const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
-const linkedDataSignature = require('../services/linked-data-signature.service');
-const dialogService = require('../services/dialog.service');
-const languageService = require('../services/nlp.service');
+const dialogService = require('../../services/dialog.service');
+const languageService = require('../../services/nlp.service');
 
 /**
  * @todo на основе набора свойств пытаюсь насытить schema.org
@@ -110,85 +110,29 @@ async function detectBySentense(text) {
    */
   function generateDocument(action) {
     // fixme вычислять через NLP и в зависимости от выполнения
-    const actionStatus = 'CompletedActionStatus'; // ActiveActionStatus, PotentialActionStatus
-    const agent = {
-      '@type': 'Person',
-      'name': 'Я', // всегда Я, если пишет сам пользователь. Если бот подклчен к паблику, то там отдельно надо
-    };
-    // set today
-    const endTime = format(
-      fromUnixTime(Math.round(new Date().getTime() / 1000)),
-      'yyyy-MM-dd',
-    );
-
-    // todo использовать AbstractGeo для этого
-    // eslint-disable-next-line
-    const location = {
-      '@type': 'Place',
-      'geo': {
-        '@type': 'GeoCoordinates',
-        'latitude': '40.75',
-        'longitude': '73.98',
-      },
-      'name': 'Empire State Building',
-    };
-
+    // const actionStatus = 'CompletedActionStatus'; // ActiveActionStatus, PotentialActionStatus
     const object = {
       '@type': 'Thing',
       'name': objectNames[0], // в идеале должно браться из dialogflow, но если не получается, то берем существительное и прилагательное через NLP
-      // image
-      // description
     };
-    // устанавливаем из endTime, если не получается установить startTime иным образом
-    const startTime = endTime;
 
-    const document = {
+    const innerDocument = {
       // предполагаю что контекст будет создавать Space для каждого отдельного события это будет вида: 'https://gotointeractive.com/:object/:subject
       '@context': {
         schema: 'http://schema.org/',
-        name: 'schema:name',
-        actionStatus: 'schema:actionStatus',
-        agent: 'schema:agent',
-        endTime: 'schema:endTime',
         object: 'schema:object',
-        startTime: 'schema:startTime',
-
-        // специально для валидации schema
+        // для валидации schema
         ...Object.keys(parameters).reduce((accumulator, k) => {
           accumulator[k] = 'schema:' + k;
           return accumulator;
         }, {}),
       },
       '@type': action,
-
-      actionStatus,
-      agent,
-      endTime,
-      // error, : thing
-      // instrument, : thing
-
-      // location,
-
-      object,
-      //  participant
-      // "result": { - добавляется если делается интернет покупка
-      //   "@type": "Order",
-      //   "url": "http://example.com/orders/1199334"
-      //   "confirmationNumber": "1ABBCDDF23234",
-      //   "orderNumber": "1199334",
-      //   "orderStatus": "PROCESSING"
-      // },
-      startTime,
-      // target
-
-      // специально для увеличения типа schema
+      object, // todo rename to result
       ...parameters,
     };
 
-    // todo нужно валидировать https://github.com/gotois/ProstoDiary_bot/issues/436
-    // ...
-
-    return document;
+    return innerDocument;
   }
 
   // todo возможно исключение, надо его правильно обработать
@@ -230,33 +174,68 @@ async function detectBySentense(text) {
 }
 
 /**
+ * @param {object} passport - parameters
  * @param {string} text - user text
- * @param {object} parameters - parameters
- * @param {string} parameters.publicKeyPem - public key pem
- * @param {string} parameters.privateKeyPem - private key pem
- * @param {string} parameters.userId - user
  * @returns {Promise<Array<jsonld>>}
  */
-module.exports = async (text, { publicKeyPem, privateKeyPem, userId }) => {
-  const documents = [];
-  for (const sentense of languageService.splitTextBySentences(text)) {
-    const unsignedDocument = await detectBySentense(sentense);
-    // подписанный JSON-LD может отсылаться ассистенту или храниться в БД
-    const signedDocument = await linkedDataSignature.signDocument(
-      unsignedDocument,
-      publicKeyPem,
-      privateKeyPem,
-      userId,
-    );
-    // проверка на велидность подписанного JSON-LD например после отдачи ассистентом
-    // const isVerified = await linkedDataSignature.verifyDocument(signedDoc, publicKeyPem, privateKeyPem, 'user-xxx');
-    // console.log('Signature is ', isVerified);
-    documents.push(signedDocument);
+module.exports = async (
+  passport,
+  text,
+  // hashtags,
+  // chat_id,
+  // telegram_message_id,
+) => {
+  // todo поддержать hashtags, chat_id, telegram_message_id
+  // ...
 
-    // в дальнейшем предполагается что будет переводится в RDF
-    // const jsonld = require('jsonld');
-    // const rdf = await jsonld.toRDF(jsonResults[0]);
+  const today = format(
+    fromUnixTime(Math.round(new Date().getTime() / 1000)),
+    'yyyy-MM-dd',
+  );
+  // todo использовать AbstractGeo для этого
+  // eslint-disable-next-line
+  const location = {
+    '@type': 'Place',
+    'geo': {
+      '@type': 'GeoCoordinates',
+      'latitude': '40.75',
+      'longitude': '73.98',
+    },
+    'name': 'Empire State Building',
+  };
+
+  const document = {
+    '@context': {
+      schema: 'http://schema.org/',
+      agent: 'schema:agent',
+      startTime: 'schema:startTime',
+      subjectOf: 'schema:subjectOf',
+      object: 'schema:object',
+      name: 'schema:name',
+      abstract: 'schema:abstract',
+      encodingFormat: 'schema:encodingFormat',
+    },
+    '@type': 'Action',
+    'agent': {
+      '@type': 'Person',
+      'name': package_.name,
+    },
+    'startTime': today,
+    'subjectOf': [],
+    'object': {
+      '@type': 'CreativeWork',
+      'name': 'text',
+      'abstract': text.toString('base64'),
+      'encodingFormat': 'text/plain',
+    },
+    // location,
+    // 'name': 'xxx', - это и будет тем самым спейсом?
+  };
+
+  for (const sentense of languageService.splitTextBySentences(text)) {
+    const subjectAction = await detectBySentense(sentense);
+    document.subjectOf.push(subjectAction);
   }
 
-  return documents;
+  return document;
 };

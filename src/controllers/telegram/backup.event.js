@@ -1,4 +1,5 @@
 const bot = require('../../core/bot');
+const backupMessage = require('../../core/functions/backup');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Backup extends TelegramBotRequest {
@@ -9,11 +10,11 @@ class Backup extends TelegramBotRequest {
    * @returns {Promise<void>}
    */
   async authReplyMessage({ text }) {
-    const result = await this.request('backup', {
-      passportId: this.message.passport.id,
+    const backupAction = backupMessage({
       token: text,
       date: this.message.date,
     });
+    const result = await this.request('post', backupAction);
     await bot.sendMessage(this.message.chat.id, result);
   }
   async beginDialog() {

@@ -1,12 +1,8 @@
+const package_ = require('../../../package');
 const { pool } = require('../../core/database');
 const passportQueries = require('../../db/passport');
-/**
- * @description блокировки чтения/приема и общей работы бота
- * @param {object} requestObject - requestObject
- * @param {object} passport - passport gotoisCredentions
- * @returns {Promise<string>}
- */
-module.exports = async function(requestObject, { passport }) {
+
+module.exports = async function(jsonld, { passport }) {
   const signOutResult = await pool.connect(async (connection) => {
     try {
       const botTable = await connection.one(
@@ -25,5 +21,18 @@ module.exports = async function(requestObject, { passport }) {
       return `Вход закончился ошибкой: ${error.message}`;
     }
   });
-  return signOutResult;
+  const document = {
+    '@context': 'http://schema.org',
+    '@type': 'AcceptAction',
+    'agent': {
+      '@type': 'Person',
+      'name': package_.name,
+    },
+    'purpose': {
+      '@type': 'Answer',
+      'abstract': String(signOutResult).toString('base64'),
+      'encodingFormat': 'text/markdown',
+    },
+  };
+  return Promise.resolve(document);
 };

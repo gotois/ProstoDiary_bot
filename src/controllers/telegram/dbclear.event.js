@@ -1,4 +1,5 @@
 const bot = require('../../core/bot');
+const destroyMessage = require('../../core/functions/destroy');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class DatabaseClear extends TelegramBotRequest {
@@ -19,9 +20,8 @@ class DatabaseClear extends TelegramBotRequest {
         await bot.sendMessage(this.message.chat.id, 'Операция отменена');
         return;
       }
-      const result = await this.request('destroy', {
-        userId: this.message.from.id,
-      });
+      const destroyAction = destroyMessage();
+      const result = await this.request('delete', destroyAction);
       await bot.sendMessage(this.message.chat.id, result);
     });
   }

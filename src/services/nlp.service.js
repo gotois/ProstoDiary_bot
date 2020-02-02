@@ -105,6 +105,8 @@ const annotateText = async (text, language) => {
   return result;
 };
 /**
+ * @todo перенести в core
+ *
  * @description The text to analyze
  * @param {string} text - string text
  * @returns {Promise<object>}
