@@ -1,5 +1,5 @@
-const bot = require('../../core/bot');
-const signinMessage = require('../../core/functions/signin');
+const bot = require('../bot');
+const signinMessage = require('../../../core/functions/signin');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class SignIn extends TelegramBotRequest {

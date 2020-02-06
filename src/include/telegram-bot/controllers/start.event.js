@@ -1,5 +1,5 @@
 const fs = require('fs');
-const bot = require('../../core/bot');
+const bot = require('../../../include/telegram-bot/bot');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Start extends TelegramBotRequest {

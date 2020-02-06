@@ -1,5 +1,5 @@
-const bot = require('../../core/bot');
-const destroyMessage = require('../../core/functions/destroy');
+const bot = require('../bot');
+const destroyMessage = require('../../../core/functions/destroy');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class DatabaseClear extends TelegramBotRequest {

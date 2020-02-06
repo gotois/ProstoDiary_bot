@@ -1,5 +1,5 @@
-const bot = require('../../core/bot');
-const pingMessage = require('../../core/functions/ping');
+const bot = require('../bot');
+const pingMessage = require('../../../core/functions/ping');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Ping extends TelegramBotRequest {

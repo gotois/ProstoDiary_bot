@@ -1,4 +1,4 @@
-const { sql } = require('../core/database');
+const { sql } = require('../db/database');
 
 module.exports = {
   selectRoleByEmail(email) {
@@ -32,9 +32,14 @@ WHERE
       SELECT email FROM passport.bot WHERE passport_id = ${passportTable.id};
     `;
   },
+  /**
+   * @param {string} login - user email or telegram id
+   * @param {string} password - bot master password
+   * @returns {*}
+   */
   checkByEmailAndMasterPassword(login, password) {
     return sql`select 1 from passport.user AS passportUser, passport.bot AS passportBot
-where passportUser.email = ${login}
+where passportUser.email = ${login} OR passportUser.telegram_id = ${login}
 AND
 passportBot.master_password = crypt(${password}, master_password)
 `;
@@ -69,9 +74,14 @@ WHERE
     passport_id = ${passportId}
 `;
   },
-  selectUserByEmail(email) {
+  /**
+   * @todo rename select by user email or telegram id
+   * @param {string} login - telegram user id or user email
+   * @returns {*}
+   */
+  selectUserByEmail(login) {
     return sql`
-      SELECT * FROM passport.user WHERE email = ${email}
+      SELECT * FROM passport.user WHERE email = ${login} OR telegram_id = ${login}
     `;
   },
   selectUserById(userId) {

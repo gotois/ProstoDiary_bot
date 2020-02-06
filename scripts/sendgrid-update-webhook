@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// todo перенести в email assistant
 const { website } = require('../app.json');
 const { updateWebhook } = require('../src/lib/sendgrid');
 const logger = require('../src/services/logger.service');

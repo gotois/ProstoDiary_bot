@@ -1,10 +1,10 @@
-const package_ = require('../../../package');
-const bot = require('../../core/bot');
-const { getTelegramFile } = require('../../services/file.service');
-const photoService = require('../../services/photo.service');
+const package_ = require('../../../../package');
+const bot = require('../bot');
+const { getTelegramFile } = require('../../../services/file.service');
+const photoService = require('../../../services/photo.service');
 const TelegramBotRequest = require('./telegram-bot-request');
-const { pool } = require('../../core/database');
-const passportQueries = require('../../db/passport');
+const { pool } = require('../../../db/database');
+const passportQueries = require('../../../db/passport');
 
 class Photo extends TelegramBotRequest {
   async beginDialog() {
@@ -31,7 +31,6 @@ class Photo extends TelegramBotRequest {
       ...messageResult,
       date: this.message.date,
       tags: [].concat(this.hashtags, messageResult.tags),
-      categories: ['user-transaction-write'],
       from: {
         email: package_.author.email,
         name: this.message.passport.id,

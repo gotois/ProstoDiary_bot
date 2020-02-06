@@ -1,5 +1,5 @@
-const bot = require('../../core/bot');
-const helpMessage = require('../../core/functions/help');
+const bot = require('../bot');
+const helpMessage = require('../../../core/functions/help');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Help extends TelegramBotRequest {

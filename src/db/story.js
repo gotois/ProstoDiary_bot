@@ -1,4 +1,4 @@
-const { sql } = require('../core/database');
+const { sql } = require('../db/database');
 
 module.exports = {
   selectCategories(categories) {

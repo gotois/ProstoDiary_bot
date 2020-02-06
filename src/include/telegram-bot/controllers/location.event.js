@@ -1,15 +1,18 @@
-const package_ = require('../../../package');
-const bot = require('../../core/bot');
-const { getTelegramFile } = require('../../services/file.service');
+const bot = require('../bot');
+const package_ = require('../../../../package');
 const TelegramBotRequest = require('./telegram-bot-request');
+const AbstractGeo = require('../../../models/abstract/abstract-geo');
 
-class Document extends TelegramBotRequest {
+class Location extends TelegramBotRequest {
   async beginDialog() {
     await super.beginDialog();
-    const fileBuffer = await getTelegramFile(this.message.document.file_id);
+    const { latitude, longitude } = this.message.location;
+    const locationGeo = new AbstractGeo({ latitude, longitude });
+    const locationGeoJSON = await locationGeo.prepare();
+    // fixme переделать под JSON-LD
     const result = await this.request('post', {
-      file: fileBuffer, // todo это поле уже не используется
-      mime: this.message.document.mime_type,
+      text: JSON.stringify(locationGeoJSON.geo), // todo это поле уже не используется
+      mime: 'application/vnd.geo+json',
       date: this.message.date,
       from: {
         email: package_.author.email,
@@ -27,14 +30,13 @@ class Document extends TelegramBotRequest {
   }
 }
 /**
- * @description пример считывания zip архива; его распаковка; нахождение export.xml и его превращение в json
- * @param {TelegramMessage} message - msg
+ * @param {TelegramMessage} message - message
  * @returns {Promise<undefined>}
  */
 module.exports = async (message) => {
   if (!message.passport.activated) {
     throw new Error('Bot not activated');
   }
-  const document = new Document(message);
-  await document.beginDialog();
+  const location = new Location(message);
+  await location.beginDialog();
 };

@@ -1,16 +1,18 @@
-const bot = require('../../core/bot');
-const { pool } = require('../../core/database');
+const bot = require('../../include/telegram-bot/bot');
+const { pool } = require('../../db/database');
 const { SERVER } = require('../../environment');
 const passportQueries = require('../../db/passport');
 const imapService = require('../../services/imap.service');
 const logger = require('../../services/logger.service');
 const Story = require('../../models/story');
 /**
+ * @todo в нынешнем виде устарело, перенести в email assistant
  * @param {object} info - mail info
  * @returns {Promise<void>}
  */
 const delivered = async (info) => {
   logger.info(delivered.name);
+  logger.info(info);
   const showTelegram = !info.test && info.chat_id && info.telegram_message_id;
   // todo проверять хуку по `info.sg_event_id` === 'ZGVsaXZlcmVkLTAtOTk2MjYyMC1aM090YUpKZFRGcTg2RkhEQm9xREFnLTA'
   // @see https://github.com/gotois/ProstoDiary_bot/issues/358
@@ -20,10 +22,21 @@ const delivered = async (info) => {
       const botTable = await connection.maybeOne(
         passportQueries.selectBotByEmail(info.email),
       );
+      if (!botTable) {
+        // пропускаем письма отправленные пользователю
+        const userTable = await connection.maybeOne(
+          passportQueries.selectUserByEmail(info.email),
+        );
+        // пропускаем сгенерированные ботом письма пользователю
+        if (userTable) {
+          return;
+        }
+        throw new Error('Unknown bot');
+      }
       return botTable;
     });
     if (!botTable) {
-      throw new Error('Unknown bot');
+      return;
     }
     const imap = imapService(
       {
@@ -41,6 +54,7 @@ const delivered = async (info) => {
     }
     const links = [];
     for (const mail of emails) {
+      // fixme категории больше не используются!
       // В зависимости от полученной категории разная логика работы с письмом
       if (info.category.includes('user-transaction-write')) {
         const story = new Story({

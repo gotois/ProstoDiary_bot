@@ -1,8 +1,6 @@
 const package_ = require('../../../package');
 
 /**
- * может не работать если абстракт уже натурализован
- *
  * @description edit
  * @param {object} requestObject - requestObject
  * @returns {Promise<string>}

@@ -1,5 +1,5 @@
 const package_ = require('../../../package');
-const { pool } = require('../../core/database');
+const { pool } = require('../../db/database');
 const passportQueries = require('../../db/passport');
 
 module.exports = async function(jsonld, { passport }) {

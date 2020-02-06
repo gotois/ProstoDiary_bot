@@ -1,9 +1,7 @@
-// todo - разделить на ассистентов, отдельно notify для телеграм и для почты
-// а пока перенести в post
 const package_ = require('../../../package');
 const { IS_AVA_OR_CI } = require('../../environment');
 const { mail } = require('../../lib/sendgrid');
-const bot = require('../../core/bot');
+const bot = require('../../include/telegram-bot/bot');
 const logger = require('../../services/logger.service');
 
 async function notifyTelegram(parameters) {

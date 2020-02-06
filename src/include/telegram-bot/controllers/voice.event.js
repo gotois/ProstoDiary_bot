@@ -1,9 +1,9 @@
-const bot = require('../../core/bot');
-const package_ = require('../../../package');
-const { pool } = require('../../core/database');
-const passportQueries = require('../../db/passport');
-const voiceService = require('../../services/voice.service');
-const { getTelegramFile } = require('../../services/file.service');
+const bot = require('../bot');
+const package_ = require('../../../../package');
+const { pool } = require('../../../db/database');
+const passportQueries = require('../../../db/passport');
+const voiceService = require('../../../services/voice.service');
+const { getTelegramFile } = require('../../../services/file.service');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Voice extends TelegramBotRequest {
@@ -32,6 +32,7 @@ class Voice extends TelegramBotRequest {
       passportId: this.message.passport.id,
     });
 
+    // todo создать api : voice
     const result = await this.request('post', {
       ...messageResult,
       date: this.message.date,

@@ -37,6 +37,45 @@ const get = (url, qs = {}, headers = {}, encoding = null) => {
   });
 };
 /**
+ * @description JSON-RPC 2 запросы
+ * @param {string} obj - obj
+ * @param {string} obj.url - url
+ * @param {object} obj.body - body
+ * @param {object} obj.auth - basic auth
+ * @returns {Promise<unknown>}
+ */
+const rpc = ({ url, body, auth }) => {
+  const values = JSON.stringify(body);
+  return new Promise((resolve, reject) => {
+    request(
+      {
+        method: 'POST',
+        url: url,
+        headers: {
+          'User-Agent': 'Telegram Assistant/0.0.1',
+          'Content-Type': 'application/json',
+          'Accept': 'application/schema+json',
+          'Content-Length': values.length,
+        },
+        body: values,
+        auth,
+      },
+      (error, response, body) => {
+        if (error) {
+          return reject(error);
+        }
+        if (response.statusCode >= 400) {
+          return reject({
+            message: formatMessage(body),
+            statusCode: response.statusCode,
+          });
+        }
+        return resolve(JSON.parse(body));
+      },
+    );
+  });
+};
+/**
  * @param {string} url - url
  * @param {object} form - form
  * @param {object|undefined} headers - headers
@@ -48,6 +87,7 @@ const post = (
   form,
   headers = { 'content-type': 'application/json; charset=UTF-8' },
   encoding = undefined,
+  auth = undefined,
 ) => {
   return new Promise((resolve, reject) => {
     const parameters = {
@@ -59,6 +99,9 @@ const post = (
     };
     if (encoding !== undefined) {
       parameters.encoding = encoding;
+    }
+    if (auth !== undefined) {
+      parameters.auth = auth;
     }
     request(parameters, (error, response, body) => {
       if (error) {
@@ -131,6 +174,7 @@ const toQueryString = (data) => {
 };
 
 module.exports = {
+  rpc,
   get,
   post,
   patch,

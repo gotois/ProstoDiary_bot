@@ -1,4 +1,4 @@
-const { sql, pool } = require('../../core/database');
+const { sql, pool } = require('../../db/database');
 
 module.exports = async (request, response, next) => {
   try {
@@ -11,10 +11,10 @@ module.exports = async (request, response, next) => {
       try {
         const ldTable = await connection.one(sql`
 SELECT
-    jsonld 
-FROM 
-    ld 
-WHERE 
+    jsonld
+FROM
+    ld
+WHERE
     passport_id = ${request.params.uuid}
 `);
         // todo: брать из View person

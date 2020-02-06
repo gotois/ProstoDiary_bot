@@ -1,8 +1,10 @@
-const bot = require('../../core/bot');
+const bot = require('../../include/telegram-bot/bot');
 const logger = require('../../services/logger.service');
-const { SignIn } = require('../telegram/signin.event');
+const {
+  SignIn,
+} = require('../../include/telegram-bot/controllers/signin.event');
 const package_ = require('../../../package');
-const { pool, NotFoundError } = require('../../core/database');
+const { pool, NotFoundError } = require('../../db/database');
 const passportQueries = require('../../db/passport');
 const { mail } = require('../../lib/sendgrid');
 const pddService = require('../../services/pdd.service');

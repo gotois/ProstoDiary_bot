@@ -1,4 +1,4 @@
-const bot = require('../core/bot');
+const bot = require('../include/telegram-bot/bot');
 const { get } = require('./request.service');
 /**
  * @type {string}

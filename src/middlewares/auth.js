@@ -1,6 +1,6 @@
 const auth = require('http-auth');
 const passportQueries = require('../db/passport');
-const { pool } = require('../core/database');
+const { pool } = require('../db/database');
 
 // example: demo@gotointeractive.com:demo
 const basic = auth.basic(

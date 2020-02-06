@@ -1,3 +1,4 @@
+// todo это убрать из core и поместить куда-то ближе к controllers/web/rbac.js ???
 const AccessControl = require('accesscontrol');
 
 const ac = new AccessControl();

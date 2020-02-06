@@ -8,6 +8,7 @@ const {
 const { POSTGRES_CONNECTION_STRING } = require('../environment');
 const pool = createPool(POSTGRES_CONNECTION_STRING);
 
+// todo как показывает код - использую только pool, остальное нужно будет импортить напрмую от slonik
 module.exports = {
   pool,
   sql,

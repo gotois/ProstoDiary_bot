@@ -1,7 +1,7 @@
-const bot = require('../../core/bot');
-const textService = require('../../services/text.service');
+const bot = require('../bot');
+const textService = require('../../../services/text.service');
 const TelegramBotRequest = require('./telegram-bot-request');
-const textMessage = require('../../core/functions/text');
+const textMessage = require('../../../core/functions/text');
 
 class Text extends TelegramBotRequest {
   onError(error) {

@@ -1,5 +1,5 @@
-const bot = require('../../core/bot');
-const backupMessage = require('../../core/functions/backup');
+const bot = require('../bot');
+const backupMessage = require('../../../core/functions/backup');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Backup extends TelegramBotRequest {

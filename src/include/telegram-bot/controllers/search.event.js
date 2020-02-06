@@ -1,14 +1,14 @@
 const uuidv1 = require('uuid/v1');
-const dictionary = require('../../lib/dictionary');
-const bot = require('../../core/bot');
-const { pool } = require('../../core/database');
-const storyQueries = require('../../db/story');
-const { telegram } = require('../../controllers');
-const logger = require('../../services/logger.service');
-const requestService = require('../../services/request.service');
-const dialogService = require('../../services/dialog.service');
+const dictionary = require('../../../lib/dictionary');
+const bot = require('../bot');
+const { pool } = require('../../../db/database');
+const storyQueries = require('../../../db/story');
+const { telegram } = require('../../../controllers');
+const logger = require('../../../services/logger.service');
+const requestService = require('../../../services/request.service');
+const dialogService = require('../../../services/dialog.service');
 const TelegramBotRequest = require('./telegram-bot-request');
-const { IS_PRODUCTION } = require('../../environment');
+const { IS_PRODUCTION } = require('../../../environment');
 
 class Search extends TelegramBotRequest {
   /**
@@ -54,6 +54,7 @@ class Search extends TelegramBotRequest {
       });
     }
 
+    // todo лучше переделать на jsonld
     // todo валидировать параметры (dialogResult.parameters) и на основе них формировать лучшую выборку
     const rows = await pool.connect(async (connection) => {
       const result = await connection.many(

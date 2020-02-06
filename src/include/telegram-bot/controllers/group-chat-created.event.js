@@ -1,4 +1,4 @@
-const logger = require('../../services/logger.service');
+const logger = require('../../../services/logger.service');
 
 /**
  * @description Создание чата

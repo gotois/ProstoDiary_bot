@@ -1,6 +1,6 @@
 const oidcParser = require('../../middlewares/oidc');
 const passportQueries = require('../../db/passport');
-const { pool } = require('../../core/database');
+const { pool } = require('../../db/database');
 
 // todo этот колбэк тестовый. данные коды нужно получать на удаленном ассистенте
 module.exports.oidcallback = (request, response) => {
@@ -9,7 +9,7 @@ module.exports.oidcallback = (request, response) => {
     return;
   }
   response.send(`
-  Ассистент подключен. 
+  Ассистент подключен.
   code: ${request.query.code}`);
 };
 

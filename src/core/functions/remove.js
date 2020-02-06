@@ -1,8 +1,7 @@
 const package_ = require('../../../package');
 
 /**
- * Удаление записи
- *
+ * @description Удаление записи
  * @param {object} requestObject - requestObject
  * @returns {Promise<jsold>}
  */

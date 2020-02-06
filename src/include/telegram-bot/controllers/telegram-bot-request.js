@@ -1,6 +1,7 @@
 const crypto = require('crypto');
-const jsonrpc = require('../../core/jsonrpc');
-const logger = require('../../services/logger.service');
+const requestService = require('../../../services/request.service');
+const logger = require('../../../services/logger.service');
+const { SERVER } = require('../../../environment');
 
 class TelegramBotRequest {
   #message;
@@ -47,7 +48,19 @@ class TelegramBotRequest {
   async request(method, document = {}) {
     logger.info('request:' + method);
     try {
-      const jsonldMessage = await jsonrpc.rpcRequest(method, document, this.message.passport);
+      const jsonldMessage = await requestService.rpc({
+        url: SERVER.HOST + '/api',
+        body: {
+          jsonrpc: '2.0',
+          method: method,
+          id: 1,
+          params: document
+        },
+        auth: {
+          user: this.message.passport.user,
+          pass:this.message.passport.masterPassword,
+        }
+      });
       return jsonldMessage;
     } catch (error) {
       this.onError(error);
