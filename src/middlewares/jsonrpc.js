@@ -1,3 +1,4 @@
+const package_ = require('../../package.json');
 const jsonRpcServer = require('../api');
 const { pool } = require('../db/database');
 const passportQueries = require('../db/passport');
@@ -49,7 +50,6 @@ async function apiRequest(server, method, document, passport) {
 }
 
 module.exports = async (request, response, next) => {
-  console.log(request.body);
   logger.info(`RPC:${request.body.method}`);
   let passport;
   try {
@@ -82,6 +82,8 @@ module.exports = async (request, response, next) => {
       request.body.params,
       passport,
     );
+    response.header('X-Bot', [package_.name]);
+    response.header('X-Bot-Version', [package_.version]);
     return response.send(result);
   } catch (error) {
     next(error);
