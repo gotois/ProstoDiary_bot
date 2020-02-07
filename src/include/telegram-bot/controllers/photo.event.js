@@ -1,10 +1,7 @@
-const package_ = require('../../../../package');
 const bot = require('../bot');
 const { getTelegramFile } = require('../../../services/file.service');
-const photoService = require('../../../services/photo.service');
 const TelegramBotRequest = require('./telegram-bot-request');
-const { pool } = require('../../../db/database');
-const passportQueries = require('../../../db/passport');
+const photoAction = require('../../../core/functions/photo');
 
 class Photo extends TelegramBotRequest {
   async beginDialog() {
@@ -16,32 +13,16 @@ class Photo extends TelegramBotRequest {
     }
     await bot.sendChatAction(this.message.chat.id, 'typing');
     const imageBuffer = await getTelegramFile(mediumPhoto.file_id);
-    const secretKey = await pool.connect(async (connection) => {
-      const botTable = await connection.one(
-        passportQueries.selectByPassport(this.message.passport.id),
-      );
-      return botTable.secret_key;
-    });
-    const messageResult = await photoService.prepareImage({
+    const result = await photoAction({
       imageBuffer,
-      secretKey,
       caption: this.message.caption,
-    });
-    const result = await this.request('post', {
-      ...messageResult,
       date: this.message.date,
-      tags: [].concat(this.hashtags, messageResult.tags),
-      from: {
-        email: package_.author.email,
-        name: this.message.passport.id,
-      },
-      to: [
-        {
-          email: this.message.passport.botEmail,
-          name: this.message.passport.botId,
-        },
-      ],
+      hashtags: this.hashtags,
       telegram_message_id: this.message.message_id,
+      auth: {
+        user: this.message.passport.user,
+        pass: this.message.passport.masterPassword,
+      },
     });
     await bot.sendMessage(this.message.chat.id, result, {
       parse_mode: 'Markdown',

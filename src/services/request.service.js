@@ -1,4 +1,3 @@
-// todo перейти на node-fetch?
 const request = require('request');
 /**
  * @param {any} body - response body
@@ -32,45 +31,6 @@ const get = (url, qs = {}, headers = {}, encoding = null) => {
           resolve(JSON.parse(body));
         }
         return resolve(body);
-      },
-    );
-  });
-};
-/**
- * @description JSON-RPC 2 запросы
- * @param {string} obj - obj
- * @param {string} obj.url - url
- * @param {object} obj.body - body
- * @param {object} obj.auth - basic auth
- * @returns {Promise<unknown>}
- */
-const rpc = ({ url, body, auth }) => {
-  const values = JSON.stringify(body);
-  return new Promise((resolve, reject) => {
-    request(
-      {
-        method: 'POST',
-        url: url,
-        headers: {
-          'User-Agent': 'Telegram Assistant/0.0.1',
-          'Content-Type': 'application/json',
-          'Accept': 'application/schema+json',
-          'Content-Length': values.length,
-        },
-        body: values,
-        auth,
-      },
-      (error, response, body) => {
-        if (error) {
-          return reject(error);
-        }
-        if (response.statusCode >= 400) {
-          return reject({
-            message: formatMessage(body),
-            statusCode: response.statusCode,
-          });
-        }
-        return resolve(JSON.parse(body));
       },
     );
   });
@@ -174,7 +134,6 @@ const toQueryString = (data) => {
 };
 
 module.exports = {
-  rpc,
   get,
   post,
   patch,

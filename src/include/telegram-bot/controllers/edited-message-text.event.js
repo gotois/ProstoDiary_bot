@@ -1,6 +1,6 @@
 const bot = require('../bot');
-const editMessage = require('../../../core/functions/edit');
-const deleteMessage = require('../../../core/functions/remove');
+const editAction = require('../../../core/functions/edit');
+const deleteAction = require('../../../core/functions/remove');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class EditMessageText extends TelegramBotRequest {
@@ -32,17 +32,25 @@ class EditMessageText extends TelegramBotRequest {
         return this.message.text.toLowerCase() === del.toLowerCase();
       })
     ) {
-      const deleteAction = deleteMessage();
       // todo дополнить API
-      const result = await this.request('remove', deleteAction);
+      const result = await deleteAction({
+        auth: {
+          user: this.message.passport.user,
+          pass: this.message.passport.masterPassword,
+        },
+      });
       await bot.sendMessage(this.message.chat.id, result, {
         parse_mode: 'Markdown',
       });
     } else {
       // TODO: https://github.com/gotois/ProstoDiary_bot/issues/34
-      const editAction = editMessage();
       // todo дополнить API
-      const result = await this.request('edit', editAction);
+      const result = await editAction({
+        auth: {
+          user: this.message.passport.user,
+          pass: this.message.passport.masterPassword,
+        },
+      });
       await bot.sendMessage(this.message.chat.id, result, {
         parse_mode: 'Markdown',
       });

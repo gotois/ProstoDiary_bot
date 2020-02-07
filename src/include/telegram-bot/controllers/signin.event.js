@@ -1,5 +1,5 @@
 const bot = require('../bot');
-const signinMessage = require('../../../core/functions/signin');
+const signinAction = require('../../../core/functions/signin');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class SignIn extends TelegramBotRequest {
@@ -11,8 +11,13 @@ class SignIn extends TelegramBotRequest {
    */
   async signInReplyMessage({ text }) {
     try {
-      const signinAction = signinMessage({ token: text });
-      await this.request('signin', signinAction);
+      await signinAction({
+        token: text,
+        auth: {
+          user: this.message.passport.user,
+          pass: this.message.passport.masterPassword,
+        },
+      });
     } catch (error) {
       await bot.sendMessage(this.message.chat.id, error.purpose.text);
       return;

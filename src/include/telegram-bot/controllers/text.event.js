@@ -1,7 +1,7 @@
 const bot = require('../bot');
 const textService = require('../../../services/text.service');
 const TelegramBotRequest = require('./telegram-bot-request');
-const textMessage = require('../../../core/functions/text');
+const textAction = require('../../../core/functions/text');
 
 class Text extends TelegramBotRequest {
   onError(error) {
@@ -21,14 +21,16 @@ class Text extends TelegramBotRequest {
     try {
       await bot.sendChatAction(this.message.chat.id, 'typing');
       const text = await textService.correctionText(this.message.text);
-      const textAction = await textMessage(
-        this.message.passport,
+      const result = await textAction({
         text,
-        this.hashtags,
-        this.message.chat.id,
+        hashtags: this.hashtags,
+        chatId: this.message.chat.id,
         message_id,
-      );
-      const result = await this.request('text', textAction);
+        auth: {
+          user: this.message.passport.user,
+          pass: this.message.passport.masterPassword,
+        },
+      });
       await bot.editMessageText(result.purpose.abstract, {
         chat_id: this.message.chat.id,
         message_id: message_id,

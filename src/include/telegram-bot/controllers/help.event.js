@@ -1,12 +1,16 @@
 const bot = require('../bot');
-const helpMessage = require('../../../core/functions/help');
+const helpAction = require('../../../core/functions/help');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Help extends TelegramBotRequest {
   async beginDialog() {
     await super.beginDialog();
-    const helpAction = helpMessage();
-    const result = await this.request('help', helpAction);
+    const result = await helpAction({
+      auth: {
+        user: this.message.passport.user,
+        pass: this.message.passport.masterPassword,
+      },
+    });
     await bot.sendMessage(this.message.chat.id, result, {
       parse_mode: 'Markdown',
     });

@@ -1,7 +1,5 @@
 const crypto = require('crypto');
-const requestService = require('../../../services/request.service');
 const logger = require('../../../services/logger.service');
-const { SERVER } = require('../../../environment');
 
 class TelegramBotRequest {
   #message;
@@ -39,39 +37,6 @@ class TelegramBotRequest {
   async beginDialog() {
     const instanceProto = Object.getPrototypeOf(this);
     logger.info('telegram:' + instanceProto.constructor.name);
-  }
-  /**
-   * @param {string} method - api method
-   * @param {jsonld} document - jsonld params
-   * @returns {Promise<string>}
-   */
-  async request(method, document = {}) {
-    logger.info('request:' + method);
-    try {
-      const jsonldMessage = await requestService.rpc({
-        url: SERVER.HOST + '/api',
-        body: {
-          jsonrpc: '2.0',
-          method: method,
-          id: 1,
-          params: document
-        },
-        auth: {
-          user: this.message.passport.user,
-          pass:this.message.passport.masterPassword,
-        }
-      });
-      return jsonldMessage;
-    } catch (error) {
-      this.onError(error);
-      return error.message;
-    }
-  }
-  /**
-   * @override
-   */
-  onError(error) {
-    logger.error(error);
   }
 }
 

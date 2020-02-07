@@ -1,10 +1,10 @@
 const package_ = require('../../../package');
-
+const rpc = require('../lib/rpc');
 /**
  * @description Проверка ping
- * @returns {Promise<jsonld>}
+ * @returns {Promise<string>}
  */
-module.exports = () => {
+module.exports = async function({ auth }) {
   const document = {
     '@context': {
       schema: 'http://schema.org/',
@@ -19,5 +19,14 @@ module.exports = () => {
     'name': 'Ping',
   };
 
-  return document;
+  const jsonldMessage = await rpc({
+    body: {
+      jsonrpc: '2.0',
+      method: 'ping',
+      id: 1,
+      params: document,
+    },
+    auth: auth,
+  });
+  return jsonldMessage;
 };

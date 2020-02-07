@@ -1,8 +1,5 @@
 const jsQR = require('jsqr');
 const Jimp = require('jimp');
-const fileType = require('file-type');
-const crypt = require('./crypt.service');
-const visionService = require('./vision.service');
 /**
  * @param {Buffer} buffer - buffer
  * @returns {Promise<string|Error>}
@@ -32,37 +29,7 @@ const readQR = async (buffer) => {
   }
   return qrValue.data;
 };
-/**
- * @param {object} requestObject - object
- * @param {string} requestObject.caption - photo caption text
- * @param {Buffer} requestObject.fileBuffer - file buffer
- * @returns {Promise<*>}
- */
-const prepareImage = async (requestObject) => {
-  const { imageBuffer, secretKey, caption } = requestObject;
-  const { mime } = fileType(imageBuffer);
-  const tags = [];
-  let subject;
-  if (caption) {
-    // fixme отправляю subject в DialogFlow для детектирования Action
-    caption.toLowerCase();
-  }
-  const visionResult = await visionService.labelDetection(imageBuffer);
-  visionResult.labelAnnotations.forEach((annotation) => {
-    tags.push(annotation.description);
-  });
-  const encrypted = await crypt.openpgpEncrypt(imageBuffer, [secretKey]);
-  return {
-    mime,
-    // eslint-disable-next-line
-    subject: subject || 'UndefinedPhoto', // todo распознавать интент-намерение в самой картинке через Vision
-    content: encrypted.data,
-    original: imageBuffer,
-    tags,
-  };
-};
 
 module.exports = {
-  prepareImage,
   readQR,
 };

@@ -1,5 +1,5 @@
 const bot = require('../bot');
-const destroyMessage = require('../../../core/functions/destroy');
+const destroyAction = require('../../../core/functions/destroy');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class DatabaseClear extends TelegramBotRequest {
@@ -20,8 +20,12 @@ class DatabaseClear extends TelegramBotRequest {
         await bot.sendMessage(this.message.chat.id, 'Операция отменена');
         return;
       }
-      const destroyAction = destroyMessage();
-      const result = await this.request('delete', destroyAction);
+      const result = await destroyAction({
+        auth: {
+          user: this.message.passport.user,
+          pass: this.message.passport.masterPassword,
+        },
+      });
       await bot.sendMessage(this.message.chat.id, result);
     });
   }

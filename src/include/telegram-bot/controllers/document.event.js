@@ -1,27 +1,21 @@
-const package_ = require('../../../../package');
 const bot = require('../bot');
 const { getTelegramFile } = require('../../../services/file.service');
 const TelegramBotRequest = require('./telegram-bot-request');
+const documentAction = require('../../../core/functions/document');
 
 class Document extends TelegramBotRequest {
   async beginDialog() {
     await super.beginDialog();
     const fileBuffer = await getTelegramFile(this.message.document.file_id);
-    const result = await this.request('post', {
-      file: fileBuffer, // todo это поле уже не используется
+    const result = await documentAction({
+      file: fileBuffer,
       mime: this.message.document.mime_type,
       date: this.message.date,
-      from: {
-        email: package_.author.email,
-        name: this.message.passport.id,
-      },
-      to: [
-        {
-          email: this.message.passport.botEmail,
-          name: this.message.passport.botId,
-        },
-      ],
       telegram_message_id: this.message.message_id,
+      auth: {
+        user: this.message.passport.user,
+        pass: this.message.passport.masterPassword,
+      },
     });
     await bot.sendMessage(this.message.chat.id, result);
   }
