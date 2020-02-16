@@ -8,34 +8,37 @@ const { SERVER } = require('../../environment');
  * @param {object} obj.auth - basic auth
  * @returns {Promise<unknown>}
  */
-module.exports = ({ body, auth }) => {
-  const values = JSON.stringify(body);
+module.exports = ({ body, auth, jwt }) => {
   return new Promise((resolve, reject) => {
-    request(
-      {
-        method: 'POST',
-        url: SERVER.HOST + '/api',
-        headers: {
-          'User-Agent': `${package_.name}/${package_.version}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/schema+json',
-          'Content-Length': values.length,
-        },
-        body: values,
-        auth,
+    const values = JSON.stringify(body);
+    const parameters = {
+      method: 'POST',
+      url: SERVER.HOST + '/api',
+      headers: {
+        'User-Agent': `${package_.name}/${package_.version}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/schema+json',
+        'Content-Length': values.length,
       },
-      (error, response, body) => {
-        if (error) {
-          return reject(error);
-        }
-        if (response.statusCode >= 400) {
-          return reject({
-            message: body,
-            statusCode: response.statusCode,
-          });
-        }
-        return resolve(JSON.parse(body));
-      },
-    );
+      body: values,
+    };
+    if (jwt) {
+      parameters.headers['Authorization'] = 'Bearer ' + jwt;
+    }
+    if (auth) {
+      parameters.auth = auth;
+    }
+    request(parameters, (error, response, body) => {
+      if (error) {
+        return reject(error);
+      }
+      if (response.statusCode >= 400) {
+        return reject({
+          message: body || response.statusMessage,
+          statusCode: response.statusCode,
+        });
+      }
+      return resolve(JSON.parse(body));
+    });
   });
 };

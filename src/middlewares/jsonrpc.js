@@ -1,3 +1,4 @@
+const jose = require('jose');
 const package_ = require('../../package.json');
 const jsonRpcServer = require('../api');
 const { pool } = require('../db/database');
@@ -5,7 +6,6 @@ const passportQueries = require('../db/passport');
 const logger = require('../services/logger.service');
 const crypt = require('../services/crypt.service');
 const signatures = require('../core/security/signature');
-
 /**
  * @param {object} server - json rpc server
  * @param {string} method - json rpc method
@@ -15,6 +15,7 @@ const signatures = require('../core/security/signature');
  */
 async function apiRequest(server, method, document, passport) {
   const signedDocument = await signatures.signature.call(passport, document);
+  
   return new Promise((resolve, reject) => {
     server.call(
       {
@@ -52,21 +53,42 @@ async function apiRequest(server, method, document, passport) {
 module.exports = async (request, response, next) => {
   logger.info(`RPC:${request.body.method}`);
   let passport;
+  let email;
   try {
     passport = await pool.connect(async (connection) => {
-      const userTable = await connection.maybeOne(
-        passportQueries.selectUserByEmail(request.user),
-      );
-      if (!userTable) {
-        throw new Error('Unknown login');
+      // By token auth
+      if (request.headers.authorization) {
+        const [_basic, id_token] = request.headers.authorization.split(' ');
+        const decoded = jose.JWT.decode(id_token);
+        // todo надо верифицировать JWT id_token
+        // jose.JWT.verify(...)
+        // плюс проверять oidc client_id из decoded
+
+        const botTable = await connection.maybeOne(
+          passportQueries.selectBotByEmail(decoded.email),
+        );
+        if (!botTable) {
+          return {};
+        }
+        return botTable;
+      } else {
+        // By basic auth
+        email = request.user;
+
+        const userTable = await connection.maybeOne(
+          passportQueries.selectUserByEmail(email),
+        );
+        if (!userTable) {
+          throw new Error('Unknown login');
+        }
+        const botTable = await connection.maybeOne(
+          passportQueries.selectByPassport(userTable.id),
+        );
+        if (!botTable) {
+          return {};
+        }
+        return botTable;
       }
-      const botTable = await connection.maybeOne(
-        passportQueries.selectByPassport(userTable.id),
-      );
-      if (!botTable) {
-        return {};
-      }
-      return botTable;
     });
   } catch (error) {
     logger.error(error);
