@@ -1,14 +1,17 @@
-const { pool } = require('../../db/database');
 const ac = require('./rbac');
+const { pool } = require('../../db/database');
 const storyQueries = require('../../db/story');
 const passportQueries = require('../../db/passport');
 
+// Для доступа к сообщениям, пользователю необходимо вести свой email и master password
 module.exports = async (request, response, next) => {
   try {
     await pool.connect(async (connection) => {
-      const role = await connection.maybeOne(
+      console.log('request.user', request.user);
+      const { role } = await connection.maybeOne(
         passportQueries.selectRoleByEmail(request.user),
       );
+      console.log('request.role', role);
       if (!role) {
         response.status(403).json({ message: 'forbidden' });
         return;
@@ -17,12 +20,13 @@ module.exports = async (request, response, next) => {
         const storyTable = await connection.one(
           storyQueries.selectStoryById(request.params.uuid),
         );
-        let permission;
-        if (storyTable.publisher_email === request.user) {
-          permission = ac.can(role).readOwn('message');
-        } else {
-          permission = ac.can(role).readAny('message');
-        }
+        const permission = ac.can(role).readOwn('message');
+        // todo поправить новую выдачу
+        // if (storyTable.publisher_email === request.user) {
+        //   permission = ac.can(role).readOwn('message');
+        // } else {
+        //   permission = ac.can(role).readAny('message');
+        // }
         if (!permission.granted) {
           return response.status(403).json({ message: 'forbidden' });
         }
@@ -35,7 +39,12 @@ module.exports = async (request, response, next) => {
           default: {
             // todo отдельный шаблонизатор
             let html = '';
+            console.log('storyTable', storyTable);
+
+            html += `<h1>${JSON.stringify(storyTable.categories)}</h1>`;
+            html += `<h2>${JSON.stringify(storyTable.context)}</h2>`;
             switch (storyTable.content_type) {
+              case 'text/plain':
               case 'plain/text': {
                 html += storyTable.content.toString();
                 break;
@@ -51,6 +60,12 @@ module.exports = async (request, response, next) => {
                 break;
               }
             }
+            html += `
+                <div>
+                  <p>STATUS: ${storyTable.status}</p>
+                  <p>created_at: ${storyTable.created_at}</p>
+                </div>
+            `;
             return response.status(200).send(
               `
                 <div>${html}</div>
