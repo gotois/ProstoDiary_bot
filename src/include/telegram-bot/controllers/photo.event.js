@@ -19,10 +19,7 @@ class Photo extends TelegramBotRequest {
       date: this.message.date,
       hashtags: this.hashtags,
       telegram_message_id: this.message.message_id,
-      auth: {
-        user: this.message.passport.user,
-        pass: this.message.passport.masterPassword,
-      },
+      jwt: this.message.passport.jwt,
     });
     await bot.sendMessage(this.message.chat.id, result, {
       parse_mode: 'Markdown',

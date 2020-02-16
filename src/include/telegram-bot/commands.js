@@ -1,4 +1,3 @@
-// todo перенести это в include/telegram-bot
 /**
  * @type {object}
  */

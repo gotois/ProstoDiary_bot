@@ -1,7 +1,7 @@
 const qs = require('qs');
 const TelegramBot = require('node-telegram-bot-api');
 const logger = require('../services/logger.service');
-const { telegram, botCommands } = require('../controllers');
+const { telegram, botCommands } = require('../include/telegram-bot/commands');
 const {
   IS_PRODUCTION,
   IS_CRON,

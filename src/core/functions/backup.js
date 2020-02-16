@@ -1,6 +1,7 @@
 const package_ = require('../../../package');
 
 /**
+ * @todo вместо отдачи jsonld производить прямой запрос на API
  * @description backup
  * @param {object} requestObject - requestObject
  * @returns {Promise<jsonld>}

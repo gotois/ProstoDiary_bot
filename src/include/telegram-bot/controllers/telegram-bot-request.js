@@ -36,7 +36,7 @@ class TelegramBotRequest {
   }
   async beginDialog() {
     const instanceProto = Object.getPrototypeOf(this);
-    logger.info('telegram:' + instanceProto.constructor.name);
+    logger.info('telegram: ' + instanceProto.constructor.name);
   }
 }
 

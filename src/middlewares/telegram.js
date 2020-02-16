@@ -1,24 +1,30 @@
-const bot = require('../core/bot');
-const { pool } = require('../core/database');
-const passportQueries = require('../db/passport');
+const jose = require('jose');
+const bot = require('../include/telegram-bot/bot');
+const { pool, sql } = require('../db/database');
+const assistantQueries = require('../db/assistant');
 
 module.exports = async (request, response, next) => {
   try {
     const message = request.body.message || request.body.callback_query.message;
     const gotoisCredentions = await pool.connect(async (connection) => {
-      const userTable = await connection.maybeOne(
-        passportQueries.selectIdByTelegramId(message.from.id),
+      const assistantTable = await connection.maybeOne(
+        assistantQueries.selectByUserId(String(message.from.id)),
       );
-      if (!userTable) {
+
+      if (!assistantTable) {
         return {};
       }
-      const botTable = await connection.maybeOne(
-        passportQueries.selectByPassport(userTable.id),
-      );
-      if (!botTable) {
-        return {};
-      }
-      return botTable;
+
+      const decoded = jose.JWT.decode(assistantTable.token);
+
+      return {
+        activated: decoded.email_verified, // fixme проверять на срок через decoded.exp
+        user: String(message.from.id),
+        passportId: decoded.sub, // ID паспорт бота
+        assistant: decoded.aud, // ID ассистента
+        email: decoded.email, // почта бота пользователя
+        jwt: assistantTable.token,
+      };
     });
     const body = {
       ...request.body,

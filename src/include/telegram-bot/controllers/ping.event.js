@@ -6,10 +6,7 @@ class Ping extends TelegramBotRequest {
   async beginDialog() {
     await super.beginDialog();
     const result = await pingAction({
-      auth: {
-        user: this.message.passport.user,
-        pass: this.message.passport.masterPassword,
-      },
+      jwt: this.message.passport.jwt,
     });
     await bot.sendMessage(this.message.chat.id, result.purpose.abstract);
   }

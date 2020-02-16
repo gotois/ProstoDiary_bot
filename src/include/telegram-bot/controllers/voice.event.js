@@ -17,10 +17,7 @@ class Voice extends TelegramBotRequest {
       duration: this.message.voice.duration,
       uid: this.userHash,
       passportId: this.message.passport.id,
-      auth: {
-        user: this.message.passport.user,
-        pass: this.message.passport.masterPassword,
-      },
+      jwt: this.message.passport.jwt,
     });
     await bot.sendMessage(this.message.chat.id, result);
   }

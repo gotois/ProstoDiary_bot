@@ -6,13 +6,11 @@ class Help extends TelegramBotRequest {
   async beginDialog() {
     await super.beginDialog();
     const result = await helpAction({
-      auth: {
-        user: this.message.passport.user,
-        pass: this.message.passport.masterPassword,
-      },
+      jwt: this.message.passport.jwt,
     });
-    await bot.sendMessage(this.message.chat.id, result, {
-      parse_mode: 'Markdown',
+    await bot.sendMessage(this.message.chat.id, result.purpose.abstract, {
+      disable_web_page_preview: true,
+      parse_mode: result.purpose.encodingFormat === 'text/markdown' ? 'Markdown' : 'HTML',
     });
   }
 }

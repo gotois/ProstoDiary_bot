@@ -1,16 +1,17 @@
-const package_ = require('../../../package');
+const validator = require('validator');
 const SchemaOrg = require('schema.org');
 const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
+const package_ = require('../../../package');
+const rpc = require('../lib/rpc');
 const dialogService = require('../../services/dialog.service');
 const languageService = require('../../services/nlp.service');
-
+const logger = require('../../services/logger.service');
 /**
  * @todo на основе набора свойств пытаюсь насытить schema.org
  * затем получать родителя из схемы и насыщать ее по необходимости из истории
  * example:
  * myForm({
- *   ...parameters,
  *   "availability": "http://schema.org/InStock",
  *   'priceCurrency': 'USD',
  *   'price': 900,
@@ -18,16 +19,14 @@ const languageService = require('../../services/nlp.service');
  * @param {object} parameters
  * @returns {object} - тип JSON-LD
  */
-// eslint-disable-next-line
 const myForm = (parameters) => {
   const schemaOrg = new SchemaOrg();
   const type = schemaOrg.getType(parameters);
   return {
-    '@type': type,
+    '@type': type || 'Thing',
     ...parameters,
   };
 };
-
 /**
  * @param {string} intent - dialogflowResult intent displayName
  * @returns {string}
@@ -95,11 +94,12 @@ function convertIntentToActionName(intent) {
     }
   }
 }
-
 /**
  * @param {string} text - sentence text
  */
 async function detectBySentense(text) {
+  logger.info('detectBySentense');
+
   if (text.length > 256) {
     throw new Error('So big for detect');
   }
@@ -109,12 +109,11 @@ async function detectBySentense(text) {
    * @returns {object}
    */
   function generateDocument(action) {
-    // fixme вычислять через NLP и в зависимости от выполнения
-    // const actionStatus = 'CompletedActionStatus'; // ActiveActionStatus, PotentialActionStatus
-    const object = {
-      '@type': 'Thing',
-      'name': objectNames[0], // в идеале должно браться из dialogflow, но если не получается, то берем существительное и прилагательное через NLP
-    };
+    const object = myForm({
+      ...parameters, // параметры полученные от Diglogflow
+      name: encodeURIComponent(objectNames[0]), // в идеале должно браться из dialogflow, но если не получается, то берем существительное и прилагательное через NLP
+      // inLanguage: 'xxx' // язык
+    });
 
     const innerDocument = {
       // предполагаю что контекст будет создавать Space для каждого отдельного события это будет вида: 'https://gotointeractive.com/:object/:subject
@@ -128,28 +127,58 @@ async function detectBySentense(text) {
         }, {}),
       },
       '@type': action,
-      object, // todo rename to result
-      ...parameters,
-    };
+      object, // todo в зависимости от контекста может быть либо 'object' либо 'result'
 
+      // todo научить разбираться какой статус произошел по контексту
+      // actionStatus: 'CompletedActionStatus'; // ActiveActionStatus, PotentialActionStatus
+    };
     return innerDocument;
   }
 
   // todo возможно исключение, надо его правильно обработать
   // todo поменять uid
   const dialogflowResult = await dialogService.detect(text, 'test-uid');
-
-  // todo
-  //  example start: когда будет готовы DialogFlow
   const parameters = dialogService.formatParameters(dialogflowResult);
-  // myForm(parameters);
-  // example end
+
+  // ------------------------------------------
+  const { entities, language } = await languageService.analyzeEntities(text);
+
+  // todo получение информации по локации
+  // for (let entity of entities) {
+  //   if (entity.type === 'LOCATION') {
+  //     this.abstracts.push(new AbstractGeo({
+  //       near: entity.name,
+  //     }));
+  //   }
+  // }
 
   const { tokens } = await languageService.analyzeSyntax(
     dialogflowResult.queryText,
   );
   const objectNames = [];
   tokens.forEach((token) => {
+    const { lemma } = token;
+
+    // ------------------------------------------
+
+    if (validator.isEmail(lemma)) {
+      // this.abstracts.push(new AbstractEmail(lemma));
+    } else if (validator.isMobilePhone(lemma)) {
+      // this.abstracts.push(new AbstractPhone(lemma));
+    } else if (validator.isURL(lemma)) {
+      // this.abstracts.push(new AbstractLinks(lemma));
+    }
+    // TODO: names получить имена людей
+    //  ...
+    // TODO: получить адреса из текста
+    //  ...
+    // TODO: получить даты
+    //  ...
+    // TODO: behavior; анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
+    //  ...
+
+    // ------------------------------------------
+
     switch (token.partOfSpeech.tag) {
       // соединитель - союз, нужно увеличить возвращаемый массив на один
       // case 'CONJ': {
@@ -157,7 +186,11 @@ async function detectBySentense(text) {
       //   break;
       // }
       case 'NOUN': {
-        objectNames.push(token.lemma);
+        objectNames.push(lemma);
+        break;
+      }
+      case 'VERB': {
+        // categories.add(lemma); // fixme здесь использовать существительное tag === 'NOUN'
         break;
       }
       default: {
@@ -166,28 +199,24 @@ async function detectBySentense(text) {
     }
   });
 
-  const unsignedDocument = generateDocument(
+  return generateDocument(
     convertIntentToActionName(dialogflowResult.intent.displayName),
   );
-
-  return unsignedDocument;
 }
-
 /**
- * @param {object} passport - parameters
  * @param {string} text - user text
  * @returns {Promise<Array<jsonld>>}
  */
-module.exports = async (
-  passport,
+module.exports = async ({
+  // hashtags, // todo поддержать
+  // chat_id, // todo поддержать
+  tgMessageId,
   text,
-  // hashtags,
-  // chat_id,
-  // telegram_message_id,
-) => {
-  // todo поддержать hashtags, chat_id, telegram_message_id
-  // ...
-
+  auth,
+  creator,
+  publisher,
+  jwt,
+}) => {
   const today = format(
     fromUnixTime(Math.round(new Date().getTime() / 1000)),
     'yyyy-MM-dd',
@@ -214,28 +243,68 @@ module.exports = async (
       name: 'schema:name',
       abstract: 'schema:abstract',
       encodingFormat: 'schema:encodingFormat',
+      identifier: 'schema:identifier',
+      provider: 'schema:provider',
+      participant: 'schema:participant',
+      value: 'schema:value',
+      email: 'schema:email',
     },
-    '@type': 'Action',
+    '@type': 'Action', // ??? похоже так неправильно
     'agent': {
+      '@type': 'Organization',
+      'identifier': creator, // identifier assistant
+    },
+    'participant': {
       '@type': 'Person',
-      'name': package_.name,
+      'email': publisher, // identifier user
     },
     'startTime': today,
     'subjectOf': [],
     'object': {
       '@type': 'CreativeWork',
       'name': 'text',
-      'abstract': text.toString('base64'),
+      'abstract': encodeURIComponent(text).toString('base64'),
       'encodingFormat': 'text/plain',
+      'provider': {
+        '@type': 'Project',
+        'identifier': {
+          '@type': 'PropertyValue',
+          'name': 'TelegramMessageId',
+          'value': tgMessageId,
+        },
+      },
     },
     // location,
     // 'name': 'xxx', - это и будет тем самым спейсом?
   };
 
   for (const sentense of languageService.splitTextBySentences(text)) {
+    /**
+     * Разбор сообщения на типы (даты, имена, города, и т.д.)
+     * поиск тела письма -> натурализация и сведение фактов в Истории -> оптимизация БД
+     *
+     * @returns {Promise<object>}
+     */
     const subjectAction = await detectBySentense(sentense);
     document.subjectOf.push(subjectAction);
   }
 
-  return document;
+  // todo это хэштеги. поддержать функциональность
+  // const categories = new Set();
+  // this.tags.forEach(tag => {
+  //   categories.add(tag);
+  // });
+
+  const jsonldMessage = await rpc({
+    body: {
+      jsonrpc: '2.0',
+      method: 'text',
+      id: 1,
+      params: document,
+    },
+    jwt,
+    auth,
+  });
+
+  return jsonldMessage;
 };

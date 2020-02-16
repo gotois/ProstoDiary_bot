@@ -21,10 +21,7 @@ class DatabaseClear extends TelegramBotRequest {
         return;
       }
       const result = await destroyAction({
-        auth: {
-          user: this.message.passport.user,
-          pass: this.message.passport.masterPassword,
-        },
+        jwt: this.message.passport.jwt,
       });
       await bot.sendMessage(this.message.chat.id, result);
     });

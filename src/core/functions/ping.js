@@ -4,7 +4,7 @@ const rpc = require('../lib/rpc');
  * @description Проверка ping
  * @returns {Promise<string>}
  */
-module.exports = async function({ auth }) {
+module.exports = async function({ auth, jwt }) {
   const document = {
     '@context': {
       schema: 'http://schema.org/',
@@ -26,7 +26,8 @@ module.exports = async function({ auth }) {
       id: 1,
       params: document,
     },
-    auth: auth,
+    jwt,
+    auth,
   });
   return jsonldMessage;
 };

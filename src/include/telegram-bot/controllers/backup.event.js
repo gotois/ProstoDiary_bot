@@ -13,10 +13,7 @@ class Backup extends TelegramBotRequest {
     const result = await backupAction({
       token: text,
       date: this.message.date,
-      auth: {
-        user: this.message.passport.user,
-        pass: this.message.passport.masterPassword,
-      },
+      jwt: this.message.passport.jwt,
     });
     await bot.sendMessage(this.message.chat.id, result);
   }

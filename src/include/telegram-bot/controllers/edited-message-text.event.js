@@ -34,10 +34,7 @@ class EditMessageText extends TelegramBotRequest {
     ) {
       // todo дополнить API
       const result = await deleteAction({
-        auth: {
-          user: this.message.passport.user,
-          pass: this.message.passport.masterPassword,
-        },
+        jwt: this.message.passport.jwt,
       });
       await bot.sendMessage(this.message.chat.id, result, {
         parse_mode: 'Markdown',
@@ -46,10 +43,7 @@ class EditMessageText extends TelegramBotRequest {
       // TODO: https://github.com/gotois/ProstoDiary_bot/issues/34
       // todo дополнить API
       const result = await editAction({
-        auth: {
-          user: this.message.passport.user,
-          pass: this.message.passport.masterPassword,
-        },
+        jwt: this.message.passport.jwt,
       });
       await bot.sendMessage(this.message.chat.id, result, {
         parse_mode: 'Markdown',

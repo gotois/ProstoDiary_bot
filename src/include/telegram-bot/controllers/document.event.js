@@ -12,10 +12,7 @@ class Document extends TelegramBotRequest {
       mime: this.message.document.mime_type,
       date: this.message.date,
       telegram_message_id: this.message.message_id,
-      auth: {
-        user: this.message.passport.user,
-        pass: this.message.passport.masterPassword,
-      },
+      jwt: this.message.passport.jwt,
     });
     await bot.sendMessage(this.message.chat.id, result);
   }

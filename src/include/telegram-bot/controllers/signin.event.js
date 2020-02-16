@@ -13,10 +13,7 @@ class SignIn extends TelegramBotRequest {
     try {
       await signinAction({
         token: text,
-        auth: {
-          user: this.message.passport.user,
-          pass: this.message.passport.masterPassword,
-        },
+        jwt: this.message.passport.jwt,
       });
     } catch (error) {
       await bot.sendMessage(this.message.chat.id, error.purpose.text);

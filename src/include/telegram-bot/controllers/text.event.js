@@ -4,9 +4,6 @@ const TelegramBotRequest = require('./telegram-bot-request');
 const textAction = require('../../../core/functions/text');
 
 class Text extends TelegramBotRequest {
-  onError(error) {
-    throw error;
-  }
   async beginDialog() {
     await super.beginDialog();
     const { message_id } = await bot.sendMessage(
@@ -18,25 +15,33 @@ class Text extends TelegramBotRequest {
         disable_web_page_preview: true,
       },
     );
+    await bot.sendChatAction(this.message.chat.id, 'typing');
     try {
-      await bot.sendChatAction(this.message.chat.id, 'typing');
       const text = await textService.correctionText(this.message.text);
       const result = await textAction({
         text,
-        hashtags: this.hashtags,
-        chatId: this.message.chat.id,
-        message_id,
-        auth: {
-          user: this.message.passport.user,
-          pass: this.message.passport.masterPassword,
-        },
+        // hashtags: this.hashtags, // todo поддержать на стороне JSONLD
+        // chatId: this.message.chat.id, // todo поддержать на стороне JSONLD
+        tgMessageId: message_id,
+        creator: this.message.passport.assistant,
+        publisher: this.message.passport.email,
+        jwt: this.message.passport.jwt,
       });
       await bot.editMessageText(result.purpose.abstract, {
         chat_id: this.message.chat.id,
         message_id: message_id,
+        parse_mode: result.purpose.isBasedOn.encodingFormat,
+        reply_markup: {
+          inline_keyboard: [
+            [{
+              text: result.purpose.isBasedOn.name,
+              url: result.purpose.isBasedOn.url,
+            }]
+          ],
+        },
       });
     } catch (error) {
-      await bot.editMessageText(error.message, {
+      await bot.editMessageText(String(error.message), {
         chat_id: this.message.chat.id,
         message_id: message_id,
       });

@@ -1,20 +1,33 @@
 const package_ = require('../../../package');
-
+const rpc = require('../lib/rpc');
 /**
  * @description помощь
  * @returns {Promise<jsonld>}
  */
-module.exports = () => {
+module.exports = async function({ auth, jwt }) {
   const document = {
-    '@context': 'http://schema.org',
+    '@context': {
+      schema: 'http://schema.org/',
+      agent: 'schema:agent',
+      name: 'schema:name',
+    },
     '@type': 'AllocateAction',
     'agent': {
       '@type': 'Person',
       'name': package_.name,
-      'url': package_.homepage,
     },
     'name': 'Help',
   };
 
-  return document;
+  const jsonldMessage = await rpc({
+    body: {
+      jsonrpc: '2.0',
+      method: 'help',
+      id: 1,
+      params: document,
+    },
+    jwt,
+    auth,
+  });
+  return jsonldMessage;
 };
