@@ -16,16 +16,19 @@ WHERE telegram_id = ${String(telegram_id)}
 LIMIT 1
     `;
   },
-  selectBotByUserEmail(login) {
+  /**
+   * получать бота по привязанному к нему юзеру
+   *
+   * @param userEmail
+   * @returns {*}
+   */
+  selectBotByUserEmail(userEmail) {
     return sql`
 SELECT
-    email,
-    passport_id
+*
 FROM
     passport.bot
-WHERE
-    email = ${login} OR email = ${login + '@gotointeractive.com'}
-`;
+WHERE passport.user.email = ${userEmail} AND passport.user.id = passport.bot.passport_id`;
   },
   selectEmailByPassport(passportTable) {
     return sql`
@@ -42,6 +45,23 @@ WHERE
 where passportUser.email = ${login} OR passportUser.telegram_id = ${login}
 AND
 passportBot.master_password = crypt(${password}, master_password)
+`;
+  },
+  /**
+   * oidc query
+   *
+   * @param login - botEmail
+   * @param password - MasterPassword
+   * @returns {*}
+   */
+  getPassport(login, password) {
+    return sql`SELECT
+    *
+FROM
+    passport.bot
+WHERE
+    email = ${login} OR email = ${login + '@gotointeractive.com'}
+    AND master_password = crypt(${password}, master_password)
 `;
   },
   checkByLoginAndPassword(login, password) {
@@ -93,6 +113,15 @@ WHERE
     return sql`
       SELECT * FROM passport.bot WHERE email = ${email} AND activated = true
     `;
+  },
+  selectBotById(id) {
+    return sql`SELECT
+    *
+FROM
+    passport.bot
+WHERE
+    id = ${id}
+`;
   },
   selectByPassport(passportId) {
     return sql`SELECT

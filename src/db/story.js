@@ -93,7 +93,6 @@ WHERE
             content,
             content_type,
             created_at,
-            email_message_id,
             telegram_message_id,
             message_id,
             schema
@@ -102,7 +101,6 @@ WHERE
             ${sql.binary(content)},
             ${contentType},
             ${date.toUTCString()}::timestamptz,
-            ${emailMessageId},
             ${telegramMessageId},
             ${messageId},
             ${schema}
@@ -114,13 +112,11 @@ WHERE
     return sql`
           INSERT INTO story.message
           (
-            creator,
             publisher,
             version,
             experimental
           )
           VALUES (
-          ${creator},
           ${publisher},
           ${version},
           ${experimental}
