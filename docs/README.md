@@ -22,6 +22,7 @@ Install
 ---
 ```
 brew install git-lfs
+brew install redis
 git lfs clone git@github.com:gotois/ProstoDiary_bot.git
 chmod +x scripts/index
 npm i

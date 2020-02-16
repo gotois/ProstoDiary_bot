@@ -54,6 +54,34 @@ ALTER TYPE intent ADD VALUE 'intent_name';
 Нужно настроить `/setprivacy` ENABLED в @BotFather
 Сделать бота админом группы
 
+### Описание синтаксиса JSON-LD (необходимые)
+- @context 
+> Должен быть расширенного вида
+- @type
+> На данный момент используется только типы Action
+- agent
+-- email 
+> Email подключенного ассистента
+
+- participant
+-- email
+> Email бота пользователя
+
+- subjectOf
+
+- object
+-- @type
+> Тип вида Thing
+
+-- name 
+> Описание свойства
+
+-- abstract
+> Content данных. Кириллица не поддерживается. Если используется несколько файлов - тогда ZIP архив формата Base64
+
+-- encodingFormat
+> MIME Content
+
 ## При Oauth Yandex ошибка 400 Required parameter 'client_id' missing
 Проверьте правильность Environments
 
