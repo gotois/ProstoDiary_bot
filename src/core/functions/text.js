@@ -2,7 +2,6 @@ const validator = require('validator');
 const SchemaOrg = require('schema.org');
 const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
-const package_ = require('../../../package');
 const rpc = require('../lib/rpc');
 const dialogService = require('../../services/dialog.service');
 const languageService = require('../../services/nlp.service');
@@ -141,7 +140,7 @@ async function detectBySentense(text) {
   const parameters = dialogService.formatParameters(dialogflowResult);
 
   // ------------------------------------------
-  const { entities, language } = await languageService.analyzeEntities(text);
+  // const { entities, language } = await languageService.analyzeEntities(text);
 
   // todo получение информации по локации
   // for (let entity of entities) {

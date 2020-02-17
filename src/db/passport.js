@@ -19,7 +19,7 @@ LIMIT 1
   /**
    * получать бота по привязанному к нему юзеру
    *
-   * @param userEmail
+   * @param {string} userEmail - user email
    * @returns {*}
    */
   selectBotByUserEmail(userEmail) {
@@ -50,8 +50,8 @@ passportBot.master_password = crypt(${password}, master_password)
   /**
    * oidc query
    *
-   * @param login - botEmail
-   * @param password - MasterPassword
+   * @param {string} login - botEmail
+   * @param {string} password - MasterPassword
    * @returns {*}
    */
   getPassport(login, password) {

@@ -27,7 +27,7 @@
     "debug": "cross-env NODE_ENV=production node --inspect ./scripts/index",
     "clean": "rm -rf .nyc_output && rm -rf logs/ && ava tests/e2e/index.js --serial --reset-cache",
     "check": "node -r dotenv/config src/server.js --check",
-    "dev": "cross-env NODE_ENV=development PORT=9000 ROARR_LOG=true ./scripts/index",
+    "dev": "killall ngrok ; cross-env NODE_ENV=development PORT=9000 ROARR_LOG=true ./scripts/index",
     "dev:debug": "cross-env NODE_ENV=development --verbose --inspect ./scripts/index",
     "lint": "eslint scripts/* src/*.js src/**/*.js src/**/**/*.js tests/**/*.js --quiet",
     "unit": "ava tests/unit/index.js",

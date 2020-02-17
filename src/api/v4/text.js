@@ -4,10 +4,11 @@ const logger = require('../../services/logger.service');
 // const linkedDataSignature = require('../../services/linked-data-signature.service');
 const storyQueries = require('../../db/story');
 const passportQueries = require('../../db/passport');
-const { pool, sql } = require('../../db/database');
+const { pool } = require('../../db/database');
 
+// здесь данные о принятии решений: производить запись или нет
+// eslint-disable-next-line
 const assumeBox = (jsonld) => {
-  // здесь данные о принятии решений: производить запись или нет
   return void 0;
 };
 

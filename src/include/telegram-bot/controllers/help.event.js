@@ -10,7 +10,8 @@ class Help extends TelegramBotRequest {
     });
     await bot.sendMessage(this.message.chat.id, result.purpose.abstract, {
       disable_web_page_preview: true,
-      parse_mode: result.purpose.encodingFormat === 'text/markdown' ? 'Markdown' : 'HTML',
+      parse_mode:
+        result.purpose.encodingFormat === 'text/markdown' ? 'Markdown' : 'HTML',
     });
   }
 }

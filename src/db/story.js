@@ -81,7 +81,7 @@ WHERE
   createContent({
     content,
     contentType,
-    emailMessageId,
+    // emailMessageId,
     date,
     telegramMessageId,
     messageId,
@@ -108,7 +108,7 @@ WHERE
           RETURNING id
           `;
   },
-  createMessage({ creator, publisher, version, experimental = false }) {
+  createMessage({ /* creator, */ publisher, version, experimental = false }) {
     return sql`
           INSERT INTO story.message
           (

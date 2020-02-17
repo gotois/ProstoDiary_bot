@@ -1,6 +1,7 @@
 const express = require('express');
 const jsonParser = require('body-parser').json();
 const { TELEGRAM } = require('../environment');
+
 const authParser = require('../middlewares/auth');
 const robotsParser = require('../middlewares/robots');
 const sitemapParser = require('../middlewares/sitemap');
@@ -17,18 +18,50 @@ const messageController = require('../controllers/web/message');
 const oauthController = require('../controllers/web/oauth');
 const oidcController = require('../controllers/web/oidc');
 
+const body = express.urlencoded({ extended: false });
+
 module.exports = (app) => {
   app.get('/oidcallback', oidcController.oidcallback);
   app.get('/interaction/:uid', setNoCache, oidcController.interactionUID);
   app.post(
     '/interaction/:uid/login',
     setNoCache,
-    express.urlencoded(),
+    body,
     oidcController.interactionLogin,
+  );
+  app.post(
+    '/interaction/:uid/continue',
+    setNoCache,
+    body,
+    async (request, response, next) => {
+      try {
+        const interaction = await oidcController.interactionDetails(
+          request,
+          response,
+        );
+        if (request.body.switch) {
+          if (interaction.params.prompt) {
+            const prompts = new Set(interaction.params.prompt.split(' '));
+            prompts.add('login');
+            interaction.params.prompt = [...prompts].join(' ');
+          } else {
+            interaction.params.prompt = 'logout';
+          }
+          await interaction.save();
+        }
+        const result = { select_account: {} };
+        await oidcController.interactionFinished(request, response, result, {
+          mergeWithLastSubmission: false,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
   );
   app.post(
     '/interaction/:uid/confirm',
     setNoCache,
+    body,
     oidcController.interactionConfirm,
   );
   app.get(
@@ -52,8 +85,8 @@ module.exports = (app) => {
   // telegram
   app.post(`/bot${TELEGRAM.TOKEN}`, jsonParser, telegramAPI);
   app.get('/', authParser, pingController);
-  // json rpc server
-  app.post('/api*', jsonParser, authParser, rpcAPI);
+  // json rpc server via header jwt
+  app.post('/api*', jsonParser, rpcAPI);
   // OpenID Connect server
   app.use('/oidc/', oidcParser.callback);
   // 404 - not found - todo благодаря использованию oidsParser это не используется

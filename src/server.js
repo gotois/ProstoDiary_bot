@@ -50,13 +50,14 @@ app.use(require('./middlewares/error-handler'));
   //   logger.error('OpenApiValidator');
   // }
 
+  let listenMessage;
+  if (IS_PRODUCTION) {
+    listenMessage = `Production server ${package_.version} started on ${SERVER.HOST}:${SERVER.PORT}`;
+  } else {
+    listenMessage = `Dev server started on ${SERVER.HOST}`;
+  }
   app.listen(SERVER.PORT, () => {
-    logger.log(
-      'info',
-      `${IS_PRODUCTION ? 'Production' : 'Dev'} server ${
-        package_.version
-      } started on ${SERVER.HOST}:${SERVER.PORT}`,
-    );
+    logger.log('info', listenMessage);
   });
 
   // запускать инстанс vzor для каждого активного пользователя

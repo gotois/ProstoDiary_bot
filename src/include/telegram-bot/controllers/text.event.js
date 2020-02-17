@@ -33,10 +33,12 @@ class Text extends TelegramBotRequest {
         parse_mode: result.purpose.isBasedOn.encodingFormat,
         reply_markup: {
           inline_keyboard: [
-            [{
-              text: result.purpose.isBasedOn.name,
-              url: result.purpose.isBasedOn.url,
-            }]
+            [
+              {
+                text: result.purpose.isBasedOn.name,
+                url: result.purpose.isBasedOn.url,
+              },
+            ],
           ],
         },
       });

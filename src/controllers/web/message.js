@@ -7,11 +7,9 @@ const passportQueries = require('../../db/passport');
 module.exports = async (request, response, next) => {
   try {
     await pool.connect(async (connection) => {
-      console.log('request.user', request.user);
       const { role } = await connection.maybeOne(
         passportQueries.selectRoleByEmail(request.user),
       );
-      console.log('request.role', role);
       if (!role) {
         response.status(403).json({ message: 'forbidden' });
         return;
@@ -39,7 +37,6 @@ module.exports = async (request, response, next) => {
           default: {
             // todo отдельный шаблонизатор
             let html = '';
-            console.log('storyTable', storyTable);
 
             html += `<h1>${JSON.stringify(storyTable.categories)}</h1>`;
             html += `<h2>${JSON.stringify(storyTable.context)}</h2>`;

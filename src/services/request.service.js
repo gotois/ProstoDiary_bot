@@ -40,7 +40,7 @@ const get = (url, qs = {}, headers = {}, encoding = null) => {
  * @param {object} form - form
  * @param {object|undefined} headers - headers
  * @param {any} encoding - encoding
- * @param auth
+ * @param {object} auth - basic auth
  * @returns {Promise<string|Buffer|Error>}
  */
 const post = (
