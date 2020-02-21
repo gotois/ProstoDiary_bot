@@ -13,6 +13,7 @@ const mailAPI = require('../middlewares/mail');
 const rpcAPI = require('../middlewares/jsonrpc');
 
 const passportController = require('../controllers/web/passport');
+const indexController = require('../controllers/web');
 const pingController = require('../controllers/web/ping');
 const messageController = require('../controllers/web/message');
 const oauthController = require('../controllers/web/oauth');
@@ -84,7 +85,8 @@ module.exports = (app) => {
   app.post('/mail', jsonParser, mailAPI);
   // telegram
   app.post(`/bot${TELEGRAM.TOKEN}`, jsonParser, telegramAPI);
-  app.get('/', authParser, pingController);
+  app.get('/', indexController);
+  app.get('/ping', authParser, pingController);
   // json rpc server via header jwt
   app.post('/api*', jsonParser, rpcAPI);
   // OpenID Connect server

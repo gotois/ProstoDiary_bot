@@ -1,5 +1,5 @@
 module.exports = (t) => {
-  const { telegram } = require('../../src/controllers');
+  const { telegram } = require('../../src/include/telegram-bot/commands');
   const {
     PING,
     BACKUP,

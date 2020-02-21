@@ -1,43 +1,7 @@
 const package_ = require('../../../package');
 const { IS_AVA_OR_CI } = require('../../environment');
 const { mail } = require('../../lib/sendgrid');
-const bot = require('../../include/telegram-bot/bot');
 const logger = require('../../services/logger.service');
-
-async function notifyTelegram(parameters) {
-  const { subject, html, attachments = [] } = parameters;
-  const messageHTML = `
-        <b>${subject}</b>
-        ${html}
-      `;
-  if (html.includes('<h')) {
-    throw new Error('Unknown html tag for telegram');
-  }
-  const chatId = -1; // fixme chat.id берется из паспорта пользователя passport.telegram_chat_id
-  // если есть attachments, тогда отдельно нужно посылать файлы в телегу
-  if (attachments.length > 0) {
-    for (const attachment of attachments) {
-      await bot.sendDocument(
-        chatId,
-        Buffer.from(attachment.content),
-        {
-          caption: subject,
-          parse_mode: 'HTML',
-          disable_notification: true,
-        },
-        {
-          filename: attachment.filename,
-          contentType: attachment.type,
-        },
-      );
-    }
-  } else {
-    await bot.sendMessage(chatId, messageHTML, {
-      parse_mode: 'HTML',
-      disable_notification: true,
-    });
-  }
-}
 
 /**
  * @description Отправляем сообщение. Попадает на почту на специально сгенерированный ящик gotois и после прочтения ботом удаляем
@@ -60,7 +24,6 @@ async function notifyEmail(requestObject, passport) {
     'x-bot': package_.name,
     'x-bot-version': package_.version,
     'x-bot-tags': JSON.stringify(tags), // todo лучше перенести в отдельный attachment
-    // todo: x-bot-sign - уникальная подпись бота
   };
   const message = {
     personalizations: [
@@ -126,11 +89,5 @@ module.exports = async function(parameters, { passport }) {
   if (typeof subject !== 'string') {
     throw new TypeError('Subject is not a string');
   }
-  if (provider.startsWith('tg')) {
-    await notifyTelegram(parameters, passport);
-  } else if (provider.startsWith('mailto')) {
-    await notifyEmail(parameters, passport);
-  } else {
-    return Promise.reject(this.error(400, 'Unknown provider'));
-  }
+  await notifyEmail(parameters, passport);
 };
