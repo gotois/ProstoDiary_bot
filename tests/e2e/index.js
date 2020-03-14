@@ -12,6 +12,15 @@ const {
   SERVER,
   TELEGRAM,
 } = require('../../src/environment');
+
+const passportExample = {
+  id: 'test-uid', // todo rename id => userId
+  botId: 'test-bot-id',
+  userEmail: 'user@test.test',
+  botEmail: 'bot@test.test',
+  activated: true,
+  // telegram_chat_id: userTable.telegram_chat_id,
+};
 /**
  * This runs before all tests
  */
@@ -23,7 +32,7 @@ test.before(async (t) => {
     storeTimeout: 60,
   });
   await server.start();
-  require('../../src/core/bot');
+  require('../../src/include/telegram-bot/bot');
   t.log(`TelegramServer: ${SERVER.HOST}:${SERVER.PORT} started`);
   const client = server.getClient(TELEGRAM.TOKEN);
   /*eslint-disable require-atomic-updates */
@@ -141,6 +150,29 @@ skipTestForFastOrTravis('language service', async t => {
 
   // todo или единый запрос. Пока только поддерживатеся английский
   // const { categories, documentSentiment, } = await languageService.annotateText('I was play in Angry Birds ');
+});
+
+skipTestForFastOrTravis('API notify', async t => {
+  t.timeout(10000);
+  const fs = require('fs');
+  const exampleSomething = fs.readFileSync('./package.json').toString('utf8');
+
+  // const notifyAction = {
+  //   provider: 'tg',
+  //   subject: 'Sample subject',
+  //   html: `<p>hello world</p>`,
+  //   attachments: [
+  //     {
+  //       content: exampleSomething.toString('base64'),
+  //       filename: 'backup.txt',
+  //       type: 'text/plain',
+  //       disposition: 'attachment',
+  //     },
+  //   ],
+  // }, passportExample
+  // fixme переделать под обычный nodejs request
+  const result = await apiRequest('post', notifyAction, passport);
+  t.log(result);
 });
 
 test('bot init', require('./telegram-bot.test'));

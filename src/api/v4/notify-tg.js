@@ -39,4 +39,4 @@ async function notifyTelegram(parameters) {
 module.exports = async function(parameters, { passport }) {
   logger.info('notify.tg');
   await notifyTelegram(parameters, passport);
-}
+};

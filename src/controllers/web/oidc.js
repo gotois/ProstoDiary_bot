@@ -19,17 +19,14 @@ module.exports.oidcallback = async (request, response) => {
   }
 
   try {
-    const tokenResult = await requestService.post(
-      SERVER.HOST + '/oidc/token',
-      {
-        client_id: 'tg',
-        client_secret: 'foobar',
-        code: request.query.code,
-        grant_type: 'authorization_code',
-      },
-    );
+    const tokenResult = await requestService.post(SERVER.HOST + '/oidc/token', {
+      client_id: 'tg',
+      client_secret: 'foobar',
+      code: request.query.code,
+      grant_type: 'authorization_code',
+    });
     const decoded = jose.JWT.decode(tokenResult.id_token);
- 
+
     await pool.connect(async (connection) => {
       // fixme: делать UPDATE если такой client_id есть в БД
       // const hasExist = await connection.maybeOne(
@@ -49,9 +46,7 @@ module.exports.oidcallback = async (request, response) => {
     Ассистент подключен. ${JSON.stringify(decoded, null, 4)}
     `);
   } catch (error) {
-    response
-      .sendStatus(400)
-      .send(error);
+    response.sendStatus(400).send(error);
     return;
   }
 };

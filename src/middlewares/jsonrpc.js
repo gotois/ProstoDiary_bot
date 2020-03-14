@@ -15,7 +15,7 @@ const signatures = require('../core/security/signature');
  */
 async function apiRequest(server, method, document, passport) {
   const signedDocument = await signatures.signature.call(passport, document);
-  
+
   return new Promise((resolve, reject) => {
     server.call(
       {

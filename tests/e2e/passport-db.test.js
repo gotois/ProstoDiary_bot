@@ -1,4 +1,4 @@
-const { pool, sql } = require('../../src/core/database');
+const { pool, sql } = require('../../src/db/database');
 
 // TODO: используя https://github.com/marak/Faker.js/
 module.exports = async (t) => {
@@ -26,9 +26,9 @@ VALUES (
 }'::jsonb
 );
 
-        
+
         INSERT INTO passport (id) VALUES ('00000000-0000-0000-0000-000000000000');
-        
+
         INSERT INTO bot (passport_id, activated, email, password, secret_key, master_password)
         VALUES (
         '00000000-0000-0000-0000-000000000000',

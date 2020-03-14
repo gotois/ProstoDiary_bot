@@ -9,7 +9,7 @@ class ContentArchive extends Content {
 
   async prepare() {
     for await (const [_fileName, buffer] of unpack(content)) {
-      //  buffer.toString()
+      // buffer.toString()
       // todo в зависимости от буффера создавать абстракты
     }
   }
