@@ -108,7 +108,7 @@
     "file-type": "14.1.1",
     "franc": "4.1.1",
     "grant-express": "4.7.0",
-    "helmet": "3.21.2",
+    "helmet": "3.21.3",
     "http-auth": "3.2.4",
     "imap": "0.8.19",
     "ioredis": "4.14.1",
