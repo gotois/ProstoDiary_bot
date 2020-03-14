@@ -116,7 +116,7 @@ const onAgree = async (message) => {
  */
 const messageListener = async (message, metadata) => {
   const { type } = metadata;
-  logger.info('telegram.message');
+  logger.info('core.bot.message');
   try {
     // подтверждение договора и первичная валидация установки через телеграм
     if (

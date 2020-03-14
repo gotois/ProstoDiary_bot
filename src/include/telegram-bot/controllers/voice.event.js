@@ -4,10 +4,9 @@ const TelegramBotRequest = require('./telegram-bot-request');
 const voiceAction = require('../../../core/functions/voice');
 
 class Voice extends TelegramBotRequest {
-  async beginDialog() {
+  async beginDialog(silent) {
     await super.beginDialog();
     const fileBuffer = await getTelegramFile(this.message.voice.file_id);
-
     const result = await voiceAction({
       buffer: fileBuffer,
       date: this.message.date,
@@ -19,17 +18,17 @@ class Voice extends TelegramBotRequest {
       passportId: this.message.passport.id,
       jwt: this.message.passport.jwt,
     });
-    await bot.sendMessage(this.message.chat.id, result);
+    if (!silent) {
+      await bot.sendMessage(this.message.chat.id, result);
+    }
   }
 }
 /**
  * @param {TelegramMessage} message - msg
+ * @param {boolean} silent - silent dialog
  * @returns {Promise<undefined>}
  */
-module.exports = async (message) => {
-  if (!message.passport.activated) {
-    throw new Error('Bot not activated');
-  }
+module.exports = async (message, silent) => {
   const voice = new Voice(message);
-  await voice.beginDialog();
+  await voice.beginDialog(silent);
 };

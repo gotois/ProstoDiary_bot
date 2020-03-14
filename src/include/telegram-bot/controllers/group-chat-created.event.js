@@ -1,5 +1,4 @@
 const logger = require('../../../services/logger.service');
-
 /**
  * @description Создание чата
  * @param {TelegramMessage} message - msg
