@@ -117,8 +117,8 @@ const onAgree = async (message) => {
 const messageListener = async (message, metadata) => {
   const { type } = metadata;
   logger.info('telegram.message');
-  // тихий режим, когда результат не отображается пользователю
-  let isSilent = false;
+  // fixme тихий режим, когда результат не отображается пользователю
+  // let isSilent = false;
   try {
     // подтверждение договора и первичная валидация установки через телеграм
     if (
@@ -142,8 +142,7 @@ const messageListener = async (message, metadata) => {
     }
     if (message.chat && message.chat.type === 'supergroup') {
       // todo silent https://github.com/gotois/ProstoDiary_bot/issues/343
-      console.log('xxx');
-      isSilent = true;
+      // isSilent = true;
       if (!checkMentionMessage(message)) {
         return;
       }

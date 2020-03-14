@@ -1,12 +1,14 @@
-const package_ = require('../../../package');
 const mm = require('music-metadata');
 const speech = require('@google-cloud/speech');
+const rpc = require('../lib/rpc');
 const { GOOGLE } = require('../environment');
+const package_ = require('../../../package');
+const dialogService = require('./dialog.service');
+const logger = require('../../services/logger.service');
+
 const client = new speech.SpeechClient({
   credentials: GOOGLE.CREDENTIALS,
 });
-const crypt = require('./crypt.service');
-const dialogService = require('./dialog.service');
 
 /**
  * @param {string} mimeType - mime type
@@ -70,17 +72,22 @@ const voiceToText = async (buffer, { duration, mime_type, file_size }) => {
 };
 
 module.exports = async function(requestObject) {
-  // todo: сначала разбираем услышанное самостоятельно чтобы понять какой диалог дергать
-  //  ... const text = await voiceToText(fileBuffer, this.message.voice);
-
   const {
     buffer,
-    secretKey,
+    auth,
+    jwt,
     mimeType,
     fileSize,
     duration,
     uid,
   } = requestObject;
+
+  // сначала разбираем услышанное самостоятельно чтобы понять какой диалог дергать
+  const text = await voiceToText(buffer, {
+    duration,
+    mime_type: mimeType,
+    file_size: fileSize,
+  });
 
   const config = await voiceMetadata({
     buffer,
@@ -94,13 +101,13 @@ module.exports = async function(requestObject) {
     sampleRateHertz: config.sampleRateHertz,
     languageCode: config.languageCode,
   };
-
   const dialogflowResult = await dialogService.detectAudio(
     buffer,
     audioConfig,
     uid,
   );
-  const encrypted = await crypt.openpgpEncrypt(buffer, [secretKey]);
+
+  logger.info(dialogflowResult);
 
   const document = {
     '@context': 'http://schema.org',
@@ -114,10 +121,26 @@ module.exports = async function(requestObject) {
     'object': {
       '@type': 'CreativeWork',
       'name': 'text',
-      'abstract': encrypted.data.toString('base64'),
+      'abstract': buffer.toString('base64'),
       'encodingFormat': 'audio/ogg',
     },
+    'subjectOf': [
+      {
+        '@type': 'CreativeWork',
+        'text': text,
+      },
+    ],
   };
 
-  return document;
+  const jsonldMessage = await rpc({
+    body: {
+      jsonrpc: '2.0',
+      method: 'ping',
+      id: 1,
+      params: document,
+    },
+    jwt,
+    auth,
+  });
+  return jsonldMessage;
 };

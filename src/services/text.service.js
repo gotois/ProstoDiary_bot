@@ -149,6 +149,7 @@ const decodeRows = (rows = []) => {
   });
 };
 /**
+ * @todo перенести в core
  * @description Автоматическое исправление опечаток
  * @param {string} text - text
  * @returns {Promise<string>}

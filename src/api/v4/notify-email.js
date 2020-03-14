@@ -85,7 +85,7 @@ async function notifyEmail(requestObject, passport) {
  */
 module.exports = async function(parameters, { passport }) {
   logger.info('notify');
-  const { provider, subject } = parameters;
+  const { subject } = parameters;
   if (typeof subject !== 'string') {
     throw new TypeError('Subject is not a string');
   }

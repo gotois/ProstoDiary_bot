@@ -1,9 +1,10 @@
 const jose = require('jose');
 const { SERVER } = require('../../environment');
 const oidcParser = require('../../middlewares/oidc');
-const requestService = require('../../services/request.service.js');
 const passportQueries = require('../../db/passport');
 const { pool, sql } = require('../../db/database');
+const logger = require('../../services/logger.service');
+const requestService = require('../../services/request.service.js');
 
 // этот callback должен выполняться на ассистенте и записывать JWT в свою БД
 module.exports.oidcallback = async (request, response) => {
@@ -56,7 +57,7 @@ module.exports.interactionUID = async (request, response, next) => {
   try {
     const details = await oidcParser.interactionDetails(request, response);
     const { uid, prompt, params, session } = details;
-    const client = await oidcParser.Client.find(details.params.client_id);
+    const client = await oidcParser.Client.find(params.client_id);
 
     switch (prompt.name) {
       case 'select_account': {
@@ -70,16 +71,16 @@ module.exports.interactionUID = async (request, response, next) => {
         }
 
         // todo findAccount
-        const account = await oidcParser.Account.findAccount(
-          undefined,
-          session.accountId,
-        );
-        const { email } = await account.claims(
-          'prompt',
-          'email',
-          { email: null },
-          [],
-        );
+        // const account = await oidcParser.Account.findAccount(
+        //   undefined,
+        //   session.accountId,
+        // );
+        // const { email } = await account.claims(
+        //   'prompt',
+        //   'email',
+        //   { email: null },
+        //   [],
+        // );
 
         // return res.render('select_account', {
         //   client,
@@ -140,7 +141,7 @@ module.exports.interactionLogin = async (request, response, next) => {
     const {
       prompt: { name },
     } = await oidcParser.interactionDetails(request, response);
-
+    logger.info('name: ' + name);
     const botInfo = await pool.connect(async (connection) => {
       const result = await connection.maybeOne(
         passportQueries.getPassport(request.body.email, request.body.password),
@@ -168,7 +169,7 @@ module.exports.interactionLogin = async (request, response, next) => {
 
 module.exports.interactionConfirm = async (request, response, next) => {
   try {
-    console.log('interactionConfirm');
+    logger.info('interactionConfirm');
     await oidcParser.interactionFinished(
       request,
       response,
