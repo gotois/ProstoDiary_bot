@@ -113,7 +113,7 @@
     "imap": "0.8.19",
     "ioredis": "4.14.1",
     "jayson": "3.2.0",
-    "jimp": "0.9.3",
+    "jimp": "0.9.5",
     "jose": "1.22.2",
     "jsonld": "2.0.2",
     "jsonld-signatures": "4.6.0",
