@@ -114,7 +114,7 @@
     "ioredis": "4.16.0",
     "jayson": "3.2.0",
     "jimp": "0.9.5",
-    "jose": "1.22.2",
+    "jose": "1.25.0",
     "jsonld": "2.0.2",
     "jsonld-signatures": "4.6.0",
     "jsqr": "1.2.0",
