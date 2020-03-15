@@ -122,7 +122,7 @@
     "music-metadata": "6.3.3",
     "node-telegram-bot-api": "0.40.0",
     "oidc-provider": "6.20.1",
-    "openpgp": "4.9.0",
+    "openpgp": "4.10.1",
     "openweather-apis": "4.2.0",
     "qrcode": "1.4.4",
     "qs": "6.9.1",
