@@ -30,12 +30,13 @@ class DatabaseClear extends TelegramBotRequest {
 /**
  * @description Очистить базу данных с подтверждением
  * @param {TelegramMessage} message - message
+ * @param {boolean} silent - silent dialog
  * @returns {Promise<undefined>}
  */
-module.exports = async (message) => {
+module.exports = async (message, silent) => {
   if (!message.passport.activated) {
     throw new Error('Bot not activated');
   }
   const databaseClear = new DatabaseClear(message);
-  await databaseClear.beginDialog();
+  await databaseClear.beginDialog(silent);
 };

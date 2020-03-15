@@ -2,14 +2,9 @@ const { publisher } = require('../../../package');
 
 class Abstract {
   constructor(data) {
-    // this.storyId = data.storyId;
-    // this.contentId = data.contentId;
-    // this.category = data.category;
   }
   get context() {
     return {
-      jurisdiction: this.jurisdiction,
-      status: 'draft',
     };
   }
   /**

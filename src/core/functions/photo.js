@@ -1,7 +1,5 @@
-const fileType = require('file-type');
-const visionService = require('./vision.service');
 const rpc = require('../lib/rpc');
-const package_ = require('../../../../package');
+const AbstractPhoto = require('../../models/abstract/abstract-photo');
 /**
  * @param {object} requestObject - object
  * @param {string} requestObject.caption - photo caption text
@@ -9,37 +7,19 @@ const package_ = require('../../../../package');
  * @returns {Promise<*>}
  */
 module.exports = async function(requestObject) {
-  const { imageBuffer, /* caption, */ auth, jwt } = requestObject;
-  const { mime } = fileType(imageBuffer);
-  const tags = [];
-  const visionResult = await visionService.labelDetection(imageBuffer);
-  // todo распознавать интент-намерение в самой картинке через Vision
-  // ...
-  visionResult.labelAnnotations.forEach((annotation) => {
-    tags.push(annotation.description);
+  const { imageBuffer, caption, auth, jwt } = requestObject;
+  const abstractPhoto = new AbstractPhoto({
+    imageBuffer,
+    caption,
   });
-  const document = {
-    '@context': {
-      schema: 'http://schema.org/',
-    },
-    '@type': 'Action',
-    'agent': {
-      '@type': 'Person',
-      'name': package_.name,
-    },
-    'object': {
-      '@type': 'CreativeWork',
-      'name': 'photo',
-      'abstract': encodeURIComponent(imageBuffer).toString('base64'),
-      'encodingFormat': mime,
-    },
-  };
+  await abstractPhoto.prepare();
+
   const jsonldMessage = await rpc({
     body: {
       jsonrpc: '2.0',
-      method: 'ping',
+      method: 'insert',
       id: 1,
-      params: document,
+      params: abstractPhoto.context,
     },
     jwt,
     auth,

@@ -1,26 +1,25 @@
-const package_ = require('../../../package');
+const rpc = require('../lib/rpc');
 const AbstractGeo = require('../../models/abstract/abstract-geo');
-
-module.exports = async function({ latitude, longitude }) {
+/**
+ * @param {object} object - object
+ * @param {number} object.latitude - latitude
+ * @param {number} object.longitude - longitude
+ * @param {*} object.jwt - jwt
+ * @param {*} object.auth - basic auth
+ * @returns {Promise<*>}
+ */
+module.exports = async function({ latitude, longitude, jwt, auth }) {
   const locationGeo = new AbstractGeo({ latitude, longitude });
-  const locationGeoJSON = await locationGeo.prepare();
-
-  const document = {
-    '@context': 'http://schema.org',
-    '@type': 'AllocateAction',
-    'agent': {
-      '@type': 'Person',
-      'name': package_.name,
-      'url': package_.homepage,
+  await locationGeo.prepare();
+  const jsonldMessage = await rpc({
+    body: {
+      jsonrpc: '2.0',
+      method: 'insert',
+      id: 1,
+      params: locationGeo.context,
     },
-    'name': 'Location',
-    'object': {
-      '@type': 'CreativeWork',
-      'name': 'location',
-      'abstract': locationGeoJSON.geo.toString('base64'),
-      'encodingFormat': 'application/vnd.geo+json',
-    },
-  };
-
-  return document;
+    jwt,
+    auth,
+  });
+  return jsonldMessage;
 };

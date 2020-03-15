@@ -2,6 +2,7 @@ const qs = require('qs');
 const TelegramBotMessage = require('./models/message');
 const logger = require('../../services/logger.service');
 const { SERVER } = require('../../environment');
+const { telegram, botCommands } = require('./commands');
 
 module.exports = (telegramBot) => {
   const onAgree = async (message) => {
@@ -71,6 +72,14 @@ module.exports = (telegramBot) => {
       }
       switch (type) {
         case 'text': {
+          // send commands
+          for (const key of botCommands) {
+            if (telegram[key].alias.test(message.text)) {
+              await botMessage.sendCommand(telegram[key].event);
+              return;
+            }
+          }
+          // send text
           await botMessage.sendText();
           break;
         }

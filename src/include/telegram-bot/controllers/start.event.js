@@ -37,9 +37,10 @@ class Start extends TelegramBotRequest {
 }
 /**
  * @param {TelegramMessage} message - message
+ * @param {boolean} silent - silent dialog
  * @returns {Promise<undefined>}
  */
-module.exports = async (message) => {
+module.exports = async (message, silent) => {
   const start = new Start(message);
-  await start.beginDialog();
+  await start.beginDialog(silent);
 };

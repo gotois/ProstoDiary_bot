@@ -1,4 +1,5 @@
 /**
+ * @todo переименовать в "все команды"
  * @type {object}
  */
 const telegram = {
@@ -75,12 +76,13 @@ const telegram = {
     description: '',
   },
 };
-
+// todo переименовать в "системные команды"
 const botCommands = Object.keys(telegram).filter((key) => {
   return telegram[key].alias instanceof RegExp;
 });
 
 module.exports = {
+  // todo перенести команды в геттеры
   telegram,
   botCommands,
 };

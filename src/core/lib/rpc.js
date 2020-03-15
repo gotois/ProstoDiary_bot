@@ -6,7 +6,7 @@ const { SERVER } = require('../../environment');
  * @param {string} obj - obj
  * @param {object} obj.body - body
  * @param {object} obj.auth - basic auth
- * @returns {Promise<unknown>}
+ * @returns {Promise<*>}
  */
 module.exports = ({ body, auth, jwt }) => {
   return new Promise((resolve, reject) => {

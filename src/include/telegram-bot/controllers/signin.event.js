@@ -53,10 +53,11 @@ class SignIn extends TelegramBotRequest {
 }
 /**
  * @param {TelegramMessage} message - msg
+ * @param {boolean} silent - silent dialog
  * @returns {Promise<undefined>}
  */
-module.exports = async (message) => {
+module.exports = async (message, silent) => {
   const signIn = new SignIn(message);
-  await signIn.beginDialog();
+  await signIn.beginDialog(silent);
 };
 module.exports.SignIn = SignIn;

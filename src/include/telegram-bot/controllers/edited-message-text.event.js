@@ -54,13 +54,14 @@ class EditMessageText extends TelegramBotRequest {
 /**
  * @description Обновление текста в БД
  * @param {TelegramMessage} message - msg
+ * @param {boolean} silent - silent dialog
  * @returns {Promise<undefined>}
  */
-module.exports = async (message) => {
+module.exports = async (message, silent) => {
   if (!message.passport.activated) {
     throw new Error('Bot not activated');
   }
   message.text = message.text.trim();
   const editedMessageTextAPI = new EditMessageText(message);
-  await editedMessageTextAPI.beginDialog();
+  await editedMessageTextAPI.beginDialog(silent);
 };

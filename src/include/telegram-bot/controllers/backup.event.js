@@ -39,12 +39,13 @@ class Backup extends TelegramBotRequest {
 /**
  * @description Скачивание файла БД на устройство
  * @param {TelegramMessage} message - message
+ * @param {boolean} silent - silent dialog
  * @returns {Promise<undefined>}
  */
-module.exports = async (message) => {
+module.exports = async (message, silent) => {
   if (!message.passport.activated) {
     throw new Error('Bot not activated');
   }
   const backup = new Backup(message);
-  await backup.beginDialog();
+  await backup.beginDialog(silent);
 };

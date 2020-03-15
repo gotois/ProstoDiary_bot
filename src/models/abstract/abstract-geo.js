@@ -1,4 +1,5 @@
 const Abstract = require('../abstract/index');
+const package_ = require('../../../package');
 const foursquare = require('../../lib/foursquare');
 const { getFullName, getGeoCode } = require('../../services/location.service');
 
@@ -36,20 +37,31 @@ class AbstractGeo extends Abstract {
   get context() {
     return {
       ...super.context,
-      geocode: this.geocode,
-      currencies: this.currencies,
-      geo: {
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [
-            this.#latlng.latitude,
-            this.#latlng.longitude,
-          ]
-        },
-        "properties": {
-          "name": this.#name,
-        }
+      '@context': 'http://schema.org',
+      '@type': 'AllocateAction',
+      'agent': {
+        '@type': 'Person',
+        'name': package_.name,
+        'url': package_.homepage,
+      },
+      'name': 'Location',
+      'object': {
+        '@type': 'CreativeWork',
+        'name': 'location',
+        'abstract': JSON.stringify({
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              this.#latlng.latitude,
+              this.#latlng.longitude,
+            ]
+          },
+          "properties": {
+            "name": this.#name,
+          }
+        }).toString('base64'),
+        'encodingFormat': 'application/vnd.geo+json',
       },
     };
   }

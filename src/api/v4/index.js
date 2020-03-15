@@ -6,7 +6,7 @@ for (const api of [
   'ping',
   'signin',
   'signout',
-  'text',
+  'insert',
 ]) {
   /**
    * @returns {object}

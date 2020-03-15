@@ -39,6 +39,7 @@ class TelegramBotMessage {
     this.silent = false;
 
     if (message.chat && message.chat.type === 'supergroup') {
+      this.inGroup = true;
       if (!checkMentionMessage(message)) {
         this.silent = true;
       }
@@ -48,6 +49,14 @@ class TelegramBotMessage {
         throw new Error('Reply message not supported');
       }
     }
+  }
+  async sendCommand(event) {
+    const { message } = this;
+    if (this.inGroup && this.silent) {
+      return;
+    }
+    checkMessage(message);
+    await require('../controllers/' + event)(message, this.silent);
   }
   async sendText() {
     const { message } = this;
@@ -60,12 +69,6 @@ class TelegramBotMessage {
       await require('./controllers/signin.event')(message);
       return;
     }
-    for (const key of botCommands) {
-      if (telegram[key].alias.test(message.text)) {
-        await require('../controllers/' + telegram[key].event)(message);
-        return;
-      }
-    }
     if (!message.passport.activated) {
       throw new Error('Bot not activated. Please try /start or /signin');
     }
@@ -76,28 +79,28 @@ class TelegramBotMessage {
     if (!message.passport.activated) {
       throw new Error('Bot not activated');
     }
-    await require('../controllers/photo.event')(message);
+    await require('../controllers/photo.event')(message, this.silent);
   }
   async sendDocument() {
     const { message } = this;
     if (!message.passport.activated) {
       throw new Error('Bot not activated');
     }
-    await require('../controllers/document.event')(message);
+    await require('../controllers/document.event')(message, this.silent);
   }
   async sendLocation() {
     const { message } = this;
     if (!message.passport.activated) {
       throw new Error('Bot not activated');
     }
-    await require('../controllers/location.event')(message);
+    await require('../controllers/location.event')(message, this.silent);
   }
   async sendVoice() {
     const { message } = this;
     if (!message.passport.activated) {
       throw new Error('Bot not activated');
     }
-    await require('../controllers/voice.event')(message);
+    await require('../controllers/voice.event')(message, this.silent);
   }
   async groupChatCreated() {
     await require('../controllers/group-chat-created.event')(this.message);
