@@ -38,6 +38,12 @@ module.exports = ({ body, auth, jwt }) => {
           statusCode: response.statusCode,
         });
       }
+      if (!body) {
+        return reject({
+          message: 'body empty',
+          statusCode: 400,
+        });
+      }
       return resolve(JSON.parse(body));
     });
   });
