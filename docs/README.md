@@ -20,7 +20,12 @@ Virtual trackers: text diary, email listener, food analyze, health watcher, slee
 
 Install
 ---
+Dev only
+```bash
+brew install graphviz
 ```
+
+```bash
 brew install git-lfs
 brew install redis
 git lfs clone git@github.com:gotois/ProstoDiary_bot.git
@@ -40,12 +45,12 @@ npm run unit
 #### Match files
 
 Example:
-```
+```bash
 npm run e2e:fast -- --match='/start'
 ```
 
 Example match titles starting with API:
-```
+```bash
 npm run e2e -- --match='API:*'
 ```
 
@@ -73,15 +78,26 @@ ncu -u
 npm run lint -- --fix
 ```
 
+#### Show dependencies graph
+```bash
+npm run depcruise
+```
+
+#### Validate dependencies 
+```bash
+npm run lint:dependency
+```
+
 #### docs
 #### Install
-```
+```bash
 sudo gem install bundler jekyll
 cd docs
 bundle install
 ```
+
 #### Run
-```
+```bash
 npm run docs:serve
 ```
 

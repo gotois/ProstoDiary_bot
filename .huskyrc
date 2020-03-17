@@ -4,6 +4,7 @@
     "post-commit": "git update-index --again",
     "pre-push": [
       "npm run lint",
+      "npm run lint:dependency",
       "npm run unit",
       "npm run e2e:fast"
     ],
