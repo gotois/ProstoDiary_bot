@@ -1,4 +1,4 @@
-const package_ = require('../../../package');
+const package_ = require('../../../package.json');
 const { IS_AVA_OR_CI } = require('../../environment');
 const { mail } = require('../../lib/sendgrid');
 const logger = require('../../services/logger.service');

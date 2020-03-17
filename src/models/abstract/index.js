@@ -1,10 +1,37 @@
-const { publisher } = require('../../../package');
+// todo перенести в core/models/
+const { publisher } = require('../../../package.json');
 
 class Abstract {
   constructor(data) {
+    this.objectMainEntity = [];
+    this.objectMainEntity.push({
+      "@type": "PropertyValue",
+      "name": "silent",
+      "value": data.silent
+    });
+    if (data.telegram) {
+      this.objectMainEntity.push({
+        "@type": "PropertyValue",
+        "name": 'TelegramMessageId',
+        "value": data.telegram.messageId
+      });
+      this.objectMainEntity.push({
+        "@type": "PropertyValue",
+        "name": "TelegramChatId",
+        "value": data.telegram.chatId
+      });
+    }
   }
   get context() {
     return {
+      // расширить когда потребуется
+      // target: {
+      //   "@type": "EntryPoint",
+      //   actionApplication: {
+      //     "@type": "SoftwareApplication",
+      //     "name": "Telegram", // или email
+      //   }
+      // }
     };
   }
   /**

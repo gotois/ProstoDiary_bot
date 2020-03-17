@@ -1,10 +1,10 @@
 const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
-const { pool } = require('../core/database');
-const bot = require('../core/bot');
-const passportQueries = require('../db/passport');
-const imapService = require('../services/imap.service');
-const logger = require('../services/logger.service');
+const { pool } = require('../../db/database');
+const bot = require('../bot');
+const passportQueries = require('../../db/passport');
+const imapService = require('../../services/imap.service');
+const logger = require('../../services/logger.service');
 
 module.exports = async () => {
   await pool.connect(async (connection) => {

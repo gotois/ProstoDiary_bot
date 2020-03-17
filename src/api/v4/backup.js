@@ -1,4 +1,4 @@
-const package_ = require('../../../package');
+const package_ = require('../../../package.json');
 const logger = require('../../services/logger.service');
 const passportQueries = require('../../db/passport');
 const { pool } = require('../../db/database');

@@ -1,4 +1,4 @@
-const package_ = require('../../../package');
+const package_ = require('../../../package.json');
 /**
  * @description Авторизация и разблокировка чтения/приема и общей работы бота
  * @param {object} requestObject - params

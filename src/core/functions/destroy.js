@@ -1,4 +1,4 @@
-const package_ = require('../../../package');
+const package_ = require('../../../package.json');
 
 /**
  * @todo дать возможность очищать не все, а только определенные истории

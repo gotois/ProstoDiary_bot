@@ -2,7 +2,7 @@ const express = require('express');
 const Sentry = require('@sentry/node');
 const helmet = require('helmet');
 // const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
-const package_ = require('../package');
+const package_ = require('../package.json');
 const logger = require('./services/logger.service');
 const { IS_PRODUCTION, SENTRY, SERVER } = require('./environment');
 

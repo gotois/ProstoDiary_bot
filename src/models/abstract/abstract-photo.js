@@ -1,6 +1,6 @@
 const fileType = require('file-type');
-const visionService = require('./vision.service');
-const package_ = require('../../../../package');
+const visionService = require('../../services/vision.service');
+const package_ = require('../../../package.json');
 const Abstract = require('../abstract/index');
 
 class AbstractPhoto extends Abstract {

@@ -1,12 +1,11 @@
 const mm = require('music-metadata');
-const package_ = require('../../../package');
-const dialogService = require('./dialog.service');
-const logger = require('../../services/logger.service');
 const speech = require('@google-cloud/speech');
-const { GOOGLE } = require('../environment');
+const package_ = require('../../../package.json');
+const dialogService = require('../../services/dialog.service');
+const logger = require('../../services/logger.service');
+const { GOOGLE } = require('../../environment');
 
 const Abstract = require('../abstract/index');
-const package_ = require('../../../package');
 
 const client = new speech.SpeechClient({
   credentials: GOOGLE.CREDENTIALS,

@@ -211,11 +211,6 @@ class AbstractText extends Abstract {
     this.creator = data.creator;
     this.publisher = data.publisher;
     this.subjectOf = [];
-    this.identifier = {
-      '@type': 'PropertyValue',
-      'name': 'TelegramMessageId',
-      'value': data.tgMessageId,
-    };
   }
 
   get context() {
@@ -235,6 +230,7 @@ class AbstractText extends Abstract {
         participant: 'schema:participant',
         value: 'schema:value',
         email: 'schema:email',
+        mainEntity: 'schema:mainEntity',
       },
       '@type': 'Action',
       'agent': {
@@ -253,12 +249,9 @@ class AbstractText extends Abstract {
       'object': {
         '@type': 'CreativeWork',
         'name': 'text',
-        'abstract': encodeURIComponent(this.text).toString('base64'),
+        'abstract': this.abstract,
         'encodingFormat': 'text/plain',
-        'provider': {
-          '@type': 'Project',
-          'identifier': this.identifier,
-        },
+        'mainEntity': this.objectMainEntity,
       },
       // location,
       // 'name': 'xxx', - это и будет тем самым спейсом?
@@ -284,15 +277,17 @@ class AbstractText extends Abstract {
     // });
 
     for (const sentense of languageService.splitTextBySentences(this.text)) {
-      /**
-       * Разбор сообщения на типы (даты, имена, города, и т.д.)
-       * поиск тела письма -> натурализация и сведение фактов в Истории -> оптимизация БД
-       *
-       * @returns {Promise<object>}
-       */
       const subjectAction = await detectBySentense(sentense);
       this.subjectOf.push(subjectAction);
     }
+    this.abstract = encodeURIComponent(this.text).toString('base64');
+
+    // todo шифрование абстракта через openPGP (пока шифрование ботом излишне)
+    // const crypt = require('../../services/crypt.service');
+    // const encrypted = await crypt.openpgpEncrypt(Buffer.from(this.text), [
+    //   passport.secret_key,
+    // ]);
+    // this.abstract = encrypted.data.toString('base64')
   }
 }
 

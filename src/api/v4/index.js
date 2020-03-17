@@ -1,7 +1,6 @@
 for (const api of [
   'backup',
   'health',
-  'notify-tg',
   'help',
   'ping',
   'signin',

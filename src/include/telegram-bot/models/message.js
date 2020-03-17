@@ -66,7 +66,7 @@ class TelegramBotMessage {
         return;
       }
       // если бот не активирован, то проверяем что он прислал код авторизации
-      await require('./controllers/signin.event')(message);
+      await require('../controllers/signin.event')(message);
       return;
     }
     if (!message.passport.activated) {

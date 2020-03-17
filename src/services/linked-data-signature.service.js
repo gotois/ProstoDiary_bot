@@ -39,7 +39,18 @@ async function signDocument(document, publicKeyPem, privateKeyPem, userId) {
 }
 
 // todo передалать верификацию через website на основе урла контроллера
-async function verifyDocument(signed, publicKeyPem, privateKeyPem, userId) {
+/**
+ * проверка на валидность подписанного JSON-LD
+ *
+ * @param {object} signed - signed object
+ * @param {*} passport - passport data
+ * @returns {Promise<void>}
+ */
+async function verifyDocument(signed, passport) {
+  const publicKeyPem = passport.public_key_cert.toString('utf8');
+  const privateKeyPem = passport.private_key_cert.toString('utf8');
+  const userId = passport.passport_id;
+
   const publicKey = getPublicKey(publicKeyPem, getControllerId(userId));
   const key = keyPair(publicKeyPem, privateKeyPem, getControllerId(userId));
   // specify the public key controller object

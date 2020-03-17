@@ -2,17 +2,34 @@ const Transport = require('winston-transport');
 const storyQueries = require('../story');
 const passportQueries = require('../passport');
 const { pool } = require('../database');
-const package_ = require('../../../package');
+const package_ = require('../../../package.json');
 
-module.exports = class PsqlTransport extends Transport {
+// todo перенести в models
+class TelegramNotifyError extends Error {
+  constructor(message, telegramMessageId, chatId) {
+    super(message);
+    this.name = 'TelegramNotifyError';
+    this.chatId = chatId;
+    this.messageId = telegramMessageId;
+  }
+}
+
+// здесь данные о принятии решений: производить запись или нет
+// eslint-disable-next-line
+const assumeBox = (jsonld) => {
+  return void 0;
+};
+
+class PsqlTransport extends Transport {
   constructor(options) {
     super(options);
   }
 
   async log(info, callback) {
-    const jsonld = info.message;
-
     try {
+      const jsonld = info.message;
+      assumeBox(jsonld);
+
       const { id } = await pool.connect(async (connection) => {
         const result = await connection.transaction(
           async (transactionConnection) => {
@@ -36,6 +53,11 @@ module.exports = class PsqlTransport extends Transport {
               }),
             );
             // 'story.createContent'
+            const telegramMessageId = jsonld.object.mainEntity.find(
+              (entity) => {
+                return entity.name === 'TelegramMessageId';
+              },
+            )['value'];
             const contentTable = await transactionConnection.one(
               storyQueries.createContent({
                 messageId: messageTable.id,
@@ -44,9 +66,7 @@ module.exports = class PsqlTransport extends Transport {
                 ),
                 contentType: jsonld.object.encodingFormat,
                 schema: jsonld.object['@type'],
-                telegramMessageId: String(
-                  jsonld.object.provider.identifier.value,
-                ),
+                telegramMessageId: String(telegramMessageId),
                 date: new Date(jsonld.startTime), // created at
 
                 // todo добавить emailMessageId
@@ -69,14 +89,29 @@ module.exports = class PsqlTransport extends Transport {
         );
         return result;
       });
-      info.message.id = id;
+      info.messageId = id;
       callback();
+      setImmediate(() => {
+        this.emit('logged', info);
+      });
     } catch (error) {
-      callback(error);
+      const telegramMessageId = info.message.object.mainEntity.find(
+        (entity) => {
+          return entity.name === 'TelegramMessageId';
+        },
+      )['value'];
+      const telegramChatId = info.message.object.mainEntity.find((entity) => {
+        return entity.name === 'TelegramChatId';
+      })['value'];
+      callback(
+        new TelegramNotifyError(
+          error.message,
+          telegramMessageId,
+          telegramChatId,
+        ),
+      );
     }
-
-    setImmediate(() => {
-      this.emit('logged', info);
-    });
   }
-};
+}
+
+module.exports = PsqlTransport;

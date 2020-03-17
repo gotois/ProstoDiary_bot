@@ -1,4 +1,4 @@
-const package_ = require('../../../package');
+const package_ = require('../../../package.json');
 
 /**
  * @todo вместо отдачи jsonld производить прямой запрос на API

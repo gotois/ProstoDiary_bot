@@ -1,5 +1,5 @@
 const Abstract = require('../abstract/index');
-const package_ = require('../../../package');
+const package_ = require('../../../package.json');
 const foursquare = require('../../lib/foursquare');
 const { getFullName, getGeoCode } = require('../../services/location.service');
 

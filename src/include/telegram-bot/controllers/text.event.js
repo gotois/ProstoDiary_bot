@@ -22,32 +22,20 @@ class Text extends TelegramBotRequest {
     }
     try {
       const text = await textService.correctionText(this.message.text);
-      const result = await textAction({
+      await textAction({
         text,
         // hashtags: this.hashtags, // todo поддержать на стороне JSONLD
-        // chatId: this.message.chat.id, // todo поддержать на стороне JSONLD
-        tgMessageId,
+        telegram: silent
+          ? null
+          : {
+            chatId: this.message.chat.id,
+            messageId: tgMessageId,
+          },
         creator: this.message.passport.assistant,
         publisher: this.message.passport.email,
         jwt: this.message.passport.jwt,
+        silent,
       });
-      if (!silent) {
-        await bot.editMessageText(result.purpose.abstract, {
-          chat_id: this.message.chat.id,
-          message_id: tgMessageId,
-          parse_mode: result.purpose.isBasedOn.encodingFormat,
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: result.purpose.isBasedOn.name,
-                  url: result.purpose.isBasedOn.url,
-                },
-              ],
-            ],
-          },
-        });
-      }
     } catch (error) {
       await bot.editMessageText(String(error.message), {
         chat_id: this.message.chat.id,

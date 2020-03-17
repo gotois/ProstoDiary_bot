@@ -1,4 +1,4 @@
-const package_ = require('../../../package');
+const package_ = require('../../../package.json');
 const rpc = require('../lib/rpc');
 
 /**

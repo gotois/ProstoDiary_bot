@@ -1,13 +1,13 @@
 const rpc = require('../lib/rpc');
 const AbstractText = require('../../models/abstract/abstract-text');
 /**
- * @param {string} text - user text
- * @returns {Promise<Array<jsonld>>}
+ * @param {*} object - object
+ * @returns {Promise<undefined>}
  */
 module.exports = async ({
   // hashtags, // todo поддержать
-  // chat_id, // todo поддержать
-  tgMessageId,
+  telegram,
+  silent,
   text,
   auth,
   creator,
@@ -15,14 +15,15 @@ module.exports = async ({
   jwt,
 }) => {
   const abstractText = new AbstractText({
-    tgMessageId,
+    silent,
+    telegram,
     text,
     auth,
     creator,
     publisher,
   });
   await abstractText.prepare();
-  const jsonldMessage = await rpc({
+  await rpc({
     body: {
       jsonrpc: '2.0',
       method: 'insert',
@@ -32,5 +33,4 @@ module.exports = async ({
     jwt,
     auth,
   });
-  return jsonldMessage;
 };

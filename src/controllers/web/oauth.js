@@ -3,7 +3,7 @@ const logger = require('../../services/logger.service');
 const {
   SignIn,
 } = require('../../include/telegram-bot/controllers/signin.event');
-const package_ = require('../../../package');
+const package_ = require('../../../package.json');
 const { pool, NotFoundError } = require('../../db/database');
 const passportQueries = require('../../db/passport');
 const { mail } = require('../../lib/sendgrid');

@@ -1,5 +1,5 @@
 const validator = require('validator');
-const herokuAPP = require('../../app');
+const herokuAPP = require('../../app.json');
 
 const {
   NODE_ENV,
