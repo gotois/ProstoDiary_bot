@@ -2,10 +2,19 @@ const ac = require('./rbac');
 const { pool } = require('../../db/database');
 const storyQueries = require('../../db/story');
 const passportQueries = require('../../db/passport');
+const template = require('../../views/message');
 
 // Для доступа к сообщениям, пользователю необходимо вести свой email и master password
 module.exports = async (request, response, next) => {
   try {
+    if (!request.user) {
+      response.status(403).json({ message: 'unknown user' });
+      return;
+    }
+    if (!request.params.uuid) {
+      response.status(400).json({ message: 'unknown uuid' });
+      return;
+    }
     await pool.connect(async (connection) => {
       const { role } = await connection.maybeOne(
         passportQueries.selectRoleByEmail(request.user),
@@ -35,39 +44,7 @@ module.exports = async (request, response, next) => {
             return response.status(200).json(storyTable);
           }
           default: {
-            // todo отдельный шаблонизатор
-            let html = '';
-
-            html += `<h1>${JSON.stringify(storyTable.categories)}</h1>`;
-            html += `<h2>${JSON.stringify(storyTable.context)}</h2>`;
-            switch (storyTable.content_type) {
-              case 'text/plain':
-              case 'plain/text': {
-                html += storyTable.content.toString();
-                break;
-              }
-              case 'image/jpeg': {
-                html += `<img src="data:image/jpeg;base64, ${storyTable.content.toString(
-                  'base64',
-                )}"/>`;
-                break;
-              }
-              default: {
-                html += 'undefined type story';
-                break;
-              }
-            }
-            html += `
-                <div>
-                  <p>STATUS: ${storyTable.status}</p>
-                  <p>created_at: ${storyTable.created_at}</p>
-                </div>
-            `;
-            return response.status(200).send(
-              `
-                <div>${html}</div>
-              `,
-            );
+            response.status(200).send(template(storyTable));
           }
         }
       } catch (error) {

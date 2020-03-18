@@ -1,13 +1,12 @@
 const Provider = require('oidc-provider');
 const { JWKS } = require('jose');
+const { SERVER } = require('../environment');
+const RedisAdapter = require('../db/adapters/redis');
+const Account = require('./oidc/account');
+
 const {
   interactionPolicy: { base: policy },
-} = require('oidc-provider');
-const { SERVER } = require('../environment');
-// const PsqlAdapter = require('../db/adapters/oidc-postgresq');
-const RedisAdapter = require('../db/adapters/redis');
-const Account = require('./oidc/account.js');
-
+} = Provider;
 // todo ключи генерируются при первом запуске приложения, надо сохранять их в БД и сделать асинхронными
 const keystore = new JWKS.KeyStore();
 keystore.generateSync('RSA', undefined, { use: 'sig' });
@@ -49,7 +48,6 @@ const clients = [
 ];
 
 const configuration = {
-  // adapter: PsqlAdapter,
   adapter: RedisAdapter,
   clients,
   jwks: keystore.toJWKS(true),

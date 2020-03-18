@@ -141,7 +141,7 @@ const detectLang = (query) => {
   if (langCode === UNDEFINED) {
     if (/[А-Я]/i.test(query)) {
       langCode = RUS;
-      // eslint-disable-next-line unicorn/regex-shorthand
+      // eslint-disable-next-line
     } else if (/[A-Z]/i.test(query)) {
       langCode = ENG;
     }

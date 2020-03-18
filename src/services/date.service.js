@@ -44,7 +44,7 @@ const convertToNormalDate = (date) => {
   let yyyy;
 
   // @example: '20/07/2019'
-  // eslint-disable-next-line unicorn/regex-shorthand
+  // eslint-disable-next-line
   if (/\d{2}\/\d{2}\/\d{4}/.test(date)) {
     if (date.includes('month/day/year')) {
       dd = Number(date.slice(3, 5));
@@ -55,7 +55,7 @@ const convertToNormalDate = (date) => {
       mm = Number(date.slice(3, 5));
       yyyy = Number(date.slice(6, 10));
     }
-    // eslint-disable-next-line unicorn/regex-shorthand
+    // eslint-disable-next-line
   } else if (/\d{4}-\d{1,2}-\d{1,2}/.test(date)) {
     // `YYYY-MM-DD`
     dd = Number(date.slice(8, 10));

@@ -51,18 +51,20 @@ ${html}
       );
     }
   } else if (messageId) {
+    /* eslint-disable */
     const replyMarkup = !url
       ? null
       : {
         inline_keyboard: [
           [
             {
-                text: html,
-                url: url,
+              text: html,
+              url: url,
             },
           ],
         ],
         };
+    /* eslint-enable */
 
     await bot.editMessageText(subject, {
       chat_id: chatId,

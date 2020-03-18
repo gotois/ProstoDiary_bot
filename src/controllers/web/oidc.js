@@ -4,7 +4,7 @@ const oidcParser = require('../../middlewares/oidc');
 const passportQueries = require('../../db/passport');
 const { pool, sql } = require('../../db/database');
 const logger = require('../../services/logger.service');
-const requestService = require('../../services/request.service.js');
+const requestService = require('../../services/request.service');
 
 // этот callback должен выполняться на ассистенте и записывать JWT в свою БД
 module.exports.oidcallback = async (request, response) => {
@@ -49,6 +49,28 @@ module.exports.oidcallback = async (request, response) => {
   } catch (error) {
     response.sendStatus(400).send(error);
     return;
+  }
+};
+
+module.exports.interactionContinue = async (request, response, next) => {
+  try {
+    const interaction = await oidcParser.interactionDetails(request, response);
+    if (request.body.switch) {
+      if (interaction.params.prompt) {
+        const prompts = new Set(interaction.params.prompt.split(' '));
+        prompts.add('login');
+        interaction.params.prompt = [...prompts].join(' ');
+      } else {
+        interaction.params.prompt = 'logout';
+      }
+      await interaction.save();
+    }
+    const result = { select_account: {} };
+    await oidcParser.interactionFinished(request, response, result, {
+      mergeWithLastSubmission: false,
+    });
+  } catch (error) {
+    next(error);
   }
 };
 

@@ -34,30 +34,7 @@ module.exports = (app) => {
     '/interaction/:uid/continue',
     setNoCache,
     body,
-    async (request, response, next) => {
-      try {
-        const interaction = await oidcController.interactionDetails(
-          request,
-          response,
-        );
-        if (request.body.switch) {
-          if (interaction.params.prompt) {
-            const prompts = new Set(interaction.params.prompt.split(' '));
-            prompts.add('login');
-            interaction.params.prompt = [...prompts].join(' ');
-          } else {
-            interaction.params.prompt = 'logout';
-          }
-          await interaction.save();
-        }
-        const result = { select_account: {} };
-        await oidcController.interactionFinished(request, response, result, {
-          mergeWithLastSubmission: false,
-        });
-      } catch (error) {
-        next(error);
-      }
-    },
+    oidcController.interactionContinue,
   );
   app.post(
     '/interaction/:uid/confirm',
@@ -70,14 +47,14 @@ module.exports = (app) => {
     setNoCache,
     oidcController.interactionAbort,
   );
-  // подтверждение авторизации oauth. Сначала переходить сначала по ссылке вида https://cd0b2563.eu.ngrok.io/connect/yandex. Через localhost не будет работать
+  // подтверждение авторизации oauth. Сначала переходить сначала по ссылке вида https://cd0b2563.eu.ngrok.io/connect/yandex
+  // Через localhost не будет работать
   app.get('/oauth', oauthController);
   // JSON-LD пользователя/организации
   // todo добавить список историй сылками и пагинацией <Array>
   //  список сообщений истории определенного пользователя
   app.get('/user/:uuid/:date', authParser, passportController);
   // отображение прикрепленных некий глобальный JSON-LD включающий ссылки на остальные документы
-  // todo делать читаемыми только для того пользователя кто создал. Нужны роли для этого
   app.get('/message/:uuid', authParser, messageController);
   app.get('/robots.txt', robotsParser);
   app.get('/sitemap.txt', sitemapParser);
