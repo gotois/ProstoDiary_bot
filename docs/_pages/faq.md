@@ -11,16 +11,23 @@ permalink: /faq/
 В Event Notification Mail Settings надо указать путь вида `https://7d4a7fb7.eu.ngrok.io/mail`. Настроить https://app.sendgrid.com/settings/mail_settings
 
 ### Хочу делать API запросы через cURL 
-Пример API запроса без параметров:
-```
+Пример API запроса без параметров (Basic Auth):
+```bash
 curl --basic -u "user_email:master_password" -X POST -H "Content-Type: application/json" -H "Accept: application/schema+json" --data '{"jsonrpc":"2.0","method":"ping","id":1}' http://127.0.0.1:9000/api/ping
 ```
-Пример API запроса с параметрами:
+
+Пример API запроса (Authorization Token)
+```bash
+curl -X POST -H "Authorization: Bearer YOUR_JWT_TOKEN" -H "Content-Type: application/json" -H "Accept: application/schema+json" --data '{"jsonrpc":"2.0","method":"ping","params":{},"id":1}' http://127.0.0.1:9000/api/ping
 ```
+
+Пример API запроса с параметрами:
+```bash
 curl --basic -u "user_email:master_password" -X POST -H "Content-Type: application/json" -H "Accept: application/schema+json" --data '{"jsonrpc":"2.0","method":"help","params":'{"jsonrpc":"2.0","method":"ping","params":{"@context":{"schema":"http://schema.org/","agent":"schema:agent","name":"schema:name"},"@type":"AllocateAction","agent":{"@type":"Person","name":"prosto-diary"},"name":"Ping", ... }}}},"id":1}'' http://127.0.0.1:9000/api
 ```
+
 Пример получения JSON данных истории
-```
+```bash
 curl --basic -u "user_email:master_password" -H "Accept: application/json" http://0.0.0.0:9000/message/73050f7c-2781-4f1a-b9f7-992f1d65f22e
 ```
 

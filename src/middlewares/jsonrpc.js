@@ -1,11 +1,12 @@
 const jose = require('jose');
+const { v1: uuidv1 } = require('uuid');
 const package_ = require('../../package.json');
 const jsonRpcServer = require('../api');
 const { pool } = require('../db/database');
 const passportQueries = require('../db/passport');
+const signatures = require('../core/security/signature');
 const logger = require('../services/logger.service');
 const crypt = require('../services/crypt.service');
-const signatures = require('../core/security/signature');
 /**
  * @param {object} server - json rpc server
  * @param {string} method - json rpc method
@@ -20,7 +21,7 @@ async function apiRequest(server, method, document, passport) {
     server.call(
       {
         jsonrpc: '2.0',
-        id: 1, // todo изменить используя guid ?
+        id: uuidv1(),
         method,
         params: signedDocument,
       },

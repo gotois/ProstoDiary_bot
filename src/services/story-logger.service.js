@@ -5,14 +5,31 @@ const logger = require('./logger.service');
 const bot = require('../include/telegram-bot/bot');
 
 const pqsqlTransport = new PsqlTransport();
+pqsqlTransport.on('logged', async (info) => {
+  logger.info('saveToDatabase:success');
+  const telegramMessageId = info.message.object.mainEntity.find((entity) => {
+    return entity.name === 'TelegramMessageId';
+  })['value'];
+  const telegramChatId = info.message.object.mainEntity.find((entity) => {
+    return entity.name === 'TelegramChatId';
+  })['value'];
+
+  await notifyTelegram({
+    subject: 'Запись добавлена',
+    html: 'Открыть запись',
+    url: `${SERVER.HOST}/message/${info.messageId}`,
+    parseMode: 'HTML',
+    chatId: telegramChatId,
+    messageId: telegramMessageId,
+  });
+});
 
 const storyLogger = winston.createLogger({
   transports: [pqsqlTransport],
 });
 
 /**
- * Отправить документ в телеграм канал
- *
+ * @description Отправить документ телеграм ассистенту
  * @param {*} parameters - telegram parameters
  * @returns {Promise<undefined>}
  */
@@ -80,27 +97,8 @@ ${html}
   }
 }
 
-pqsqlTransport.on('logged', async (info) => {
-  logger.info('saveToDatabase:success');
-  const telegramMessageId = info.message.object.mainEntity.find((entity) => {
-    return entity.name === 'TelegramMessageId';
-  })['value'];
-  const telegramChatId = info.message.object.mainEntity.find((entity) => {
-    return entity.name === 'TelegramChatId';
-  })['value'];
-
-  await notifyTelegram({
-    subject: 'Запись добавлена',
-    html: 'Открыть запись',
-    url: `${SERVER.HOST}/message/${info.messageId}`,
-    parseMode: 'HTML',
-    chatId: telegramChatId,
-    messageId: telegramMessageId,
-  });
-});
-
 storyLogger.on('error', async (error) => {
-  logger.error(error);
+  logger.error(error.message);
 
   await notifyTelegram({
     subject: error.message,

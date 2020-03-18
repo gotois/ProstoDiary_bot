@@ -1,12 +1,14 @@
-module.exports = ({ storyTable }) => {
-  let html = '';
+module.exports = (storyTable) => {
+  const action = storyTable.categories;
+  const jsonld = storyTable.context;
 
-  html += `<h1>${JSON.stringify(storyTable.categories)}</h1>`;
-  html += `<h2>${JSON.stringify(storyTable.context)}</h2>`;
+  let html = '';
+  html += `<h1>${JSON.stringify(action)}</h1>`;
+  html += `<pre>${JSON.stringify(jsonld, null, 2)}</pre>`;
   switch (storyTable.content_type) {
     case 'text/plain':
     case 'plain/text': {
-      html += storyTable.content.toString();
+      html += `<p><b>RAW</b>: ${storyTable.content.toString()}</p>`;
       break;
     }
     case 'image/jpeg': {
@@ -21,10 +23,8 @@ module.exports = ({ storyTable }) => {
     }
   }
   html += `
-    <div>
-      <p>STATUS: ${storyTable.status}</p>
-      <p>created_at: ${storyTable.created_at}</p>
-    </div>
+    <p><b>STATUS</b>: ${storyTable.status}</p>
+    <p><b>CREATED</b>: ${storyTable.created_at}</p>
   `;
 
   return html;
