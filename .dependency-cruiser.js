@@ -170,12 +170,6 @@ module.exports = {
     }
   ],
   options: {
-
-    /* conditions specifying which files not to follow further when encountered:
-       - path: a regular expression to match
-       - dependencyTypes: see https://github.com/sverweij/dependency-cruiser/blob/master/doc/rules-reference.md#dependencytypes
-       for a complete list
-    */
     doNotFollow: {
       dependencyTypes: [
         'npm',
@@ -186,29 +180,16 @@ module.exports = {
         'npm-no-pkg'
       ]
     },
-
     exclude : {
-      path: 'src/core/bot.js|src/services/request.service.js|src/services/linked-data-signature.service.js|src/lib/foursquare.js|src/db/transports/psql-transport.js|src/db/adapters/redis.js|src/core/lib/rpc.js',
+      path: 'src/core/bot.js|src/services/request.service.js|src/lib/foursquare.js|src/db/transports/psql-transport.js|src/core/lib/rpc.js',
       dynamic: true
     },
-
     moduleSystems: ['cjs'],
-
     reporterOptions: {
       dot: {
-        /* pattern of modules that can be consolidated in the detailed
-           graphical dependency graph. The default pattern in this configuration
-           collapses everything in node_modules to one folder deep so you see
-           the external modules, but not the innards your app depends upon.
-         */
         collapsePattern: 'node_modules/[^/]+',
       },
       archi: {
-        /* pattern of modules that can be consolidated in the high level
-          graphical dependency graph. If you use the high level graphical
-          dependency graph reporter (`archi`) you probably want to tweak
-          this collapsePattern to your situation.
-        */
         collapsePattern: '^(node_modules|packages|src|lib|app|test|spec)/[^/]+',
       }
     }

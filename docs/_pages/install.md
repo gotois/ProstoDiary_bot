@@ -46,6 +46,9 @@ FOURSQUARE_REDIRECT_URI=http://localhost
 FOURSQUARE_ACCESS_TOKEN={ string } # Чтобы получить token перейдите по ссылке и подтвердите привязку приложения. (В хэше открытого попапа будет  access token)
 
 SENTRY_DSN={ URL }
+
+GOOGLE_KNOWLEDGE_GRAPH={ key }
+REDIS_URL={ URL } # вида 127.0.0.1:6379
 ```
 
 <details>

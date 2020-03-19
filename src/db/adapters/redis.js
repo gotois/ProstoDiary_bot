@@ -1,8 +1,16 @@
 const Redis = require('ioredis');
-const { isEmpty } = require('lodash');
+const { REDIS } = require('../../environment');
 
-// todo поменять URL редиса, включа HEROKU
-const client = new Redis('127.0.0.1:6379', {
+function isEmpty(value) {
+  return (
+    value === undefined ||
+    value === null ||
+    (typeof value === 'object' && Object.keys(value).length === 0) ||
+    (typeof value === 'string' && value.trim().length === 0)
+  );
+}
+
+const client = new Redis(REDIS.URL, {
   keyPrefix: 'oidc:',
 });
 

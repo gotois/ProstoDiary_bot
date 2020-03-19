@@ -50,12 +50,17 @@ const {
 
   FACEBOOK_APP_ID,
   FACEBOOK_APP_SECRET,
+
+  REDIS_URL,
 } = process.env;
 
 const ENV = {
   NGROK: {
     TOKEN: NGROK,
     URL: NGROK_URL,
+  },
+  REDIS: {
+    URL: REDIS_URL,
   },
   DATABASE: {
     host: PGHOST,
