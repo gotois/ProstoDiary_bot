@@ -1,6 +1,7 @@
 const auth = require('http-auth');
 const passportQueries = require('../db/passport');
 const { pool } = require('../db/database');
+const logger = require('../services/logger.service');
 
 // example: demo@gotointeractive.com:demo
 const basic = auth.basic(
@@ -21,5 +22,17 @@ const basic = auth.basic(
     }
   },
 );
+
+basic.on('success', (result) => {
+  logger.info(`User authenticated: ${result.user}`);
+});
+
+basic.on('fail', (result) => {
+  logger.info(`User authentication failed: ${result.user}`);
+});
+
+basic.on('error', (error) => {
+  logger.error(`Authentication error: ${error.code + ' - ' + error.message}`);
+});
 
 module.exports = auth.connect(basic);
