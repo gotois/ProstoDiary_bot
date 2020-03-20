@@ -42,7 +42,7 @@ WHERE passport.user.email = ${userEmail} AND passport.user.id = passport.bot.pas
    */
   checkByEmailAndMasterPassword(login, password) {
     return sql`select 1 from passport.user AS passportUser, passport.bot AS passportBot
-where passportUser.email = ${login} OR passportUser.telegram_id = ${login}
+where (passportUser.email = ${login} OR passportUser.telegram_id = ${login})
 AND
 passportBot.master_password = crypt(${password}, master_password)
 `;

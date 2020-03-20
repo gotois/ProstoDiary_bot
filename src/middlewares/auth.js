@@ -35,4 +35,4 @@ basic.on('error', (error) => {
   logger.error(`Authentication error: ${error.code + ' - ' + error.message}`);
 });
 
-module.exports = auth.connect(basic);
+module.exports = basic;

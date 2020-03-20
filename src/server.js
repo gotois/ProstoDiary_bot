@@ -1,6 +1,7 @@
 const express = require('express');
 const Sentry = require('@sentry/node');
 const helmet = require('helmet');
+const csrf = require('csurf');
 // const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
 const package_ = require('../package.json');
 const logger = require('./services/logger.service');
@@ -21,6 +22,8 @@ app.use(require('./middlewares/logger'));
 // The error handler must be before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());
 require('./routes')(app);
+// настроить позже отдельные страницы с формами где требуется csrf
+app.use(csrf({ cookie: true }));
 // Express error handler
 app.use(require('./middlewares/error-handler'));
 

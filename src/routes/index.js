@@ -2,7 +2,7 @@ const express = require('express');
 const jsonParser = require('body-parser').json();
 const { TELEGRAM } = require('../environment');
 
-const authParser = require('../middlewares/auth');
+const basic = require('../middlewares/auth');
 const robotsParser = require('../middlewares/robots');
 const sitemapParser = require('../middlewares/sitemap');
 const oidcParser = require('../middlewares/oidc');
@@ -53,9 +53,9 @@ module.exports = (app) => {
   // JSON-LD пользователя/организации
   // todo добавить список историй сылками и пагинацией <Array>
   //  список сообщений истории определенного пользователя
-  app.get('/user/:uuid/:date', authParser, passportController);
+  app.get('/user/:uuid/:date', basic.check(passportController));
   // отображение прикрепленных некий глобальный JSON-LD включающий ссылки на остальные документы
-  app.get('/message/:uuid', authParser, messageController);
+  app.get('/message/:uuid', basic.check(messageController));
   app.get('/robots.txt', robotsParser);
   app.get('/sitemap.txt', sitemapParser);
   // вебхуки нотификаций о почте, включая ассистентов
@@ -63,7 +63,7 @@ module.exports = (app) => {
   // telegram
   app.post(`/bot${TELEGRAM.TOKEN}`, jsonParser, telegramAPI);
   app.get('/', indexController);
-  app.get('/ping', authParser, pingController);
+  app.get('/ping', basic.check(pingController));
   // json rpc server via header jwt
   app.post('/api*', jsonParser, rpcAPI);
   // OpenID Connect server
