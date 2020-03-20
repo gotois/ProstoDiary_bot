@@ -1,6 +1,6 @@
 const jose = require('jose');
 const { SERVER } = require('../../environment');
-const oidcParser = require('../../middlewares/oidc');
+const oidc = require('../../middlewares/oidc');
 const passportQueries = require('../../db/passport');
 const { pool, sql } = require('../../db/database');
 const logger = require('../../services/logger.service');
@@ -54,7 +54,7 @@ module.exports.oidcallback = async (request, response) => {
 
 module.exports.interactionContinue = async (request, response, next) => {
   try {
-    const interaction = await oidcParser.interactionDetails(request, response);
+    const interaction = await oidc.interactionDetails(request, response);
     if (request.body.switch) {
       if (interaction.params.prompt) {
         const prompts = new Set(interaction.params.prompt.split(' '));
@@ -66,7 +66,7 @@ module.exports.interactionContinue = async (request, response, next) => {
       await interaction.save();
     }
     const result = { select_account: {} };
-    await oidcParser.interactionFinished(request, response, result, {
+    await oidc.interactionFinished(request, response, result, {
       mergeWithLastSubmission: false,
     });
   } catch (error) {
@@ -77,14 +77,14 @@ module.exports.interactionContinue = async (request, response, next) => {
 // @see https://github.com/panva/node-oidc-provider/blob/master/example/routes/express.js
 module.exports.interactionUID = async (request, response, next) => {
   try {
-    const details = await oidcParser.interactionDetails(request, response);
+    const details = await oidc.interactionDetails(request, response);
     const { uid, prompt, params, session } = details;
-    const client = await oidcParser.Client.find(params.client_id);
+    const client = await oidc.Client.find(params.client_id);
 
     switch (prompt.name) {
       case 'select_account': {
         if (!session) {
-          return oidcParser.interactionFinished(
+          return oidc.interactionFinished(
             request,
             response,
             { select_account: {} },
@@ -162,7 +162,7 @@ module.exports.interactionLogin = async (request, response, next) => {
   try {
     const {
       prompt: { name },
-    } = await oidcParser.interactionDetails(request, response);
+    } = await oidc.interactionDetails(request, response);
     logger.info('name: ' + name);
     const botInfo = await pool.connect(async (connection) => {
       const result = await connection.maybeOne(
@@ -181,7 +181,7 @@ module.exports.interactionLogin = async (request, response, next) => {
         account: botInfo.id,
       },
     };
-    await oidcParser.interactionFinished(request, response, result, {
+    await oidc.interactionFinished(request, response, result, {
       mergeWithLastSubmission: false,
     });
   } catch (error) {
@@ -192,7 +192,7 @@ module.exports.interactionLogin = async (request, response, next) => {
 module.exports.interactionConfirm = async (request, response, next) => {
   try {
     logger.info('interactionConfirm');
-    await oidcParser.interactionFinished(
+    await oidc.interactionFinished(
       request,
       response,
       {
@@ -216,7 +216,7 @@ module.exports.interactionAbort = async (request, response, next) => {
       error: 'access_denied',
       error_description: 'End-User aborted interaction',
     };
-    await oidcParser.interactionFinished(request, response, result, {
+    await oidc.interactionFinished(request, response, result, {
       mergeWithLastSubmission: false,
     });
   } catch (error) {

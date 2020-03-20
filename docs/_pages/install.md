@@ -4,6 +4,16 @@ title: Installer
 permalink: /install/
 ---
 
+Heroku addons
+---
+* Coralogix logging addon 
+* Heroku Postgres 
+* Heroku Redis 
+* Heroku Scheduler 
+* Secure Key 
+* SendGrid 
+* Sentry
+
 Server Environments
 ---
 * Create ```.env``` file in root project for dev test

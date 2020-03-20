@@ -51,10 +51,12 @@ const {
   FACEBOOK_APP_ID,
   FACEBOOK_APP_SECRET,
 
+  SECURE_KEY,
   REDIS_URL,
 } = process.env;
 
 const ENV = {
+  SECURE_KEY, // Heroku securekey
   NGROK: {
     TOKEN: NGROK,
     URL: NGROK_URL,
@@ -197,6 +199,8 @@ const ENV = {
     }
   },
   /**
+   * Heroku production
+   *
    * @returns {boolean}
    */
   get IS_PRODUCTION() {
