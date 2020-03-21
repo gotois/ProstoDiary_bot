@@ -1,6 +1,6 @@
 const Provider = require('oidc-provider');
 const { JWKS } = require('jose');
-const { SERVER, IS_PRODUCTION } = require('../environment');
+const { SERVER, IS_PRODUCTION, SECURE_KEY } = require('../environment');
 const RedisAdapter = require('../db/adapters/redis');
 const Account = require('./oidc/account');
 
@@ -103,7 +103,7 @@ const configuration = {
 const oidc = new Provider(SERVER.HOST, configuration);
 oidc.proxy = true;
 if (IS_PRODUCTION) {
-  oidc.keys = process.env.SECURE_KEY.split(',');
+  oidc.keys = SECURE_KEY.split(',');
 }
 
 module.exports = oidc;

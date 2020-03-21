@@ -7,7 +7,7 @@ export default () => {
   // специально скрываем результаты логов от посторонних глаз
   const verbose = process.env.NODE_ENV !== 'TRAVIS_CI';
   const avaMainConfig = {
-    'sources': [
+    'ignoredByWatcher': [
       'src/**/*'
     ],
     'concurrency': 5,
@@ -17,9 +17,8 @@ export default () => {
       'HOST': 'localhost',
       'PORT': '9001',
     },
-    'compileEnhancements': false,
   };
-  
+
   if (process.env.FAST_TEST) {
     return {
       ...avaMainConfig,
