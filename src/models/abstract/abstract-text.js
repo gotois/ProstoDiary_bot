@@ -6,6 +6,7 @@ const dialogService = require('../../services/dialog.service');
 const logger = require('../../services/logger.service');
 const languageService = require('../../services/nlp.service');
 const Abstract = require('.');
+const Action = require('../../core/models/action');
 /**
  * @todo на основе набора свойств пытаюсь насытить schema.org
  * затем получать родителя из схемы и насыщать ее по необходимости из истории
@@ -26,73 +27,6 @@ const myForm = (parameters) => {
     ...parameters,
   };
 };
-/**
- * @param {string} intent - dialogflowResult intent displayName
- * @returns {string}
- */
-function convertIntentToActionName(intent) {
-  switch (intent) {
-    case 'EatIntent': {
-      return 'EatAction';
-    }
-    case 'BuyIntent': {
-      return 'BuyAction';
-    }
-    case 'FinanceIntent': {
-      return 'AchieveAction';
-    }
-    case 'FitnessIntent': {
-      return 'ExerciseAction';
-    }
-    case 'TodoIntent': {
-      return 'PlanAction';
-    }
-    case 'WorkIntent': {
-      return 'CreateAction';
-      // todo
-      //  здесь же может быть акт перехода (MoveAction).
-      //  пример: "пошел на работу в офис"
-      //  MoveAction
-    }
-    // case 'InstallIntent': {
-    // xxx
-    // }
-    // case 'PainIntent': {
-    // todo https://schema.org/MedicalSymptom
-    // break;
-    // }
-    // case 'WeightIntent': {
-    // todo
-    // break;
-    // }
-    // например когда "посмотрел фильм"
-    // case 'WatchAction': {
-    //   break;
-    // }
-    // настроение
-    // case 'AssessAction': {
-    //   break;
-    // }
-    // ??
-    // это когда бот подключен к сторонним группам в телеграм
-    // case 'InteractAction': {
-    //   break;
-    // }
-    // case 'PlayAction': {
-    //   break;
-    // }
-    // case 'SearchAction': {
-    //   break;
-    // }
-    // пример работы с финансами
-    // case 'TradeAction': {
-    //   break;
-    // }
-    default: {
-      return 'Action';
-    }
-  }
-}
 
 /**
  * @param {string} text - sentence text
@@ -105,7 +39,7 @@ async function detectBySentense(text) {
   }
 
   /**
-   * @param {string} action - JSON-LD action
+   * @param {Action} action - JSON-LD action
    * @returns {object}
    */
   function generateDocument(action) {
@@ -126,11 +60,9 @@ async function detectBySentense(text) {
           return accumulator;
         }, {}),
       },
-      '@type': action,
-      object, // todo в зависимости от контекста может быть либо 'object' либо 'result'
-
-      // todo научить разбираться какой статус произошел по контексту
-      // actionStatus: 'CompletedActionStatus'; // ActiveActionStatus, PotentialActionStatus
+      '@type': action.type,
+      object,
+      // actionStatus: action.status,
     };
     return innerDocument;
   }
@@ -199,9 +131,7 @@ async function detectBySentense(text) {
     }
   });
 
-  return generateDocument(
-    convertIntentToActionName(dialogflowResult.intent.displayName),
-  );
+  return generateDocument(new Action(dialogflowResult.intent.displayName));
 }
 
 class AbstractText extends Abstract {
