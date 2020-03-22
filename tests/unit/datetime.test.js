@@ -21,7 +21,7 @@ module.exports = (t) => {
   t.is(convertToNormalDate('2017-08-07').getMonth(), 8);
   t.throws(() => {
     convertToNormalDate('2017-27-2');
-  }, Error);
+  }, { instanceOf: Error });
   t.is(convertToNormalDate(new Date(0)).getMonth(), 0);
   t.is(convertToNormalDate(new Date(0)).toDateString(), 'Thu Jan 01 1970');
   t.true(convertToNormalDate(new Date()) instanceof Date);
