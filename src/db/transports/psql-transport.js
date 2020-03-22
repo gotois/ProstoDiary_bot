@@ -45,7 +45,8 @@ class PsqlTransport extends Transport {
             // 'story.botTable'
             const messageTable = await transactionConnection.one(
               storyQueries.createMessage({
-                // creator: jsonld.participant.email, // todo нужно получать ассистент GUID
+                namespace: jsonld['@id'],
+                // creator: jsonld.participant.email, // todo нужно получать идентификатор ассистента GUID
                 publisher: botTable.id,
                 version: package_.version,
                 experimental: false,
@@ -69,8 +70,7 @@ class PsqlTransport extends Transport {
                 telegramMessageId: String(telegramMessageId),
                 date: new Date(jsonld.startTime), // created at
 
-                // todo добавить emailMessageId
-                // emailMessageId: content.emailMessageId, // fixme поддержать
+                // emailMessageId: content.emailMessageId, // fixme поддержать emailMessageId
               }),
             );
             for (const subject of jsonld.subjectOf) {

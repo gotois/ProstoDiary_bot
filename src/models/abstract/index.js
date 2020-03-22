@@ -7,19 +7,29 @@ class Abstract {
     this.objectMainEntity.push({
       "@type": "PropertyValue",
       "name": "silent",
-      "value": data.silent
+      "value": data.silent || false
     });
     if (data.telegram) {
-      this.objectMainEntity.push({
-        "@type": "PropertyValue",
-        "name": 'TelegramMessageId',
-        "value": data.telegram.messageId
-      });
-      this.objectMainEntity.push({
-        "@type": "PropertyValue",
-        "name": "TelegramChatId",
-        "value": data.telegram.chatId
-      });
+      if (data.telegram.messageId) {
+        this.objectMainEntity.push({
+          "@type": "PropertyValue",
+          "name": 'TelegramMessageId',
+          "value": data.telegram.messageId,
+        });
+      }
+      if (data.telegram.chatId) {
+        this.objectMainEntity.push({
+          "@type": "PropertyValue",
+          "name": "TelegramChatId",
+          "value": data.telegram.chatId,
+        });
+
+        // телеграм чат
+        this.namespace = `https://t.me/chat#${data.telegram.chatId}`;
+      }
+    } else {
+      // сообщение пришло из почты
+      // this.namespace будет устанавливаться из Message-Id письма
     }
   }
   get context() {

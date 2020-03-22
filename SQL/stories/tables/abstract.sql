@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS story.abstract (
 id BIGSERIAL,
--- todo сюда еще хэштеги можно
 category TEXT NOT NULL, -- CreativeWork @type
 context JSONB NOT NULL, -- CreativeWork Full Values
 content_id BIGINT NOT NULL,

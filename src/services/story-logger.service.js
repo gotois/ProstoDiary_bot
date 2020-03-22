@@ -13,7 +13,13 @@ pqsqlTransport.on('logged', async (info) => {
   const telegramChatId = info.message.object.mainEntity.find((entity) => {
     return entity.name === 'TelegramChatId';
   })['value'];
-
+  const isSilent = info.message.object.mainEntity.find((entity) => {
+    return entity.name === 'silent';
+  })['value'];
+  if (isSilent) {
+    logger.info('skip notify message');
+    return;
+  }
   await notifyTelegram({
     subject: 'Запись добавлена',
     html: 'Открыть запись',

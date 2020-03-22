@@ -5,7 +5,7 @@ const AbstractText = require('../../models/abstract/abstract-text');
  * @returns {Promise<undefined>}
  */
 module.exports = async ({
-  // hashtags, // todo поддержать
+  // hashtags, // todo поддержать на стороне JSONLD
   telegram,
   silent,
   text,

@@ -162,6 +162,7 @@ class AbstractText extends Abstract {
         email: 'schema:email',
         mainEntity: 'schema:mainEntity',
       },
+      "@id": this.namespace, // изоляцинные идентификаторы сообщения
       '@type': 'Action',
       'agent': {
         '@type': 'Organization',

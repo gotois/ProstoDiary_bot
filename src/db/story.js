@@ -108,15 +108,22 @@ WHERE
           RETURNING id
           `;
   },
-  createMessage({ /* creator, */ publisher, version, experimental = false }) {
+  createMessage({
+    /* creator, */ namespace,
+    publisher,
+    version,
+    experimental = false,
+  }) {
     return sql`
           INSERT INTO story.message
           (
+            namespace,
             publisher,
             version,
             experimental
           )
           VALUES (
+          ${namespace},
           ${publisher},
           ${version},
           ${experimental}

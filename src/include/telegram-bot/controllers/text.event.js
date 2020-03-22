@@ -2,11 +2,13 @@ const bot = require('../bot');
 const textService = require('../../../services/text.service');
 const TelegramBotRequest = require('./telegram-bot-request');
 const textAction = require('../../../core/functions/text');
+const logger = require('../../../services/logger.service');
 
 class Text extends TelegramBotRequest {
   async beginDialog(silent) {
     await super.beginDialog();
-    let tgMessageId;
+    let tgMessageId = this.message.message_id;
+    logger.info(this.message);
     if (!silent) {
       const { message_id } = await bot.sendMessage(
         this.message.chat.id,
@@ -24,23 +26,25 @@ class Text extends TelegramBotRequest {
       const text = await textService.correctionText(this.message.text);
       await textAction({
         text,
-        // hashtags: this.hashtags, // todo поддержать на стороне JSONLD
-        telegram: silent
-          ? null
-          : {
-            chatId: this.message.chat.id,
-            messageId: tgMessageId,
-          },
+        hashtags: this.hashtags,
+        telegram: {
+          title: this.message.chat.title,
+          chatId: this.message.chat.id,
+          messageId: tgMessageId,
+        },
         creator: this.message.passport.assistant,
         publisher: this.message.passport.email,
         jwt: this.message.passport.jwt,
         silent,
       });
     } catch (error) {
-      await bot.editMessageText(String(error.message), {
-        chat_id: this.message.chat.id,
-        message_id: tgMessageId,
-      });
+      logger.error(error);
+      if (!silent) {
+        await bot.editMessageText(String(error.message), {
+          chat_id: this.message.chat.id,
+          message_id: tgMessageId,
+        });
+      }
     }
   }
 }
