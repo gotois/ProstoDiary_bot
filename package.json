@@ -126,7 +126,7 @@
     "mailparser": "2.7.7",
     "music-metadata": "6.3.6",
     "node-telegram-bot-api": "0.40.0",
-    "oidc-provider": "6.23.2",
+    "oidc-provider": "6.23.3",
     "openpgp": "4.10.1",
     "openweather-apis": "4.2.0",
     "qrcode": "1.4.4",
