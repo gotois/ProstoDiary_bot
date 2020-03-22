@@ -21,7 +21,7 @@ module.exports.oidcallback = async (request, response) => {
 
   try {
     const tokenResult = await requestService.post(SERVER.HOST + '/oidc/token', {
-      client_id: 'tg',
+      client_id: 'tg', // fixme подставлять через реферального ассистента вида '@ProstoDiary_bot'
       client_secret: 'foobar',
       code: request.query.code,
       grant_type: 'authorization_code',

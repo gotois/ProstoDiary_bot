@@ -183,6 +183,39 @@ const ENV = {
       return FOURSQUARE_CLIENT_SECRET;
     },
   },
+  get CLIENTS() {
+    return [
+      // todo данные должны записываться в БД
+      // где client_id становится алиасом для email вида search - search@gotointeractive.com
+      // {
+      //   client_id: 'search',
+      //   client_secret: 'bar', // todo upd
+      //   // todo редирект должен находиться на ассистенте,
+      //   //  тогда ассистент будет получать ключ который детектирует id бота в его базе
+      //   redirect_uris: [SERVER.HOST + '/oidcallback'],
+      //   token_endpoint_auth_method: 'none',
+      //   // grant_types: ['implicit'],
+      //   response_types: ['code'],
+      // },
+      // {
+      //   client_id: 'health',
+      //   client_secret: 'bar',
+      //   redirect_uris: [SERVER.HOST + '/oidcallback'],
+      //   token_endpoint_auth_method: 'none',
+      //   response_types: ['code'],
+      // },
+      // telegram assistant
+      {
+        client_id: 'tg', // todo должен быть '@ProstoDiary_bot'
+        client_secret: 'foobar',
+        application_type: 'web', // todo возможен неверный тип, сейчас бот работает внутри 'application'
+        grant_types: ['implicit', 'authorization_code'],
+        response_types: ['code'],
+        redirect_uris: [ENV.SERVER.HOST + '/oidcallback'],
+        token_endpoint_auth_method: 'client_secret_post',
+      },
+    ];
+  },
   /**
    * @see path отличается одним символом @
    * @returns {string}

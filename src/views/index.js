@@ -1,15 +1,21 @@
 const qs = require('qs');
-const { SERVER } = require('../environment');
+const { SERVER, CLIENTS } = require('../environment');
 
 module.exports = () => {
-  const tgParameters = qs.stringify({
-    client_id: 'tg',
-    response_type: 'code',
-    scope: 'openid email profile',
-  });
-  return `
+  let html = '';
+  html += `
     <h1>Assistants</h1>
     <p>Bind your input assistant:</p>
-    <a href="${SERVER.HOST}/oidc/auth?${tgParameters}">Telegram</a>
   `;
+
+  CLIENTS.forEach((client) => {
+    const tgParameters = qs.stringify({
+      client_id: client.client_id,
+      response_type: client.response_types[0],
+      scope: 'openid email profile',
+    });
+    html += `<a href="${SERVER.HOST}/oidc/auth?${tgParameters}">${client.client_id}</a>`;
+  });
+
+  return html;
 };

@@ -13,7 +13,8 @@ const mailAPI = require('../middlewares/mail');
 const rpcAPI = require('../middlewares/jsonrpc');
 
 const passportController = require('../controllers/web/passport');
-const indexController = require('../controllers/web');
+const indexController = require('../controllers/web/index-page');
+const assistantsController = require('../controllers/web/assistants');
 const pingController = require('../controllers/web/ping');
 const messageController = require('../controllers/web/message');
 const oauthController = require('../controllers/web/oauth');
@@ -50,6 +51,7 @@ module.exports = (app) => {
   // подтверждение авторизации oauth. Сначала переходить сначала по ссылке вида https://cd0b2563.eu.ngrok.io/connect/yandex
   // Через localhost не будет работать
   app.get('/oauth', oauthController);
+  app.get('/assistants', assistantsController);
   // JSON-LD пользователя/организации
   // todo добавить список историй сылками и пагинацией <Array>
   //  список сообщений истории определенного пользователя

@@ -1,6 +1,11 @@
 const Provider = require('oidc-provider');
 const { JWKS } = require('jose');
-const { SERVER, IS_PRODUCTION, SECURE_KEY } = require('../environment');
+const {
+  SERVER,
+  IS_PRODUCTION,
+  SECURE_KEY,
+  CLIENTS,
+} = require('../environment');
 const RedisAdapter = require('../db/adapters/redis');
 const Account = require('./oidc/account');
 
@@ -15,41 +20,9 @@ keystore.generateSync('EC', undefined, { key_ops: ['sign', 'verify'] });
 // copies the default policy, already has login and consent prompt policies
 const interactions = policy();
 
-const clients = [
-  // todo данные должны записываться в БД
-  // где client_id становится алиасом для email вида search - search@gotointeractive.com
-  // {
-  //   client_id: 'search',
-  //   client_secret: 'bar', // todo upd
-  //   // todo редирект должен находиться на ассистенте,
-  //   //  тогда ассистент будет получать ключ который детектирует id бота в его базе
-  //   redirect_uris: [SERVER.HOST + '/oidcallback'],
-  //   token_endpoint_auth_method: 'none',
-  //   // grant_types: ['implicit'],
-  //   response_types: ['code'],
-  // },
-  // {
-  //   client_id: 'health',
-  //   client_secret: 'bar',
-  //   redirect_uris: [SERVER.HOST + '/oidcallback'],
-  //   token_endpoint_auth_method: 'none',
-  //   response_types: ['code'],
-  // },
-  // telegram assistant
-  {
-    client_id: 'tg',
-    client_secret: 'foobar',
-    application_type: 'web',
-    grant_types: ['implicit', 'authorization_code'],
-    response_types: ['code'],
-    redirect_uris: [SERVER.HOST + '/oidcallback'],
-    token_endpoint_auth_method: 'client_secret_post',
-  },
-];
-
 const configuration = {
   adapter: RedisAdapter,
-  clients,
+  clients: CLIENTS,
   jwks: keystore.toJWKS(true),
 
   // This interface is required by oidc-provider
