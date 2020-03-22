@@ -3,17 +3,22 @@ const Abstract = require('../abstract/index');
 const ogParser = require('../../module/og-parser');
 
 class AbstractWebpage extends Abstract {
-  constructor({
-                url,
-              }) {
-    super();
-    this.url = url;
+  constructor(data) {
+    super(data);
+    this.url = data.url;
   }
 
   get context() {
     return {
       ...super.context,
-      '@context': 'http://schema.org',
+      '@context': {
+        schema: 'http://schema.org/',
+        agent: 'schema:agent',
+        encodingFormat: 'schema:encodingFormat',
+        url: 'schema:url',
+        name: 'schema:name',
+        alternativeHeadline: 'schema:alternativeHeadline',
+      },
       '@type': 'WebContent',
       'agent': {
         '@type': 'Person',
@@ -28,7 +33,7 @@ class AbstractWebpage extends Abstract {
 
   async prepare() {
     const { title } = await ogParser(this.url);
-    this.title = title;
+    this.title = encodeURIComponent(title);
   }
 }
 

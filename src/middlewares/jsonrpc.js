@@ -98,6 +98,7 @@ module.exports = async (request, response, next) => {
   if (!passport) {
     return response.sendStatus(401).send('401 Unauthorized');
   }
+  logger.info(`API:${request.body.method}`);
   try {
     const result = await apiRequest(
       jsonRpcServer,

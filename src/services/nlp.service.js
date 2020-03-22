@@ -215,7 +215,7 @@ const langISO = (language) => {
  */
 const splitTextBySentences = (text) => {
   // обрабатываем отдельно каждое предложение которое заканчивается знаками (.)
-  const sentenses = text.split('.').map((sentense) => {
+  const sentenses = text.split('. ').map((sentense) => {
     return sentense.trim();
   });
 

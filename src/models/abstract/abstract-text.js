@@ -2,10 +2,11 @@ const validator = require('validator');
 const SchemaOrg = require('schema.org');
 const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
-const dialogService = require('../../services/dialog.service');
-const logger = require('../../services/logger.service');
-const languageService = require('../../services/nlp.service');
+const dialogService = require('../../services/dialog.service'); // в моделях не должно быть сервисов
+const logger = require('../../services/logger.service'); // в моделях не должно быть сервисов
+const languageService = require('../../services/nlp.service'); // в моделях не должно быть сервисов
 const Abstract = require('.');
+const AbstractWebpage = require('./abstract-webpage');
 const Action = require('../../core/models/action');
 /**
  * @todo на основе набора свойств пытаюсь насытить schema.org
@@ -29,6 +30,7 @@ const myForm = (parameters) => {
 };
 
 /**
+ * @todo перенести в modules
  * @param {string} text - sentence text
  */
 async function detectBySentense(text) {
@@ -37,6 +39,7 @@ async function detectBySentense(text) {
   if (text.length > 256) {
     throw new Error('So big for detect');
   }
+  const subjects = [];
 
   /**
    * @param {Action} action - JSON-LD action
@@ -72,33 +75,21 @@ async function detectBySentense(text) {
   const dialogflowResult = await dialogService.detect(text, 'test-uid');
   const parameters = dialogService.formatParameters(dialogflowResult);
 
-  // ------------------------------------------
-  // const { entities, language } = await languageService.analyzeEntities(text);
-
-  // todo получение информации по локации
-  // for (let entity of entities) {
-  //   if (entity.type === 'LOCATION') {
-  //     this.abstracts.push(new AbstractGeo({
-  //       near: entity.name,
-  //     }));
-  //   }
-  // }
-
   const { tokens } = await languageService.analyzeSyntax(
     dialogflowResult.queryText,
   );
   const objectNames = [];
-  tokens.forEach((token) => {
+  for (const token of tokens) {
     const { lemma } = token;
-
-    // ------------------------------------------
 
     if (validator.isEmail(lemma)) {
       // this.abstracts.push(new AbstractEmail(lemma));
     } else if (validator.isMobilePhone(lemma)) {
       // this.abstracts.push(new AbstractPhone(lemma));
     } else if (validator.isURL(lemma)) {
-      // this.abstracts.push(new AbstractLinks(lemma));
+      const webpage = new AbstractWebpage({ url: lemma });
+      await webpage.prepare();
+      subjects.push(webpage.context);
     }
     // TODO: names получить имена людей
     //  ...
@@ -108,8 +99,6 @@ async function detectBySentense(text) {
     //  ...
     // TODO: behavior; анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
     //  ...
-
-    // ------------------------------------------
 
     switch (token.partOfSpeech.tag) {
       // соединитель - союз, нужно увеличить возвращаемый массив на один
@@ -129,9 +118,11 @@ async function detectBySentense(text) {
         break;
       }
     }
-  });
+  }
 
-  return generateDocument(new Action(dialogflowResult.intent.displayName));
+  subjects.push(generateDocument(new Action(dialogflowResult.intent.displayName)));
+
+  return subjects;
 }
 
 class AbstractText extends Abstract {
@@ -185,7 +176,6 @@ class AbstractText extends Abstract {
         'mainEntity': this.objectMainEntity,
       },
       // location,
-      // 'name': 'xxx', - это и будет тем самым спейсом?
     };
   }
 
@@ -207,9 +197,20 @@ class AbstractText extends Abstract {
     //   categories.add(tag);
     // });
 
+    // const { entities, language } = await languageService.analyzeEntities(this.text);
+    // todo получение информации по локации
+    // for (let entity of entities) {
+    //   if (entity.type === 'LOCATION') {
+    //     this.abstracts.push(new AbstractGeo({
+    //       near: entity.name,
+    //     }));
+    //   }
+    // }
+
     for (const sentense of languageService.splitTextBySentences(this.text)) {
-      const subjectAction = await detectBySentense(sentense);
-      this.subjectOf.push(subjectAction);
+      for (const subject of await detectBySentense(sentense)) {
+        this.subjectOf.push(subject);
+      }
     }
     this.abstract = encodeURIComponent(this.text).toString('base64');
 
