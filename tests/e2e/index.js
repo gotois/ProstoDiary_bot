@@ -114,7 +114,7 @@ test.todo('/search'); // + Проверека построения график�
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
 
 skipTestForFastOrTravis('story', require('./story.test'));
-
+skipTestForFastOrTravis('opengraph', require('./open-graph-parser.test'));
 skipTestForFastOrTravis('archive service', require('./archive-service.test'));
 skipTestForFastOrTravis('foursquare', require('./foursquare-service.test'));
 
