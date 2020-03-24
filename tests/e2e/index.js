@@ -13,14 +13,6 @@ const {
   TELEGRAM,
 } = require('../../src/environment');
 
-const passportExample = {
-  id: 'test-uid', // todo rename id => userId
-  botId: 'test-bot-id',
-  userEmail: 'user@test.test',
-  botEmail: 'bot@test.test',
-  activated: true,
-  // telegram_chat_id: userTable.telegram_chat_id,
-};
 /**
  * This runs before all tests
  */
@@ -88,7 +80,6 @@ test.after.always('guaranteed cleanup', async (t) => {
 });
 
 // API
-skipTestForFastOrTravis('API: script', require('./script.test'));
 skipTestForFast('API: speller service', require('./speller-service.test'));
 skipTestForFast('API: request', require('./request.test'));
 skipTestForFast('API: Location', require('./location.test'));
@@ -111,6 +102,7 @@ test.todo('/dbclear');
 test.todo('Проверка удаления своей записи');
 test.todo('/search'); // + Проверека построения графика
 
+// CORE
 skipTestForFastOrTravis('INPUT: voice', require('./voice.test'));
 
 skipTestForFastOrTravis('story', require('./story.test'));

@@ -1,3 +1,4 @@
+// todo перенести в modules
 const winston = require('winston');
 const CoralogixWinston = require('coralogix-logger-winston');
 const { IS_PRODUCTION, CORALOGIX } = require('../environment');

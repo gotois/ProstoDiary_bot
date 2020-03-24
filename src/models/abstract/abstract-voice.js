@@ -4,7 +4,6 @@ const package_ = require('../../../package.json');
 const dialogService = require('../../services/dialog.service');
 const logger = require('../../services/logger.service');
 const { GOOGLE } = require('../../environment');
-
 const Abstract = require('../abstract/index');
 
 const client = new speech.SpeechClient({
@@ -73,25 +72,35 @@ const voiceToText = async (buffer, { duration, mime_type, file_size }) => {
 };
 
 class AbstractVoice extends Abstract {
-  constructor({
-                buffer,
-                mimeType,
-                fileSize,
-                duration,
-                uid,
-              }) {
-    super();
-    this.buffer = buffer;
-    this.mimeType = mimeType;
-    this.fileSize = fileSize;
-    this.duration = duration;
-    this.uid = uid;
+  /**
+   * @param {object} data - data
+   * @param {*} data.buffer - data
+   * @param {*} data.mimeType - data
+   * @param {*} data.fileSize - data
+   * @param {*} data.duration - data
+   * @param {*} data.uid - data
+   */
+  constructor(data) {
+    super(data);
+    this.buffer = data.buffer;
+    this.mimeType = data.mimeType;
+    this.fileSize = data.fileSize;
+    this.duration = data.duration;
+    this.uid = data.uid;
   }
 
   get context() {
     return {
       ...super.context,
-      '@context': 'http://schema.org',
+      '@context': {
+        schema: 'http://schema.org/',
+        agent: 'schema:agent',
+        name: 'schema:name',
+        object: 'schema:object',
+        abstract: 'schema:abstract',
+        encodingFormat: 'schema:encodingFormat',
+        subjectOf: 'schema:subjectOf',
+      },
       '@type': 'AllocateAction',
       'agent': {
         '@type': 'Person',
@@ -101,14 +110,14 @@ class AbstractVoice extends Abstract {
       'name': 'Voice',
       'object': {
         '@type': 'CreativeWork',
-        'name': 'text',
+        'name': 'voice',
         'abstract': this.buffer.toString('base64'),
-        'encodingFormat': 'audio/ogg',
+        'encodingFormat': this.mimeType,
       },
       'subjectOf': [
         {
           '@type': 'CreativeWork',
-          'text': this.text,
+          'text': encodeURIComponent(this.text),
         },
       ],
     };
@@ -141,7 +150,7 @@ class AbstractVoice extends Abstract {
     const dialogflowResult = await dialogService.detectAudio(
       buffer,
       audioConfig,
-      uid,
+      this.uid,
     );
 
     logger.info(dialogflowResult);

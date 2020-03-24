@@ -3,7 +3,9 @@ const AbstractVoice = require('../../models/abstract/abstract-voice');
 
 module.exports = async function(requestObject) {
   const {
+    date,
     buffer,
+    silent,
     mimeType,
     fileSize,
     duration,
@@ -12,7 +14,9 @@ module.exports = async function(requestObject) {
     jwt,
   } = requestObject;
   const abstractVoice = new AbstractVoice({
+    date,
     buffer,
+    silent,
     mimeType,
     fileSize,
     duration,

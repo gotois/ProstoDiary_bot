@@ -1,4 +1,4 @@
-const uuidv1 = require('uuid/v1');
+const { v1: uuidv1 } = require('uuid');
 const dictionary = require('../../../lib/dictionary');
 const bot = require('../bot');
 const { pool } = require('../../../db/database');

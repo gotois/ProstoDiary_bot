@@ -166,6 +166,7 @@
     "nyc": "15.0.0",
     "openapi-jsonrpc-jsdoc": "1.0.3",
     "prettier": "1.19.1",
+    "supertest": "4.0.2",
     "telegram-test-api": "2.4.2"
   },
   "snyk": true
