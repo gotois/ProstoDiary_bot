@@ -86,7 +86,7 @@ ${html}
             },
           ],
         ],
-        };
+      };
     /* eslint-enable */
 
     await bot.editMessageText(subject, {

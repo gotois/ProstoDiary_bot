@@ -12,3 +12,5 @@ coverage.lcov
 logs/
 *.rej
 /*.log
+*.key
+*.pem

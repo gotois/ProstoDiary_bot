@@ -17,27 +17,40 @@ if (IS_AVA_OR_CI || IS_CRON) {
   telegramBot.startPolling({ restart: false });
 } else if (IS_PRODUCTION) {
   telegramBot = new TelegramBot(TELEGRAM.TOKEN);
-  telegramBot.setWebHook(`${SERVER.HEROKUAPP}/bot${TELEGRAM.TOKEN}`, {
-    max_connections: 10,
-  });
+  telegramBot
+    .setWebHook(`${SERVER.HEROKUAPP}/bot${TELEGRAM.TOKEN}`, {
+      max_connections: 10,
+    })
+    .then(() => {
+      logger.info('set webhook completed');
+    })
+    .catch((error) => {
+      logger.error(error.message);
+    });
   telegramBot.on('webhook_error', (error) => {
-    logger.log('error', error.toString());
+    logger.error(error.toString());
+  });
+} else if (NGROK.URL) {
+  telegramBot = new TelegramBot(TELEGRAM.TOKEN);
+  telegramBot
+    .setWebHook(`${SERVER.HOST}/bot${TELEGRAM.TOKEN}`, {
+      max_connections: 3,
+    })
+    .then(() => {
+      logger.info('set webhook completed');
+    })
+    .catch((error) => {
+      logger.error(error.message);
+    });
+  telegramBot.on('webhook_error', (error) => {
+    logger.error(error.toString());
   });
 } else {
   telegramBot = new TelegramBot(TELEGRAM.TOKEN);
-  if (NGROK.URL) {
-    telegramBot.setWebHook(`${SERVER.HOST}/bot${TELEGRAM.TOKEN}`, {
-      max_connections: 3,
-    });
-    telegramBot.on('webhook_error', (error) => {
-      logger.log('error', error.toString());
-    });
-  } else {
-    telegramBot.startPolling({ restart: false });
-    telegramBot.on('polling_error', (error) => {
-      logger.log('error', error.toString());
-    });
-  }
+  telegramBot.startPolling({ restart: false });
+  telegramBot.on('polling_error', (error) => {
+    logger.error(error.toString());
+  });
 }
 require('./listeners')(telegramBot);
 /**
