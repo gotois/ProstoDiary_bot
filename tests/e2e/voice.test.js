@@ -1,13 +1,39 @@
 const fs = require('fs');
+const { v1: uuidv1 } = require('uuid');
+const request = require('supertest');
 
 module.exports = async (t) => {
-  t.timeout(4000);
-  const voiceService = require('../../src/services/voice.service');
+  t.timeout(10000);
+  const voiceAction = require('../../src/core/functions/voice');
   const buffer = fs.readFileSync('tests/data/voice/voice-example-1.ogg');
-  const text = await voiceService.voiceToText(buffer, {
+  const result = await voiceAction({
+    buffer: buffer,
+    silent: false,
+    date: Math.round(new Date().getTime() / 1000),
+    mimeType: 'audio/ogg',
+    fileSize: 3141,
     duration: 1,
-    mime_type: 'audio/ogg',
-    file_size: 3141,
+    uid: uuidv1(),
   });
-  t.true(Boolean(text.length));
+  const res = await request(t.context.app)
+    .post('/api')
+    .send({
+      method: 'POST',
+      url: '/api',
+      headers: {
+        'User-Agent': `Ava Supertest`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/schema+json',
+      },
+      body: {
+        jsonrpc: '2.0',
+        method: 'insert',
+        id: 1,
+        params: result.context,
+      },
+    });
+  t.is(res.status, 200);
+  if (validator.isJSON(res.body.result)) {
+    t.fail('Invalid JSON-LD body');
+  }
 };

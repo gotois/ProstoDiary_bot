@@ -12,6 +12,8 @@ const {
   SERVER,
   TELEGRAM,
 } = require('../../src/environment');
+const express = require('express');
+const app = express();
 
 /**
  * This runs before all tests
@@ -28,9 +30,10 @@ test.before(async (t) => {
   t.log(`TelegramServer: ${SERVER.HOST}:${SERVER.PORT} started`);
   const client = server.getClient(TELEGRAM.TOKEN);
   /*eslint-disable require-atomic-updates */
-  t.context.server = server;
+  t.context.server = server; // TelegramServer context
   t.context.client = client;
   t.context.tasks = {};
+  t.context.app = app; // ExpressServer context
   /*eslint-enable */
   // todo uncomment?
   // const message = client.makeMessage('/ping');
@@ -41,6 +44,19 @@ test.before(async (t) => {
   // } catch (error) {
   //   t.fail('Telegram Server not response: ' + error);
   // }
+
+  // замокапленный json-rpc backend
+  app.post('/api', (req, res) => {
+    const jsonldResponse = {
+      '@context': 'http://schema.org',
+      '@type': 'AcceptAction',
+      agent: { '@type': 'Person', name: 'prosto-diary' },
+      purpose: { '@type': 'Answer', abstract: 'pong', encodingFormat: 'text/plain' }
+    };
+    res.status(200).json(
+      {"jsonrpc": "2.0", "result": jsonldResponse, "id": 1}
+    );
+  });
 });
 
 test.beforeEach((t) => {
