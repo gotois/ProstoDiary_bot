@@ -1,4 +1,4 @@
-const rpc = require('../lib/rpc');
+const { rpc } = require('../../services/request.service');
 const AbstractGeo = require('../../models/abstract/abstract-geo');
 /**
  * @param {object} object - object

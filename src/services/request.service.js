@@ -1,10 +1,63 @@
 const request = require('request');
+const validator = require('validator');
+const package_ = require('../../package.json');
+const { SERVER } = require('../environment');
 /**
  * @param {any} body - response body
  * @returns {string}
  */
 const formatMessage = (body) => {
   return Buffer.isBuffer(body) ? body.toString('utf8') : body;
+};
+/**
+ * @description JSON-RPC 2 request
+ * @param {string} obj - obj
+ * @param {object} obj.body - body
+ * @param {object} obj.auth - basic auth
+ * @returns {Promise<*>}
+ */
+const rpc = ({ body, auth, jwt }) => {
+  return new Promise((resolve, reject) => {
+    const values = JSON.stringify(body);
+    const parameters = {
+      method: 'POST',
+      url: SERVER.HOST + '/api',
+      headers: {
+        'User-Agent': `${package_.name}/${package_.version}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/schema+json',
+        'Content-Length': values.length,
+      },
+      body: values,
+    };
+    if (jwt) {
+      parameters.headers['Authorization'] = 'Bearer ' + jwt;
+    }
+    if (auth) {
+      parameters.auth = auth;
+    }
+    request(parameters, (error, response, body) => {
+      if (error) {
+        return reject(error);
+      }
+      if (response.statusCode >= 400) {
+        return reject({
+          message: body || response.statusMessage,
+          statusCode: response.statusCode,
+        });
+      }
+      if (!body) {
+        return reject({
+          message: 'body empty',
+          statusCode: 400,
+        });
+      }
+      if (validator.isJSON(body)) {
+        return resolve(JSON.parse(body));
+      }
+      return resolve(body);
+    });
+  });
 };
 /**
  * @param {string} url - url
@@ -135,6 +188,7 @@ const toQueryString = (data) => {
 };
 
 module.exports = {
+  rpc,
   get,
   post,
   patch,

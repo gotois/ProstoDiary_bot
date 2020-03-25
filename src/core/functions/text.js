@@ -1,8 +1,8 @@
-const rpc = require('../lib/rpc');
 const AbstractText = require('../../models/abstract/abstract-text');
+const textService = require('../../services/text.service');
 /**
  * @param {*} object - object
- * @returns {Promise<undefined>}
+ * @returns {Promise<Abstract>}
  */
 module.exports = async ({
   // hashtags, // todo поддержать на стороне JSONLD
@@ -12,25 +12,15 @@ module.exports = async ({
   auth,
   creator,
   publisher,
-  jwt,
 }) => {
   const abstractText = new AbstractText({
     silent,
     telegram,
-    text,
+    text: await textService.correctionText(text),
     auth,
     creator,
     publisher,
   });
   await abstractText.prepare();
-  await rpc({
-    body: {
-      jsonrpc: '2.0',
-      method: 'insert',
-      id: 1,
-      params: abstractText.context,
-    },
-    jwt,
-    auth,
-  });
+  return abstractText;
 };

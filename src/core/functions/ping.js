@@ -1,23 +1,12 @@
 const AbstractCommand = require('../../models/abstract/abstract-command');
-const rpc = require('../lib/rpc');
 /**
  * @description Проверка ping
- * @returns {Promise<string>}
+ * @returns {Promise<Abstract>}
  */
-module.exports = async function({ auth, jwt }) {
+module.exports = async function() {
   const abstractCommand = new AbstractCommand({
     command: 'Ping',
   });
   await abstractCommand.prepare();
-  const jsonldMessage = await rpc({
-    body: {
-      jsonrpc: '2.0',
-      method: 'ping',
-      id: 1,
-      params: abstractCommand.context,
-    },
-    jwt,
-    auth,
-  });
-  return jsonldMessage;
+  return abstractCommand;
 };

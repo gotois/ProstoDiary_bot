@@ -3,8 +3,13 @@ const textService = require('../../../services/text.service');
 const TelegramBotRequest = require('./telegram-bot-request');
 const textAction = require('../../../core/functions/text');
 const logger = require('../../../services/logger.service');
+const { rpc } = require('../../../services/request.service');
 
 class Text extends TelegramBotRequest {
+  constructor(message) {
+    super(message);
+    this.method = 'insert';
+  }
   async beginDialog(silent) {
     await super.beginDialog();
     let tgMessageId = this.message.message_id;
@@ -23,9 +28,8 @@ class Text extends TelegramBotRequest {
       await bot.sendChatAction(this.message.chat.id, 'typing');
     }
     try {
-      const text = await textService.correctionText(this.message.text);
-      await textAction({
-        text,
+      const jsonldAction = await textAction({
+        text: this.message.text,
         hashtags: this.hashtags,
         telegram: {
           title: this.message.chat.title,
@@ -34,8 +38,16 @@ class Text extends TelegramBotRequest {
         },
         creator: this.message.passport.assistant,
         publisher: this.message.passport.email,
-        jwt: this.message.passport.jwt,
         silent,
+      });
+      await rpc({
+        body: {
+          jsonrpc: '2.0',
+          method: this.method,
+          id: 1,
+          params: jsonldAction.context,
+        },
+        jwt: this.message.passport.jwt,
       });
     } catch (error) {
       logger.error(error);

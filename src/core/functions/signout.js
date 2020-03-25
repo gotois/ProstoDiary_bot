@@ -1,5 +1,5 @@
 const AbstractCommand = require('../../models/abstract/abstract-command');
-const rpc = require('../lib/rpc');
+const { rpc } = require('../../services/request.service');
 /**
  * @description блокировки чтения/приема и общей работы бота
  * @returns {Promise<jsonld>}
