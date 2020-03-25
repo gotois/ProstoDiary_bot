@@ -1,7 +1,7 @@
 const Abstract = require('../abstract/index');
 const package_ = require('../../../package.json');
-const foursquare = require('../../lib/foursquare');
-const { getFullName, getGeoCode } = require('../../services/location.service');
+const foursquare = require('../../lib/foursquare'); // в моделях не должно быть либ
+const { getFullName, getWeather, getGeoCode } = require('../../services/location.service');
 
 /**
  * @param {Array} parsedData - geocode parsed data
@@ -39,6 +39,8 @@ class AbstractGeo extends Abstract {
       ...super.context,
       '@context': 'http://schema.org',
       '@type': 'AllocateAction',
+      // добавить сведения о погоде https://github.com/schemaorg/schemaorg/issues/362#issuecomment-154098889
+      // this.weatherInfo = await getWeather(this.#latlng);
       'agent': {
         '@type': 'Person',
         'name': package_.name,

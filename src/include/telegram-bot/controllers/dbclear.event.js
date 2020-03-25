@@ -1,9 +1,12 @@
 const bot = require('../bot');
 const destroyAction = require('../../../core/functions/destroy');
 const TelegramBotRequest = require('./telegram-bot-request');
-const { rpc } = require('../../../services/request.service');
 
 class DatabaseClear extends TelegramBotRequest {
+  constructor(message) {
+    super(message);
+    this.method = 'signout';
+  }
   async beginDialog() {
     await super.beginDialog();
     const { message_id } = await bot.sendMessage(
@@ -21,16 +24,8 @@ class DatabaseClear extends TelegramBotRequest {
         await bot.sendMessage(this.message.chat.id, 'Операция отменена');
         return;
       }
-      const result = await destroyAction();
-      const jsonldMessage = await rpc({
-        body: {
-          jsonrpc: '2.0',
-          method: 'signout',
-          id: 1,
-          params: result.context,
-        },
-        jwt: this.message.passport.jwt,
-      });
+      const jsonldAction = await destroyAction();
+      const jsonldMessage = await this.rpc(jsonldAction);
       await bot.sendMessage(this.message.chat.id, jsonldMessage.purpose.abstract);
     });
   }

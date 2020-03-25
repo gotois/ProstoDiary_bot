@@ -3,7 +3,6 @@ const textService = require('../../../services/text.service');
 const TelegramBotRequest = require('./telegram-bot-request');
 const textAction = require('../../../core/functions/text');
 const logger = require('../../../services/logger.service');
-const { rpc } = require('../../../services/request.service');
 
 class Text extends TelegramBotRequest {
   constructor(message) {
@@ -40,15 +39,7 @@ class Text extends TelegramBotRequest {
         publisher: this.message.passport.email,
         silent,
       });
-      await rpc({
-        body: {
-          jsonrpc: '2.0',
-          method: this.method,
-          id: 1,
-          params: jsonldAction.context,
-        },
-        jwt: this.message.passport.jwt,
-      });
+      await this.rpc(jsonldAction);
     } catch (error) {
       logger.error(error);
       if (!silent) {

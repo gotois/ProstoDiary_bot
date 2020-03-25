@@ -8,14 +8,17 @@ class Document extends TelegramBotRequest {
     await super.beginDialog();
     const fileBuffer = await getTelegramFile(this.message.document.file_id);
     const result = await documentAction({
-      file: fileBuffer,
-      mime: this.message.document.mime_type,
+      buffer: fileBuffer,
+      mimeType: this.message.document.mime_type,
       date: this.message.date,
-      telegram_message_id: this.message.message_id,
-      jwt: this.message.passport.jwt,
+      telegram: {
+        messageId: this.message.message_id,
+      },
+      silent,
     });
+    const jsonldMessage = await this.rpc(result);
     if (!silent) {
-      await bot.sendMessage(this.message.chat.id, result);
+      await bot.sendMessage(this.message.chat.id, jsonldMessage.purpose.abstract);
     }
   }
 }

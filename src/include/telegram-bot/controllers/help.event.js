@@ -1,7 +1,6 @@
 const bot = require('../bot');
 const helpAction = require('../../../core/functions/help');
 const TelegramBotRequest = require('./telegram-bot-request');
-const { rpc } = require('../../../services/request.service');
 
 class Help extends TelegramBotRequest {
   constructor(message) {
@@ -10,16 +9,8 @@ class Help extends TelegramBotRequest {
   }
   async beginDialog(silent) {
     await super.beginDialog();
-    const result = await helpAction();
-    const jsonldMessage = await rpc({
-      body: {
-        jsonrpc: '2.0',
-        method: this.method,
-        id: 1,
-        params: result.context,
-      },
-      jwt: this.message.passport.jwt,
-    });
+    const jsonldAction = await helpAction();
+    const jsonldMessage = await this.rpc(jsonldAction);
     if (!silent) {
       await bot.sendMessage(
         this.message.chat.id,
