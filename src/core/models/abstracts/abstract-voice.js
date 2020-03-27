@@ -1,10 +1,10 @@
 const mm = require('music-metadata');
 const speech = require('@google-cloud/speech');
-const package_ = require('../../../package.json');
-const dialogService = require('../../services/dialog.service');
-const logger = require('../../lib/log');
-const { GOOGLE } = require('../../environment');
-const Abstract = require('../abstract/index');
+const package_ = require('../../../../package.json');
+const dialogService = require('../../../services/dialog.service');
+const logger = require('../../../lib/log');
+const { GOOGLE } = require('../../../environment');
+const Abstract = require('.');
 
 const client = new speech.SpeechClient({
   credentials: GOOGLE.CREDENTIALS,
@@ -124,10 +124,7 @@ class AbstractVoice extends Abstract {
   }
 
   async prepare() {
-    const { buffer,
-      mimeType,
-      fileSize,
-      duration } = this;
+    const { buffer, mimeType, fileSize, duration } = this;
     // сначала разбираем услышанное самостоятельно чтобы понять какой диалог дергать
     this.text = await voiceToText(buffer, {
       duration,

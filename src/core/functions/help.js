@@ -1,4 +1,4 @@
-const AbstractCommand = require('../../models/abstract/abstract-command');
+const AbstractCommand = require('../models/abstracts/abstract-command');
 /**
  * @description помощь
  * @returns {Promise<Abstract>}

@@ -1,10 +1,10 @@
 const bot = require('../../../include/telegram-bot/bot');
-const { pool } = require('../../../db/database');
+const { pool } = require('../../../db/sql');
+// eslint-disable-next-line
 const { SERVER } = require('../../../environment');
 const passportQueries = require('../../../db/passport');
 const imapService = require('../../../services/imap.service');
 const logger = require('../../../lib/log');
-const Story = require('../../../models/story');
 /**
  * @todo в нынешнем виде устарело, перенести в email assistant
  * @param {object} info - mail info
@@ -57,16 +57,17 @@ const delivered = async (info) => {
       // fixme категории больше не используются!
       // В зависимости от полученной категории разная логика работы с письмом
       if (info.category.includes('user-transaction-write')) {
-        const story = new Story({
-          ...mail,
-          ...info,
-        });
-        const id = await story.commit();
+        // fixme использовать storyLogger
+        // const story = new Story({
+        //   ...mail,
+        //   ...info,
+        // });
+        // const id = await story.commit();
+        // links.push({
+        //   text: 'show message',
+        //   url: `${SERVER.HOST}:${SERVER.PORT}/message/${id}`,
+        // });
         await imap.remove(mail.uid);
-        links.push({
-          text: 'show message',
-          url: `${SERVER.HOST}:${SERVER.PORT}/message/${id}`,
-        });
       } else if (info.category.includes('user-transaction-read')) {
         // todo если пришла transaction-read, то получаем возможность делать read
         //  ...

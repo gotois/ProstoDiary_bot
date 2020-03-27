@@ -2,7 +2,7 @@ const jose = require('jose');
 const { SERVER } = require('../../../environment');
 const oidc = require('../../middlewares/oidc');
 const passportQueries = require('../../../db/passport');
-const { pool, sql } = require('../../../db/database');
+const { pool, sql } = require('../../../db/sql');
 const logger = require('../../../lib/log');
 const requestService = require('../../../services/request.service');
 

@@ -1,4 +1,4 @@
-const linkedDataSignature = require('../../services/linked-data-signature.service');
+const linkedDataSignature = require('../services/linked-data-signature.service');
 
 module.exports.signature = async function(document) {
   const signedMessage = await linkedDataSignature.signDocument(

@@ -1,4 +1,4 @@
-const AbstractCommand = require('../../models/abstract/abstract-command');
+const AbstractCommand = require('../models/abstracts/abstract-command');
 const { rpc } = require('../../services/request.service');
 /**
  * @description блокировки чтения/приема и общей работы бота

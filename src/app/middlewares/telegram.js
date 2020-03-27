@@ -1,6 +1,6 @@
 const jose = require('jose');
 const bot = require('../../include/telegram-bot/bot');
-const { pool } = require('../../db/database');
+const { pool } = require('../../db/sql');
 const assistantQueries = require('../../db/assistant');
 
 module.exports = async (request, response, next) => {

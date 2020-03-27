@@ -8,5 +8,5 @@
 ava.config.js
 
 # todo remove when eslint supports private params
-src/models/
+abstract-geo.js
 telegram-bot-request.js

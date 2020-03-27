@@ -1,4 +1,4 @@
-const { sql } = require('../db/database');
+const { sql } = require('./sql');
 
 module.exports = {
   selectCategories(categories) {
@@ -8,13 +8,6 @@ module.exports = {
     `;
     // todo `AND created_at between '2019-12-15' AND '2019-12-15'`
   },
-  // @deprecated
-  selectCategory(intentName) {
-    return sql`
-    SELECT * FROM story WHERE
-    '{${sql.identifier([intentName])}}' <@ categories
-    `;
-  },
   /**
    * refresh materialized view
    *
@@ -22,13 +15,6 @@ module.exports = {
    */
   refreshView() {
     return sql`REFRESH MATERIALIZED VIEW public.story
-`;
-  },
-  selectStory() {
-    return sql`SELECT
-    *
-FROM
-    story
 `;
   },
   selectStoryById(id) {

@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-const { pool, sql } = require('../../src/db/database');
+const { pool, sql } = require('../../src/db/sql');
 
 // todo перенести в passport assistants
 // TODO: используя https://github.com/marak/Faker.js/

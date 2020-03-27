@@ -181,7 +181,7 @@ module.exports = {
       ]
     },
     exclude : {
-      path: 'src/core/bot.js|src/services/request.service.js|src/lib/foursquare.js|src/db/transports/psql-transport.js|src/core/lib/rpc.js',
+      path: 'src/services/request.service.js|src/lib/foursquare.js|psql-transport.js',
       dynamic: true
     },
     moduleSystems: ['cjs'],

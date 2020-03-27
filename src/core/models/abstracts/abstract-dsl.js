@@ -1,17 +1,21 @@
 const parser = require('fast-xml-parser');
-const Content = require('.');
-const { unpack } = require('../../services/archive.service');
+const Abstract = require('.');
+const { unpack } = require('../../../services/archive.service');
 
 // html, xml, json и пр
-class ContentDsl extends Content {
+class AbstractDsl extends Abstract {
+  constructor(parameters) {
+    super(parameters);
+    this.buffer = parameters.buffer;
+  }
   get context() {
     return {
       ...super.context,
     };
   }
 
-  async precommit() {
-    const mapBuffer = await unpack(buffer);
+  async prepare() {
+    const mapBuffer = await unpack(this.buffer);
     if (mapBuffer.size === 0) {
       throw new Error('Empty file');
     }
@@ -27,13 +31,10 @@ class ContentDsl extends Content {
     };
     mapBuffer.forEach((buffer) => {
       const string = buffer.toString('utf8');
+      // eslint-disable-next-line
       const jsonObject = parser.parse(string, parserOptions);
     });
   }
-
-  async commit() {
-    await this.precommit();
-  }
 }
 
-module.exports = ContentDsl;
+module.exports = AbstractDsl;

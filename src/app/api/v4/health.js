@@ -1,4 +1,4 @@
-const { pool } = require('../../../db/database');
+const { pool } = require('../../../db/sql');
 const bot = require('../../../include/telegram-bot/bot');
 const passportQueries = require('../../../db/passport');
 const logger = require('../../../lib/log');

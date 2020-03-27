@@ -1,5 +1,5 @@
-const package_ = require('../../../package.json');
-const Abstract = require('../abstract/index');
+const package_ = require('../../../../package.json');
+const Abstract = require('.');
 
 class AbstractCommand extends Abstract {
   /**

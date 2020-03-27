@@ -1,4 +1,4 @@
-const AbstractPhoto = require('../../models/abstract/abstract-photo');
+const AbstractPhoto = require('../models/abstracts/abstract-photo');
 /**
  * @param {object} requestObject - object
  * @param {string} requestObject.caption - photo caption text

@@ -1,6 +1,6 @@
 const { v1: uuidv1 } = require('uuid');
 const dictionary = require('../../../lib/dictionary');
-const { pool } = require('../../../db/database');
+const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/story');
 const { telegram } = require('../commands');
 const logger = require('../../../lib/log');

@@ -4,7 +4,7 @@ const {
   SignIn,
 } = require('../../../include/telegram-bot/controllers/signin.event');
 const package_ = require('../../../../package.json');
-const { pool, NotFoundError } = require('../../../db/database');
+const { pool, NotFoundError } = require('../../../db/sql');
 const passportQueries = require('../../../db/passport');
 const { mail } = require('../../../lib/sendgrid');
 const pddService = require('../../../services/pdd.service');

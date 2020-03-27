@@ -1,5 +1,5 @@
 const ac = require('./rbac');
-const { pool } = require('../../../db/database');
+const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/story');
 const passportQueries = require('../../../db/passport');
 const template = require('../../views/message');

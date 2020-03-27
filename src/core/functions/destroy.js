@@ -1,4 +1,4 @@
-const AbstractCommand = require('../../models/abstract/abstract-command');
+const AbstractCommand = require('../models/abstracts/abstract-command');
 /**
  * @todo дать возможность очищать не все, а только определенные истории
  * @description Удаление всей истории пользователя целиком

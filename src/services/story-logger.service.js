@@ -1,5 +1,5 @@
 const winston = require('winston');
-const PsqlTransport = require('../db/transports/psql-transport');
+const PsqlTransport = require('../db/adapters/psql-transport');
 const { SERVER } = require('../environment');
 const logger = require('../lib/log');
 const bot = require('../include/telegram-bot/bot');

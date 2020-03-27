@@ -1,4 +1,4 @@
-const { sql, pool } = require('../../../db/database');
+const { sql, pool } = require('../../../db/sql');
 
 // todo deprecated?
 module.exports = async (request, response, next) => {

@@ -1,38 +1,9 @@
-const { sql } = require('../db/database');
+const { sql } = require('./sql');
 
 module.exports = {
   selectRoleByEmail(email) {
     return sql`
         SELECT role FROM passport.roles WHERE email = ${email}
-    `;
-  },
-  selectIdByTelegramId(telegram_id) {
-    return sql`
-SELECT
-    id, email
-FROM
-    passport.user
-WHERE telegram_id = ${String(telegram_id)}
-LIMIT 1
-    `;
-  },
-  /**
-   * получать бота по привязанному к нему юзеру
-   *
-   * @param {string} userEmail - user email
-   * @returns {*}
-   */
-  selectBotByUserEmail(userEmail) {
-    return sql`
-SELECT
-*
-FROM
-    passport.bot
-WHERE passport.user.email = ${userEmail} AND passport.user.id = passport.bot.passport_id`;
-  },
-  selectEmailByPassport(passportTable) {
-    return sql`
-      SELECT email FROM passport.bot WHERE passport_id = ${passportTable.id};
     `;
   },
   /**
@@ -57,16 +28,6 @@ passportBot.master_password = crypt(${password}, master_password)
   getPassport(login, password) {
     return sql`SELECT
     *
-FROM
-    passport.bot
-WHERE
-    email = ${login} OR email = ${login + '@gotointeractive.com'}
-    AND master_password = crypt(${password}, master_password)
-`;
-  },
-  checkByLoginAndPassword(login, password) {
-    return sql`SELECT
-    1
 FROM
     passport.bot
 WHERE
@@ -104,11 +65,6 @@ WHERE
       SELECT * FROM passport.user WHERE email = ${login} OR telegram_id = ${login}
     `;
   },
-  selectUserById(userId) {
-    return sql`
-      SELECT * FROM passport.user WHERE id = ${userId}
-    `;
-  },
   selectBotByEmail(email) {
     return sql`
       SELECT * FROM passport.bot WHERE email = ${email} AND activated = true
@@ -142,7 +98,7 @@ WHERE
    * @param {string} obj.secretKey - secret key
    * @param {buffer} obj.publicKeyCert - public key pem
    * @param {buffer} obj.privateKeyCert - private key pem
-   * @param {?string} obj.telegram_chat_id - chat id
+   * @param {?string} obj.chatId - telegram chat id
    * @returns {*}
    */
   createBot({

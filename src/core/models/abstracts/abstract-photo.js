@@ -1,10 +1,10 @@
 const fileType = require('file-type');
-const visionService = require('../../lib/vision');
-const package_ = require('../../../package.json');
-const Abstract = require('../abstract/index');
+const visionService = require('../../../lib/vision');
+const package_ = require('../../../../package.json');
+const Abstract = require('.');
 
 class AbstractPhoto extends Abstract {
-  constructor({imageBuffer, caption}) {
+  constructor({ imageBuffer, caption }) {
     super();
     this.imageBuffer = imageBuffer;
     this.caption = caption;
@@ -34,7 +34,7 @@ class AbstractPhoto extends Abstract {
     const { mime } = fileType(this.imageBuffer);
     this.mime = mime;
     const tags = [];
-    const visionResult = await visionService.labelDetection(imageBuffer);
+    const visionResult = await visionService.labelDetection(this.imageBuffer);
     // todo распознавать интент-намерение в самой картинке через Vision
     // ...
     visionResult.labelAnnotations.forEach((annotation) => {

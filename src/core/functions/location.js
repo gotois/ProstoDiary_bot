@@ -1,5 +1,5 @@
 const { rpc } = require('../../services/request.service');
-const AbstractGeo = require('../../models/abstract/abstract-geo');
+const AbstractGeo = require('../models/abstracts/abstract-geo');
 /**
  * @param {object} object - object
  * @param {number} object.latitude - latitude

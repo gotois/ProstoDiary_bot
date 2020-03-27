@@ -1,5 +1,4 @@
-const Redis = require('ioredis');
-const { REDIS } = require('../../environment');
+const client = require('../redis');
 
 function isEmpty(value) {
   return (
@@ -9,10 +8,6 @@ function isEmpty(value) {
     (typeof value === 'string' && value.trim().length === 0)
   );
 }
-
-const client = new Redis(REDIS.URL, {
-  keyPrefix: 'oidc:',
-});
 
 const consumable = new Set(['AuthorizationCode', 'RefreshToken', 'DeviceCode']);
 

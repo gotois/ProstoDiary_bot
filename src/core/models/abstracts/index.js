@@ -1,27 +1,26 @@
-// todo перенести в core/models/
-const { publisher } = require('../../../package.json');
+const { publisher } = require('../../../../package.json');
 
 class Abstract {
   constructor(data) {
     this.objectMainEntity = [];
     this.objectMainEntity.push({
-      "@type": "PropertyValue",
-      "name": "silent",
-      "value": data.silent || false
+      '@type': 'PropertyValue',
+      'name': 'silent',
+      'value': data.silent || false,
     });
     if (data.telegram) {
       if (data.telegram.messageId) {
         this.objectMainEntity.push({
-          "@type": "PropertyValue",
-          "name": 'TelegramMessageId',
-          "value": data.telegram.messageId,
+          '@type': 'PropertyValue',
+          'name': 'TelegramMessageId',
+          'value': data.telegram.messageId,
         });
       }
       if (data.telegram.chatId) {
         this.objectMainEntity.push({
-          "@type": "PropertyValue",
-          "name": "TelegramChatId",
-          "value": data.telegram.chatId,
+          '@type': 'PropertyValue',
+          'name': 'TelegramChatId',
+          'value': data.telegram.chatId,
         });
 
         // телеграм чат

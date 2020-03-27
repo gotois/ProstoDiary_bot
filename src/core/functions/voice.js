@@ -1,4 +1,4 @@
-const AbstractVoice = require('../../models/abstract/abstract-voice');
+const AbstractVoice = require('../models/abstracts/abstract-voice');
 
 module.exports = async function(requestObject) {
   const {

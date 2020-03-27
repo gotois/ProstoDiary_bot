@@ -1,5 +1,5 @@
 const package_ = require('../../../../package.json');
-const { pool } = require('../../../db/database');
+const { pool } = require('../../../db/sql');
 const passportQueries = require('../../../db/passport');
 const logger = require('../../../lib/log');
 const twoFactorAuthService = require('../../../services/2fa.service');

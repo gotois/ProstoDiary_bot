@@ -1,5 +1,4 @@
-// todo эти запросы должны происходить на стороне TG ассистента
-const { sql } = require('../db/database');
+const { sql } = require('./sql');
 
 module.exports = {
   selectByUserId(id) {

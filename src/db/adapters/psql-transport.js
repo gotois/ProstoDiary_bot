@@ -1,18 +1,9 @@
 const Transport = require('winston-transport');
 const storyQueries = require('../story');
 const passportQueries = require('../passport');
-const { pool } = require('../database');
+const { pool } = require('../sql');
 const package_ = require('../../../package.json');
-
-// todo перенести в models
-class TelegramNotifyError extends Error {
-  constructor(message, telegramMessageId, chatId) {
-    super(message);
-    this.name = 'TelegramNotifyError';
-    this.chatId = chatId;
-    this.messageId = telegramMessageId;
-  }
-}
+const TelegramNotifyError = require('../../core/models/errors/telegram-notify-error');
 
 // здесь данные о принятии решений: производить запись или нет
 // eslint-disable-next-line

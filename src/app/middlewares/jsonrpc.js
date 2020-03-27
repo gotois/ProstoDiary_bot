@@ -2,9 +2,9 @@ const jose = require('jose');
 const { v1: uuidv1 } = require('uuid');
 const package_ = require('../../../package.json');
 const jsonRpcServer = require('../api');
-const { pool } = require('../../db/database');
+const { pool } = require('../../db/sql');
 const passportQueries = require('../../db/passport');
-const signatures = require('../../core/security/signature');
+const signatures = require('../../lib/signature');
 const logger = require('../../lib/log');
 const crypt = require('../../services/crypt.service');
 /**

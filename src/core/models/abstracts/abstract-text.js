@@ -2,12 +2,12 @@ const validator = require('validator');
 const SchemaOrg = require('schema.org');
 const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
-const dialogService = require('../../services/dialog.service'); // в моделях не должно быть сервисов
-const logger = require('../../lib/log'); // в моделях не должно быть сервисов
-const languageService = require('../../services/nlp.service'); // в моделях не должно быть сервисов
+const dialogService = require('../../../services/dialog.service'); // в моделях не должно быть сервисов
+const logger = require('../../../lib/log'); // в моделях не должно быть сервисов
+const languageService = require('../../../services/nlp.service'); // в моделях не должно быть сервисов
 const Abstract = require('.');
 const AbstractWebpage = require('./abstract-webpage');
-const Action = require('../../core/models/action');
+const Action = require('../actions/action');
 /**
  * @todo на основе набора свойств пытаюсь насытить schema.org
  * затем получать родителя из схемы и насыщать ее по необходимости из истории
@@ -120,7 +120,9 @@ async function detectBySentense(text) {
     }
   }
 
-  subjects.push(generateDocument(new Action(dialogflowResult.intent.displayName)));
+  subjects.push(
+    generateDocument(new Action(dialogflowResult.intent.displayName)),
+  );
 
   return subjects;
 }
@@ -153,7 +155,7 @@ class AbstractText extends Abstract {
         email: 'schema:email',
         mainEntity: 'schema:mainEntity',
       },
-      "@id": this.namespace, // изоляцинные идентификаторы сообщения
+      '@id': this.namespace, // изоляцинные идентификаторы сообщения
       '@type': 'Action',
       'agent': {
         '@type': 'Organization',

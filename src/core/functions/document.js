@@ -1,5 +1,5 @@
 // todo на основе данных возвращать нужный тип абстрактов
-const Abstract = require('../../models/abstract');
+const Abstract = require('../models/abstracts');
 /**
  * @description работа с документами
  * @returns {Promise<Abstract>}

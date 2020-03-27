@@ -1,4 +1,4 @@
-const AbstractText = require('../../models/abstract/abstract-text');
+const AbstractText = require('../models/abstracts/abstract-text');
 const textService = require('../../services/text.service');
 /**
  * @param {*} object - object

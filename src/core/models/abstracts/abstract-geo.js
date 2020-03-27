@@ -1,7 +1,7 @@
-const Abstract = require('../abstract/index');
-const package_ = require('../../../package.json');
-const foursquare = require('../../lib/foursquare'); // в моделях не должно быть либ
-const { getFullName, getWeather, getGeoCode } = require('../../services/location.service');
+const Abstract = require('./index');
+const package_ = require('../../../../package.json');
+const foursquare = require('../../../lib/foursquare'); // в моделях не должно быть либ
+const { getFullName, getWeather, getGeoCode } = require('../../../services/location.service');
 
 /**
  * @param {Array} parsedData - geocode parsed data
