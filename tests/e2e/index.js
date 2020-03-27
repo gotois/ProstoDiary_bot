@@ -19,6 +19,8 @@ const app = express();
  * This runs before all tests
  */
 test.before(async (t) => {
+  // todo записывать если необходимо ключи - https://github.com/panva/jose/blob/HEAD/docs/README.md#keytopemprivate-encoding
+
   const server = new TelegramServer({
     host: SERVER.HOST,
     port: SERVER.PORT,

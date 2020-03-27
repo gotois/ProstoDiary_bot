@@ -17,13 +17,14 @@ const keystore = new JWKS.KeyStore();
 keystore.generateSync('RSA', undefined, { use: 'sig' });
 keystore.generateSync('EC', undefined, { key_ops: ['sign', 'verify'] });
 
+const publicKey = keystore.toJWKS(true);
 // copies the default policy, already has login and consent prompt policies
 const interactions = policy();
 
 const configuration = {
   adapter: RedisAdapter,
   clients: CLIENTS,
-  jwks: keystore.toJWKS(true),
+  jwks: publicKey,
 
   // This interface is required by oidc-provider
   findAccount: Account.findAccount,

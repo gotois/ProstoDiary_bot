@@ -5,8 +5,13 @@ const passportQueries = require('../../../db/passport');
 const { pool, sql } = require('../../../db/sql');
 const logger = require('../../../lib/log');
 const requestService = require('../../../services/request.service');
-
-// этот callback должен выполняться на ассистенте и записывать JWT в свою БД
+/**
+ * этот callback должен выполняться на ассистенте и записывать JWT в свою БД
+ *
+ * @param {*} request - request
+ * @param {*} response - response
+ * @returns {Promise<void>}
+ */
 module.exports.oidcallback = async (request, response) => {
   if (request.error) {
     response.sendStatus(400).send(request.error);
@@ -21,34 +26,39 @@ module.exports.oidcallback = async (request, response) => {
 
   try {
     const tokenResult = await requestService.post(SERVER.HOST + '/oidc/token', {
-      client_id: 'tg', // fixme подставлять через реферального ассистента вида '@ProstoDiary_bot'
+      client_id: request.query.client_id,
       client_secret: 'foobar',
       code: request.query.code,
       grant_type: 'authorization_code',
     });
     const decoded = jose.JWT.decode(tokenResult.id_token);
+    logger.info(decoded);
 
     await pool.connect(async (connection) => {
-      // fixme: делать UPDATE если такой client_id есть в БД
-      // const hasExist = await connection.maybeOne(
-      //   sql`select 1 from assistant where user_id = ${decoded.client_id}
-      //   `,
-      // );
-
-      await connection.query(
-        sql`INSERT INTO assistant
+      const checkAssistant = await connection.maybeOne(
+        sql`select 1 from assistant where user_id = ${decoded.client_id}
+        `,
+      );
+      // eslint-disable-next-line
+      if (Boolean(checkAssistant)) {
+        await connection.query(
+          sql`UPDATE assistant
+          SET token = ${tokenResult.id_token}
+          WHERE user_id = ${decoded.client_id}`,
+        );
+      } else {
+        await connection.query(
+          sql`INSERT INTO assistant
         (user_id, token)
         VALUES (${decoded.client_id}, ${tokenResult.id_token})
         `,
-      );
+        );
+      }
     });
 
-    response.send(`
-    Ассистент подключен. ${JSON.stringify(decoded, null, 4)}
-    `);
+    response.send(`Ассистент ${decoded.aud} подключен.`);
   } catch (error) {
     response.sendStatus(400).send(error);
-    return;
   }
 };
 

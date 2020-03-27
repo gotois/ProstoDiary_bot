@@ -61,10 +61,7 @@ module.exports = async (request, response, next) => {
       if (request.headers.authorization) {
         const [_basic, id_token] = request.headers.authorization.split(' ');
         const decoded = jose.JWT.decode(id_token);
-        // todo надо верифицировать JWT id_token
-        // jose.JWT.verify(...)
-        // плюс проверять oidc client_id из decoded
-
+        // fixme: на данный момент считаем все токены вечными, затем надо будет их валидировать jose.JWT.verify(...)
         const botTable = await connection.maybeOne(
           passportQueries.selectBotByEmail(decoded.email),
         );

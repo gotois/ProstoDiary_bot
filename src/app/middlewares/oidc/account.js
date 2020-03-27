@@ -28,14 +28,14 @@ class Account {
   /**
    * Получение аккаунта и запись в стор
    *
+   * @param {*} context - context
+   * @param {*} id - id
    * @returns {Promise<any>}
-   * @param {*} context
-   * @param {*} id
    */
   static findAccount(context, id) {
     return new Promise((resolve) => {
       // token is a reference to the token used for which a given account is being loaded,
-      //   it is undefined in scenarios where account claims are returned from authorization endpoint
+      //  it is undefined in scenarios where account claims are returned from authorization endpoint
       if (!store.get(id)) {
         new Account(id);
       }
