@@ -1,5 +1,3 @@
-const bot = require('../bot');
-const { getTelegramFile } = require('../../../services/file.service');
 const TelegramBotRequest = require('./telegram-bot-request');
 const photoAction = require('../../../core/functions/photo');
 
@@ -13,14 +11,14 @@ class Photo extends TelegramBotRequest {
     const [_smallPhoto, mediumPhoto] = this.message.photo;
     if (!mediumPhoto.file_id || mediumPhoto.file_size === 0) {
       if (!silent) {
-        await bot.sendMessage(this.message.chat.id, 'Wrong photo');
+        await this.bot.sendMessage(this.message.chat.id, 'Wrong photo');
       }
       return;
     }
     if (!silent) {
-      await bot.sendChatAction(this.message.chat.id, 'typing');
+      await this.bot.sendChatAction(this.message.chat.id, 'typing');
     }
-    const imageBuffer = await getTelegramFile(mediumPhoto.file_id);
+    const imageBuffer = await this.getTelegramFile(mediumPhoto.file_id);
     const jsonldAction = await photoAction({
       imageBuffer,
       caption: this.message.caption,
@@ -30,7 +28,7 @@ class Photo extends TelegramBotRequest {
     });
     const jsonldMessage = await this.rpc(jsonldAction);
     if (!silent) {
-      await bot.sendMessage(
+      await this.bot.sendMessage(
         this.message.chat.id,
         jsonldMessage.purpose.abstract,
         {

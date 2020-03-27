@@ -1,6 +1,6 @@
 const { execSync } = require('child_process');
 const { DATABASE } = require('../../environment');
-const logger = require('../../services/logger.service');
+const logger = require('../../lib/log');
 const Content = require('./index');
 
 // todo: это абстракция необходима только для бота - она оборачивает все внутренние запросы на его обновление

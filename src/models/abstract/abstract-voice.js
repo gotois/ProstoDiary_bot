@@ -2,7 +2,7 @@ const mm = require('music-metadata');
 const speech = require('@google-cloud/speech');
 const package_ = require('../../../package.json');
 const dialogService = require('../../services/dialog.service');
-const logger = require('../../services/logger.service');
+const logger = require('../../lib/log');
 const { GOOGLE } = require('../../environment');
 const Abstract = require('../abstract/index');
 

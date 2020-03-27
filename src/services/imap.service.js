@@ -1,7 +1,7 @@
 const Imap = require('imap');
 const { simpleParser } = require('mailparser');
 const crypt = require('./crypt.service');
-const logger = require('./logger.service');
+const logger = require('../lib/log');
 // const tfa = require('./2fa.service');
 
 class Vzor extends Imap {

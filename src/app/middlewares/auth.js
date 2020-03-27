@@ -1,7 +1,7 @@
 const auth = require('http-auth');
 const passportQueries = require('../../db/passport');
 const { pool } = require('../../db/database');
-const logger = require('../../services/logger.service');
+const logger = require('../../lib/log');
 
 // example: demo@gotointeractive.com:demo
 const basic = auth.basic(

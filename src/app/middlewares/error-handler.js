@@ -1,4 +1,4 @@
-const logger = require('../../services/logger.service');
+const logger = require('../../lib/log');
 
 module.exports = (error, request, response, next) => {
   logger.error(error.stack);

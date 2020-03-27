@@ -3,7 +3,7 @@ const { SERVER } = require('../../../environment');
 const oidc = require('../../middlewares/oidc');
 const passportQueries = require('../../../db/passport');
 const { pool, sql } = require('../../../db/database');
-const logger = require('../../../services/logger.service');
+const logger = require('../../../lib/log');
 const requestService = require('../../../services/request.service');
 
 // этот callback должен выполняться на ассистенте и записывать JWT в свою БД

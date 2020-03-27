@@ -1,4 +1,3 @@
-const bot = require('../bot');
 const destroyAction = require('../../../core/functions/destroy');
 const TelegramBotRequest = require('./telegram-bot-request');
 
@@ -9,7 +8,7 @@ class DatabaseClear extends TelegramBotRequest {
   }
   async beginDialog() {
     await super.beginDialog();
-    const { message_id } = await bot.sendMessage(
+    const { message_id } = await this.bot.sendMessage(
       this.message.chat.id,
       'Очистить ваши записи?\nНапишите: YES',
       {
@@ -19,15 +18,22 @@ class DatabaseClear extends TelegramBotRequest {
       },
     );
     // todo: проверять выгружен ли был бэкап, и если нет - предупреждать пользователя
-    bot.onReplyToMessage(this.message.chat.id, message_id, async ({ text }) => {
-      if (text !== 'YES') {
-        await bot.sendMessage(this.message.chat.id, 'Операция отменена');
-        return;
-      }
-      const jsonldAction = await destroyAction();
-      const jsonldMessage = await this.rpc(jsonldAction);
-      await bot.sendMessage(this.message.chat.id, jsonldMessage.purpose.abstract);
-    });
+    this.bot.onReplyToMessage(
+      this.message.chat.id,
+      message_id,
+      async ({ text }) => {
+        if (text !== 'YES') {
+          await this.bot.sendMessage(this.message.chat.id, 'Операция отменена');
+          return;
+        }
+        const jsonldAction = await destroyAction();
+        const jsonldMessage = await this.rpc(jsonldAction);
+        await this.bot.sendMessage(
+          this.message.chat.id,
+          jsonldMessage.purpose.abstract,
+        );
+      },
+    );
   }
 }
 /**

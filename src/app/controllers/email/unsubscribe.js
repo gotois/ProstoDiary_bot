@@ -1,4 +1,4 @@
-const logger = require('../../../services/logger.service');
+const logger = require('../../../lib/log');
 
 const unsubscribe = (info) => {
   logger.info(info);

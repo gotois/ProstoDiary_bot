@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const csrf = require('csurf');
 // const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
 const package_ = require('../../package.json');
-const logger = require('../services/logger.service');
+const logger = require('../lib/log');
 const { IS_PRODUCTION, SENTRY, SERVER } = require('../environment');
 
 const app = express();

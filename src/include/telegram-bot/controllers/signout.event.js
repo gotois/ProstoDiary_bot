@@ -1,4 +1,3 @@
-const bot = require('../bot');
 const signoutAction = require('../../../core/functions/signout');
 const TelegramBotRequest = require('./telegram-bot-request');
 
@@ -8,7 +7,7 @@ class SignOut extends TelegramBotRequest {
       jwt: this.message.passport.jwt,
     });
     if (!silent) {
-      await bot.sendMessage(this.message.chat.id, result);
+      await this.bot.sendMessage(this.message.chat.id, result);
     }
   }
 }

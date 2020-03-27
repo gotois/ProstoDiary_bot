@@ -1,4 +1,3 @@
-// todo move into lib/vision.js
 const vision = require('@google-cloud/vision');
 const { GOOGLE } = require('../environment');
 const client = new vision.ImageAnnotatorClient({

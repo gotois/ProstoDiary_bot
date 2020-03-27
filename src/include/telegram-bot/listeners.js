@@ -1,6 +1,6 @@
 const qs = require('qs');
 const TelegramBotMessage = require('./models/message');
-const logger = require('../../services/logger.service');
+const logger = require('../../lib/log');
 const { SERVER } = require('../../environment');
 const { telegram, botCommands } = require('./commands');
 

@@ -1,5 +1,5 @@
 const ContentPhoto = require('../content/content-photo');
-const logger = require('../../services/logger.service');
+const logger = require('../../lib/log');
 
 class Story {
   /**

@@ -1,4 +1,3 @@
-const bot = require('../bot');
 const backupAction = require('../../../core/functions/backup');
 const TelegramBotRequest = require('./telegram-bot-request');
 
@@ -15,11 +14,11 @@ class Backup extends TelegramBotRequest {
       date: this.message.date,
       jwt: this.message.passport.jwt,
     });
-    await bot.sendMessage(this.message.chat.id, result);
+    await this.bot.sendMessage(this.message.chat.id, result);
   }
   async beginDialog() {
     await super.beginDialog();
-    const authMessage = await bot.sendMessage(
+    const authMessage = await this.bot.sendMessage(
       this.message.chat.id,
       'Введите ключ двухфакторной аутентификации',
       {
@@ -29,7 +28,7 @@ class Backup extends TelegramBotRequest {
         },
       },
     );
-    bot.onReplyToMessage(
+    this.bot.onReplyToMessage(
       this.message.chat.id,
       authMessage.message_id,
       this.authReplyMessage.bind(this),

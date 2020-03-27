@@ -1,5 +1,5 @@
 const fileType = require('file-type');
-const visionService = require('../../services/vision.service');
+const visionService = require('../../lib/vision.service');
 const package_ = require('../../../package.json');
 const Abstract = require('../abstract/index');
 

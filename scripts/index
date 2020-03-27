@@ -2,7 +2,7 @@
 require('dotenv').config();
 const nodemon = require('nodemon');
 const ngrok = require('ngrok');
-const logger = require('../src/services/logger.service');
+const logger = require('../src/lib/log');
 const { IS_PRODUCTION, SERVER, NGROK } = require('../src/environment');
 const clipboardHelper = require('../src/helpers/clipboard');
 

@@ -1,4 +1,3 @@
-const bot = require('../bot');
 const editAction = require('../../../core/functions/edit');
 const deleteAction = require('../../../core/functions/remove');
 const TelegramBotRequest = require('./telegram-bot-request');
@@ -14,7 +13,7 @@ class EditMessageText extends TelegramBotRequest {
   async beginDialog() {
     await super.beginDialog();
     if (this.message.text.startsWith('/')) {
-      await bot.sendMessage(
+      await this.bot.sendMessage(
         this.message.chat.id,
         'Редактирование этой записи невозможно',
       );
@@ -36,7 +35,7 @@ class EditMessageText extends TelegramBotRequest {
       const result = await deleteAction({
         jwt: this.message.passport.jwt,
       });
-      await bot.sendMessage(this.message.chat.id, result, {
+      await this.bot.sendMessage(this.message.chat.id, result, {
         parse_mode: 'Markdown',
       });
     } else {
@@ -45,7 +44,7 @@ class EditMessageText extends TelegramBotRequest {
       const result = await editAction({
         jwt: this.message.passport.jwt,
       });
-      await bot.sendMessage(this.message.chat.id, result, {
+      await this.bot.sendMessage(this.message.chat.id, result, {
         parse_mode: 'Markdown',
       });
     }

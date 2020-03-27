@@ -1,7 +1,7 @@
 const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
 const imapService = require('../../services/imap.service');
-const logger = require('../../services/logger.service');
+const logger = require('../../lib/log');
 
 /**
  * @description Запуск imap считывателя пришедших писем за сегодня

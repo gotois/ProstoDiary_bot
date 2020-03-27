@@ -1,5 +1,5 @@
 const package_ = require('../../../../package.json');
-const logger = require('../../../services/logger.service');
+const logger = require('../../../lib/log');
 const { telegram } = require('../../../include/telegram-bot/commands');
 const { IS_PRODUCTION } = require('../../../environment');
 const { getCheckSum } = require('../../../services/crypt.service');

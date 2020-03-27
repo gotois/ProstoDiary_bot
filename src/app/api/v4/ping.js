@@ -1,5 +1,5 @@
 const package_ = require('../../../../package.json');
-const logger = require('../../../services/logger.service');
+const logger = require('../../../lib/log');
 
 /**
  * @param {jsonld} jsonld - parameters

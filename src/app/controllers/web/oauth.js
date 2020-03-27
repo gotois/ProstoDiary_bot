@@ -1,5 +1,5 @@
 const bot = require('../../../include/telegram-bot/bot');
-const logger = require('../../../services/logger.service');
+const logger = require('../../../lib/log');
 const {
   SignIn,
 } = require('../../../include/telegram-bot/controllers/signin.event');

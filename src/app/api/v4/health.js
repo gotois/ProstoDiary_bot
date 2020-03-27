@@ -1,7 +1,7 @@
 const { pool } = require('../../../db/database');
 const bot = require('../../../include/telegram-bot/bot');
 const passportQueries = require('../../../db/passport');
-const logger = require('../../../services/logger.service');
+const logger = require('../../../lib/log');
 /**
  * @description пингуем тем самым проверяем что пользователь активен
  * @param {jsonld} jsonld - jsonld

@@ -3,7 +3,7 @@ const { pool } = require('../../../db/database');
 const { SERVER } = require('../../../environment');
 const passportQueries = require('../../../db/passport');
 const imapService = require('../../../services/imap.service');
-const logger = require('../../../services/logger.service');
+const logger = require('../../../lib/log');
 const Story = require('../../../models/story');
 /**
  * @todo в нынешнем виде устарело, перенести в email assistant

@@ -1,4 +1,3 @@
-const bot = require('../bot');
 const helpAction = require('../../../core/functions/help');
 const TelegramBotRequest = require('./telegram-bot-request');
 
@@ -12,7 +11,7 @@ class Help extends TelegramBotRequest {
     const jsonldAction = await helpAction();
     const jsonldMessage = await this.rpc(jsonldAction);
     if (!silent) {
-      await bot.sendMessage(
+      await this.bot.sendMessage(
         this.message.chat.id,
         jsonldMessage.purpose.abstract,
         {

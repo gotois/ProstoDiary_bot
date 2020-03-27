@@ -1,7 +1,7 @@
 const package_ = require('../../../../package.json');
 const { IS_AVA_OR_CI } = require('../../../environment');
 const { mail } = require('../../../lib/sendgrid');
-const logger = require('../../../services/logger.service');
+const logger = require('../../../lib/log');
 
 /**
  * @description Отправляем сообщение. Попадает на почту на специально сгенерированный ящик gotois и после прочтения ботом удаляем

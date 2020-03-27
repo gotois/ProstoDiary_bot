@@ -1,4 +1,3 @@
-const bot = require('../bot');
 const pingAction = require('../../../core/functions/ping');
 const TelegramBotRequest = require('./telegram-bot-request');
 
@@ -12,7 +11,7 @@ class Ping extends TelegramBotRequest {
     const result = await pingAction();
     const jsonldMessage = await this.rpc(result);
     if (!silent) {
-      await bot.sendMessage(
+      await this.bot.sendMessage(
         this.message.chat.id,
         jsonldMessage.purpose.abstract,
       );

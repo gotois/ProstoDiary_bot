@@ -2,7 +2,7 @@ const Eyo = require('eyo-kernel');
 const speller = require('../lib/speller');
 // const dialogService = require('./dialog.service');
 const { detectLang, isRUS, isENG } = require('./nlp.service');
-const logger = require('./logger.service');
+const logger = require('../lib/log');
 const crypt = require('./crypt.service');
 // const { FakerText } = require('./faker.service');
 /**

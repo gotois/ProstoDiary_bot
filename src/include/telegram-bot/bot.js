@@ -1,5 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
-const logger = require('../../services/logger.service');
+const logger = require('../../lib/log');
 const {
   IS_PRODUCTION,
   IS_CRON,

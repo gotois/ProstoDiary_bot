@@ -1,4 +1,3 @@
-const bot = require('../bot');
 const signinAction = require('../../../core/functions/signin');
 const TelegramBotRequest = require('./telegram-bot-request');
 
@@ -16,11 +15,11 @@ class SignIn extends TelegramBotRequest {
         jwt: this.message.passport.jwt,
       });
     } catch (error) {
-      await bot.sendMessage(this.message.chat.id, error.purpose.text);
+      await this.bot.sendMessage(this.message.chat.id, error.purpose.text);
       return;
     }
-    const me = await bot.getMe();
-    await bot.sendMessage(
+    const me = await this.bot.getMe();
+    await this.bot.sendMessage(
       this.message.chat.id,
       `Приветствую ${this.message.chat.first_name}!\n` +
         `Я твой персональный бот __${me.first_name}__.\n` +
@@ -35,7 +34,7 @@ class SignIn extends TelegramBotRequest {
       await this.signInReplyMessage({ text: this.message.text });
       return;
     }
-    const checkSecretValue = await bot.sendMessage(
+    const checkSecretValue = await this.bot.sendMessage(
       this.message.chat.id,
       'Ваш токен двухфакторной авторизации:',
       {
@@ -44,7 +43,7 @@ class SignIn extends TelegramBotRequest {
         },
       },
     );
-    bot.onReplyToMessage(
+    this.bot.onReplyToMessage(
       this.message.chat.id,
       checkSecretValue.message_id,
       this.signInReplyMessage.bind(this),

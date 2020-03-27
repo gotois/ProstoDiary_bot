@@ -1,6 +1,7 @@
 const crypto = require('crypto');
-const logger = require('../../../services/logger.service');
-const { rpc } = require('../../../services/request.service');
+const bot = require('../bot');
+const logger = require('../../../lib/log');
+const { rpc, get } = require('../../../services/request.service');
 
 class TelegramBotRequest {
   #message;
@@ -8,6 +9,7 @@ class TelegramBotRequest {
    * @param {TelegramMessage} message - message
    */
   constructor(message) {
+    this.bot = bot;
     this.#message = message;
     this.userHash = crypto.createHash('md5').update(String(message.from.id)).digest("hex");
   }
@@ -38,6 +40,21 @@ class TelegramBotRequest {
   async beginDialog() {
     const instanceProto = Object.getPrototypeOf(this);
     logger.info('telegram: ' + instanceProto.constructor.name);
+  }
+  /**
+   * @param {string} fileId - file id
+   * @returns {Promise<Buffer>}
+   */
+  async getTelegramFile(fileId) {
+    /**
+     * @type {string}
+     */
+    const TELEGRAM_HOST = 'api.telegram.org';
+    const fileInfo = await bot.getFile(fileId);
+    const buffer = await get(
+      `https://${TELEGRAM_HOST}/file/bot${bot.token}/${fileInfo.file_path}`,
+    );
+    return buffer;
   }
   async rpc(action) {
     const jsonldMessage = await rpc({

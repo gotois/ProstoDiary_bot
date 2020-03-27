@@ -1,10 +1,9 @@
 const { v1: uuidv1 } = require('uuid');
 const dictionary = require('../../../lib/dictionary');
-const bot = require('../bot');
 const { pool } = require('../../../db/database');
 const storyQueries = require('../../../db/story');
 const { telegram } = require('../commands');
-const logger = require('../../../services/logger.service');
+const logger = require('../../../lib/log');
 const requestService = require('../../../services/request.service');
 const dialogService = require('../../../services/dialog.service');
 const TelegramBotRequest = require('./telegram-bot-request');
@@ -82,7 +81,7 @@ class Search extends TelegramBotRequest {
             },
             null,
           );
-          await bot.sendPhoto(
+          await this.bot.sendPhoto(
             this.message.chat.id,
             Buffer.from(photo),
             {
@@ -110,7 +109,7 @@ class Search extends TelegramBotRequest {
           // todo показать текстом с пагинацией
           // todo задать вопрос насчет сортировки asc/desc
           // ...
-          await bot.sendMessage(
+          await this.bot.sendMessage(
             this.message.chat.id,
             JSON.stringify(text, null, 2),
             {
@@ -125,7 +124,7 @@ class Search extends TelegramBotRequest {
       }
     } catch (error) {
       logger.error(error);
-      await bot.sendMessage(
+      await this.bot.sendMessage(
         this.message.chat.id,
         `Assistant ${intentName} unavailable`,
       );
@@ -144,7 +143,10 @@ class Search extends TelegramBotRequest {
       !dialogResult.outputContexts
     ) {
       logger.warn('undefined intent: ' + dialogResult.queryText);
-      await bot.sendMessage(this.message.chat.id, dialogResult.fulfillmentText);
+      await this.bot.sendMessage(
+        this.message.chat.id,
+        dialogResult.fulfillmentText,
+      );
       return;
     }
 
@@ -155,7 +157,7 @@ class Search extends TelegramBotRequest {
     ) {
       await this.showResult(dialogResult);
     } else {
-      const { message_id } = await bot.sendMessage(
+      const { message_id } = await this.bot.sendMessage(
         this.message.chat.id,
         dialogResult.fulfillmentText,
         {
@@ -164,7 +166,7 @@ class Search extends TelegramBotRequest {
           },
         },
       );
-      bot.onReplyToMessage(
+      this.bot.onReplyToMessage(
         this.message.chat.id,
         message_id,
         async ({ text }) => {
@@ -191,7 +193,7 @@ class Search extends TelegramBotRequest {
         ],
       };
     }
-    await bot.sendMessage(this.message.chat.id, generatorResult.value, {
+    await this.bot.sendMessage(this.message.chat.id, generatorResult.value, {
       disable_web_page_preview: true,
       parse_mode: 'Markdown',
       reply_markup: replyMarkup,

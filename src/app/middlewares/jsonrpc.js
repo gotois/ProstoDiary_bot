@@ -5,7 +5,7 @@ const jsonRpcServer = require('../api');
 const { pool } = require('../../db/database');
 const passportQueries = require('../../db/passport');
 const signatures = require('../../core/security/signature');
-const logger = require('../../services/logger.service');
+const logger = require('../../lib/log');
 const crypt = require('../../services/crypt.service');
 /**
  * @param {object} server - json rpc server

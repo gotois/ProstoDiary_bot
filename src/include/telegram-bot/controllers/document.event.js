@@ -1,5 +1,3 @@
-const bot = require('../bot');
-const { getTelegramFile } = require('../../../services/file.service');
 const TelegramBotRequest = require('./telegram-bot-request');
 const documentAction = require('../../../core/functions/document');
 
@@ -10,7 +8,9 @@ class Document extends TelegramBotRequest {
   }
   async beginDialog(silent) {
     await super.beginDialog();
-    const fileBuffer = await getTelegramFile(this.message.document.file_id);
+    const fileBuffer = await this.getTelegramFile(
+      this.message.document.file_id,
+    );
     const result = await documentAction({
       buffer: fileBuffer,
       mimeType: this.message.document.mime_type,
@@ -22,7 +22,7 @@ class Document extends TelegramBotRequest {
     });
     const jsonldMessage = await this.rpc(result);
     if (!silent) {
-      await bot.sendMessage(
+      await this.bot.sendMessage(
         this.message.chat.id,
         jsonldMessage.purpose.abstract,
       );

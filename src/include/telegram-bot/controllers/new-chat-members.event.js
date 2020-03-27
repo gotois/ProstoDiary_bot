@@ -1,4 +1,4 @@
-const logger = require('../../../services/logger.service');
+const logger = require('../../../lib/log');
 /**
  * @description Добавление нового участника в чат
  * @param {TelegramMessage} message - msg

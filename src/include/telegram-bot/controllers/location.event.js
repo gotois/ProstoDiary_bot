@@ -1,4 +1,3 @@
-const bot = require('../bot');
 const TelegramBotRequest = require('./telegram-bot-request');
 const locationAction = require('../../../core/functions/location');
 
@@ -14,7 +13,7 @@ class Location extends TelegramBotRequest {
       jwt: this.message.passport.jwt,
     });
     if (!silent) {
-      await bot.sendMessage(this.message.chat.id, result);
+      await this.bot.sendMessage(this.message.chat.id, result);
     }
   }
 }

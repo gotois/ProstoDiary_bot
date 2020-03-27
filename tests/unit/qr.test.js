@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 module.exports = async (t) => {
-  const { readQR } = require('../../src/services/photo.service');
+  const { readQR } = require('../../src/lib/qr');
   const buffer = fs.readFileSync('tests/data/photo/qr-example-1.jpg');
   const qrString = await readQR(buffer);
   t.is(

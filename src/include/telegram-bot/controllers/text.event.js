@@ -1,8 +1,7 @@
-const bot = require('../bot');
 const textService = require('../../../services/text.service');
 const TelegramBotRequest = require('./telegram-bot-request');
 const textAction = require('../../../core/functions/text');
-const logger = require('../../../services/logger.service');
+const logger = require('../../../lib/log');
 
 class Text extends TelegramBotRequest {
   constructor(message) {
@@ -14,7 +13,7 @@ class Text extends TelegramBotRequest {
     let tgMessageId = this.message.message_id;
     logger.info(this.message);
     if (!silent) {
-      const { message_id } = await bot.sendMessage(
+      const { message_id } = await this.bot.sendMessage(
         this.message.chat.id,
         `_${textService.previousInput(this.message.text)}_ 📝`,
         {
@@ -24,7 +23,7 @@ class Text extends TelegramBotRequest {
         },
       );
       tgMessageId = message_id;
-      await bot.sendChatAction(this.message.chat.id, 'typing');
+      await this.bot.sendChatAction(this.message.chat.id, 'typing');
     }
     try {
       const jsonldAction = await textAction({
@@ -43,7 +42,7 @@ class Text extends TelegramBotRequest {
     } catch (error) {
       logger.error(error);
       if (!silent) {
-        await bot.editMessageText(String(error.message), {
+        await this.bot.editMessageText(String(error.message), {
           chat_id: this.message.chat.id,
           message_id: tgMessageId,
         });
