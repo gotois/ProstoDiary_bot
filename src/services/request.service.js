@@ -1,7 +1,8 @@
 const request = require('request');
+const supertest = require('supertest');
 const validator = require('validator');
 const package_ = require('../../package.json');
-const { SERVER } = require('../environment');
+const { SERVER, IS_AVA } = require('../environment');
 /**
  * @param {any} body - response body
  * @returns {string}
@@ -17,25 +18,39 @@ const formatMessage = (body) => {
  * @returns {Promise<*>}
  */
 const rpc = ({ body, auth, jwt }) => {
+  const values = JSON.stringify(body);
+  const parameters = {
+    method: 'POST',
+    url: SERVER.HOST + '/api',
+    headers: {
+      'User-Agent': `${package_.name}/${package_.version}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/schema+json',
+      'Content-Length': values.length,
+    },
+    body: values,
+  };
+  if (jwt) {
+    parameters.headers['Authorization'] = 'Bearer ' + jwt;
+  }
+  if (auth) {
+    parameters.auth = auth;
+  }
+  // hack переопределяем для тестов моковый сервер
+  if (IS_AVA) {
+    return supertest(global.app)
+      .post('/api')
+      .send({
+        method: parameters.method,
+        url: 'http://' + parameters.url,
+        headers: parameters.headers,
+        body: values,
+      })
+      .then((response) => {
+        return response.body.result;
+      });
+  }
   return new Promise((resolve, reject) => {
-    const values = JSON.stringify(body);
-    const parameters = {
-      method: 'POST',
-      url: SERVER.HOST + '/api',
-      headers: {
-        'User-Agent': `${package_.name}/${package_.version}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/schema+json',
-        'Content-Length': values.length,
-      },
-      body: values,
-    };
-    if (jwt) {
-      parameters.headers['Authorization'] = 'Bearer ' + jwt;
-    }
-    if (auth) {
-      parameters.auth = auth;
-    }
     request(parameters, (error, response, body) => {
       if (error) {
         return reject(error);

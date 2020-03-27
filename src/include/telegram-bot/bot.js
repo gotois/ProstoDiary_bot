@@ -15,6 +15,9 @@ if (IS_AVA_OR_CI || IS_CRON) {
     baseApiUrl: TELEGRAM.API_URL,
   });
   telegramBot.startPolling({ restart: false });
+  telegramBot.on('polling_error', (error) => {
+    logger.error(error.toString());
+  });
 } else if (IS_PRODUCTION) {
   telegramBot = new TelegramBot(TELEGRAM.TOKEN);
   telegramBot

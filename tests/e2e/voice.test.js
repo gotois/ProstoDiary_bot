@@ -33,7 +33,7 @@ module.exports = async (t) => {
       },
     });
   t.is(res.status, 200);
-  if (validator.isJSON(res.body.result)) {
+  if (typeof res.body.result !== 'object') {
     t.fail('Invalid JSON-LD body');
   }
 };

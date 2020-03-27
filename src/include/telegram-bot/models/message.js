@@ -1,4 +1,5 @@
 const { telegram, botCommands } = require('../commands');
+const { IS_AVA } = require('../../../environment');
 
 const checkMessage = (message) => {
   // Пропускаем команды бота
@@ -30,6 +31,17 @@ class TelegramBotMessage {
    * @returns {undefined}
    */
   constructor(message) {
+    // hack для запуска e2e тестов
+    if (IS_AVA) {
+      message.passport = {
+        activated: true,
+        user: 'ava-test',
+        passportId: '-1',
+        assistant: 'tg',
+        email: 'e2e@gotointeractive.com',
+        jwt: 'YOUR_VALID_JWT',
+      };
+    }
     if (!message.passport) {
       throw new Error('gotois message error');
     }

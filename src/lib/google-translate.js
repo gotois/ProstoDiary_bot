@@ -1,4 +1,4 @@
-const { Translate } = require('@google-cloud/translate');
+const { Translate } = require('@google-cloud/translate').v2;
 const { GOOGLE } = require('../environment');
 const client = new Translate({
   credentials: GOOGLE.CREDENTIALS,

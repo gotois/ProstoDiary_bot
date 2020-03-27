@@ -1,5 +1,6 @@
 const { pool, sql } = require('../../src/db/database');
 
+// todo перенести в passport assistants
 // TODO: используя https://github.com/marak/Faker.js/
 module.exports = async (t) => {
   t.timeout(5000);

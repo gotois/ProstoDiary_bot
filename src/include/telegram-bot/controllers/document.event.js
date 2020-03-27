@@ -4,6 +4,10 @@ const TelegramBotRequest = require('./telegram-bot-request');
 const documentAction = require('../../../core/functions/document');
 
 class Document extends TelegramBotRequest {
+  constructor(message) {
+    super(message);
+    this.method = 'insert';
+  }
   async beginDialog(silent) {
     await super.beginDialog();
     const fileBuffer = await getTelegramFile(this.message.document.file_id);
@@ -18,7 +22,10 @@ class Document extends TelegramBotRequest {
     });
     const jsonldMessage = await this.rpc(result);
     if (!silent) {
-      await bot.sendMessage(this.message.chat.id, jsonldMessage.purpose.abstract);
+      await bot.sendMessage(
+        this.message.chat.id,
+        jsonldMessage.purpose.abstract,
+      );
     }
   }
 }

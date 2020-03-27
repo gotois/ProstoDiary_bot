@@ -1,5 +1,6 @@
 const fs = require('fs');
 
+// fixme перенести в health asisstant
 module.exports = async (t) => {
   t.timeout(1500);
   // fixme использовать рандомный zip

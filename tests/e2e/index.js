@@ -35,16 +35,9 @@ test.before(async (t) => {
   t.context.tasks = {};
   t.context.app = app; // ExpressServer context
   /*eslint-enable */
-  // todo uncomment?
-  // const message = client.makeMessage('/ping');
-  // await client.sendMessage(message);
-  // try {
-  //   await client.getUpdates();
-  //   t.pass();
-  // } catch (error) {
-  //   t.fail('Telegram Server not response: ' + error);
-  // }
 
+  // hack пробрасываем в глобальную область объект сервера
+  global.app = app;
   // замокапленный json-rpc backend
   app.post('/api', (req, res) => {
     const jsonldResponse = {
@@ -126,9 +119,6 @@ skipTestForFastOrTravis('opengraph', require('./open-graph-parser.test'));
 skipTestForFastOrTravis('archive service', require('./archive-service.test'));
 skipTestForFastOrTravis('foursquare', require('./foursquare-service.test'));
 
-// urls
-skipTestForFastOrTravis('/id/', require('./json-ld.test'));
-
 test('dictionary', async t => {
   const dictionary = require('../../src/lib/dictionary');
   const { def } = await dictionary({ text: 'eat'});
@@ -158,29 +148,6 @@ skipTestForFastOrTravis('language service', async t => {
 
   // todo или единый запрос. Пока только поддерживатеся английский
   // const { categories, documentSentiment, } = await languageService.annotateText('I was play in Angry Birds ');
-});
-
-skipTestForFastOrTravis('API notify', async t => {
-  t.timeout(10000);
-  const fs = require('fs');
-  const exampleSomething = fs.readFileSync('./package.json').toString('utf8');
-
-  // const notifyAction = {
-  //   provider: 'tg',
-  //   subject: 'Sample subject',
-  //   html: `<p>hello world</p>`,
-  //   attachments: [
-  //     {
-  //       content: exampleSomething.toString('base64'),
-  //       filename: 'backup.txt',
-  //       type: 'text/plain',
-  //       disposition: 'attachment',
-  //     },
-  //   ],
-  // }, passportExample
-  // fixme переделать под обычный nodejs request
-  const result = await apiRequest('post', notifyAction, passport);
-  t.log(result);
 });
 
 test('bot init', require('./telegram-bot.test'));

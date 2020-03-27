@@ -1,6 +1,6 @@
 module.exports = async (t) => {
   t.timeout(3000);
-  const geoCodeService = require('../../src/services/geocode.service');
+  const geoCodeService = require('../../src/services/location.service');
   const parsedDataResults = await geoCodeService.getGeoCode({
     latitude: 37.787679,
     longitude: -122.409713,
