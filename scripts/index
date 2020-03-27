@@ -8,7 +8,7 @@ const clipboardHelper = require('../src/helpers/clipboard');
 
 (async function main() {
   if (IS_PRODUCTION) {
-    throw new Error('Please use `node src/server`');
+    throw new Error('Please use `node src/app/server`');
   } else {
     let nodemonInstance;
     try {
@@ -24,14 +24,14 @@ const clipboardHelper = require('../src/helpers/clipboard');
           logger.info(data);
         },
       });
-      nodemonInstance = nodemon(`-x 'NGROK_URL=${url} node' src/server`);
+      nodemonInstance = nodemon(`-x 'NGROK_URL=${url} node' src/app/server`);
       const { updateWebhook } = require('../src/lib/sendgrid');
       await updateWebhook(url);
       clipboardHelper.copy(url);
     } catch (error) {
       logger.error(error.msg);
       logger.warn('"Run without NGROK. Telegram webhook doesn\'t work!"');
-      nodemonInstance = nodemon({ script: 'src/server' });
+      nodemonInstance = nodemon({ script: 'src/app/server' });
     }
     nodemonInstance
       .on('start', () => {

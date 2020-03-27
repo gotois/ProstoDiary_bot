@@ -6,7 +6,8 @@
 /SQL
 *.sh
 ava.config.js
+tests/
+
 # todo remove when eslint supports private params
 src/models/
-src/controllers/telegram/telegram-bot-request.js
-tests/
+telegram-bot-request.js

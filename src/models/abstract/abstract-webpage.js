@@ -1,6 +1,6 @@
 const package_ = require('../../../package.json');
 const Abstract = require('../abstract/index');
-const ogParser = require('../../module/og-parser');
+const ogParser = require('../../lib/og-parser');
 
 class AbstractWebpage extends Abstract {
   constructor(data) {
