@@ -1,7 +1,6 @@
 const logger = require('../../../lib/log');
 const linkedDataSignature = require('../../../services/linked-data-signature.service');
-const storyLogger = require('../../../services/story-log');
-
+const storyLogger = require('../../../services/story-logger.service');
 /**
  * @param {jsonld} jsonld - parameters
  * @param {object} passport - passport gotoisCredentions
