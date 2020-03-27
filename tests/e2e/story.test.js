@@ -4,8 +4,10 @@ module.exports = async (t) => {
   const Story = require('../../src/models/story');
   const { mailExample } = require('../data/database/mail');
 
-  const messageId = '<xxxxxxxxxxxxx_5XtptB-A@ismtpd0001p1lon1.sendgrid.net>'
-    .replace('xxxxxxxxxxxxx', String(Math.random()).slice(3, 3 + 13))
+  const messageId = '<xxxxxxxxxxxxx_5XtptB-A@ismtpd0001p1lon1.sendgrid.net>'.replace(
+    'xxxxxxxxxxxxx',
+    String(Math.random()).slice(3, 3 + 13),
+  );
 
   mailExample.headers['message-id'] = messageId;
   mailExample['smtp-id'] = messageId;

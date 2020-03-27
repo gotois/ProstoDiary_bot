@@ -1,3 +1,5 @@
+const request = require('supertest');
+
 module.exports = async (t) => {
   t.timeout(15000);
 
@@ -10,13 +12,13 @@ module.exports = async (t) => {
     publisher: 'test@gotointeractive.com',
     telegram_message_id: 1234567890,
   });
-  const res = await request(t.context.app)
+  const response = await request(t.context.app)
     .post('/api')
     .send({
       method: 'POST',
       url: '/api',
       headers: {
-        'User-Agent': `Ava Supertest`,
+        'User-Agent': 'Ava Supertest',
         'Content-Type': 'application/json',
         'Accept': 'application/schema+json',
       },
@@ -27,10 +29,6 @@ module.exports = async (t) => {
         params: result.context,
       },
     });
-  t.is(res.status, 200);
-  if (validator.isJSON(res.body.result)) {
-    t.fail('Invalid JSON-LD body');
-  }
-  t.is(error, undefined);
+  t.is(response.status, 200);
   t.log(result);
 };

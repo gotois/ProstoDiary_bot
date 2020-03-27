@@ -6,7 +6,6 @@
 /SQL
 *.sh
 ava.config.js
-tests/
 
 # todo remove when eslint supports private params
 src/models/

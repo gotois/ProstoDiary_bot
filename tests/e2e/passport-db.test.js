@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 const { pool, sql } = require('../../src/db/database');
 
 // todo перенести в passport assistants
@@ -7,39 +8,29 @@ module.exports = async (t) => {
 
   await pool.connect(async (connection) => {
     await connection.query(
+      // eslint-disable-next-line
       sql`
-        INSERT INTO jsonld
-    (id, context, type, email, url, same_as)
+INSERT INTO jsonld (id, context, type, email, url, same_as)
     VALUES ('https://demo.gotointeractive.com/', '{ "@vocab": "http://schema.org/" }', 'Person', 'denis@baskovsky.ru', 'http://denis.baskovsky.ru/', array['sssd'])
-    RETURNING id
+RETURNING
+    id INSERT INTO ld (passport_id, jsonld)
+    VALUES ('ff000000-0000-0000-0000-000000000000', '{
+            "name": "demo",
+            "email": "mailto://demo@gotointeractive.com",
+            "@context": "https://json-ld.org/contexts/person.jsonld",
+            "nickname": "demo",
+            "http://schema.org/birthDate": {
+              "@id": "/2019-11-20"
+            }
+          }'::jsonb);
 
-INSERT INTO ld (passport_id, jsonld)
-VALUES (
-'ff000000-0000-0000-0000-000000000000',
-'{
-  "name": "demo",
-  "email": "mailto://demo@gotointeractive.com",
-  "@context": "https://json-ld.org/contexts/person.jsonld",
-  "nickname": "demo",
-  "http://schema.org/birthDate": {
-    "@id": "/2019-11-20"
-  }
-}'::jsonb
-);
+INSERT INTO passport (id)
+    VALUES ('00000000-0000-0000-0000-000000000000');
 
+INSERT INTO bot (passport_id, activated, email, password, secret_key, master_password)
+    VALUES ('00000000-0000-0000-0000-000000000000', true, 'demo@gotointeractive.com', 'demo', 'demo', 'demo');
 
-        INSERT INTO passport (id) VALUES ('00000000-0000-0000-0000-000000000000');
-
-        INSERT INTO bot (passport_id, activated, email, password, secret_key, master_password)
-        VALUES (
-        '00000000-0000-0000-0000-000000000000',
-        true,
-        'demo@gotointeractive.com',
-        'demo',
-        'demo',
-        'demo'
-        );
-      `,
+`,
     );
   });
 };

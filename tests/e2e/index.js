@@ -39,16 +39,20 @@ test.before(async (t) => {
   // hack пробрасываем в глобальную область объект сервера
   global.app = app;
   // замокапленный json-rpc backend
-  app.post('/api', (req, res) => {
+  app.post('/api', (request, response) => {
     const jsonldResponse = {
       '@context': 'http://schema.org',
       '@type': 'AcceptAction',
-      agent: { '@type': 'Person', name: 'prosto-diary' },
-      purpose: { '@type': 'Answer', abstract: 'pong', encodingFormat: 'text/plain' }
+      'agent': { '@type': 'Person', 'name': 'prosto-diary' },
+      'purpose': {
+        '@type': 'Answer',
+        'abstract': 'pong',
+        'encodingFormat': 'text/plain',
+      },
     };
-    res.status(200).json(
-      {"jsonrpc": "2.0", "result": jsonldResponse, "id": 1}
-    );
+    response
+      .status(200)
+      .json({ jsonrpc: '2.0', result: jsonldResponse, id: 1 });
   });
 });
 
@@ -105,7 +109,10 @@ skipTestForFastOrTravis('/help', require('./help.test'));
 skipTestForFastOrTravis('/backup', require('./backup.test'));
 skipTestForFastOrTravis('/post', require('./post.test'));
 skipTestForFastOrTravis('/ping', require('./ping.test'));
-skipTestForFastOrTravis('Создать отдельного пользователя в БД', require('./passport-db.test'));
+skipTestForFastOrTravis(
+  'Создать отдельного пользователя в БД',
+  require('./passport-db.test'),
+);
 test.todo('/start');
 test.todo('/dbclear');
 test.todo('Проверка удаления своей записи');
@@ -119,15 +126,15 @@ skipTestForFastOrTravis('opengraph', require('./open-graph-parser.test'));
 skipTestForFastOrTravis('archive service', require('./archive-service.test'));
 skipTestForFastOrTravis('foursquare', require('./foursquare-service.test'));
 
-test('dictionary', async t => {
+test('dictionary', async (t) => {
   const dictionary = require('../../src/lib/dictionary');
-  const { def } = await dictionary({ text: 'eat'});
+  const { def } = await dictionary({ text: 'eat' });
 
   const synonyms = [];
   for (const d of def) {
     synonyms.push(d.tr[0].text);
 
-    d.tr[0].syn.forEach(syn => {
+    d.tr[0].syn.forEach((syn) => {
       synonyms.push(syn.text);
     });
   }
@@ -135,10 +142,12 @@ test('dictionary', async t => {
   t.true(Array.isArray(synonyms));
 });
 
-skipTestForFastOrTravis('language service', async t => {
+skipTestForFastOrTravis('language service', async (t) => {
   const languageService = require('../../src/services/nlp.service');
 
-  const analyzedEntities = await languageService.analyzeEntities('я поел салат');
+  const analyzedEntities = await languageService.analyzeEntities(
+    'я поел салат',
+  );
   const { entities, language } = analyzedEntities;
   const { tokens } = await languageService.analyzeSyntax('я поел салат');
 

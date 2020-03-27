@@ -1,7 +1,5 @@
 module.exports = (t) => {
-  const {
-    formatQuery,
-  } = require('../../src/services/dialog.service');
+  const { formatQuery } = require('../../src/services/dialog.service');
   t.is(typeof formatQuery, 'function');
 
   // spaces

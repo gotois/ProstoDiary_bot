@@ -15,13 +15,13 @@ module.exports = async (t) => {
     duration: 1,
     uid: uuidv1(),
   });
-  const res = await request(t.context.app)
+  const response = await request(t.context.app)
     .post('/api')
     .send({
       method: 'POST',
       url: '/api',
       headers: {
-        'User-Agent': `Ava Supertest`,
+        'User-Agent': 'Ava Supertest',
         'Content-Type': 'application/json',
         'Accept': 'application/schema+json',
       },
@@ -32,8 +32,8 @@ module.exports = async (t) => {
         params: result.context,
       },
     });
-  t.is(res.status, 200);
-  if (typeof res.body.result !== 'object') {
+  t.is(response.status, 200);
+  if (typeof response.body.result !== 'object') {
     t.fail('Invalid JSON-LD body');
   }
 };
