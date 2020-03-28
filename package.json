@@ -124,7 +124,7 @@
     "jsonld-signatures": "4.6.0",
     "jsqr": "1.2.0",
     "mailparser": "2.7.7",
-    "music-metadata": "6.3.6",
+    "music-metadata": "6.3.7",
     "node-telegram-bot-api": "0.40.0",
     "oidc-provider": "6.23.2",
     "openpgp": "4.10.1",
