@@ -141,7 +141,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "8.3.5",
-    "@sentry/cli": "1.51.1",
+    "@sentry/cli": "1.52.0",
     "ava": "3.5.0",
     "codecov": "4.0.0-0",
     "commitizen": "4.0.3",
