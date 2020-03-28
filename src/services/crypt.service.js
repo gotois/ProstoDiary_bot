@@ -79,7 +79,7 @@ const openpgpDecrypt = async (buffer, passwords) => {
   }
   return utf8Content;
 };
-
+// можно заменить на jose
 const generateRSA = () => {
   return new Promise((resolve, reject) => {
     const { generateKeyPair } = crypto;

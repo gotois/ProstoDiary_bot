@@ -14,12 +14,14 @@ const {
 } = require('../../src/environment');
 const express = require('express');
 const app = express();
-
+const { getPemKeys } = require('../helpers/pem-keys');
 /**
  * This runs before all tests
  */
 test.before(async (t) => {
-  // todo записывать если необходимо ключи - https://github.com/panva/jose/blob/HEAD/docs/README.md#keytopemprivate-encoding
+  const { publicKey, privateKey } = getPemKeys(t);
+  t.context.publicKey = publicKey;
+  t.context.privateKey = privateKey;
 
   const server = new TelegramServer({
     host: SERVER.HOST,
@@ -143,6 +145,8 @@ test('dictionary', async (t) => {
 
   t.true(Array.isArray(synonyms));
 });
+
+skipTestForFastOrTravis('keys:jsonld', require('./keys.test'));
 
 skipTestForFastOrTravis('language service', async (t) => {
   const languageService = require('../../src/services/nlp.service');
