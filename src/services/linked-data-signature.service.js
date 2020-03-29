@@ -7,40 +7,43 @@ const { RsaSignature2018 } = jsigs.suites;
 const { AssertionProofPurpose } = jsigs.purposes;
 const { SECURITY_CONTEXT_URL } = jsigs;
 
-const getControllerId = (user) => {
+const getControllerId = (passportId) => {
   if (IS_PRODUCTION) {
-    return 'https://gotointeractive.com/i/' + user;
+    return 'https://gotointeractive.com/i/' + passportId;
   }
-  return SERVER.HOST + 'i/' + user;
+  return SERVER.HOST + 'i/' + passportId;
 };
-
-const getPublicKey = (publicKeyPem, controller) => {
-  const controllerKey = controller + '/keys/1'; // todo насыщать из БД
-  return {
+/**
+ * Specify the public key object
+ *
+ * @param {Buffer} publicKeyPem - public key
+ * @param {Buffer} privateKeyPem - private key
+ * @param {*} controller - user controller
+ * @returns {RSAKeyPair}
+ */
+const keyPair = (publicKeyPem, privateKeyPem, controller) => {
+  const controllerKey = controller + '/keys/' + 1; // // todo по-умолчанию ключ всегда первый
+  return new RSAKeyPair({
     '@context': SECURITY_CONTEXT_URL,
     'type': 'RsaVerificationKey2018',
     'id': controllerKey,
     'controller': controller,
     publicKeyPem,
-  };
+    privateKeyPem,
+  });
 };
 /**
- * specify the public key object
+ * Create the JSON-LD document that should be signed
  *
- * @param {Buffer} publicKeyPem - public key
- * @param {Buffer} privateKeyPem - private key
- * @param {*} controller - controller
- * @returns {RSAKeyPair}
+ * @param {object} document - jsonld document
+ * @param {*} publicKeyPem - key pem
+ * @param {*} privateKeyPem - key pem
+ * @param {string} passportId - passport id
+ * @returns {Promise<*>}
  */
-const keyPair = (publicKeyPem, privateKeyPem, controller) => {
-  const publicKey = getPublicKey(publicKeyPem, controller);
-  const key = new RSAKeyPair({ ...publicKey, privateKeyPem });
-  return key;
-};
-
-// create the JSON-LD document that should be signed
-async function signDocument(document, publicKeyPem, privateKeyPem, userId) {
-  const key = keyPair(publicKeyPem, privateKeyPem, getControllerId(userId));
+async function signDocument(document, publicKeyPem, privateKeyPem, passportId) {
+  const userController = getControllerId(passportId);
+  const key = keyPair(publicKeyPem, privateKeyPem, userController);
   const signed = await jsigs.sign(document, {
     suite: new RsaSignature2018({ key }),
     purpose: new AssertionProofPurpose(),
@@ -59,20 +62,16 @@ async function verifyDocument(signed, passport) {
   const publicKeyPem = passport.public_key_cert.toString('utf8');
   const privateKeyPem = passport.private_key_cert.toString('utf8');
   const userId = passport.passport_id;
-
-  const controllerId = getControllerId(userId);
-  const publicKey = getPublicKey(publicKeyPem, controllerId);
-  const key = keyPair(publicKeyPem, privateKeyPem, controllerId);
-
-  // specify the public key controller object
-  const controller = {
+  const userController = getControllerId(userId);
+  const controllerKey = userController + '/keys/' + 1; // todo по-умолчанию ключ всегда первый
+  const key = keyPair(publicKeyPem, privateKeyPem, userController);
+  const publicKey = {
     '@context': SECURITY_CONTEXT_URL,
-    'id': controllerId,
-    'publicKey': [publicKey],
-    // this authorizes this key to be used for making assertions
-    'assertionMethod': [publicKey.id],
+    'type': 'RsaVerificationKey2018',
+    'id': controllerKey,
+    'controller': userController,
+    publicKeyPem,
   };
-  const controllerKey = controller.id + '/keys/1'; // todo насыщать из БД
 
   // we will need the documentLoader to verify the controller
   // verify the signed document
@@ -88,7 +87,16 @@ async function verifyDocument(signed, passport) {
       };
     },
     suite: new RsaSignature2018(key),
-    purpose: new AssertionProofPurpose({ controller }),
+    purpose: new AssertionProofPurpose({
+      // specify the public key controller object
+      controller: {
+        '@context': SECURITY_CONTEXT_URL,
+        'id': userController,
+        'publicKey': [publicKey],
+        // this authorizes this key to be used for making assertions
+        'assertionMethod': [publicKey.id],
+      },
+    }),
   });
   if (!result.verified) {
     throw new Error(result.error);

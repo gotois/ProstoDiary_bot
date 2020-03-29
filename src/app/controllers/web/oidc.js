@@ -56,7 +56,9 @@ module.exports.oidcallback = async (request, response) => {
       }
     });
 
-    response.send(`Ассистент ${decoded.aud} подключен.`);
+    response.send(
+      `Ассистент ${decoded.aud} подключен. Можете пользоваться ассистентом.`,
+    );
   } catch (error) {
     response.sendStatus(400).send(error);
   }

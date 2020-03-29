@@ -173,10 +173,12 @@ const createOauthPassport = async (
           <strong>${secret.masterPassword}</strong>
         </p>
         <h3>Сохраните открытые и закрытые ключи SSL</h3>
-        <p>Находятся в атачменте</p>
+        <p>* Находятся в атачменте</p>
         <br>
         <h2>Шаг 3: Активируйте бота.</h2>
         <p>Пришлите <a href="https://prosto-diary.gotointeractive.com/">ProstoDiary_bot</a> сгенерированный токен от двухфакторной аутентификации.</p>
+        <h2>Шаг 4: Выберите и активируйте ассистента.</h2>
+        <p>На странице / выберите ассистента. Введите серверу OIDC данные своего bot email и password</p>
       `,
       attachments: [
         {

@@ -4,9 +4,9 @@ const package_ = require('../../../package.json');
 const jsonRpcServer = require('../api');
 const { pool } = require('../../db/sql');
 const passportQueries = require('../../db/passport');
-const signatures = require('../../lib/signature');
 const logger = require('../../lib/log');
 const crypt = require('../../services/crypt.service');
+const linkedDataSignature = require('../../services/linked-data-signature.service');
 /**
  * @param {object} server - json rpc server
  * @param {string} method - json rpc method
@@ -15,8 +15,12 @@ const crypt = require('../../services/crypt.service');
  * @returns {Promise<jsonld>}
  */
 async function apiRequest(server, method, document, passport) {
-  const signedDocument = await signatures.signature.call(passport, document);
-
+  const signedDocument = await linkedDataSignature.signDocument(
+    document,
+    passport.public_key_cert.toString('utf8'),
+    passport.private_key_cert.toString('utf8'),
+    passport.passport_id,
+  );
   return new Promise((resolve, reject) => {
     server.call(
       {
@@ -52,7 +56,7 @@ async function apiRequest(server, method, document, passport) {
 }
 
 module.exports = async (request, response, next) => {
-  logger.info(`RPC:${request.body.method}`);
+  logger.info(`JSONRPC:${request.body.method}`);
   let passport;
   let email;
   try {
@@ -69,7 +73,7 @@ module.exports = async (request, response, next) => {
           return {};
         }
         return botTable;
-      } else {
+      } else if (request.user) {
         // By basic auth
         email = request.user;
 
@@ -86,11 +90,13 @@ module.exports = async (request, response, next) => {
           return {};
         }
         return botTable;
+      } else {
+        throw new Error('Unknown assistant');
       }
     });
   } catch (error) {
     logger.error(error);
-    return response.status(500).json('Bad error :/');
+    return response.status(500).send('500 Bad Error: ' + error.message);
   }
   if (!passport) {
     return response.sendStatus(401).send('401 Unauthorized');
