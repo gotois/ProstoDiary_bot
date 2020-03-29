@@ -1,4 +1,4 @@
-const AcceptAction = (abstract, encoding = 'text/plain') => {
+module.exports = (abstract, encoding = 'text/plain') => {
   return {
     '@context': 'http://schema.org',
     '@type': 'AcceptAction',
@@ -9,4 +9,3 @@ const AcceptAction = (abstract, encoding = 'text/plain') => {
     },
   };
 };
-module.exports = AcceptAction;

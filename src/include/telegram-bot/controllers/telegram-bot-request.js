@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const bot = require('../bot');
 const logger = require('../../../lib/log');
+const { IS_AVA_OR_CI, IS_AVA } = require('../../../environment');
 const { rpc, get } = require('../../../services/request.service');
 
 class TelegramBotRequest {
@@ -40,7 +41,7 @@ class TelegramBotRequest {
   async beginDialog(silent) {
     const instanceProto = Object.getPrototypeOf(this);
     logger.info('telegram: ' + instanceProto.constructor.name);
-    if (!silent) {
+    if (!silent && !IS_AVA_OR_CI) {
       await this.bot.sendChatAction(this.message.chat.id, 'typing');
     }
   }
@@ -59,6 +60,10 @@ class TelegramBotRequest {
     );
     return buffer;
   }
+  /**
+   * @param {Action} action - action
+   * @returns {Promise<*>}
+   */
   async rpc(action) {
     const jsonldMessage = await rpc({
       body: {
@@ -69,6 +74,10 @@ class TelegramBotRequest {
       },
       jwt: this.message.passport.jwt,
     });
+    // hack специальный вызов для тестирования E2E. Без явного ответа sendMessage возникает ошибка SubError
+    if (IS_AVA) {
+      await this.bot.sendMessage(this.message.chat.id, jsonldMessage.purpose.abstract);
+    }
     return jsonldMessage;
   }
 }

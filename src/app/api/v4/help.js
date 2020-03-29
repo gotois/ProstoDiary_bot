@@ -55,6 +55,8 @@ module.exports = async function(document, { passport }) {
     });
     return Promise.resolve(AcceptAction(message));
   } catch (error) {
-    return Promise.reject(this.error(400, null, RejectAction(error)));
+    return Promise.reject(
+      this.error(400, null, JSON.stringify(RejectAction(error))),
+    );
   }
 };

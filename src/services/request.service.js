@@ -56,6 +56,14 @@ const rpc = ({ body, auth, jwt }) => {
         return reject(error);
       }
       if (response.statusCode >= 400) {
+        // decode jsonld reject
+        if (validator.isJSON(body)) {
+          const message = JSON.parse(body);
+          return reject({
+            message: message.purpose.abstract,
+            statusCode: response.statusCode,
+          });
+        }
         return reject({
           message: body || response.statusMessage,
           statusCode: response.statusCode,
@@ -63,10 +71,11 @@ const rpc = ({ body, auth, jwt }) => {
       }
       if (!body) {
         return reject({
-          message: 'body empty',
+          message: response.statusMessage || 'body empty',
           statusCode: 400,
         });
       }
+      // decode jsonld accept
       if (validator.isJSON(body)) {
         return resolve(JSON.parse(body));
       }

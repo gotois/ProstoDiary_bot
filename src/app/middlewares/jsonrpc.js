@@ -57,8 +57,9 @@ async function apiRequest(server, method, document, passport) {
 
 module.exports = async (request, response, next) => {
   logger.info(`JSONRPC:${request.body.method}`);
+  response.header('X-Bot', [package_.name]);
+  response.header('X-Bot-Version', [package_.version]);
   let passport;
-  let email;
   try {
     passport = await pool.connect(async (connection) => {
       // By token auth
@@ -73,23 +74,6 @@ module.exports = async (request, response, next) => {
           return {};
         }
         return botTable;
-      } else if (request.user) {
-        // By basic auth
-        email = request.user;
-
-        const userTable = await connection.maybeOne(
-          passportQueries.selectUserByEmail(email),
-        );
-        if (!userTable) {
-          throw new Error('Unknown login');
-        }
-        const botTable = await connection.maybeOne(
-          passportQueries.selectByPassport(userTable.id),
-        );
-        if (!botTable) {
-          return {};
-        }
-        return botTable;
       } else {
         throw new Error('Unknown assistant');
       }
@@ -99,7 +83,7 @@ module.exports = async (request, response, next) => {
     return response.status(500).send('500 Bad Error: ' + error.message);
   }
   if (!passport) {
-    return response.sendStatus(401).send('401 Unauthorized');
+    return response.sendStatus(401).send('Unauthorized');
   }
   logger.info(`API:${request.body.method}`);
   try {
@@ -109,10 +93,12 @@ module.exports = async (request, response, next) => {
       request.body.params,
       passport,
     );
-    response.header('X-Bot', [package_.name]);
-    response.header('X-Bot-Version', [package_.version]);
     return response.send(result);
   } catch (error) {
+    if (typeof error === 'string') {
+      response.status(400).json(JSON.parse(error));
+      return;
+    }
     next(error);
   }
 };

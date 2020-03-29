@@ -22,11 +22,10 @@ app.use(require('./middlewares/logger'));
 // The error handler must be before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());
 require('./routes')(app);
-// настроить позже отдельные страницы с формами где требуется csrf
-app.use(csrf({ cookie: true }));
 // Express error handler
 app.use(require('./middlewares/error-handler'));
-
+// настроить позже отдельные страницы с формами где требуется csrf
+app.use(csrf({ cookie: true }));
 // eslint-disable-next-line require-await
 (async function main() {
   // fixme перестал работать, возможно новая версия поломала API
