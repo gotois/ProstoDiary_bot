@@ -1,7 +1,5 @@
 const validator = require('validator');
 const SchemaOrg = require('schema.org');
-const format = require('date-fns/format');
-const fromUnixTime = require('date-fns/fromUnixTime');
 const dialogService = require('../../../services/dialog.service'); // в моделях не должно быть сервисов
 const logger = require('../../../lib/log'); // в моделях не должно быть сервисов
 const languageService = require('../../../services/nlp.service'); // в моделях не должно быть сервисов
@@ -155,20 +153,7 @@ class AbstractText extends Abstract {
         email: 'schema:email',
         mainEntity: 'schema:mainEntity',
       },
-      '@id': this.namespace, // изоляцинные идентификаторы сообщения
       '@type': 'Action',
-      'agent': {
-        '@type': 'Organization',
-        'identifier': this.creator, // identifier assistant
-      },
-      'participant': {
-        '@type': 'Person',
-        'email': this.publisher, // identifier user
-      },
-      'startTime': format(
-        fromUnixTime(Math.round(new Date().getTime() / 1000)),
-        'yyyy-MM-dd',
-      ),
       'subjectOf': this.subjectOf,
       'object': {
         '@type': 'CreativeWork',

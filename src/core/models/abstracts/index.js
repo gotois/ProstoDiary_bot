@@ -1,3 +1,5 @@
+const format = require('date-fns/format');
+const fromUnixTime = require('date-fns/fromUnixTime');
 const { publisher } = require('../../../../package.json');
 
 class Abstract {
@@ -33,7 +35,20 @@ class Abstract {
   }
   get context() {
     return {
-      // расширить когда потребуется
+      '@id': this.namespace, // изоляцинные идентификаторы сообщения
+      'agent': {
+        '@type': 'Organization',
+        'identifier': this.creator, // identifier assistant
+      },
+      'participant': {
+        '@type': 'Person',
+        'email': this.publisher, // identifier user
+      },
+      'startTime': format(
+        fromUnixTime(Math.round(new Date().getTime() / 1000)),
+        'yyyy-MM-dd',
+      ),
+      // uncomment
       // target: {
       //   "@type": "EntryPoint",
       //   actionApplication: {
@@ -52,7 +67,7 @@ class Abstract {
   get jurisdiction() {
     return JSON.stringify([
       {
-        publisher: publisher,
+        publisher,
         coding: [
           {
             system: 'urn:iso:std:iso:3166',

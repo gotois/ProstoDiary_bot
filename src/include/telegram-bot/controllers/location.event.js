@@ -3,18 +3,17 @@ const locationAction = require('../../../core/functions/location');
 
 class Location extends TelegramBotRequest {
   async beginDialog(silent) {
-    await super.beginDialog();
+    await super.beginDialog(silent);
     const { latitude, longitude } = this.message.location;
-    const result = await locationAction({
+    const jsonldAction = await locationAction({
       latitude,
       longitude,
       date: this.message.date,
       telegram_message_id: this.message.message_id,
       jwt: this.message.passport.jwt,
+      silent,
     });
-    if (!silent) {
-      await this.bot.sendMessage(this.message.chat.id, result);
-    }
+    await this.rpc(jsonldAction);
   }
 }
 /**

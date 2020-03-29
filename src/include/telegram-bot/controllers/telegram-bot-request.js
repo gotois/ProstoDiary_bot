@@ -37,9 +37,12 @@ class TelegramBotRequest {
     }
     return [...hashtags];
   }
-  async beginDialog() {
+  async beginDialog(silent) {
     const instanceProto = Object.getPrototypeOf(this);
     logger.info('telegram: ' + instanceProto.constructor.name);
+    if (!silent) {
+      await this.bot.sendChatAction(this.message.chat.id, 'typing');
+    }
   }
   /**
    * @param {string} fileId - file id

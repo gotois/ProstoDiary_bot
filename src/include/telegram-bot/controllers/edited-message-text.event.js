@@ -10,8 +10,8 @@ class EditMessageText extends TelegramBotRequest {
   static get DELETE_VARIABLES() {
     return ['del', 'remove'];
   }
-  async beginDialog() {
-    await super.beginDialog();
+  async beginDialog(silent) {
+    await super.beginDialog(silent);
     if (this.message.text.startsWith('/')) {
       await this.bot.sendMessage(
         this.message.chat.id,
@@ -31,22 +31,28 @@ class EditMessageText extends TelegramBotRequest {
         return this.message.text.toLowerCase() === del.toLowerCase();
       })
     ) {
-      // todo дополнить API
       const result = await deleteAction({
-        jwt: this.message.passport.jwt,
+        telegram: {
+          title: this.message.chat.title,
+          chatId: this.message.chat.id,
+        },
+        creator: this.message.passport.assistant,
+        publisher: this.message.passport.email,
+        silent,
       });
-      await this.bot.sendMessage(this.message.chat.id, result, {
-        parse_mode: 'Markdown',
-      });
+      await this.rpc(result);
     } else {
       // TODO: https://github.com/gotois/ProstoDiary_bot/issues/34
-      // todo дополнить API
       const result = await editAction({
-        jwt: this.message.passport.jwt,
+        telegram: {
+          title: this.message.chat.title,
+          chatId: this.message.chat.id,
+        },
+        creator: this.message.passport.assistant,
+        publisher: this.message.passport.email,
+        silent,
       });
-      await this.bot.sendMessage(this.message.chat.id, result, {
-        parse_mode: 'Markdown',
-      });
+      await this.rpc(result);
     }
   }
 }

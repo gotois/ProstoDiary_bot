@@ -9,7 +9,7 @@ class Text extends TelegramBotRequest {
     this.method = 'insert';
   }
   async beginDialog(silent) {
-    await super.beginDialog();
+    await super.beginDialog(silent);
     let tgMessageId = this.message.message_id;
     logger.info(this.message);
     if (!silent) {

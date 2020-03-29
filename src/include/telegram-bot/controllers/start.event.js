@@ -7,7 +7,7 @@ class Start extends TelegramBotRequest {
     super(message);
     this.dialog = this.messageIterator();
   }
-  async beginDialog() {
+  async beginDialog(silent) {
     if (this.message.passport.id) {
       const message =
         'Повторная установка не требуется\n\n' +
@@ -16,7 +16,7 @@ class Start extends TelegramBotRequest {
       await bot.sendMessage(this.message.chat.id, message);
       return;
     }
-    await super.beginDialog();
+    await super.beginDialog(silent);
     await this.dialog.next();
   }
   /**

@@ -5,22 +5,24 @@ const { pool } = require('../sql');
 const package_ = require('../../../package.json');
 const TelegramNotifyError = require('../../core/models/errors/telegram-notify-error');
 
-// здесь данные о принятии решений: производить запись или нет
-// eslint-disable-next-line
-const assumeBox = (jsonld) => {
-  return void 0;
-};
-
-class PsqlTransport extends Transport {
+module.exports = class PsqlTransport extends Transport {
   constructor(options) {
     super(options);
   }
-
+  // здесь данные о принятии решений: производить запись или нет
+  // eslint-disable-next-line
+  assumeBox(document) {
+    return void 0;
+  }
+  /**
+   * @param {object} info - info
+   * @param {Function} callback - callback
+   * @returns {Promise<void>}
+   */
   async log(info, callback) {
+    const { document } = info.message;
     try {
-      const jsonld = info.message;
-      assumeBox(jsonld);
-
+      // this.assumeBox(document);
       const { id } = await pool.connect(async (connection) => {
         const result = await connection.transaction(
           async (transactionConnection) => {
@@ -31,12 +33,12 @@ class PsqlTransport extends Transport {
             //   select * from assistant where
             // `);
             const botTable = await connection.one(
-              passportQueries.selectBotByEmail(jsonld.participant.email),
+              passportQueries.selectBotByEmail(document.participant.email),
             );
             // 'story.botTable'
             const messageTable = await transactionConnection.one(
               storyQueries.createMessage({
-                namespace: jsonld['@id'],
+                namespace: document['@id'],
                 // creator: jsonld.participant.email, // todo нужно получать идентификатор ассистента GUID
                 publisher: botTable.id,
                 version: package_.version,
@@ -45,7 +47,7 @@ class PsqlTransport extends Transport {
               }),
             );
             // 'story.createContent'
-            const telegramMessageId = jsonld.object.mainEntity.find(
+            const telegramMessageId = document.object.mainEntity.find(
               (entity) => {
                 return entity.name === 'TelegramMessageId';
               },
@@ -54,17 +56,16 @@ class PsqlTransport extends Transport {
               storyQueries.createContent({
                 messageId: messageTable.id,
                 content: Buffer.from(
-                  decodeURIComponent(jsonld.object.abstract),
+                  decodeURIComponent(document.object.abstract),
                 ),
-                contentType: jsonld.object.encodingFormat,
-                schema: jsonld.object['@type'],
+                contentType: document.object.encodingFormat,
+                schema: document.object['@type'],
                 telegramMessageId: String(telegramMessageId),
-                date: new Date(jsonld.startTime), // created at
-
+                date: new Date(document.startTime), // created at
                 // emailMessageId: content.emailMessageId, // fixme поддержать emailMessageId
               }),
             );
-            for (const subject of jsonld.subjectOf) {
+            for (const subject of document.subjectOf) {
               // 'story.createAbstract'
               await transactionConnection.query(
                 storyQueries.createAbstract({
@@ -86,12 +87,10 @@ class PsqlTransport extends Transport {
         this.emit('logged', info);
       });
     } catch (error) {
-      const telegramMessageId = info.message.object.mainEntity.find(
-        (entity) => {
-          return entity.name === 'TelegramMessageId';
-        },
-      )['value'];
-      const telegramChatId = info.message.object.mainEntity.find((entity) => {
+      const telegramMessageId = document.object.mainEntity.find((entity) => {
+        return entity.name === 'TelegramMessageId';
+      })['value'];
+      const telegramChatId = document.object.mainEntity.find((entity) => {
         return entity.name === 'TelegramChatId';
       })['value'];
       callback(
@@ -103,6 +102,4 @@ class PsqlTransport extends Transport {
       );
     }
   }
-}
-
-module.exports = PsqlTransport;
+};

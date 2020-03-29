@@ -7,22 +7,17 @@ class Help extends TelegramBotRequest {
     this.method = 'help';
   }
   async beginDialog(silent) {
-    await super.beginDialog();
-    const jsonldAction = await helpAction();
-    const jsonldMessage = await this.rpc(jsonldAction);
-    if (!silent) {
-      await this.bot.sendMessage(
-        this.message.chat.id,
-        jsonldMessage.purpose.abstract,
-        {
-          disable_web_page_preview: true,
-          parse_mode:
-            jsonldMessage.purpose.encodingFormat === 'text/markdown'
-              ? 'Markdown'
-              : 'HTML',
-        },
-      );
-    }
+    await super.beginDialog(silent);
+    const jsonldAction = await helpAction({
+      telegram: {
+        title: this.message.chat.title,
+        chatId: this.message.chat.id,
+      },
+      creator: this.message.passport.assistant,
+      publisher: this.message.passport.email,
+      silent,
+    });
+    await this.rpc(jsonldAction);
   }
 }
 /**

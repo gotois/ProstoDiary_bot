@@ -6,10 +6,8 @@ const AbstractPhoto = require('../models/abstracts/abstract-photo');
  * @returns {Promise<Abstract>}
  */
 module.exports = async function(requestObject) {
-  const { imageBuffer, caption } = requestObject;
   const abstractPhoto = new AbstractPhoto({
-    imageBuffer,
-    caption,
+    ...requestObject,
   });
   await abstractPhoto.prepare();
   return abstractPhoto;

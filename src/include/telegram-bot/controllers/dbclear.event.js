@@ -6,8 +6,8 @@ class DatabaseClear extends TelegramBotRequest {
     super(message);
     this.method = 'signout';
   }
-  async beginDialog() {
-    await super.beginDialog();
+  async beginDialog(silent) {
+    await super.beginDialog(silent);
     const { message_id } = await this.bot.sendMessage(
       this.message.chat.id,
       'Очистить ваши записи?\nНапишите: YES',
@@ -27,11 +27,7 @@ class DatabaseClear extends TelegramBotRequest {
           return;
         }
         const jsonldAction = await destroyAction();
-        const jsonldMessage = await this.rpc(jsonldAction);
-        await this.bot.sendMessage(
-          this.message.chat.id,
-          jsonldMessage.purpose.abstract,
-        );
+        await this.rpc(jsonldAction);
       },
     );
   }

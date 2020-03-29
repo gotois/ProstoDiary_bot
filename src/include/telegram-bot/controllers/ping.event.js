@@ -7,15 +7,17 @@ class Ping extends TelegramBotRequest {
     this.method = 'ping';
   }
   async beginDialog(silent) {
-    await super.beginDialog();
-    const result = await pingAction();
-    const jsonldMessage = await this.rpc(result);
-    if (!silent) {
-      await this.bot.sendMessage(
-        this.message.chat.id,
-        jsonldMessage.purpose.abstract,
-      );
-    }
+    await super.beginDialog(silent);
+    const result = await pingAction({
+      telegram: {
+        title: this.message.chat.title,
+        chatId: this.message.chat.id,
+      },
+      creator: this.message.passport.assistant,
+      publisher: this.message.passport.email,
+      silent,
+    });
+    await this.rpc(result);
   }
 }
 /**

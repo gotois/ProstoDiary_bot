@@ -7,16 +7,13 @@ class Photo extends TelegramBotRequest {
     this.method = 'insert';
   }
   async beginDialog(silent) {
-    await super.beginDialog();
+    await super.beginDialog(silent);
     const [_smallPhoto, mediumPhoto] = this.message.photo;
     if (!mediumPhoto.file_id || mediumPhoto.file_size === 0) {
       if (!silent) {
         await this.bot.sendMessage(this.message.chat.id, 'Wrong photo');
       }
       return;
-    }
-    if (!silent) {
-      await this.bot.sendChatAction(this.message.chat.id, 'typing');
     }
     const imageBuffer = await this.getTelegramFile(mediumPhoto.file_id);
     const jsonldAction = await photoAction({
@@ -26,16 +23,7 @@ class Photo extends TelegramBotRequest {
       hashtags: this.hashtags,
       telegram_message_id: this.message.message_id,
     });
-    const jsonldMessage = await this.rpc(jsonldAction);
-    if (!silent) {
-      await this.bot.sendMessage(
-        this.message.chat.id,
-        jsonldMessage.purpose.abstract,
-        {
-          parse_mode: 'Markdown',
-        },
-      );
-    }
+    await this.rpc(jsonldAction);
   }
 }
 /**

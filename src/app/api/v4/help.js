@@ -1,18 +1,16 @@
-const package_ = require('../../../../package.json');
+const packageLock_ = require('../../../../package-lock.json');
 const logger = require('../../../lib/log');
 const { telegram } = require('../../../include/telegram-bot/commands');
 const { IS_PRODUCTION } = require('../../../environment');
 const { getCheckSum } = require('../../../services/crypt.service');
-
+const commandLogger = require('../../../services/command-logger.service');
+const linkedDataSignature = require('../../../services/linked-data-signature.service');
+const RejectAction = require('../../../core/models/actions/reject');
+const AcceptAction = require('../../../core/models/actions/accept');
 /**
- * @param {jsonld} jsonld - parameters
- * @param {object} passport - passport gotoisCredentions
- * @returns {Promise<*>}
+ * @returns {string}
  */
-// eslint-disable-next-line
-module.exports = function(jsonld, { passport }) {
-  logger.info('ping');
-
+function response() {
   const helpData = Object.entries(telegram).reduce(
     (accumulator, [command, object]) => {
       if (object.description.length === 0) {
@@ -29,31 +27,34 @@ module.exports = function(jsonld, { passport }) {
       accumulator += result;
       return accumulator;
     }, '') +
-    // todo ссылку перенести в reply_markup: {
-    //           inline_keyboard: [links],
-    //         },
     '\n\nF.A.Q.: ' +
     'https://prosto-diary.gotointeractive.com/faq/\n\n';
-  message += package_.version;
+  message += packageLock_.version;
   if (IS_PRODUCTION) {
     message += ' - production\n';
   }
-  // todo нужно получать чексумму всего проекта - для этого настроить precommit хуку и создавать чексумму всех измененных файлов на гите, учитывая пользователя
-  message += ' \n' + getCheckSum(JSON.stringify(package_));
-
-  const document = {
-    '@context': 'http://schema.org',
-    '@type': 'AcceptAction',
-    'agent': {
-      '@type': 'Person',
-      'name': package_.name,
-    },
-    'purpose': {
-      '@type': 'Answer',
-      'abstract': message.toString('base64'),
-      'encodingFormat': 'text/markdown',
-    },
-  };
-
-  return Promise.resolve(document);
+  message += ' \n' + getCheckSum(JSON.stringify(packageLock_));
+  return message;
+}
+/**
+ * @param {object} document - parameters
+ * @param {object} passport - passport gotoisCredentions
+ * @returns {Promise<*>}
+ */
+module.exports = async function(document, { passport }) {
+  logger.info('help');
+  try {
+    await linkedDataSignature.verifyDocument(document, passport);
+    const message = response();
+    commandLogger.info({
+      document: {
+        ...document,
+        ...AcceptAction(message, 'text/markdown'),
+      },
+      passport,
+    });
+    return Promise.resolve(AcceptAction(message));
+  } catch (error) {
+    return Promise.reject(this.error(400, null, RejectAction(error)));
+  }
 };

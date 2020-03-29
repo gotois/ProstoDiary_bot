@@ -7,7 +7,7 @@ class Voice extends TelegramBotRequest {
     this.method = 'insert';
   }
   async beginDialog(silent) {
-    await super.beginDialog();
+    await super.beginDialog(silent);
     const fileBuffer = await this.getTelegramFile(this.message.voice.file_id);
     const jsonldAction = await voiceAction({
       buffer: fileBuffer,
@@ -19,10 +19,7 @@ class Voice extends TelegramBotRequest {
       uid: this.userHash,
       passportId: this.message.passport.id,
     });
-    const jsonldMessage = await this.rpc(jsonldAction);
-    if (!silent) {
-      await this.bot.sendMessage(this.message.chat.id, jsonldMessage);
-    }
+    await this.rpc(jsonldAction);
   }
 }
 /**

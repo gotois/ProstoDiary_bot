@@ -16,8 +16,8 @@ class Backup extends TelegramBotRequest {
     });
     await this.bot.sendMessage(this.message.chat.id, result);
   }
-  async beginDialog() {
-    await super.beginDialog();
+  async beginDialog(silent) {
+    await super.beginDialog(silent);
     const authMessage = await this.bot.sendMessage(
       this.message.chat.id,
       'Введите ключ двухфакторной аутентификации',

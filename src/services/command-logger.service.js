@@ -1,16 +1,11 @@
 const winston = require('winston');
-const PsqlTransport = require('../db/adapters/psql-transport');
-const { SERVER } = require('../environment');
+const CommandTransport = require('../db/adapters/command-transport');
 const logger = require('../lib/log');
 const notifyTelegram = require('../lib/notify-tg');
 
-const pqsqlTransport = new PsqlTransport();
-pqsqlTransport.on('logged', async (info) => {
-  logger.info('saveToDatabase:success');
+const commandTransport = new CommandTransport();
+commandTransport.on('logged', async (info) => {
   const { document } = info.message;
-  const telegramMessageId = document.object.mainEntity.find((entity) => {
-    return entity.name === 'TelegramMessageId';
-  })['value'];
   const telegramChatId = document.object.mainEntity.find((entity) => {
     return entity.name === 'TelegramChatId';
   })['value'];
@@ -21,18 +16,18 @@ pqsqlTransport.on('logged', async (info) => {
     logger.info('skip notify message');
     return;
   }
+  const telegramParseMode =
+    document.purpose.encodingFormat === 'text/markdown' ? 'Markdown' : 'HTML';
+  // todo поддержать notifyEmail
   await notifyTelegram({
-    subject: 'Запись добавлена',
-    html: 'Открыть запись',
-    url: `${SERVER.HOST}/message/${info.messageId}`,
-    parseMode: 'HTML',
+    subject: document.purpose.abstract,
+    parseMode: telegramParseMode,
     chatId: telegramChatId,
-    messageId: telegramMessageId,
   });
 });
 
 const storyLogger = winston.createLogger({
-  transports: [pqsqlTransport],
+  transports: [commandTransport],
 });
 storyLogger.on('error', async (error) => {
   logger.error(error.message);

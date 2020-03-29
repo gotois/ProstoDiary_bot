@@ -130,8 +130,8 @@ class Search extends TelegramBotRequest {
       );
     }
   }
-  async beginDialog() {
-    await super.beginDialog();
+  async beginDialog(silent) {
+    await super.beginDialog(silent);
     logger.info(`Поиск ${this.message.text}`);
 
     const dialogResult = await dialogService.search(

@@ -1,12 +1,11 @@
-const package_ = require('../../../../package.json');
-const { IS_AVA_OR_CI } = require('../../../environment');
-const { mail } = require('../../../lib/sendgrid');
-const logger = require('../../../lib/log');
-
+const package_ = require('../../package.json');
+const { IS_AVA_OR_CI } = require('../environment');
+const { mail } = require('./sendgrid');
+const logger = require('./log');
 /**
  * @description Отправляем сообщение. Попадает на почту на специально сгенерированный ящик gotois и после прочтения ботом удаляем
  * @param {object} requestObject - requestObject
- * @param {object} passport - passport
+ * @param {object} passport - passport credentions
  * @returns {Promise<string>}
  */
 async function notifyEmail(requestObject, passport) {
@@ -20,6 +19,9 @@ async function notifyEmail(requestObject, passport) {
     telegram_message_id = null,
     chat_id = null,
   } = requestObject;
+  if (typeof subject !== 'string') {
+    throw new TypeError('Subject is not a string');
+  }
   const headers = {
     'x-bot': package_.name,
     'x-bot-version': package_.version,
@@ -71,23 +73,5 @@ async function notifyEmail(requestObject, passport) {
     throw new Error('Email bad request');
   }
 }
-/**
- * npm run e2e -- --match='API notify'
- *
- * https://github.com/gotois/ProstoDiary_bot/issues/343
- * Нотификация пользователю. Текст не читаем для бота.
- * в зависимости от доступных девайсов (телеграм, почта)
- *
- * @description аналогичны push-notification
- * @param {object} parameters - parameters
- * @param {object} passport - passport gotoisCredentions
- * @returns {Promise<*>}
- */
-module.exports = async function(parameters, { passport }) {
-  logger.info('notify');
-  const { subject } = parameters;
-  if (typeof subject !== 'string') {
-    throw new TypeError('Subject is not a string');
-  }
-  await notifyEmail(parameters, passport);
-};
+
+module.exports = notifyEmail;

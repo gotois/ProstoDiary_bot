@@ -7,11 +7,11 @@ class Document extends TelegramBotRequest {
     this.method = 'insert';
   }
   async beginDialog(silent) {
-    await super.beginDialog();
+    await super.beginDialog(silent);
     const fileBuffer = await this.getTelegramFile(
       this.message.document.file_id,
     );
-    const result = await documentAction({
+    const jsonldAction = await documentAction({
       buffer: fileBuffer,
       mimeType: this.message.document.mime_type,
       date: this.message.date,
@@ -20,13 +20,7 @@ class Document extends TelegramBotRequest {
       },
       silent,
     });
-    const jsonldMessage = await this.rpc(result);
-    if (!silent) {
-      await this.bot.sendMessage(
-        this.message.chat.id,
-        jsonldMessage.purpose.abstract,
-      );
-    }
+    await this.rpc(jsonldAction);
   }
 }
 /**

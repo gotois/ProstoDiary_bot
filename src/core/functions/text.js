@@ -1,25 +1,13 @@
 const AbstractText = require('../models/abstracts/abstract-text');
 const textService = require('../../services/text.service');
 /**
- * @param {*} object - object
+ * @param {*} parameters - object
  * @returns {Promise<Abstract>}
  */
-module.exports = async ({
-  // hashtags, // todo поддержать на стороне JSONLD
-  telegram,
-  silent,
-  text,
-  auth,
-  creator,
-  publisher,
-}) => {
+module.exports = async (parameters) => {
   const abstractText = new AbstractText({
-    silent,
-    telegram,
-    text: await textService.correctionText(text),
-    auth,
-    creator,
-    publisher,
+    ...parameters,
+    text: await textService.correctionText(parameters.text),
   });
   await abstractText.prepare();
   return abstractText;

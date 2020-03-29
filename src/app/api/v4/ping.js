@@ -1,28 +1,24 @@
-const package_ = require('../../../../package.json');
-const logger = require('../../../lib/log');
-
+const commandLogger = require('../../../services/command-logger.service');
+const linkedDataSignature = require('../../../services/linked-data-signature.service');
+const RejectAction = require('../../../core/models/actions/reject');
+const AcceptAction = require('../../../core/models/actions/accept');
 /**
- * @param {jsonld} jsonld - parameters
+ * @param {object} document - parameters
  * @param {object} passport - passport gotoisCredentions
  * @returns {Promise<*>}
  */
-// eslint-disable-next-line
-module.exports = async function(jsonld, { passport }) {
-  logger.info('ping');
-
-  const document = {
-    '@context': 'http://schema.org',
-    '@type': 'AcceptAction',
-    'agent': {
-      '@type': 'Person',
-      'name': package_.name,
-    },
-    'purpose': {
-      '@type': 'Answer',
-      'abstract': 'pong',
-      'encodingFormat': 'text/plain',
-    },
-  };
-
-  return Promise.resolve(document);
+module.exports = async function(document, { passport }) {
+  try {
+    await linkedDataSignature.verifyDocument(document, passport);
+    commandLogger.info({
+      document: {
+        ...document,
+        ...AcceptAction('pong'),
+      },
+      passport,
+    });
+    return Promise.resolve(AcceptAction('pong'));
+  } catch (error) {
+    return Promise.reject(this.error(400, null, RejectAction(error)));
+  }
 };

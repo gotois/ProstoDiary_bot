@@ -3,7 +3,6 @@ const { pool } = require('../../../db/sql');
 const passportQueries = require('../../../db/passport');
 const logger = require('../../../lib/log');
 const twoFactorAuthService = require('../../../services/2fa.service');
-
 /**
  * @param {jsonld} jsonld - parameters
  * @param {object} passport - passport gotoisCredentions

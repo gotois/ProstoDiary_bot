@@ -1,20 +1,21 @@
-const logger = require('../../../lib/log');
-const linkedDataSignature = require('../../../services/linked-data-signature.service');
 const storyLogger = require('../../../services/story-logger.service');
+const linkedDataSignature = require('../../../services/linked-data-signature.service');
+const RejectAction = require('../../../core/models/actions/reject');
+const AcceptAction = require('../../../core/models/actions/accept');
 /**
- * @param {jsonld} jsonld - parameters
+ * @param {object} document - jsonld document
  * @param {object} passport - passport gotoisCredentions
  * @returns {Promise<*>}
  */
-module.exports = async function(jsonld, { passport }) {
+module.exports = async function(document, { passport }) {
   try {
-    await linkedDataSignature.verifyDocument(jsonld, passport);
+    await linkedDataSignature.verifyDocument(document, passport);
+    storyLogger.info({
+      document,
+      passport,
+    });
+    return Promise.resolve(AcceptAction('Данные отправлены в очередь'));
   } catch (error) {
-    logger.error(error);
-    return Promise.reject(
-      this.error(400, 'Проверка документа закончилась с ошибкой'),
-    );
+    return Promise.reject(this.error(400, null, RejectAction(error)));
   }
-  storyLogger.info(jsonld);
-  return Promise.resolve('Данные отправлены в очередь');
 };
