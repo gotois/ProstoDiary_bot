@@ -120,7 +120,7 @@
     "jimp": "0.9.6",
     "jose": "1.25.0",
     "jsonld": "3.0.1",
-    "jsonld-signatures": "4.6.0",
+    "jsonld-signatures": "5.0.1",
     "jsqr": "1.2.0",
     "mailparser": "2.7.7",
     "music-metadata": "6.3.7",
