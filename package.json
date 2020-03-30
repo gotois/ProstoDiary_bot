@@ -89,7 +89,7 @@
     "@google-cloud/speech": "3.6.0",
     "@google-cloud/translate": "5.3.0",
     "@google-cloud/vision": "1.11.0",
-    "@sendgrid/mail": "6.5.4",
+    "@sendgrid/mail": "6.5.5",
     "@sentry/node": "5.15.4",
     "accesscontrol": "2.2.1",
     "archiver": "3.1.1",
