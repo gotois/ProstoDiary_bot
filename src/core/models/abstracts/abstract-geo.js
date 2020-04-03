@@ -1,6 +1,6 @@
-const Abstract = require('./index');
+const Abstract = require('.');
 const package_ = require('../../../../package.json');
-const foursquare = require('../../../lib/foursquare'); // в моделях не должно быть либ
+const foursquare = require('../../../lib/foursquare');
 const { getFullName, getWeather, getGeoCode } = require('../../../services/location.service');
 
 /**

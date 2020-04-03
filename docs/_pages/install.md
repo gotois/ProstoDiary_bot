@@ -73,30 +73,20 @@ REDIS_URL={ URL } # вида 127.0.0.1:6379
 * Upload data/dialogflow/entities/food.csv
 </details>
 
+Посмотреть список параметров oidc:
+---
+http://localhost:9000/oidc/.well-known/openid-configuration
+
 Привязка ассистента
 ---
-Посмотреть список параметров oidc:
-- http://localhost:9000/oidc/.well-known/openid-configuration
-
-1) Добавьте нового clients в src/middlewares/oidc.js 
-- Назначьте client_id
-
-2) Передайте ключ client_id в запросе
+Выполните `npm run start:new-assistant` и следуйте инструкциям
 
 Примеры
 ---
-## Search assistant
-- http://0.0.0.0:9000/oidc/auth?client_id=search&response_type=code&scope=openid
-
 ## Telegram assistant
 - https://e309e9db.ngrok.io/oidc/auth?client_id=tg&response_type=code&scope=openid%20email%20email%20profile
-
-## Health assistant
-- http://0.0.0.0:9000/oidc/auth?client_id=health&response_type=code&scope=openid
 
 3) Введите email/password вашего бота в OpenID Connect
 
 4) Вы перейдете на http://0.0.0.0:9000/oidcallback?code=EOB2dYP9V6ZO7H1fFVFVS81LAfLPTzXVFeiZDNXJQZ2
 - Ассистент получает jwt
-
-! В дальнейшем при истечении jwt, требуется заново авторизироваться в OpenID Connect

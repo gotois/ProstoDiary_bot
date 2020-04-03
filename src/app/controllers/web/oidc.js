@@ -1,138 +1,120 @@
 const jose = require('jose');
-const { SERVER } = require('../../../environment');
-const oidc = require('../../middlewares/oidc');
 const passportQueries = require('../../../db/passport');
-const { pool, sql } = require('../../../db/sql');
+const assistantQueries = require('../../../db/assistant');
+const { pool } = require('../../../db/sql');
 const logger = require('../../../lib/log');
 const requestService = require('../../../services/request.service');
-/**
- * этот callback должен выполняться на ассистенте и записывать JWT в свою БД
- *
- * @param {*} request - request
- * @param {*} response - response
- * @returns {Promise<void>}
- */
-module.exports.oidcallback = async (request, response) => {
-  if (request.error) {
-    response.sendStatus(400).send(request.error);
-    return;
-  }
-  if (request.query.error) {
-    response
-      .sendStatus(400)
-      .send(request.query.error + '\n' + request.query.error_description);
-    return;
-  }
+const { SERVER } = require('../../../environment');
 
-  try {
-    const tokenResult = await requestService.post(SERVER.HOST + '/oidc/token', {
-      client_id: request.query.client_id,
-      client_secret: 'foobar',
-      code: request.query.code,
-      grant_type: 'authorization_code',
-    });
-    const decoded = jose.JWT.decode(tokenResult.id_token);
-    logger.info(decoded);
-
-    await pool.connect(async (connection) => {
-      const checkAssistant = await connection.maybeOne(
-        sql`select 1 from assistant where user_id = ${decoded.client_id}
-        `,
-      );
-      // eslint-disable-next-line
-      if (Boolean(checkAssistant)) {
-        await connection.query(
-          sql`UPDATE assistant
-          SET token = ${tokenResult.id_token}
-          WHERE user_id = ${decoded.client_id}`,
-        );
-      } else {
-        await connection.query(
-          sql`INSERT INTO assistant
-        (user_id, token)
-        VALUES (${decoded.client_id}, ${tokenResult.id_token})
-        `,
-        );
+class OIDC {
+  constructor(provider) {
+    this.oidc = provider;
+  }
+  /**
+   * @description callback должен выполняться на ассистенте и записывать JWT в свою БД
+   * @param {*} request - request
+   * @param {*} response - response
+   * @returns {Promise<void>}
+   */
+  async oidcallback(request, response) {
+    logger.info('oidcallback');
+    try {
+      if (request.error) {
+        throw new Error(request.error);
       }
-    });
-
-    response.send(
-      `Ассистент ${decoded.aud} подключен. Можете пользоваться ассистентом.`,
-    );
-  } catch (error) {
-    response.sendStatus(400).send(error);
-  }
-};
-
-module.exports.interactionContinue = async (request, response, next) => {
-  try {
-    const interaction = await oidc.interactionDetails(request, response);
-    if (request.body.switch) {
-      if (interaction.params.prompt) {
-        const prompts = new Set(interaction.params.prompt.split(' '));
-        prompts.add('login');
-        interaction.params.prompt = [...prompts].join(' ');
-      } else {
-        interaction.params.prompt = 'logout';
+      if (request.query.error) {
+        throw new Error(request.query.error + '\n' + request.query.error_description);
       }
-      await interaction.save();
-    }
-    const result = { select_account: {} };
-    await oidc.interactionFinished(request, response, result, {
-      mergeWithLastSubmission: false,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// @see https://github.com/panva/node-oidc-provider/blob/master/example/routes/express.js
-module.exports.interactionUID = async (request, response, next) => {
-  try {
-    const details = await oidc.interactionDetails(request, response);
-    const { uid, prompt, params, session } = details;
-    const client = await oidc.Client.find(params.client_id);
-
-    switch (prompt.name) {
-      case 'select_account': {
-        if (!session) {
-          return oidc.interactionFinished(
-            request,
-            response,
-            { select_account: {} },
-            { mergeWithLastSubmission: false },
-          );
+      const tokenResult = await requestService.post(SERVER.HOST + '/oidc/token', {
+        client_id: request.query.client_id,
+        client_secret: 'foobar',
+        code: request.query.code,
+        grant_type: 'authorization_code',
+        redirect_uri: SERVER.HOST + `/oidcallback?client_id=${request.query.client_id}`,
+      });
+      const decoded = jose.JWT.decode(tokenResult.id_token);
+      const assistantData = await pool.connect(async (connection) => {
+        // сверяем что такой client_id ассистента существует
+        const assistantIsAlive = await connection.maybeOne(
+          assistantQueries.exist(request.query.client_id),
+        );
+        if (!assistantIsAlive) {
+          // обновляется токен бота
+          await connection.query(assistantQueries.updateAssistantBotToken(tokenResult.id_token, decoded.client_id));
+          const assistantData = await connection.one(assistantQueries.selectAssistantById(request.query.client_id));
+          return assistantData;
+        } else {
+          const assistantData = await connection.one(assistantQueries.selectAssistantById(request.query.client_id));
+          // создается новый assistant.bot, ассистент сохраняет JWT
+          // а в таблицу passport.bot записывается id ассистента (tg@gotointeractive.com)
+          await connection.query(assistantQueries.createAssistantBot({
+            assistant_marketplace_id: assistantData.id,
+            token: tokenResult.id_token,
+            bot_user_email: decoded.email,
+          }));
+          return assistantData;
         }
-
-        // todo findAccount
-        // const account = await oidcParser.Account.findAccount(
-        //   undefined,
-        //   session.accountId,
-        // );
-        // const { email } = await account.claims(
-        //   'prompt',
-        //   'email',
-        //   { email: null },
-        //   [],
-        // );
-
-        // return res.render('select_account', {
-        //   client,
-        //   uid,
-        //   email,
-        //   details: prompt.details,
-        //   params,
-        //   title: 'Sign-in',
-        //   session: session ? debug(session) : undefined,
-        //   dbg: {
-        //     params: debug(params),
-        //     prompt: debug(prompt),
-        //   },
-        // });
-        break;
+      });
+      // в случае успеха надо перекидывать на homepage страницу ассистента
+      if (assistantData.homepage) {
+        response.redirect(assistantData.homepage);
+        return;
       }
-      case 'login': {
-        response.send(`
+      response.send(
+        `Подключен ассистент ${decoded.aud} для бота ${decoded.email}. Можете пользоваться ассистентом.`,
+      );
+    } catch (error) {
+      response.status(400).json({ error: error.message });
+    }
+  }
+  // @see https://github.com/panva/node-oidc-provider/blob/master/example/routes/express.js
+  async interactionUID(request, response) {
+    logger.info('interactionUID');
+    try {
+      const details = await this.oidc.interactionDetails(request, response);
+      const { uid, prompt, params, session } = details;
+      const client = await this.oidc.Client.find(params.client_id);
+
+      switch (prompt.name) {
+        case 'select_account': {
+          if (!session) {
+            return this.oidc.interactionFinished(
+              request,
+              response,
+              { select_account: {} },
+              { mergeWithLastSubmission: false },
+            );
+          }
+
+          // todo findAccount
+          // const account = await Account.findAccount(
+          //   undefined,
+          //   session.accountId,
+          // );
+          // const { email } = await account.claims(
+          //   'prompt',
+          //   'email',
+          //   { email: null },
+          //   [],
+          // );
+
+          // return res.render('select_account', {
+          //   client,
+          //   uid,
+          //   email,
+          //   details: prompt.details,
+          //   params,
+          //   title: 'Sign-in',
+          //   session: session ? debug(session) : undefined,
+          //   dbg: {
+          //     params: debug(params),
+          //     prompt: debug(prompt),
+          //   },
+          // });
+          break;
+        }
+        case 'login': {
+          response.send(`
       <h1>${client.clientId}</h1>
       <form autocomplete="off" action="/interaction/${uid}/login" method="post">
         <input required type="email" name="email" placeholder="Enter bot email" autofocus="on">
@@ -143,14 +125,14 @@ module.exports.interactionUID = async (request, response, next) => {
         <a href="/interaction/${uid}/abort">[ Abort ]</a>
       </div>
         `);
-        break;
-      }
-      case 'consent': {
-        response.send(`
+          break;
+        }
+        case 'consent': {
+          response.send(`
   ${prompt.details.scopes.new.map((scope) => {
-    return `
+            return `
       <li>${scope}</li>`;
-  })}
+          })}
       <form autocomplete="off" action="/interaction/${uid}/confirm" method="post">
         <button autofocus type="submit">Continue</button>
       </form>
@@ -158,80 +140,103 @@ module.exports.interactionUID = async (request, response, next) => {
         <a href="/interaction/${uid}/abort">[ Abort ]</a>
       </div>
 `);
-        break;
+          break;
+        }
+        default: {
+          return undefined;
+        }
       }
-      default: {
-        return undefined;
+    } catch (error) {
+      response.status(400).json({ error: error.message });
+    }
+  }
+  // authenticate
+  async interactionLogin(request, response) {
+    logger.info('interactionLogin');
+    try {
+      const {
+        prompt: { name },
+      } = await this.oidc.interactionDetails(request, response);
+      logger.info('name: ' + name);
+      const botInfo = await pool.connect(async (connection) => {
+        const result = await connection.maybeOne(
+          passportQueries.getPassport(request.body.email, request.body.password),
+        );
+        return result;
+      });
+
+      if (!botInfo) {
+        throw new Error('Invalid email or password.');
       }
-    }
-  } catch (error) {
-    return next(error);
-  }
-};
-
-// authenticate
-module.exports.interactionLogin = async (request, response, next) => {
-  try {
-    const {
-      prompt: { name },
-    } = await oidc.interactionDetails(request, response);
-    logger.info('name: ' + name);
-    const botInfo = await pool.connect(async (connection) => {
-      const result = await connection.maybeOne(
-        passportQueries.getPassport(request.body.email, request.body.password),
-      );
-      return result;
-    });
-
-    if (!botInfo) {
-      response.sendStatus(401).send('Invalid email or password.');
-      return;
-    }
-    const result = {
-      select_account: {}, // make sure its skipped by the interaction policy since we just logged in
-      login: {
-        account: botInfo.id,
-      },
-    };
-    await oidc.interactionFinished(request, response, result, {
-      mergeWithLastSubmission: false,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-module.exports.interactionConfirm = async (request, response, next) => {
-  try {
-    logger.info('interactionConfirm');
-    await oidc.interactionFinished(
-      request,
-      response,
-      {
-        consent: {
-          // rejectedScopes: [], // < uncomment and add rejections here
-          // rejectedClaims: [], // < uncomment and add rejections here
+      const result = {
+        select_account: {}, // make sure its skipped by the interaction policy since we just logged in
+        login: {
+          account: botInfo.id,
         },
-      },
-      {
-        mergeWithLastSubmission: true,
-      },
-    );
-  } catch (error) {
-    next(error);
+      };
+      await this.oidc.interactionFinished(request, response, result, {
+        mergeWithLastSubmission: false,
+      });
+    } catch (error) {
+      response.status(400).json({ error: error.message });
+    }
   }
-};
+  async interactionContinue(request, response) {
+    logger.info('interactionContinue');
+    try {
+      const interaction = await this.oidc.interactionDetails(request, response);
+      if (request.body.switch) {
+        if (interaction.params.prompt) {
+          const prompts = new Set(interaction.params.prompt.split(' '));
+          prompts.add('login');
+          interaction.params.prompt = [...prompts].join(' ');
+        } else {
+          interaction.params.prompt = 'logout';
+        }
+        await interaction.save();
+      }
+      const result = { select_account: {} };
+      await this.oidc.interactionFinished(request, response, result, {
+        mergeWithLastSubmission: false,
+      });
+    } catch (error) {
+      response.status(400).json({ error: error.message });
+    }
+  }
+  async interactionConfirm(request, response) {
+    logger.info('interactionConfirm');
+    try {
+      await this.oidc.interactionFinished(
+        request,
+        response,
+        {
+          consent: {
+            // rejectedScopes: [], // < uncomment and add rejections here
+            // rejectedClaims: [], // < uncomment and add rejections here
+          },
+        },
+        {
+          mergeWithLastSubmission: true,
+        },
+      );
+    } catch (error) {
+      response.status(400).json({ error: error.message });
+    }
+  }
+  async interactionAbort(request, response) {
+    logger.info('interactionAbort');
+    try {
+      const result = {
+        error: 'access_denied',
+        error_description: 'End-User aborted interaction',
+      };
+      await this.oidc.interactionFinished(request, response, result, {
+        mergeWithLastSubmission: false,
+      });
+    } catch (error) {
+      response.status(400).json({ error: error.message });
+    }
+  }
+}
 
-module.exports.interactionAbort = async (request, response, next) => {
-  try {
-    const result = {
-      error: 'access_denied',
-      error_description: 'End-User aborted interaction',
-    };
-    await oidc.interactionFinished(request, response, result, {
-      mergeWithLastSubmission: false,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+module.exports = OIDC;

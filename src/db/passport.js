@@ -12,8 +12,8 @@ module.exports = {
    * @returns {*}
    */
   checkByEmailAndMasterPassword(login, password) {
-    return sql`select 1 from passport.user AS passportUser, passport.bot AS passportBot
-where (passportUser.email = ${login} OR passportUser.telegram_id = ${login})
+    return sql`SELECT 1 FROM passport.user AS passportUser, passport.bot AS passportBot
+WHERE (passportUser.email = ${login} OR passportUser.telegram_id = ${login})
 AND
 passportBot.master_password = crypt(${password}, master_password)
 `;
@@ -98,7 +98,6 @@ WHERE
    * @param {string} obj.secretKey - secret key
    * @param {buffer} obj.publicKeyCert - public key pem
    * @param {buffer} obj.privateKeyCert - private key pem
-   * @param {?string} obj.chatId - telegram chat id
    * @returns {*}
    */
   createBot({
@@ -110,11 +109,10 @@ WHERE
     masterPassword,
     publicKeyCert,
     privateKeyCert,
-    chatId = null,
   }) {
     return sql`
 INSERT INTO passport.bot
-    (passport_id, email, email_uid, email_password, secret_key, master_password, public_key_cert, private_key_cert, telegram_chat_id)
+    (passport_id, email, email_uid, email_password, secret_key, master_password, public_key_cert, private_key_cert)
 VALUES
     (
     ${passportId},
@@ -124,8 +122,7 @@ VALUES
     ${secretKey},
     crypt(${masterPassword}, gen_salt('bf', 8)),
     ${sql.binary(publicKeyCert)},
-    ${sql.binary(privateKeyCert)},
-    ${chatId}
+    ${sql.binary(privateKeyCert)}
     )
 `;
   },

@@ -18,16 +18,6 @@ class SignIn extends TelegramBotRequest {
       await this.bot.sendMessage(this.message.chat.id, error.purpose.text);
       return;
     }
-    const me = await this.bot.getMe();
-    await this.bot.sendMessage(
-      this.message.chat.id,
-      `Приветствую ${this.message.chat.first_name}!\n` +
-        `Я твой персональный бот __${me.first_name}__.\n` +
-        'Узнай все мои возможности командой /help.',
-      {
-        parse_mode: 'Markdown',
-      },
-    );
   }
   async beginDialog() {
     if (this.message.reply_to_message) {

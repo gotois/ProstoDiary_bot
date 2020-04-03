@@ -1,6 +1,6 @@
 const linkedDataSignature = require('../../services/linked-data-signature.service');
 
-module.exports.signature = async function(document) {
+module.exports.signature = async function (document) {
   const signedMessage = await linkedDataSignature.signDocument(
     document,
     this.public_key_cert.toString('utf8'),

@@ -2,9 +2,9 @@ const AbstractCommand = require('../models/abstracts/abstract-command');
 const { rpc } = require('../../services/request.service');
 /**
  * @description блокировки чтения/приема и общей работы бота
- * @returns {Promise<jsonld>}
+ * @returns {Promise<AbstractCommand>}
  */
-module.exports = async function({ auth }) {
+module.exports = async function ({ auth }) {
   const abstractCommand = new AbstractCommand({
     command: 'SignOut',
   });

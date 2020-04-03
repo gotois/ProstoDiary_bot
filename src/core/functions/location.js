@@ -1,25 +1,12 @@
-const { rpc } = require('../../services/request.service');
 const AbstractGeo = require('../models/abstracts/abstract-geo');
 /**
  * @param {object} object - object
  * @param {number} object.latitude - latitude
  * @param {number} object.longitude - longitude
- * @param {*} object.jwt - jwt
- * @param {*} object.auth - basic auth
- * @returns {Promise<*>}
+ * @returns {Promise<AbstractGeo>}
  */
-module.exports = async function({ latitude, longitude, jwt, auth }) {
+module.exports = async function ({ latitude, longitude }) {
   const locationGeo = new AbstractGeo({ latitude, longitude });
   await locationGeo.prepare();
-  const jsonldMessage = await rpc({
-    body: {
-      jsonrpc: '2.0',
-      method: 'insert',
-      id: 1,
-      params: locationGeo.context,
-    },
-    jwt,
-    auth,
-  });
-  return jsonldMessage;
+  return locationGeo;
 };

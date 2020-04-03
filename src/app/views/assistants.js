@@ -1,18 +1,26 @@
 const qs = require('qs');
-const { CLIENTS } = require('../../environment');
+const { SERVER } = require('../../environment');
 
-module.exports = () => {
-  const data = CLIENTS.map((client) => {
-    const tgParameters = qs.stringify({
+module.exports = ({ clients }) => {
+  const data = clients.map((client) => {
+    const linkQuery = qs.stringify({
       client_id: client.client_id,
-      response_type: client.response_type,
+      response_type: client.response_types[0],
+      redirect_uri: client.redirect_uris[0],
       scope: 'openid email profile',
     });
     return {
       client_id: client.client_id,
-      application_type: client.application_type,
-      link: `/oidc/auth?${tgParameters}`,
+      connect: `${SERVER.HOST}/oidc/auth?${linkQuery}`,
+      homepage: client.homepage,
     };
   });
-  return JSON.stringify(data, null, 2);
+  return `
+    <h1>Marketplace</h1>
+    <ul>${data.map((assistant) => `
+        <li><a href="${assistant.connect}">${assistant.client_id}</a> <a href="${assistant.homepage}">[Homepage]</a></li>
+      `
+    )}
+    </ul>
+  `;
 };

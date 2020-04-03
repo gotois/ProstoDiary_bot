@@ -35,20 +35,23 @@ module.exports = async (request, response, next) => {
         //   permission = ac.can(role).readAny('message');
         // }
         if (!permission.granted) {
-          return response.status(403).json({ message: 'forbidden' });
+          response.status(403).json({ message: 'forbidden' });
+          return;
         }
         // todo показывать отдельный список для пользователя/бота, и для сторонних людей - https://github.com/gotois/ProstoDiary_bot/issues/280#issuecomment-558048329
         switch (request.headers.accept) {
           case 'application/schema+json':
           case 'application/json': {
-            return response.status(200).json(storyTable);
+            response.status(200).json(storyTable);
+            return;
           }
           default: {
             response.status(200).send(template(storyTable));
+            return;
           }
         }
       } catch (error) {
-        return response.status(404).json({ message: error.message });
+        response.status(404).json({ message: error.message });
       }
     });
   } catch (error) {

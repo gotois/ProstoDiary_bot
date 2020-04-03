@@ -20,9 +20,9 @@ const isValidDate = (date) => {
     return (
       dateFns.isValid(new Date(date)) &&
       !checkDateLaterThanNow(new Date(date)) &&
-      !isNaN(Date.parse(date))
+      !Number.isNaN(Date.parse(date))
     );
-  } catch (_) {
+  } catch {
     return false;
   }
 };

@@ -1,48 +1,41 @@
-const qs = require('qs');
 const TelegramBotMessage = require('./models/message');
 const logger = require('../../lib/log');
-const { SERVER } = require('../../environment');
 const { telegram, botCommands } = require('./commands');
+
+const assistantChatQueries = require('../../db/chat');
+
 
 module.exports = (telegramBot) => {
   const onAgree = async (message) => {
     logger.info('start.agree');
-    // TODO: эти данные лучше не передавать на сторонний сервер.
-    //  Лучше использовать какой-то безобидный id -
-    //  например id текущей сессии, которая после колбэка будет уничтожаться в oauth.js
-    const callbackValues = qs.stringify({
-      telegram: {
-        ...message,
-      },
-    });
     await telegramBot.deleteMessage(message.chat.id, message.message_id);
     await telegramBot.sendMessage(message.chat.id, 'Договор подписан', {
       reply_markup: {
         remove_keyboard: true,
       },
     });
-    logger.info(`${SERVER.HOST}/connect/facebook?${callbackValues}`);
-    logger.info(`${SERVER.HOST}/connect/yandex?${callbackValues}`);
+    // https://github.com/gotois/ProstoDiary_bot/issues/523
+    // Ассистент детектирует бота пользователя, запрашивает 2FA
+    // ...
+
+
+
+    console.log(message)
+
+    assistantChatQueries.createChat({
+      id: message.chat.id,
+      name: message.chat.username,
+      assistant_id: '',
+    })
+
+    const me = await telegramBot.getMe();
     await telegramBot.sendMessage(
       message.chat.id,
-      'Выберите способ авторизации:',
+      `Приветствую ${message.chat.first_name}!\n` +
+      `Я твой персональный бот __${me.first_name}__.\n` +
+      'Узнай все мои возможности командой /help.',
       {
-        parse_mode: 'HTML',
-        reply_markup: {
-          force_reply: true,
-          inline_keyboard: [
-            [
-              {
-                text: 'Yandex',
-                url: `${SERVER.HOST}/connect/yandex?${callbackValues}`,
-              },
-              {
-                text: 'Facebook',
-                url: `${SERVER.HOST}/connect/facebook?${callbackValues}`,
-              },
-            ],
-          ],
-        },
+        parse_mode: 'Markdown',
       },
     );
   };
@@ -109,6 +102,10 @@ module.exports = (telegramBot) => {
         }
         case 'migrate_from_chat_id': {
           await botMessage.migrateFromChat();
+          break;
+        }
+        case 'left_chat_member': {
+          await botMessage.leftChatMember();
           break;
         }
         default: {

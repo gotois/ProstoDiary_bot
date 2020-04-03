@@ -80,10 +80,12 @@ module.exports = async (request, response, next) => {
     });
   } catch (error) {
     logger.error(error);
-    return response.status(500).send('500 Bad Error: ' + error.message);
+    response.status(500).send('500 Bad Error: ' + error.message);
+    return;
   }
   if (!passport) {
-    return response.sendStatus(401).send('Unauthorized');
+    response.sendStatus(401).send('Unauthorized');
+    return;
   }
   logger.info(`API:${request.body.method}`);
   try {
@@ -93,7 +95,7 @@ module.exports = async (request, response, next) => {
       request.body.params,
       passport,
     );
-    return response.send(result);
+    response.send(result);
   } catch (error) {
     if (typeof error === 'string') {
       response.status(400).json(JSON.parse(error));

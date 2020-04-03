@@ -1,5 +1,6 @@
 const { telegram, botCommands } = require('../commands');
 const { IS_AVA } = require('../../../environment');
+const logger = require('../../../lib/log');
 
 const checkMessage = (message) => {
   // Пропускаем команды бота
@@ -63,6 +64,7 @@ class TelegramBotMessage {
     }
   }
   async sendCommand(event) {
+    logger.info('sendCommand');
     const { message } = this;
     if (this.inGroup && this.silent) {
       return;
@@ -71,6 +73,7 @@ class TelegramBotMessage {
     await require('../controllers/' + event)(message, this.silent);
   }
   async sendText() {
+    logger.info('sendText');
     const { message } = this;
     checkMessage(message);
     if (message.reply_to_message) {
@@ -87,6 +90,7 @@ class TelegramBotMessage {
     await require('../controllers/text.event')(message, this.silent);
   }
   async sendPhoto() {
+    logger.info('sendPhoto');
     const { message } = this;
     if (!message.passport.activated) {
       throw new Error('Bot not activated');
@@ -94,6 +98,7 @@ class TelegramBotMessage {
     await require('../controllers/photo.event')(message, this.silent);
   }
   async sendDocument() {
+    logger.info('sendDocument');
     const { message } = this;
     if (!message.passport.activated) {
       throw new Error('Bot not activated');
@@ -101,6 +106,7 @@ class TelegramBotMessage {
     await require('../controllers/document.event')(message, this.silent);
   }
   async sendLocation() {
+    logger.info('sendLocation');
     const { message } = this;
     if (!message.passport.activated) {
       throw new Error('Bot not activated');
@@ -108,6 +114,7 @@ class TelegramBotMessage {
     await require('../controllers/location.event')(message, this.silent);
   }
   async sendVoice() {
+    logger.info('sendVoice');
     const { message } = this;
     if (!message.passport.activated) {
       throw new Error('Bot not activated');
@@ -115,13 +122,20 @@ class TelegramBotMessage {
     await require('../controllers/voice.event')(message, this.silent);
   }
   async groupChatCreated() {
+    logger.info('groupChatCreated');
     await require('../controllers/group-chat-created.event')(this.message);
   }
   async newChatMembers() {
+    logger.info('newChatMembers');
     await require('../controllers/new-chat-members.event')(this.message);
   }
-  migrateFromChat() {
-    // todo
+  async migrateFromChat() {
+    logger.info('migrateFromChat');
+    await require('../controllers/migrate-from-chat.event')(this.message);
+  }
+  async leftChatMember() {
+    logger.info('leftChatMember');
+    await require('../controllers/left-chat-member.event')(this.message);
   }
 }
 

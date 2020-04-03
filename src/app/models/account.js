@@ -1,5 +1,5 @@
-const { pool } = require('../../../db/sql');
-const passportQueries = require('../../../db/passport');
+const { pool } = require('../../db/sql');
+const passportQueries = require('../../db/passport');
 
 const store = new Map();
 
@@ -28,6 +28,7 @@ class Account {
   /**
    * Получение аккаунта и запись в стор
    *
+   * @todo надо переделать под выборку через redis
    * @param {*} context - context
    * @param {*} id - id
    * @returns {Promise<any>}

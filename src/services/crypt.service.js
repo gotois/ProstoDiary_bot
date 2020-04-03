@@ -16,10 +16,7 @@ const BITES_LENGTH = 16;
  * @returns {string}
  */
 const getCheckSum = (buffer, algorithm = 'md5', encoding = 'hex') => {
-  return crypto
-    .createHash(algorithm)
-    .update(buffer, 'utf8')
-    .digest(encoding);
+  return crypto.createHash(algorithm).update(buffer, 'utf8').digest(encoding);
 };
 /**
  * @deprecated

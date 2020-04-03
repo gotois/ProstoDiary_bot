@@ -24,9 +24,9 @@ WHERE
           '@context': 'https://schema.org',
           '@type': 'Person',
         };
-        return response.status(200).json(personLD);
+        response.status(200).json(personLD);
       } catch (error) {
-        return response.status(404).json({ message: error.message });
+        response.status(404).json({ message: error.message });
       }
     });
   } catch (error) {

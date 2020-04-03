@@ -183,28 +183,6 @@ const ENV = {
       return FOURSQUARE_CLIENT_SECRET;
     },
   },
-  get CLIENTS() {
-    // где client_id становится алиасом для email вида search - search@gotointeractive.com
-    const tgClientId = 'tg'; // todo должен быть '@ProstoDiary_bot'
-    const tgAssistant = {
-      client_id: tgClientId,
-      client_secret: 'foobar',
-      application_type: 'web',
-      grant_types: ['implicit', 'authorization_code'],
-      response_types: ['code'],
-      redirect_uris: [ENV.SERVER.HOST + `/oidcallback?client_id=${tgClientId}`],
-      token_endpoint_auth_method: 'client_secret_post',
-    };
-    return [
-      // {
-      //   client_id: 'search',
-      // },
-      // {
-      //   client_id: 'health',
-      // },
-      tgAssistant,
-    ];
-  },
   /**
    * @see path отличается одним символом @
    * @returns {string}

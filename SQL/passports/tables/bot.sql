@@ -1,3 +1,5 @@
+-- fixme ОБНОВИТЬ БД с новой схемой
+-- rename: user.bot
 CREATE TABLE IF NOT EXISTS passport.bot (
 id UUID NOT NULL DEFAULT gen_random_uuid(),
 
@@ -19,14 +21,7 @@ master_password TEXT NOT NULL,
 secret_key TEXT NOT NULL,
 
 public_key_cert BYTEA NOT NULL,
-private_key_cert BYTEA NOT NULL,
-
--- собственно сам чат телеграма
-telegram_chat_id TEXT,
-
--- todo нужно добавить id и controller вида:
--- думаю можно использовать отдельную VIEW для этого, где брать alice в виде bot id, а key инкрементировать через SERIAL
--- https://example.com/i/alice/keys/1 и https://example.com/i/alice
+private_key_cert BYTEA NOT NULL
 
 PRIMARY KEY (id)
 );

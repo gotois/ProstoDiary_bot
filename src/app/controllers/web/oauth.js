@@ -1,8 +1,4 @@
-const bot = require('../../../include/telegram-bot/bot');
 const logger = require('../../../lib/log');
-const {
-  SignIn,
-} = require('../../../include/telegram-bot/controllers/signin.event');
 const package_ = require('../../../../package.json');
 const { pool, NotFoundError } = require('../../../db/sql');
 const passportQueries = require('../../../db/passport');
@@ -12,7 +8,46 @@ const twoFactorAuthService = require('../../../services/2fa.service');
 const oauthService = require('../../../services/oauth.service');
 const cryptService = require('../../../services/crypt.service');
 const { pack } = require('../../../services/archive.service');
-const { IS_PRODUCTION } = require('../../../environment');
+const { IS_PRODUCTION, SERVER } = require('../../../environment');
+const template = require('../../views/registration');
+
+module.exports = class OAUTH {
+  // подтверждение авторизации oauth. Сначала переходить сначала по ссылке вида https://cd0b2563.eu.ngrok.io/connect/yandex
+  // Через localhost не будет работать
+  constructor() {
+    // здесь устанавливать подключение в БД
+  }
+  async callback(request, response) {
+    logger.info('web:oauth');
+    try {
+      const { grant } = request.session;
+      switch (grant.provider) {
+        case 'yandex':
+        case 'facebook': {
+          if (grant.response.error) {
+            throw new Error(grant.response.error.error_message);
+          }
+          break;
+        }
+        default: {
+          throw new Error('unknown provider: ' + grant.provider);
+        }
+      }
+      const result = await oauth({
+        [grant.provider]: {
+          ...grant.response,
+          access_token: response.access_token,
+        },
+      });
+      response.status(200).send(result);
+    } catch (error) {
+      response.status(400).json(error);
+    }
+  }
+  registration(request, response) {
+    response.status(200).send(template());
+  }
+};
 
 /**
  * @param {*} transactionConnection - transactionConnection
@@ -42,19 +77,23 @@ const updateOauthPassport = async (
   transactionConnection,
   { telegram, yandex, facebook },
 ) => {
-  const passportTable = await getPassport(transactionConnection, {
-    telegram_id: telegram.from.id,
-  });
   if (telegram) {
+    const passportTable = await getPassport(transactionConnection, {
+      telegram_id: telegram.from.id,
+    });
     await transactionConnection.query(
       passportQueries.updateTelegramPassportByPassportId(
         telegram,
         passportTable.id,
       ),
     );
+    return passportTable;
   }
   if (yandex) {
     const yandexPassport = await oauthService.yandex(yandex.raw);
+    const passportTable = await getPassport(transactionConnection, {
+      yandex_id: yandexPassport.client_id,
+    });
     await transactionConnection.query(
       passportQueries.updateYandexPassportByPassportId(
         yandexPassport,
@@ -62,9 +101,13 @@ const updateOauthPassport = async (
         passportTable.id,
       ),
     );
+    return passportTable;
   }
   if (facebook) {
     const fbPassport = await oauthService.facebook(facebook.raw);
+    const passportTable = await getPassport(transactionConnection, {
+      facebook_id: fbPassport.id,
+    });
     await transactionConnection.query(
       passportQueries.updateFacebookPassportByPassportId(
         fbPassport,
@@ -72,8 +115,9 @@ const updateOauthPassport = async (
         passportTable.id,
       ),
     );
+    return passportTable;
   }
-  return passportTable;
+  throw new Error('unknown passport');
 };
 /**
  * @param {*} transactionConnection - sql transaction
@@ -141,7 +185,6 @@ const createOauthPassport = async (
         masterPassword: secret.masterPassword,
         publicKeyCert,
         privateKeyCert,
-        chatId: telegram.chat && telegram.chat.id,
       }),
     );
     logger.info('pre.pack');
@@ -157,7 +200,6 @@ const createOauthPassport = async (
     ]);
 
     logger.info('pre.mail');
-    // использовать v3/notify здесь не получится из-за того что только здесь насыщается passport
     await mail.send({
       to: passport.email,
       from: email,
@@ -178,7 +220,7 @@ const createOauthPassport = async (
         <h2>Шаг 3: Активируйте бота.</h2>
         <p>Пришлите <a href="https://prosto-diary.gotointeractive.com/">ProstoDiary_bot</a> сгенерированный токен от двухфакторной аутентификации.</p>
         <h2>Шаг 4: Выберите и активируйте ассистента.</h2>
-        <p>На странице / выберите ассистента. Введите серверу OIDC данные своего bot email и password</p>
+        <p><a href="${SERVER.HOST}/marketplace">выберите ассистента</a>. Введите серверу OIDC данные своего bot email и password</p>
       `,
       attachments: [
         {
@@ -203,6 +245,7 @@ const createOauthPassport = async (
  */
 async function oauth(requestObject) {
   logger.info('oauth');
+  // todo возможно telegram предстоит убрать - так как у него нет oauth
   const { yandex, facebook, telegram } = requestObject;
   if (!yandex && !facebook && !telegram) {
     throw new Error('Unknown provider oauth');
@@ -216,6 +259,7 @@ async function oauth(requestObject) {
             yandex,
             facebook,
           });
+          // todo надо дополнительно отправлять письмо
           return 'Вы успешно обновили данные своего паспорта.';
         } catch (error) {
           if (error instanceof NotFoundError) {
@@ -235,43 +279,3 @@ async function oauth(requestObject) {
   });
   return result;
 }
-
-module.exports = async (request, response) => {
-  logger.info('web:preoauth');
-  const { grant } = request.session;
-  switch (grant.provider) {
-    case 'yandex':
-    case 'facebook': {
-      if (grant.response.error) {
-        return response.status(400).send(grant.response.error.error_message);
-      }
-      break;
-    }
-    default: {
-      return response.status(404).send('unknown provider: ' + grant.provider);
-    }
-  }
-  try {
-    logger.info('web:oauth');
-    const result = await oauth({
-      [grant.provider]: {
-        ...grant.response,
-        access_token: response.access_token,
-      },
-      telegram: grant.dynamic && grant.dynamic.telegram, // если делаем прямой переход по урлу, то никакого telegram не будет
-    });
-    if (grant.dynamic && grant.dynamic.telegram) {
-      await bot.sendMessage(grant.dynamic.telegram.chat.id, result);
-      try {
-        const signIn = new SignIn(grant.dynamic.telegram);
-        await signIn.beginDialog();
-      } finally {
-        response.redirect('tg://resolve?domain=ProstoDiary_bot');
-      }
-      return;
-    }
-    return response.status(200).send(result);
-  } catch (error) {
-    response.status(400).json(error);
-  }
-};

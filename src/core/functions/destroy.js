@@ -4,7 +4,7 @@ const AbstractCommand = require('../models/abstracts/abstract-command');
  * @description Удаление всей истории пользователя целиком
  * @returns {Promise<Abstract>}
  */
-module.exports = async function() {
+module.exports = async function () {
   const abstractCommand = new AbstractCommand({
     command: 'Destroy',
   });

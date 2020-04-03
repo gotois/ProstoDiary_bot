@@ -11,7 +11,7 @@ const logger = require('../../lib/log');
  * @param {string} info.botSecretKey - botTable secret_key
  * @returns {Promise<void>}
  */
-module.exports = async function({ email, password, botSecretKey }) {
+module.exports = async function ({ email, password, botSecretKey }) {
   const imap = imapService(
     {
       host: 'imap.yandex.ru',

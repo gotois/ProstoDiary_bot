@@ -66,6 +66,11 @@ npm run dev
 npm start
 ```
 
+### Create new assistant
+```bash
+npm run start:new-assistant
+```
+
 Tools
 ---
 #### Package upgrade

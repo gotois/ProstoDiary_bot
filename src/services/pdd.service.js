@@ -46,10 +46,7 @@ const createYaMail = async (login) => {
   if (validator.isURL(login)) {
     login = login.replace(new RegExp('^https?://', 'i'), '').toLowerCase();
   } else if (validator.isUUID) {
-    login = login
-      .toLowerCase()
-      .replace(/-/g, '')
-      .slice(0, 30);
+    login = login.toLowerCase().replace(/-/g, '').slice(0, 30);
   } else {
     throw new Error('Login wrong type');
   }
