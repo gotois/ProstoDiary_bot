@@ -3,7 +3,7 @@ const { sql } = require('./sql');
 module.exports = {
   selectRoleByEmail(email) {
     return sql`
-        SELECT role FROM passport.roles WHERE email = ${email}
+        SELECT role FROM client.roles WHERE email = ${email}
     `;
   },
   /**
@@ -12,15 +12,13 @@ module.exports = {
    * @returns {*}
    */
   checkByEmailAndMasterPassword(login, password) {
-    return sql`SELECT 1 FROM passport.user AS passportUser, passport.bot AS passportBot
+    return sql`SELECT 1 FROM client.passport AS passportUser, client.bot AS passportBot
 WHERE (passportUser.email = ${login} OR passportUser.telegram_id = ${login})
 AND
 passportBot.master_password = crypt(${password}, master_password)
 `;
   },
   /**
-   * oidc query
-   *
    * @param {string} login - botEmail
    * @param {string} password - MasterPassword
    * @returns {*}
@@ -29,7 +27,7 @@ passportBot.master_password = crypt(${password}, master_password)
     return sql`SELECT
     *
 FROM
-    passport.bot
+    client.bot
 WHERE
     email = ${login} OR email = ${login + '@gotointeractive.com'}
     AND master_password = crypt(${password}, master_password)
@@ -38,7 +36,7 @@ WHERE
   activateByPassportId(passportId) {
     return sql`
 UPDATE
-    passport.bot
+    client.bot
 SET
     activated = ${true}
 WHERE
@@ -48,7 +46,7 @@ WHERE
   deactivateByPassportId(passportId) {
     return sql`
 UPDATE
-    passport.bot
+    client.bot
 SET
     activated = ${false}
 WHERE
@@ -62,19 +60,19 @@ WHERE
    */
   selectUserByEmail(login) {
     return sql`
-      SELECT * FROM passport.user WHERE email = ${login} OR telegram_id = ${login}
+      SELECT * FROM client.passport WHERE email = ${login} OR telegram_id = ${login}
     `;
   },
   selectBotByEmail(email) {
     return sql`
-      SELECT * FROM passport.bot WHERE email = ${email} AND activated = true
+      SELECT * FROM client.bot WHERE email = ${email} AND activated = true
     `;
   },
   selectBotById(id) {
     return sql`SELECT
     *
 FROM
-    passport.bot
+    client.bot
 WHERE
     id = ${id}
 `;
@@ -83,7 +81,7 @@ WHERE
     return sql`SELECT
     *
 FROM
-    passport.bot
+    client.bot
 WHERE
     passport_id = ${passportId}
 `;
@@ -111,7 +109,7 @@ WHERE
     privateKeyCert,
   }) {
     return sql`
-INSERT INTO passport.bot
+INSERT INTO client.bot
     (passport_id, email, email_uid, email_password, secret_key, master_password, public_key_cert, private_key_cert)
 VALUES
     (
@@ -130,14 +128,14 @@ VALUES
     return sql`SELECT
     *
 FROM
-    passport.user
+    client.passport
 `;
   },
   selectAll(telegram_id, yandex_id = null, facebook_id = null) {
     return sql`
 SELECT *
     FROM
-passport.user
+client.passport
     WHERE
 telegram_id = ${telegram_id} OR
 yandex_id = ${yandex_id} OR
@@ -147,7 +145,7 @@ facebook_id = ${facebook_id}
   updateTelegramPassportByPassportId(telegram, passportUID) {
     return sql`
 UPDATE
-    passport.user
+    client.passport
 SET
     telegram_id = ${telegram.from.id},
     telegram_passport = ${sql.json(telegram.from)}
@@ -158,7 +156,7 @@ WHERE
   updateYandexPassportByPassportId(passport, session, passportUID) {
     return sql`
 UPDATE
-    passport.user
+    client.passport
 SET
     yandex_id = ${passport.client_id},
     yandex_passport = ${sql.json(passport)},
@@ -170,7 +168,7 @@ WHERE
   updateFacebookPassportByPassportId(passport, session, passportUID) {
     return sql`
 UPDATE
-    passport.user
+    client.passport
 SET
     facebook_id = ${passport.id},
     facebook_passport = ${sql.json(passport)},
@@ -181,6 +179,7 @@ WHERE
   },
   createPassport({
     email,
+    phone,
     telegramPassport,
     facebookPassport,
     yandexPassport,
@@ -188,8 +187,9 @@ WHERE
     yandexSession,
   }) {
     return sql`
-INSERT INTO passport.user (
+INSERT INTO client.passport (
     email,
+    phone,
     telegram_id,
     telegram_passport,
     facebook_id,
@@ -201,6 +201,7 @@ INSERT INTO passport.user (
 )
 VALUES (
     ${email},
+    ${phone},
     ${telegramPassport ? telegramPassport.id : null},
     ${telegramPassport ? sql.json(telegramPassport) : null},
     ${facebookPassport ? facebookPassport.id : null},
@@ -211,7 +212,7 @@ VALUES (
     ${yandexPassport ? sql.json(yandexSession) : null}
 )
 RETURNING
-    id, email
+    id, email, phone
 `;
   },
 };

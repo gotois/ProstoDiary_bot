@@ -48,16 +48,6 @@ const telegram = {
     alias: /^бот|bot(\s)|\?$/,
     description: 'Бот список вхождения?',
   },
-  SIGNIN: {
-    event: 'signin.event',
-    alias: /^\/signin$/,
-    description: 'Войти в систему',
-  },
-  SIGNOUT: {
-    event: 'signout.event',
-    alias: /^\/signout$/,
-    description: 'Выйти из системы',
-  },
   START: {
     event: 'start.event',
     alias: /^\/start|начать$/,

@@ -35,33 +35,32 @@ class OIDC {
       const decoded = jose.JWT.decode(tokenResult.id_token);
       const assistantData = await pool.connect(async (connection) => {
         // сверяем что такой client_id ассистента существует
-        const assistantIsAlive = await connection.maybeOne(
-          assistantQueries.exist(request.query.client_id),
+        const assistant = await connection.one(
+          assistantQueries.selectMarketAssistant(request.query.client_id),
         );
-        if (!assistantIsAlive) {
+        const assistantBot = await connection.maybeOne(assistantQueries.selectAssistantBotByEmail(decoded.email));
+        if (assistantBot) {
           // обновляется токен бота
-          await connection.query(assistantQueries.updateAssistantBotToken(tokenResult.id_token, decoded.client_id));
-          const assistantData = await connection.one(assistantQueries.selectAssistantById(request.query.client_id));
-          return assistantData;
+          await connection.query(assistantQueries.updateAssistantBotToken(tokenResult.id_token, assistantBot.bot_user_email));
         } else {
-          const assistantData = await connection.one(assistantQueries.selectAssistantById(request.query.client_id));
           // создается новый assistant.bot, ассистент сохраняет JWT
-          // а в таблицу passport.bot записывается id ассистента (tg@gotointeractive.com)
+          // а в таблицу client.bot записывается id ассистента (tg@gotointeractive.com)
           await connection.query(assistantQueries.createAssistantBot({
-            assistant_marketplace_id: assistantData.id,
+            assistant_marketplace_id: assistantBot.id,
             token: tokenResult.id_token,
             bot_user_email: decoded.email,
           }));
-          return assistantData;
         }
+        return assistant;
       });
+      request.session.passportId = decoded.client_id;
       // в случае успеха надо перекидывать на homepage страницу ассистента
       if (assistantData.homepage) {
         response.redirect(assistantData.homepage);
         return;
       }
       response.send(
-        `Подключен ассистент ${decoded.aud} для бота ${decoded.email}. Можете пользоваться ассистентом.`,
+        `Привязан/обновлен ассистент ${decoded.aud} для бота ${decoded.email}.`,
       );
     } catch (error) {
       response.status(400).json({ error: error.message });

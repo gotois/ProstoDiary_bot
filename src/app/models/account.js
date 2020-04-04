@@ -21,7 +21,7 @@ class Account {
       sub: this.accountId, // it is essential to always return a sub claim
       email: botInfo.email, // почта бота
       email_verified: botInfo.activated,
-      client_id: botInfo.telegram_chat_id,
+      client_id: botInfo.passport_id,
       updated_at: botInfo.updated_at,
     };
   }

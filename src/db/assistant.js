@@ -1,13 +1,21 @@
 const { sql } = require('./sql');
 
 module.exports = {
-  // rename to marketplace
-  selectAssistantById(client_id) {
+  selectAssistantIdByUserPhone(userPhone) {
+    const marketPlaceId = 'tg@gotointeractive.com';
+    return sql`
+      SELECT assistant.id FROM client.passport AS usr, client.bot AS bot, assistant.bot AS assistant, assistant.marketplace AS marketplace
+      WHERE usr.phone = ${userPhone}
+      AND marketplace.client_id = ${marketPlaceId}
+      AND assistant.bot_user_email = bot.email
+    `;
+  },
+  selectAssistantBotByEmail(bot_user_email) {
     return sql`SELECT
     *
 FROM
-    assistant.marketplace
-    WHERE client_id = ${client_id}
+    assistant.bot
+    WHERE bot_user_email = ${bot_user_email}
 `;
   },
   selectAll() {
@@ -55,8 +63,8 @@ FROM
         )
         `;
   },
-  exist(user_id) {
-    return sql`SELECT 1 from assistant.marketplace where client_id = ${user_id}`;
+  selectMarketAssistant(client_id) {
+    return sql`SELECT * FROM assistant.marketplace WHERE client_id = ${client_id}`;
   },
   updateAssistantBotToken(bot_user_email, token) {
     return sql`UPDATE assistant.bot

@@ -38,7 +38,7 @@ class TelegramBotMessage {
         activated: true,
         user: 'ava-test',
         passportId: '-1',
-        assistant: 'tg',
+        assistant: 'e2e@gotointeractive.com',
         email: 'e2e@gotointeractive.com',
         jwt: 'YOUR_VALID_JWT',
       };
@@ -67,6 +67,7 @@ class TelegramBotMessage {
     logger.info('sendCommand');
     const { message } = this;
     if (this.inGroup && this.silent) {
+      logger.info('sendCommand:skip');
       return;
     }
     checkMessage(message);

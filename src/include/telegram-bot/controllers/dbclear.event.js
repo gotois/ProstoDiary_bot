@@ -4,7 +4,7 @@ const TelegramBotRequest = require('./telegram-bot-request');
 class DatabaseClear extends TelegramBotRequest {
   constructor(message) {
     super(message);
-    this.method = 'signout';
+    this.method = 'dbclear';
   }
   async beginDialog(silent) {
     await super.beginDialog(silent);

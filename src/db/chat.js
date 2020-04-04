@@ -1,7 +1,7 @@
 const { sql } = require('./sql');
 
 module.exports = {
-  createChat({ id, name, assistant_id }) {
+  createChat({ id, name, assistant_bot_id }) {
     return sql`
       INSERT INTO assistant.chat
       (id, name, assistant_bot_id)
@@ -9,7 +9,7 @@ module.exports = {
       (
       ${id},
       ${name},
-      ${assistant_id}
+      ${assistant_bot_id}
       )
     `;
   },

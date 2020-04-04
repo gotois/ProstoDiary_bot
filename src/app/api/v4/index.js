@@ -3,8 +3,6 @@ for (const api of [
   'health',
   'help',
   'ping',
-  'signin',
-  'signout',
   'insert',
 ]) {
   /**

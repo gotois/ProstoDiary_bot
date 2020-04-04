@@ -15,6 +15,7 @@ const rpcAPI = require('../middlewares/jsonrpc');
 const OIDC = require('../controllers/web/oidc');
 const OAUTH = require('../controllers/web/oauth');
 const Marketplace = require('../controllers/web/assistants');
+const BOT = require('../controllers/web/bot');
 
 const passportController = require('../controllers/web/passport');
 const indexController = require('../controllers/web/index-page');
@@ -32,9 +33,14 @@ module.exports = (app, provider) => {
   const oauth = new OAUTH();
   const marketplace = new Marketplace();
 
-  // oauth
-  app.get('/registration', oauth.registration);
-  app.get('/oauth', oauth.callback);
+  // registration
+  app.get('/registration', oauth.registrationStart);
+  app.post('/registration/oauth', body, oauth.registrationOauth);
+  app.get('/oauth', oauth.callback); // rename to callback/oauth
+
+  // bot
+  app.get('/bot/activate', body, BOT.signin);
+  app.get('/bot/deactivate', body, BOT.signout);
 
   // assistant marketplace
   app.get('/marketplace', marketplace.assistants);

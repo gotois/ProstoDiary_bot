@@ -4,5 +4,4 @@ module.exports = {
   userEmail: 'user@test.test',
   botEmail: 'bot@test.test',
   activated: true,
-  // telegram_chat_id: userTable.telegram_chat_id,
 };

@@ -57,38 +57,28 @@ async function apiRequest(server, method, document, passport) {
 
 module.exports = async (request, response, next) => {
   logger.info(`JSONRPC:${request.body.method}`);
-  response.header('X-Bot', [package_.name]);
-  response.header('X-Bot-Version', [package_.version]);
-  let passport;
   try {
-    passport = await pool.connect(async (connection) => {
+    response.header('X-Bot', [package_.name]);
+    response.header('X-Bot-Version', [package_.version]);
+    const passport = await pool.connect(async (connection) => {
       // By token auth
       if (request.headers.authorization) {
+        // на данный момент считаем все токены вечными, затем надо будет их валидировать jose.JWT.verify(...)
         const [_basic, id_token] = request.headers.authorization.split(' ');
         const decoded = jose.JWT.decode(id_token);
-        // fixme: на данный момент считаем все токены вечными, затем надо будет их валидировать jose.JWT.verify(...)
-        const botTable = await connection.maybeOne(
+        const botTable = await connection.one(
           passportQueries.selectBotByEmail(decoded.email),
         );
-        if (!botTable) {
-          return {};
-        }
         return botTable;
       } else {
         throw new Error('Unknown assistant');
       }
     });
-  } catch (error) {
-    logger.error(error);
-    response.status(500).send('500 Bad Error: ' + error.message);
-    return;
-  }
-  if (!passport) {
-    response.sendStatus(401).send('Unauthorized');
-    return;
-  }
-  logger.info(`API:${request.body.method}`);
-  try {
+    if (!passport) {
+      response.sendStatus(401).send('Unauthorized');
+      return;
+    }
+    logger.info(`API:${request.body.method}`);
     const result = await apiRequest(
       jsonRpcServer,
       request.body.method,

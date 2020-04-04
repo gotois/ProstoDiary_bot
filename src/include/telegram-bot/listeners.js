@@ -1,33 +1,34 @@
 const TelegramBotMessage = require('./models/message');
 const logger = require('../../lib/log');
 const { telegram, botCommands } = require('./commands');
+const { pool } = require('../../db/sql');
 
 const assistantChatQueries = require('../../db/chat');
-
+const assistantQueries = require('../../db/assistant');
 
 module.exports = (telegramBot) => {
+  // @todo перенести это в /start.event.js
   const onAgree = async (message) => {
     logger.info('start.agree');
+    // это перенести в модель, чтобы можно было повторно использовать с chat
+    await pool.connect(async (connection) => {
+      const assistantBot = await connection.one(assistantQueries.selectAssistantIdByUserPhone(
+        message.contact.phone_number
+      ));
+      await connection.query(assistantChatQueries.createChat({
+        id: message.chat.id,
+        name: message.chat.username,
+        assistant_bot_id: assistantBot.id,
+      }));
+      // Ассистент детектирует бота пользователя, запрашивает 2FA
+      // ...
+    });
     await telegramBot.deleteMessage(message.chat.id, message.message_id);
-    await telegramBot.sendMessage(message.chat.id, 'Договор подписан', {
+    await telegramBot.sendMessage(message.chat.id, 'Создан новый чат с ассистентом', {
       reply_markup: {
         remove_keyboard: true,
       },
     });
-    // https://github.com/gotois/ProstoDiary_bot/issues/523
-    // Ассистент детектирует бота пользователя, запрашивает 2FA
-    // ...
-
-
-
-    console.log(message)
-
-    assistantChatQueries.createChat({
-      id: message.chat.id,
-      name: message.chat.username,
-      assistant_id: '',
-    })
-
     const me = await telegramBot.getMe();
     await telegramBot.sendMessage(
       message.chat.id,
