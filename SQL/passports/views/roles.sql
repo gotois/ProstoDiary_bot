@@ -1,12 +1,12 @@
-CREATE VIEW passport.roles AS
+CREATE VIEW client.roles AS
 SELECT
-  passport.bot.email,
+  client.bot.email,
   'bot' AS role
 FROM
-  passport.bot
+  client.bot
 UNION
 SELECT
-  passport.user.email,
+  client.passport.email,
   'user' AS role
 FROM
-  passport.user
+  client.passport

@@ -1,1 +1,3 @@
-CREATE SCHEMA IF NOT EXISTS assistant;
+CREATE
+    SCHEMA IF NOT EXISTS assistant
+;
