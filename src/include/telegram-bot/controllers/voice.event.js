@@ -17,7 +17,7 @@ class Voice extends TelegramBotRequest {
       fileSize: this.message.voice.file_size,
       duration: this.message.voice.duration,
       uid: this.userHash,
-      passportId: this.message.passport.id,
+      passportId: this.message.passport[0].id,
     });
     await this.rpc(jsonldAction);
   }

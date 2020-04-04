@@ -16,11 +16,10 @@ class Account {
       );
       return botTable;
     });
-
     return {
       sub: this.accountId, // it is essential to always return a sub claim
       email: botInfo.email, // почта бота
-      email_verified: botInfo.activated,
+      email_verified: botInfo.activated, // fixme это неправильно считать так
       client_id: botInfo.passport_id,
       updated_at: botInfo.updated_at,
     };

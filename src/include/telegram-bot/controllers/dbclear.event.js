@@ -39,9 +39,6 @@ class DatabaseClear extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 module.exports = async (message, silent) => {
-  if (!message.passport.activated) {
-    throw new Error('Bot not activated');
-  }
   const databaseClear = new DatabaseClear(message);
   await databaseClear.beginDialog(silent);
 };

@@ -33,6 +33,7 @@ module.exports = async () => {
         }
         return;
       }
+      // fixme неверно считать через jwt активацию, узнать что бот неактивирован можно только постфактум
       if (botTable.activated) {
         // eslint-disable-next-line no-unused-vars
         const imap = imapService(

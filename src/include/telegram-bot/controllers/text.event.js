@@ -34,8 +34,8 @@ class Text extends TelegramBotRequest {
           chatId: this.message.chat.id,
           messageId: tgMessageId,
         },
-        creator: this.message.passport.assistant,
-        publisher: this.message.passport.email,
+        creator: this.creator,
+        publisher: this.publisher,
         silent,
       });
       await this.rpc(jsonldAction);

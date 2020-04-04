@@ -205,9 +205,6 @@ class Search extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 module.exports = async (message) => {
-  if (!message.passport.activated) {
-    throw new Error('Bot not activated');
-  }
   const search = new Search(message);
   await search.beginDialog();
 };

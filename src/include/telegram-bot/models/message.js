@@ -34,17 +34,19 @@ class TelegramBotMessage {
   constructor(message) {
     // hack для запуска e2e тестов
     if (IS_AVA) {
-      message.passport = {
-        activated: true,
-        user: 'ava-test',
-        passportId: '-1',
-        assistant: 'e2e@gotointeractive.com',
-        email: 'e2e@gotointeractive.com',
-        jwt: 'YOUR_VALID_JWT',
-      };
+      message.passport = [
+        {
+          activated: true,
+          user: 'ava-test',
+          passportId: '-1',
+          assistant: 'e2e@gotointeractive.com',
+          email: 'e2e@gotointeractive.com',
+          jwt: 'YOUR_VALID_JWT',
+        },
+      ];
     }
-    if (!message.passport) {
-      throw new Error('gotois message error');
+    if (!Array.isArray(message.passport)) {
+      throw new TypeError('gotois passport error');
     }
     // Нативное сообщение Telegram
     this.message = message;
@@ -78,48 +80,28 @@ class TelegramBotMessage {
     const { message } = this;
     checkMessage(message);
     if (message.reply_to_message) {
-      if (message.passport.activated) {
-        return;
-      }
-      // если бот не активирован, то проверяем что он прислал код авторизации
-      await require('../controllers/signin.event')(message);
       return;
-    }
-    if (!message.passport.activated) {
-      throw new Error('Bot not activated. Please try /start or /signin');
     }
     await require('../controllers/text.event')(message, this.silent);
   }
   async sendPhoto() {
     logger.info('sendPhoto');
     const { message } = this;
-    if (!message.passport.activated) {
-      throw new Error('Bot not activated');
-    }
     await require('../controllers/photo.event')(message, this.silent);
   }
   async sendDocument() {
     logger.info('sendDocument');
     const { message } = this;
-    if (!message.passport.activated) {
-      throw new Error('Bot not activated');
-    }
     await require('../controllers/document.event')(message, this.silent);
   }
   async sendLocation() {
     logger.info('sendLocation');
     const { message } = this;
-    if (!message.passport.activated) {
-      throw new Error('Bot not activated');
-    }
     await require('../controllers/location.event')(message, this.silent);
   }
   async sendVoice() {
     logger.info('sendVoice');
     const { message } = this;
-    if (!message.passport.activated) {
-      throw new Error('Bot not activated');
-    }
     await require('../controllers/voice.event')(message, this.silent);
   }
   async groupChatCreated() {

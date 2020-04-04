@@ -12,7 +12,8 @@ class Backup extends TelegramBotRequest {
     const result = await backupAction({
       token: text,
       date: this.message.date,
-      jwt: this.message.passport.jwt,
+      creator: this.creator,
+      publisher: this.publisher,
     });
     await this.bot.sendMessage(this.message.chat.id, result);
   }
@@ -42,9 +43,6 @@ class Backup extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 module.exports = async (message, silent) => {
-  if (!message.passport.activated) {
-    throw new Error('Bot not activated');
-  }
   const backup = new Backup(message);
   await backup.beginDialog(silent);
 };

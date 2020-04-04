@@ -8,11 +8,8 @@ class Start extends TelegramBotRequest {
     this.dialog = this.messageIterator();
   }
   async beginDialog(silent) {
-    if (this.message.passport.id) {
-      const message =
-        'Повторная установка не требуется\n\n' +
-        '/signin - включить бота \n' +
-        '/signout - выключить бота \n';
+    if (this.message.passport[0]) {
+      const message = 'Повторная установка не требуется\n\n' + '/help - помощь';
       await bot.sendMessage(this.message.chat.id, message);
       return;
     }

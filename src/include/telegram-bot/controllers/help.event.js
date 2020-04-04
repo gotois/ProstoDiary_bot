@@ -13,8 +13,8 @@ class Help extends TelegramBotRequest {
         title: this.message.chat.title,
         chatId: this.message.chat.id,
       },
-      creator: this.message.passport.assistant,
-      publisher: this.message.passport.email,
+      creator: this.creator,
+      publisher: this.publisher,
       silent,
     });
     await this.rpc(jsonldAction);

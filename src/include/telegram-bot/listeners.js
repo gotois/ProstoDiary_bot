@@ -12,29 +12,37 @@ module.exports = (telegramBot) => {
     logger.info('start.agree');
     // это перенести в модель, чтобы можно было повторно использовать с chat
     await pool.connect(async (connection) => {
-      const assistantBot = await connection.one(assistantQueries.selectAssistantIdByUserPhone(
-        message.contact.phone_number
-      ));
-      await connection.query(assistantChatQueries.createChat({
-        id: message.chat.id,
-        name: message.chat.username,
-        assistant_bot_id: assistantBot.id,
-      }));
+      const assistantBot = await connection.one(
+        assistantQueries.selectAssistantIdByUserPhone(
+          message.contact.phone_number,
+        ),
+      );
+      await connection.query(
+        assistantChatQueries.createChat({
+          id: message.chat.id,
+          name: message.chat.username,
+          assistant_bot_id: assistantBot.id,
+        }),
+      );
       // Ассистент детектирует бота пользователя, запрашивает 2FA
       // ...
     });
     await telegramBot.deleteMessage(message.chat.id, message.message_id);
-    await telegramBot.sendMessage(message.chat.id, 'Создан новый чат с ассистентом', {
-      reply_markup: {
-        remove_keyboard: true,
+    await telegramBot.sendMessage(
+      message.chat.id,
+      'Создан новый чат с ассистентом',
+      {
+        reply_markup: {
+          remove_keyboard: true,
+        },
       },
-    });
+    );
     const me = await telegramBot.getMe();
     await telegramBot.sendMessage(
       message.chat.id,
       `Приветствую ${message.chat.first_name}!\n` +
-      `Я твой персональный бот __${me.first_name}__.\n` +
-      'Узнай все мои возможности командой /help.',
+        `Я твой персональный бот __${me.first_name}__.\n` +
+        'Узнай все мои возможности командой /help.',
       {
         parse_mode: 'Markdown',
       },

@@ -10,7 +10,8 @@ class Location extends TelegramBotRequest {
       longitude,
       date: this.message.date,
       telegram_message_id: this.message.message_id,
-      jwt: this.message.passport.jwt,
+      creator: this.creator,
+      publisher: this.publisher,
       silent,
     });
     await this.rpc(jsonldAction);

@@ -15,16 +15,16 @@ module.exports = ({ clients }) => {
       homepage: client.homepage,
     };
   });
+  /* eslint-disable */
   return `
     <h1>Marketplace</h1>
     <p>Передайте OIDC серверу логин и пароль бота полученный в письме</p>
-    <ul>${
-    data.map((assistant) => {
+    <ul>
+    ${data.map((assistant) => {
       return `
         <li><a href="${assistant.connect}">${assistant.client_id}</a> <a href="${assistant.homepage}">[Homepage]</a></li>
-      `
-      })
-  }
+      `;
+    })}
     </ul>
   `;
 };

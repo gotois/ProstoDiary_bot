@@ -17,6 +17,14 @@ class TelegramBotRequest {
   get message() {
     return this.#message;
   }
+  // todo для чатов возможно предстоит делать отдачу всех ассистентов указанных в паспорте
+  get creator() {
+    return this.message.passport[0].assistant;
+  }
+  // todo для чатов возможно предстоит делать отдачу всей почты боты указанных в паспорте?
+  get publisher() {
+    return this.message.passport[0].email;
+  }
   /**
    * @returns {Array<string>}
    */
@@ -61,24 +69,28 @@ class TelegramBotRequest {
     return buffer;
   }
   /**
+   * Бродкаст всех сообщений по паспортам ботов по API
+   *
    * @param {Action} action - action
    * @returns {Promise<*>}
    */
   async rpc(action) {
-    const jsonldMessage = await rpc({
-      body: {
-        jsonrpc: '2.0',
-        method: this.method,
-        id: 1,
-        params: action.context,
-      },
-      jwt: this.message.passport.jwt,
-    });
+    for (const passport of this.message.passport) {
+      await rpc({
+        body: {
+          jsonrpc: '2.0',
+          method: this.method,
+          id: 1,
+          params: action.context,
+        },
+        jwt: passport.jwt,
+      });
+    }
+
     // hack специальный вызов для тестирования E2E. Без явного ответа sendMessage возникает ошибка SubError
     if (IS_AVA) {
       await this.bot.sendMessage(this.message.chat.id, jsonldMessage.purpose.abstract);
     }
-    return jsonldMessage;
   }
 }
 

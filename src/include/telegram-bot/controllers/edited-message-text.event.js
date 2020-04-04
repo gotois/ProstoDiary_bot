@@ -36,8 +36,8 @@ class EditMessageText extends TelegramBotRequest {
           title: this.message.chat.title,
           chatId: this.message.chat.id,
         },
-        creator: this.message.passport.assistant,
-        publisher: this.message.passport.email,
+        creator: this.creator,
+        publisher: this.publisher,
         silent,
       });
       await this.rpc(result);
@@ -48,8 +48,8 @@ class EditMessageText extends TelegramBotRequest {
           title: this.message.chat.title,
           chatId: this.message.chat.id,
         },
-        creator: this.message.passport.assistant,
-        publisher: this.message.passport.email,
+        creator: this.creator,
+        publisher: this.publisher,
         silent,
       });
       await this.rpc(result);
@@ -63,9 +63,6 @@ class EditMessageText extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 module.exports = async (message, silent) => {
-  if (!message.passport.activated) {
-    throw new Error('Bot not activated');
-  }
   message.text = message.text.trim();
   const editedMessageTextAPI = new EditMessageText(message);
   await editedMessageTextAPI.beginDialog(silent);

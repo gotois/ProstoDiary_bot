@@ -6,7 +6,7 @@ const notifyTelegram = require('../lib/notify-tg');
 
 const pqsqlTransport = new PsqlTransport();
 pqsqlTransport.on('logged', async (info) => {
-  logger.info('saveToDatabase:success');
+  logger.info('saveToDatabase:success ' + info.messageId);
   const { document } = info.message;
   const telegramMessageId = document.object.mainEntity.find((entity) => {
     return entity.name === 'TelegramMessageId';

@@ -5,12 +5,14 @@ const logger = require('../../../lib/log');
 const twoFactorAuthService = require('../../../services/2fa.service');
 
 module.exports = class Bot {
-  constructor() {
-  }
+  constructor() {}
   // Авторизация и разблокировка чтения/приема и общей работы бота
   static async signin(request, response) {
-    logger.info('signin');
+    logger.info('signin', request.session.passportId);
     try {
+      if (!request.session.passportId) {
+        throw new Error('Session not found');
+      }
       const passportId = request.session.passportId;
       await pool.connect(async (connection) => {
         const botTable = await connection.one(
@@ -41,6 +43,9 @@ module.exports = class Bot {
   // блокировки чтения/приема и общей работы бота
   static async signout(request, response) {
     try {
+      if (!request.session.passportId) {
+        throw new Error('Session not found');
+      }
       const passportId = request.session.passportId;
       await pool.connect(async (connection) => {
         const botTable = await connection.one(
