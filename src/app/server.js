@@ -6,6 +6,16 @@ const package_ = require('../../package.json');
 const provider = require('../lib/oidc');
 const logger = require('../lib/log');
 const { IS_PRODUCTION, SENTRY, SERVER } = require('../environment');
+const session = require('./middlewares/session');
+const grant = require('./middlewares/grant');
+const winstonLog = require('./middlewares/logger');
+const mainRoutes = require('./routes/main');
+const botRoutes = require('./routes/bot');
+const apiRoutes = require('./routes/api');
+const marketplaceRoutes = require('./routes/marketplace');
+const messageRoutes = require('./routes/message');
+const assistantWebhookRoutes = require('./routes/assistant');
+const pingRoutes = require('./routes/ping');
 
 (async function main() {
   Sentry.init({
@@ -18,12 +28,20 @@ const { IS_PRODUCTION, SENTRY, SERVER } = require('../environment');
   // The request handler must be the first middleware on the app
   app.use(Sentry.Handlers.requestHandler());
   app.use(helmet());
-  app.use(require('./middlewares/session'));
-  app.use(require('./middlewares/grant'));
-  app.use(require('./middlewares/logger'));
+  app.use(session);
+  app.use(grant);
+  app.use(winstonLog);
   // The error handler must be before any other error middleware and after all controllers
   app.use(Sentry.Handlers.errorHandler());
-  require('./routes')(app, oidcProvider);
+  app.use('/', mainRoutes(oidcProvider));
+  app.use('/ping', pingRoutes);
+  app.use('/api', apiRoutes);
+  app.use('/bot', botRoutes);
+  app.use('/message', messageRoutes);
+  app.use('/marketplace', marketplaceRoutes);
+  app.use('/assistant', assistantWebhookRoutes);
+  app.use('/oidc/', oidcProvider.callback);
+
   // Express error handler
   app.use(require('./middlewares/error-handler'));
 

@@ -5,6 +5,7 @@ const passportQueries = require('../../../db/passport');
 const template = require('../../views/message');
 
 // Для доступа к сообщениям, пользователю необходимо вести свой email и master password
+// отображение прикрепленных JSON-LD включающий ссылки на остальные документы
 module.exports = async (request, response, next) => {
   try {
     if (!request.user) {

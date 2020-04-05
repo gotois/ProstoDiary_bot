@@ -1,8 +1,9 @@
 const jose = require('jose');
-const bot = require('../../include/telegram-bot/bot');
-const { pool } = require('../../db/sql');
-const assistantChatQueries = require('../../db/chat');
-const logger = require('../../lib/log');
+const bot = require('../../../include/telegram-bot/bot');
+const { pool } = require('../../../db/sql');
+const assistantChatQueries = require('../../../db/chat');
+const logger = require('../../../lib/log');
+const notifyTelegram = require('../../../lib/notify-tg');
 /**
  * @param {object} body - telegram request body
  * @returns {Promise<object>}
@@ -59,12 +60,23 @@ async function makeRequestBody(body) {
   };
 }
 
-module.exports = async (request, response, next) => {
-  try {
-    const body = await makeRequestBody(request.body);
-    bot.processUpdate(body);
-    response.sendStatus(200);
-  } catch (error) {
-    next(error);
+module.exports = class TelegramController {
+  // not async specific for webhook
+  static webhookAssistant(request, response) {
+    response.status(200).send('OK');
+    notifyTelegram(request.body)
+      .then(() => {})
+      .catch((error) => {
+        logger.error(error);
+      });
+  }
+  static async webhookAPI(request, response, next) {
+    try {
+      const body = await makeRequestBody(request.body);
+      bot.processUpdate(body);
+      response.sendStatus(200);
+    } catch (error) {
+      next(error);
+    }
   }
 };

@@ -33,16 +33,24 @@ class Abstract {
       // this.namespace будет устанавливаться из Message-Id письма
     }
   }
+  // identifier assistant
+  get agent() {
+    // hack считаем что это ассистент tg@gotointeractive.com
+    if (this.namespace.includes('//t.me/')) {
+      return {
+        '@type': 'Organization',
+        'email': 'tg@gotointeractive.com',
+      };
+    }
+    throw new Error('Unknown agent');
+  }
   get context() {
     return {
       '@id': this.namespace, // изоляцинные идентификаторы сообщения
-      'agent': {
-        '@type': 'Organization',
-        'identifier': this.creator, // identifier assistant
-      },
+      'agent': this.agent,
       'participant': {
         '@type': 'Person',
-        'email': this.publisher, // identifier user
+        'email': this.publisher, // fixme identifier user
       },
       'startTime': format(
         fromUnixTime(Math.round(new Date().getTime() / 1000)),

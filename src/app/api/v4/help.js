@@ -41,19 +41,22 @@ function response() {
  * @param {object} passport - passport gotoisCredentions
  * @returns {Promise<*>}
  */
-module.exports = async function(document, { passport }) {
+module.exports = async function (document, { passport }) {
   logger.info('help');
   try {
     await linkedDataSignature.verifyDocument(document, passport);
-    const message = response();
+    const resultAction = AcceptAction({
+      abstract: response(),
+      encodingFormat: 'text/markdown',
+    });
     commandLogger.info({
       document: {
         ...document,
-        ...AcceptAction(message, 'text/markdown'),
+        ...resultAction,
       },
       passport,
     });
-    return Promise.resolve(AcceptAction(message));
+    return Promise.resolve(resultAction);
   } catch (error) {
     return Promise.reject(
       this.error(400, null, JSON.stringify(RejectAction(error))),

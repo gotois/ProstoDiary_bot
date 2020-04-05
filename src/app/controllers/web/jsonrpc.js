@@ -1,12 +1,12 @@
 const jose = require('jose');
 const { v1: uuidv1 } = require('uuid');
-const package_ = require('../../../package.json');
-const jsonRpcServer = require('../api');
-const { pool } = require('../../db/sql');
-const passportQueries = require('../../db/passport');
-const logger = require('../../lib/log');
-const crypt = require('../../services/crypt.service');
-const linkedDataSignature = require('../../services/linked-data-signature.service');
+const package_ = require('../../../../package.json');
+const jsonRpcServer = require('../../api');
+const { pool } = require('../../../db/sql');
+const passportQueries = require('../../../db/passport');
+const logger = require('../../../lib/log');
+const crypt = require('../../../services/crypt.service');
+const linkedDataSignature = require('../../../services/linked-data-signature.service');
 /**
  * @param {object} server - json rpc server
  * @param {string} method - json rpc method
@@ -54,7 +54,7 @@ async function apiRequest(server, method, document, passport) {
     );
   });
 }
-
+// json rpc server via header jwt
 module.exports = async (request, response, next) => {
   logger.info(`JSONRPC:${request.body.method}`);
   try {

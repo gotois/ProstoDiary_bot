@@ -1,33 +1,25 @@
 const winston = require('winston');
+const AcceptAction = require('../core/models/actions/accept');
+const RejectAction = require('../core/models/actions/reject');
 const PsqlTransport = require('../db/adapters/psql-transport');
 const { SERVER } = require('../environment');
 const logger = require('../lib/log');
-const notifyTelegram = require('../lib/notify-tg');
+const notifier = require('../lib/notifier');
 
 const pqsqlTransport = new PsqlTransport();
 pqsqlTransport.on('logged', async (info) => {
   logger.info('saveToDatabase:success ' + info.messageId);
   const { document } = info.message;
-  const telegramMessageId = document.object.mainEntity.find((entity) => {
-    return entity.name === 'TelegramMessageId';
-  })['value'];
-  const telegramChatId = document.object.mainEntity.find((entity) => {
-    return entity.name === 'TelegramChatId';
-  })['value'];
-  const isSilent = document.object.mainEntity.find((entity) => {
-    return entity.name === 'silent';
-  })['value'];
-  if (isSilent) {
-    logger.info('skip notify message');
-    return;
-  }
-  await notifyTelegram({
-    subject: 'Запись добавлена',
-    html: 'Открыть запись',
-    url: `${SERVER.HOST}/message/${info.messageId}`,
-    parseMode: 'HTML',
-    chatId: telegramChatId,
-    messageId: telegramMessageId,
+  await notifier({
+    agent: document.agent,
+    object: document.object,
+    purpose: document.purpose,
+    ...AcceptAction({
+      abstract: 'Запись добавлена',
+      url: `${SERVER.HOST}/message/${info.messageId}`,
+      text: 'Открыть запись',
+      encodingFormat: 'text/html',
+    }),
   });
 });
 
@@ -35,13 +27,7 @@ const storyLogger = winston.createLogger({
   transports: [pqsqlTransport],
 });
 storyLogger.on('error', async (error) => {
-  logger.error(error.message);
-
-  await notifyTelegram({
-    subject: error.message,
-    chatId: error.chatId,
-    messageId: error.messageId,
-  });
+  await notifier(RejectAction(error));
 });
 
 module.exports = storyLogger;

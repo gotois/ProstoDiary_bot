@@ -3,7 +3,7 @@ const passportQueries = require('../../../db/passport');
 const assistantQueries = require('../../../db/assistant');
 const { pool } = require('../../../db/sql');
 const logger = require('../../../lib/log');
-const requestService = require('../../../services/request.service');
+const { post } = require('../../../services/request.service');
 const { SERVER } = require('../../../environment');
 
 class OIDC {
@@ -23,14 +23,17 @@ class OIDC {
         throw new Error(request.error);
       }
       if (request.query.error) {
-        throw new Error(request.query.error + '\n' + request.query.error_description);
+        throw new Error(
+          request.query.error + '\n' + request.query.error_description,
+        );
       }
-      const tokenResult = await requestService.post(SERVER.HOST + '/oidc/token', {
+      const tokenResult = await post(SERVER.HOST + '/oidc/token', {
         client_id: request.query.client_id,
         client_secret: 'foobar',
         code: request.query.code,
         grant_type: 'authorization_code',
-        redirect_uri: SERVER.HOST + `/oidcallback?client_id=${request.query.client_id}`,
+        redirect_uri:
+          SERVER.HOST + `/oidcallback?client_id=${request.query.client_id}`,
       });
       const decoded = jose.JWT.decode(tokenResult.id_token);
       const assistantData = await pool.connect(async (connection) => {
@@ -38,18 +41,27 @@ class OIDC {
         const assistant = await connection.one(
           assistantQueries.selectMarketAssistant(request.query.client_id),
         );
-        const assistantBot = await connection.maybeOne(assistantQueries.selectAssistantBotByEmail(decoded.email));
+        const assistantBot = await connection.maybeOne(
+          assistantQueries.selectAssistantBotByEmail(decoded.email),
+        );
         if (assistantBot) {
           // обновляется токен бота
-          await connection.query(assistantQueries.updateAssistantBotToken(tokenResult.id_token, assistantBot.bot_user_email));
+          await connection.query(
+            assistantQueries.updateAssistantBotToken(
+              tokenResult.id_token,
+              assistantBot.bot_user_email,
+            ),
+          );
         } else {
           // создается новый assistant.bot, ассистент сохраняет JWT
           // а в таблицу client.bot записывается id ассистента (tg@gotointeractive.com)
-          await connection.query(assistantQueries.createAssistantBot({
-            assistant_marketplace_id: assistantBot.id,
-            token: tokenResult.id_token,
-            bot_user_email: decoded.email,
-          }));
+          await connection.query(
+            assistantQueries.createAssistantBot({
+              assistant_marketplace_id: assistantBot.id,
+              token: tokenResult.id_token,
+              bot_user_email: decoded.email,
+            }),
+          );
         }
         return assistant;
       });
@@ -129,9 +141,9 @@ class OIDC {
         case 'consent': {
           response.send(`
   ${prompt.details.scopes.new.map((scope) => {
-            return `
+    return `
       <li>${scope}</li>`;
-          })}
+  })}
       <form autocomplete="off" action="/interaction/${uid}/confirm" method="post">
         <button autofocus type="submit">Continue</button>
       </form>
@@ -159,7 +171,10 @@ class OIDC {
       logger.info('name: ' + name);
       const botInfo = await pool.connect(async (connection) => {
         const result = await connection.maybeOne(
-          passportQueries.getPassport(request.body.email, request.body.password),
+          passportQueries.getPassport(
+            request.body.email,
+            request.body.password,
+          ),
         );
         return result;
       });
