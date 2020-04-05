@@ -2,7 +2,7 @@ const Provider = require('oidc-provider');
 const { JWKS } = require('jose');
 const { SERVER, IS_PRODUCTION, SECURE_KEY } = require('../environment');
 const { pool } = require('../db/sql');
-const RedisAdapter = require('../db/adapters/redis-transport');
+const RedisAdapter = require('../db/adapters/oidc-transport');
 const assistantQueries = require('../db/selectors/assistant');
 const Account = require('../app/models/account');
 /**

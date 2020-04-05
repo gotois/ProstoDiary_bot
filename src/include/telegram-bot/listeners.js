@@ -1,4 +1,4 @@
-const TelegramBotMessage = require('./models/message');
+const TelegramBotMessage = require('./models/telegram-bot-message');
 const logger = require('../../lib/log');
 const { telegram, botCommands } = require('./commands');
 const { pool } = require('../../db/sql');
