@@ -1,12 +1,12 @@
-const packageLock_ = require('../../../../package-lock.json');
-const logger = require('../../../lib/log');
-const { telegram } = require('../../../include/telegram-bot/commands');
-const { IS_PRODUCTION } = require('../../../environment');
-const { getCheckSum } = require('../../../services/crypt.service');
-const commandLogger = require('../../../services/command-logger.service');
-const linkedDataSignature = require('../../../services/linked-data-signature.service');
-const RejectAction = require('../../../core/models/actions/reject');
-const AcceptAction = require('../../../core/models/actions/accept');
+const packageLock_ = require('../../../package-lock.json');
+const logger = require('../../lib/log');
+const { telegram } = require('../../include/telegram-bot/commands');
+const { IS_PRODUCTION } = require('../../environment');
+const { getCheckSum } = require('../../services/crypt.service');
+const commandLogger = require('../../services/command-logger.service');
+const linkedDataSignature = require('../../services/linked-data-signature.service');
+const RejectAction = require('../../core/models/actions/reject');
+const AcceptAction = require('../../core/models/actions/accept');
 /**
  * @returns {string}
  */

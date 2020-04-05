@@ -1,7 +1,7 @@
 const jose = require('jose');
 const { v1: uuidv1 } = require('uuid');
 const package_ = require('../../../../package.json');
-const jsonRpcServer = require('../../api');
+const jsonRpcServer = require('../../../api/server');
 const { pool } = require('../../../db/sql');
 const passportQueries = require('../../../db/passport');
 const logger = require('../../../lib/log');

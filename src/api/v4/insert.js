@@ -1,8 +1,8 @@
 const SchemaOrg = require('schema.org');
-const storyLogger = require('../../../services/story-logger.service');
-const linkedDataSignature = require('../../../services/linked-data-signature.service');
-const RejectAction = require('../../../core/models/actions/reject');
-const AcceptAction = require('../../../core/models/actions/accept');
+const storyLogger = require('../../services/story-logger.service');
+const linkedDataSignature = require('../../services/linked-data-signature.service');
+const RejectAction = require('../../core/models/actions/reject');
+const AcceptAction = require('../../core/models/actions/accept');
 /**
  * @param {object} document - jsonld document
  * @param {object} passport - passport gotoisCredentions

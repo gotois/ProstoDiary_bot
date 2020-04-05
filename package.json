@@ -18,7 +18,7 @@
   "scripts": {
     "postinstall": "ncu ; npm run clean",
     "commit": "git-cz",
-    "pretest": "npm run lint -- --quiet",
+    "pretest": "npm run lint -- --quiet && npm run lint:dependency",
     "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js --serial",
     "start": "node src/app/server.js",
     "start:new-assistant": "./scripts/add-assistant",

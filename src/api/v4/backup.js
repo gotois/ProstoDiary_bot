@@ -1,11 +1,11 @@
-const package_ = require('../../../../package.json');
-const logger = require('../../../lib/log');
-const passportQueries = require('../../../db/passport');
-const { pool } = require('../../../db/sql');
-const { pack } = require('../../../services/archive.service');
-const twoFactorAuthService = require('../../../services/2fa.service');
-const storyQueries = require('../../../db/story');
-const { convertIn2DigitFormat } = require('../../../services/date.service');
+const package_ = require('../../../package.json');
+const logger = require('../../lib/log');
+const passportQueries = require('../../db/passport');
+const { pool } = require('../../db/sql');
+const { pack } = require('../../services/archive.service');
+const twoFactorAuthService = require('../../services/2fa.service');
+const storyQueries = require('../../db/story');
+const { convertIn2DigitFormat } = require('../../services/date.service');
 
 /**
  * @param {Array} stories - entries
@@ -37,7 +37,7 @@ const getTextFromStories = (stories) => {
  * @param {object} passport - passport gotoisCredentions
  * @returns {Promise<*>}
  */
-module.exports = async function(jsonld, { passport }) {
+module.exports = async function (jsonld, { passport }) {
   logger.info('ping');
 
   const date = jsonld.startTime;
