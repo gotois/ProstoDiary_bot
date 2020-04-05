@@ -1,6 +1,6 @@
 const Transport = require('winston-transport');
-const storyQueries = require('../story');
-const passportQueries = require('../passport');
+const storyQueries = require('../selectors/story');
+const passportQueries = require('../selectors/passport');
 const { pool } = require('../sql');
 const package_ = require('../../../package.json');
 const TelegramNotifyError = require('../../core/models/errors/telegram-notify-error');

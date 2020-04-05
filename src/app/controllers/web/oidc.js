@@ -1,6 +1,6 @@
 const jose = require('jose');
-const passportQueries = require('../../../db/passport');
-const assistantQueries = require('../../../db/assistant');
+const passportQueries = require('../../../db/selectors/passport');
+const assistantQueries = require('../../../db/selectors/assistant');
 const { pool } = require('../../../db/sql');
 const logger = require('../../../lib/log');
 const { post } = require('../../../services/request.service');

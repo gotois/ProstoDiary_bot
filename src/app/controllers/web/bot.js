@@ -1,5 +1,5 @@
 const { pool } = require('../../../db/sql');
-const passportQueries = require('../../../db/passport');
+const passportQueries = require('../../../db/selectors/passport');
 const logger = require('../../../lib/log');
 // eslint-disable-next-line
 const twoFactorAuthService = require('../../../services/2fa.service');

@@ -1,11 +1,10 @@
 const template = require('../../views/assistants');
 const { SERVER } = require('../../../environment');
 const { pool } = require('../../../db/sql');
-const assistantQueries = require('../../../db/assistant');
+const assistantQueries = require('../../../db/selectors/assistant');
 
 module.exports = class Marketplace {
-  super() {
-  }
+  super() {}
   async assistants(request, response) {
     try {
       const clients = await pool.connect(async (connection) => {
@@ -23,9 +22,11 @@ module.exports = class Marketplace {
           };
         });
       });
-      response.status(200).send(template({
-        clients
-      }));
+      response.status(200).send(
+        template({
+          clients,
+        }),
+      );
     } catch (error) {
       response.status(400).json({ error: error.message });
     }

@@ -2,7 +2,7 @@ const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
 const { pool } = require('../../db/sql');
 const bot = require('../../include/telegram-bot/bot');
-const passportQueries = require('../../db/passport');
+const passportQueries = require('../../db/selectors/passport');
 const imapService = require('../../services/imap.service');
 const logger = require('../../lib/log');
 

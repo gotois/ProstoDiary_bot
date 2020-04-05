@@ -1,7 +1,7 @@
 const jose = require('jose');
 const bot = require('../../../include/telegram-bot/bot');
 const { pool } = require('../../../db/sql');
-const assistantChatQueries = require('../../../db/chat');
+const assistantChatQueries = require('../../../db/selectors/chat');
 const logger = require('../../../lib/log');
 const notifyTelegram = require('../../../lib/notify-tg');
 /**

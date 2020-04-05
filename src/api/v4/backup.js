@@ -1,10 +1,10 @@
 const package_ = require('../../../package.json');
 const logger = require('../../lib/log');
-const passportQueries = require('../../db/passport');
+const passportQueries = require('../../db/selectors/passport');
 const { pool } = require('../../db/sql');
 const { pack } = require('../../services/archive.service');
 const twoFactorAuthService = require('../../services/2fa.service');
-const storyQueries = require('../../db/story');
+const storyQueries = require('../../db/selectors/story');
 const { convertIn2DigitFormat } = require('../../services/date.service');
 
 /**

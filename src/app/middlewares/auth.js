@@ -1,5 +1,5 @@
 const auth = require('http-auth');
-const passportQueries = require('../../db/passport');
+const passportQueries = require('../../db/selectors/passport');
 const { pool } = require('../../db/sql');
 const logger = require('../../lib/log');
 

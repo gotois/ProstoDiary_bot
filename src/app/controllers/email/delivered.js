@@ -2,7 +2,7 @@ const bot = require('../../../include/telegram-bot/bot');
 const { pool } = require('../../../db/sql');
 // eslint-disable-next-line
 const { SERVER } = require('../../../environment');
-const passportQueries = require('../../../db/passport');
+const passportQueries = require('../../../db/selectors/passport');
 const imapService = require('../../../services/imap.service');
 const logger = require('../../../lib/log');
 /**

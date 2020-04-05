@@ -2,7 +2,7 @@ const validator = require('validator');
 const logger = require('../../../lib/log');
 const package_ = require('../../../../package.json');
 const { pool, NotFoundError } = require('../../../db/sql');
-const passportQueries = require('../../../db/passport');
+const passportQueries = require('../../../db/selectors/passport');
 const { mail } = require('../../../lib/sendgrid');
 const pddService = require('../../../services/pdd.service');
 const twoFactorAuthService = require('../../../services/2fa.service');
@@ -49,21 +49,27 @@ module.exports = class OAUTH {
         const transactionResult = await connection.transaction(
           async (transactionConnection) => {
             try {
-              const passport = await OAUTH.updateOauthPassport(transactionConnection, {
-                yandex,
-                facebook,
-              });
+              const passport = await OAUTH.updateOauthPassport(
+                transactionConnection,
+                {
+                  yandex,
+                  facebook,
+                },
+              );
               // todo добавить еще отправку письма про апдейт паспорта
               // ...
               request.session.passportId = passport.id;
               return 'Вы успешно обновили данные своего паспорта.';
             } catch (error) {
               if (error instanceof NotFoundError) {
-                const passport = await OAUTH.createOauthPassport(transactionConnection, {
-                  yandex,
-                  facebook,
-                  phone,
-                });
+                const passport = await OAUTH.createOauthPassport(
+                  transactionConnection,
+                  {
+                    yandex,
+                    facebook,
+                    phone,
+                  },
+                );
                 request.session.passportId = passport.id;
                 return 'На привязанную почту вам отправлено письмо от вашего бота. Активируйте бота следуя инструкциям в письме.';
               }
@@ -75,9 +81,11 @@ module.exports = class OAUTH {
         return transactionResult;
       });
       logger.info(result);
-      response.status(200).send(registrationSuccessTemplate({
-        message: result
-      }));
+      response.status(200).send(
+        registrationSuccessTemplate({
+          message: result,
+        }),
+      );
     } catch (error) {
       response.status(400).json(error);
     }
@@ -107,8 +115,10 @@ module.exports = class OAUTH {
    * @param {object} oauth - oauth providers
    * @returns {Promise<*>}
    */
-  static async getPassport (transactionConnection,
-                            { telegram_id = null, yandex_id = null, facebook_id = null },) {
+  static async getPassport(
+    transactionConnection,
+    { telegram_id = null, yandex_id = null, facebook_id = null },
+  ) {
     const passportTable = await transactionConnection.maybeOne(
       passportQueries.selectAll(telegram_id, yandex_id, facebook_id),
     );
@@ -124,8 +134,10 @@ module.exports = class OAUTH {
    * @param {object} oauth - oauth providers
    * @returns {Promise<*>}
    */
-  static async updateOauthPassport(transactionConnection,
-                                   { yandex, facebook },) {
+  static async updateOauthPassport(
+    transactionConnection,
+    { yandex, facebook },
+  ) {
     if (yandex) {
       const yandexPassport = await oauthService.yandex(yandex.raw);
       const passportTable = await OAUTH.getPassport(transactionConnection, {
@@ -160,8 +172,10 @@ module.exports = class OAUTH {
    * @param {*} transactionConnection - sql transaction
    * @param {object} oauth - oauth providers
    */
-  static async createOauthPassport(  transactionConnection,
-                                     { yandex = {}, facebook = {}, telegram = {}, phone }) {
+  static async createOauthPassport(
+    transactionConnection,
+    { yandex = {}, facebook = {}, telegram = {}, phone },
+  ) {
     logger.info('createOauthPassport');
     const passportEmails = [];
     let yaData;

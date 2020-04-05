@@ -1,6 +1,6 @@
 const { pool } = require('../../db/sql');
 const bot = require('../../include/telegram-bot/bot');
-const passportQueries = require('../../db/passport');
+const passportQueries = require('../../db/selectors/passport');
 const logger = require('../../lib/log');
 /**
  * @description пингуем тем самым проверяем что пользователь активен

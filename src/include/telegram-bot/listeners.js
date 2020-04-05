@@ -2,9 +2,8 @@ const TelegramBotMessage = require('./models/message');
 const logger = require('../../lib/log');
 const { telegram, botCommands } = require('./commands');
 const { pool } = require('../../db/sql');
-
-const assistantChatQueries = require('../../db/chat');
-const assistantQueries = require('../../db/assistant');
+const assistantChatQueries = require('../../db/selectors/chat');
+const assistantQueries = require('../../db/selectors/assistant');
 
 module.exports = (telegramBot) => {
   // @todo перенести это в /start.event.js

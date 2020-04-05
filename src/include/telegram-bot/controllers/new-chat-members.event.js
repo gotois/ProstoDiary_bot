@@ -1,6 +1,6 @@
 const TelegramBotRequest = require('./telegram-bot-request');
 const { pool, sql } = require('../../../db/sql');
-const assistantChatQueries = require('../../../db/chat');
+const assistantChatQueries = require('../../../db/selectors/chat');
 const logger = require('../../../lib/log');
 
 class NewChatMembers extends TelegramBotRequest {

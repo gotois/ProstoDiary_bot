@@ -1,7 +1,7 @@
 const ac = require('./rbac');
 const { pool } = require('../../../db/sql');
-const storyQueries = require('../../../db/story');
-const passportQueries = require('../../../db/passport');
+const storyQueries = require('../../../db/selectors/story');
+const passportQueries = require('../../../db/selectors/passport');
 const template = require('../../views/message');
 
 // Для доступа к сообщениям, пользователю необходимо вести свой email и master password
