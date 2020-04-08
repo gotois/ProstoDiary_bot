@@ -4,7 +4,7 @@
 /.nyc_output/
 /keys/
 *-debug.log*
-.env
+*.env
 /docs/_site
 .sass-cache
 .jekyll-metadata
