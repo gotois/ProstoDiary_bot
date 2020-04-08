@@ -2,8 +2,15 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
 const logger = require('../src/lib/log');
-
-// todo добавить validate и улучшить параметры вопросов
+/**
+ * @constant
+ * @type {string}
+ */
+const ENV_NAME = '.env';
+/**
+ * @todo добавить validate и улучшить параметры вопросов
+ * @type {object[]}
+ */
 const questions = [
   // TELEGRAM
   {
@@ -213,9 +220,11 @@ function convertEnvironmentObjectToString(object) {
 }
 
 (async function main() {
+  if (fs.existsSync(ENV_NAME)) {
+    throw new Error('File: ' + ENV_NAME + ' exist. Please recycle it');
+  }
   const environments = await inquirer.prompt(questions);
   const values = convertEnvironmentObjectToString(environments);
-  const ENV_NAME = 'test.env';
   fs.writeFileSync(ENV_NAME, values);
   logger.info('file: ' + ENV_NAME + ' saved');
 })();
