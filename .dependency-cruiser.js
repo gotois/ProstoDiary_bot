@@ -181,7 +181,7 @@ module.exports = {
       ]
     },
     exclude : {
-      path: 'src/services/request.service.js|command-transport.js|src/lib/foursquare.js|psql-transport.js',
+      path: 'request|winston-transport',
       dynamic: true
     },
     moduleSystems: ['cjs'],
