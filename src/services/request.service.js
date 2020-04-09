@@ -1,8 +1,11 @@
 const request = require('request');
-const supertest = require('supertest');
 const validator = require('validator');
 const package_ = require('../../package.json');
 const { SERVER, IS_AVA } = require('../environment');
+let supertest;
+if (IS_AVA) {
+  supertest = require('supertest');
+}
 /**
  * @param {any} body - response body
  * @returns {string}
@@ -155,7 +158,12 @@ const post = (
     });
   });
 };
-
+/**
+ * @param {string} url - url
+ * @param {form} form - form
+ * @param {headers} headers - headers
+ * @returns {Promise<*>}
+ */
 const patch = (
   url,
   form,
