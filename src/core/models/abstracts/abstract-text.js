@@ -27,104 +27,6 @@ const myForm = (parameters) => {
   };
 };
 
-/**
- * @todo перенести в modules
- * @param {string} text - sentence text
- */
-async function detectBySentense(text) {
-  logger.info('detectBySentense');
-
-  if (text.length > 256) {
-    throw new Error('So big for detect');
-  }
-  const subjects = [];
-
-  /**
-   * @param {Action} action - JSON-LD action
-   * @returns {object}
-   */
-  function generateDocument(action) {
-    const object = myForm({
-      ...parameters, // параметры полученные от Diglogflow
-      name: encodeURIComponent(objectNames[0]), // в идеале должно браться из dialogflow, но если не получается, то берем существительное и прилагательное через NLP
-      // inLanguage: 'xxx' // язык
-    });
-
-    const innerDocument = {
-      // предполагаю что контекст будет создавать Space для каждого отдельного события это будет вида: 'https://gotointeractive.com/:object/:subject
-      '@context': {
-        schema: 'http://schema.org/',
-        object: 'schema:object',
-        // для валидации schema
-        ...Object.keys(parameters).reduce((accumulator, k) => {
-          accumulator[k] = 'schema:' + k;
-          return accumulator;
-        }, {}),
-      },
-      '@type': action.type,
-      object,
-      // actionStatus: action.status,
-    };
-    return innerDocument;
-  }
-
-  // todo возможно исключение, надо его правильно обработать
-  // todo поменять uid
-  const dialogflowResult = await dialogService.detect(text, 'test-uid');
-  const parameters = dialogService.formatParameters(dialogflowResult);
-
-  const { tokens } = await languageService.analyzeSyntax(
-    dialogflowResult.queryText,
-  );
-  const objectNames = [];
-  for (const token of tokens) {
-    const { lemma } = token;
-
-    if (validator.isEmail(lemma)) {
-      // this.abstracts.push(new AbstractEmail(lemma));
-    } else if (validator.isMobilePhone(lemma)) {
-      // this.abstracts.push(new AbstractPhone(lemma));
-    } else if (validator.isURL(lemma)) {
-      const webpage = new AbstractWebpage({ url: lemma });
-      await webpage.prepare();
-      subjects.push(webpage.context);
-    }
-    // TODO: names получить имена людей
-    //  ...
-    // TODO: получить адреса из текста
-    //  ...
-    // TODO: получить даты
-    //  ...
-    // TODO: behavior; анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
-    //  ...
-
-    switch (token.partOfSpeech.tag) {
-      // соединитель - союз, нужно увеличить возвращаемый массив на один
-      // case 'CONJ': {
-      //   resCount++;
-      //   break;
-      // }
-      case 'NOUN': {
-        objectNames.push(lemma);
-        break;
-      }
-      case 'VERB': {
-        // categories.add(lemma); // fixme здесь использовать существительное tag === 'NOUN'
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-  }
-
-  subjects.push(
-    generateDocument(new Action(dialogflowResult.intent.displayName)),
-  );
-
-  return subjects;
-}
-
 class AbstractText extends Abstract {
   constructor(data) {
     super(data);
@@ -195,7 +97,7 @@ class AbstractText extends Abstract {
     // }
 
     for (const sentense of languageService.splitTextBySentences(this.text)) {
-      for (const subject of await detectBySentense(sentense)) {
+      for (const subject of await this.detectBySentense(sentense)) {
         this.subjectOf.push(subject);
       }
     }
@@ -207,6 +109,107 @@ class AbstractText extends Abstract {
     //   passport.secret_key,
     // ]);
     // this.abstract = encrypted.data.toString('base64')
+  }
+
+  /**
+   * @param {string} text - sentence text
+   */
+  async detectBySentense(text) {
+    logger.info('detectBySentense');
+
+    if (text.length > 256) {
+      throw new Error('So big for detect');
+    }
+    const subjects = [];
+
+    /**
+     * @param {Action} action - JSON-LD action
+     * @returns {object}
+     */
+    function generateDocument(action) {
+      const object = myForm({
+        ...parameters, // параметры полученные от Diglogflow
+        name: encodeURIComponent(objectNames[0]), // в идеале должно браться из dialogflow, но если не получается, то берем существительное и прилагательное через NLP
+        // inLanguage: 'xxx' // язык
+      });
+
+      const innerDocument = {
+        // предполагаю что контекст будет создавать Space для каждого отдельного события это будет вида: 'https://gotointeractive.com/:object/:subject
+        '@context': {
+          schema: 'http://schema.org/',
+          object: 'schema:object',
+          // для валидации schema
+          ...Object.keys(parameters).reduce((accumulator, k) => {
+            accumulator[k] = 'schema:' + k;
+            return accumulator;
+          }, {}),
+        },
+        '@type': action.type,
+        object,
+        // actionStatus: action.status,
+      };
+      return innerDocument;
+    }
+
+    // todo возможно исключение, надо его правильно обработать
+    // todo поменять uid
+    const dialogflowResult = await dialogService.detect(text, 'test-uid');
+    const parameters = dialogService.formatParameters(dialogflowResult);
+
+    const { tokens } = await languageService.analyzeSyntax(
+      dialogflowResult.queryText,
+    );
+    const objectNames = [];
+    for (const token of tokens) {
+      const { lemma } = token;
+
+      if (validator.isEmail(lemma)) {
+        // this.abstracts.push(new AbstractEmail(lemma));
+      } else if (validator.isMobilePhone(lemma)) {
+        // this.abstracts.push(new AbstractPhone(lemma));
+      } else if (validator.isURL(lemma)) {
+        logger.info('webpage preparing');
+        const webpage = new AbstractWebpage({ url: lemma });
+        await webpage.prepare();
+        webpage.namespace = this.namespace; // hack - передача namespace от родителя к потомку
+        webpage.creator = this.creator; // hack - передача creator от родителя к потомку
+        webpage.publisher = this.publisher; // hack - передача publisher от родителя к потомку
+        subjects.push(webpage.context);
+      }
+      // TODO: names получить имена людей
+      //  ...
+      // TODO: получить адреса из текста
+      //  ...
+      // TODO: получить даты
+      //  ...
+      // TODO: behavior; анализируемое поведение. Анализируем введенный текст узнаем желания/намерение пользователя в более глубоком виде
+      //  ...
+
+      switch (token.partOfSpeech.tag) {
+        // соединитель - союз, нужно увеличить возвращаемый массив на один
+        // case 'CONJ': {
+        //   resCount++;
+        //   break;
+        // }
+        case 'NOUN': {
+          objectNames.push(lemma);
+          break;
+        }
+        case 'VERB': {
+          // categories.add(lemma); // fixme здесь использовать существительное tag === 'NOUN'
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+
+    subjects.push(
+      generateDocument(new Action(dialogflowResult.intent.displayName)),
+    );
+
+    return subjects;
   }
 }
 

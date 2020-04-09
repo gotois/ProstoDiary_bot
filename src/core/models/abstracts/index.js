@@ -36,16 +36,20 @@ class Abstract {
   // identifier assistant
   get agent() {
     // hack считаем что это ассистент tg@gotointeractive.com
-    if (this.namespace.includes('//t.me/')) {
-      return {
-        '@type': 'Organization',
-        'email': 'tg@gotointeractive.com',
-      };
+    if (this.namespace) {
+      if (this.namespace.includes('//t.me/')) {
+        return {
+          '@type': 'Organization',
+          'email': 'tg@gotointeractive.com',
+        };
+      }
     }
     throw new Error('Unknown agent');
   }
   get context() {
     return {
+      // fixme для вложенных абстрактов требуется использовать $ref?
+      //  https://github.com/APIDevTools/json-schema-ref-parser
       '@id': this.namespace, // изоляцинные идентификаторы сообщения
       'agent': this.agent,
       'participant': {

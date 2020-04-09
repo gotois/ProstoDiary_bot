@@ -9,16 +9,24 @@ const notifyTelegram = require('../../../lib/notify-tg');
  * @returns {Promise<object>}
  */
 async function makeRequestBody(body) {
-  const message = body.message || body.callback_query.message;
+  const message =
+    body.message || body.channel_post || body.callback_query.message;
+  const chatId = message.chat && message.chat.id;
+  const userId = message.from && message.from.id;
   const passports = await pool.connect(async (connection) => {
     // сначала я получаю массив assistant_bot_id по чату
     // декодирую и передаю в passport - массив паспортов
-    const results = await connection.many(
-      assistantChatQueries.selectByChatId(String(message.chat.id)),
-    );
-    if (results.length === 0) {
-      logger.warn('you need to connect this assistant');
-      return {};
+    let results = [];
+    try {
+      results = await connection.many(
+        assistantChatQueries.selectByChatId(String(chatId)),
+      );
+      if (results.length === 0) {
+        logger.warn('you need to connect this assistant');
+        return {};
+      }
+    } catch (error) {
+      logger.warn(error.message);
     }
     const passports = [];
     if (body.channel_post) {
@@ -30,7 +38,7 @@ async function makeRequestBody(body) {
       if (result.id.startsWith('-')) {
         logger.info('PUBLIC CHAT');
         passports.push({
-          user: String(message.from.id),
+          user: String(userId),
           assistant: result.client_id,
           email: result.bot_user_email,
           jwt: result.token,
@@ -40,7 +48,7 @@ async function makeRequestBody(body) {
         const decoded = jose.JWT.decode(result.token);
         passports.push({
           activated: decoded.email_verified,
-          user: String(message.from.id),
+          user: String(userId),
           assistant: result.client_id,
           passportId: decoded.sub, // ID паспорт бота
           email: decoded.email, // почта бота пользователя
