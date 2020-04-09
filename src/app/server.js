@@ -16,6 +16,7 @@ const marketplaceRoutes = require('./routes/marketplace');
 const messageRoutes = require('./routes/message');
 const assistantWebhookRoutes = require('./routes/assistant');
 const pingRoutes = require('./routes/ping');
+const documentationRoutes = require('./routes/documentation');
 
 (async function main() {
   Sentry.init({
@@ -35,6 +36,7 @@ const pingRoutes = require('./routes/ping');
   app.use(Sentry.Handlers.errorHandler());
   app.use('/', mainRoutes(oidcProvider));
   app.use('/ping', pingRoutes);
+  app.use('/documentation', documentationRoutes);
   app.use('/api', apiRoutes);
   app.use('/bot', botRoutes);
   app.use('/message', messageRoutes);

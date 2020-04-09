@@ -29,8 +29,7 @@ const clipboardHelper = require('../src/helpers/clipboard');
       await updateWebhook(url);
       clipboardHelper.copy(url);
     } catch (error) {
-      logger.error(error.msg);
-      logger.warn('"Run without NGROK. Telegram webhook doesn\'t work!"');
+      logger.error('"Run without NGROK. Telegram webhook doesn\'t work!"');
       nodemonInstance = nodemon({ script: 'src/app/server' });
     }
     nodemonInstance

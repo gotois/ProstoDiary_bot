@@ -1,15 +1,11 @@
 {
+  "enabled": true,
   "extends": [
     "config:base",
     ":onlyNpm"
   ],
   "prHourlyLimit": 24,
-  "digest": {
-    "automerge": true
-  },
-  "schedule": [
-    "every weekend"
-  ],
+  "schedule": "before 3am on Monday",
   "baseBranches": [
     "master"
   ],

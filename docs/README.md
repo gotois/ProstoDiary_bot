@@ -12,7 +12,7 @@
 [![GitHub](https://img.shields.io/github/license/gotois/ProstoDiary_bot.svg)](https://github.com/gotois/ProstoDiary_bot/blob/master/LICENSE)
 [![sketchboard](https://img.shields.io/badge/sketchboard.me-orange.svg?link=https://gallery.sketchboard.me/team/tm_XjeyfGQC?s=TBE23WvgfgAg&style=flat&label=Schemes)](https://gallery.sketchboard.me/team/tm_XjeyfGQC?s=TBE23WvgfgAg)
 [![Trello](https://img.shields.io/badge/trello-black.svg?style=flat&label=community)](https://trello.com/gotois)
-[![OpenAPI](https://img.shields.io/badge/OpenAPI-green.svg?style=flat&label=docs)](https://prosto-diary.gotointeractive.com/openapi.json)
+[![OpenAPI](https://img.shields.io/badge/OpenAPI-green.svg?style=flat&label=docs)](https://prosto-diary.herokuapp.com/documentation/openapi.json)
 [![Issuehunt](https://img.shields.io/badge/issuehunt.io-blueviolet.svg?link=https://issuehunt.io/r/gotois/ProstoDiary_bot&style=flat&label=jobs)](https://issuehunt.io/r/gotois/ProstoDiary_bot)
 
 ## About
