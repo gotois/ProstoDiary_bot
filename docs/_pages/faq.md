@@ -113,7 +113,6 @@ select encode(content, 'escape') as text_content from story where id = 'b8ea5534
 DROP USER IF EXISTS bot;
 DROP ROLE IF EXISTS demo;
 
-DROP TYPE IF EXISTS TAG CASCADE;
 DROP TYPE IF EXISTS STATUS_TYPE CASCADE;
 
 DROP MATERIALIZED VIEW public.story;

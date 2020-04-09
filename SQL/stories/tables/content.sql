@@ -17,6 +17,8 @@ CREATE
 ; CREATE
     INDEX
         ON story.content (content_type)
-; GRANT ALL PRIVILEGES
+;
+-- skip to heroku
+GRANT ALL PRIVILEGES
     ON story.content TO bot
 ;

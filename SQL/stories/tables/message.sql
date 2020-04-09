@@ -22,6 +22,8 @@ CREATE
  CREATE
     INDEX
         ON story.message (publisher)
-; GRANT ALL PRIVILEGES
+;
+-- skip to heroku
+GRANT ALL PRIVILEGES
     ON story.message TO bot
 ;

@@ -4,6 +4,7 @@ CREATE
 			id UUID NOT NULL DEFAULT gen_random_uuid (
             ) -- специально используем gen_random_uuid, чтобы отслеживать по MAC адресу компьютер на котором было создание портрета пользователя
             ,email TEXT UNIQUE -- primary email который используется при первой регистрации. Основной ящик можно затем изменить
+            -- todo добавить поле email_verified
             ,phone TEXT UNIQUE -- primary phone используется при первой регистрации. Телефон после нельзя изменить
             ,telegram_id TEXT UNIQUE -- привязки OAuth
             ,telegram_passport JSONB
@@ -15,7 +16,9 @@ CREATE
             ,yandex_session JSONB
             ,PRIMARY KEY (id)
         )
-; GRANT ALL
+;
+-- skip to heroku
+GRANT ALL
     ON TABLE
     client.passport TO bot
 ;

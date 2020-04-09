@@ -20,7 +20,9 @@ CREATE
             ,private_key_cert BYTEA NOT NULL
             ,PRIMARY KEY (id)
         )
-; GRANT ALL
+;
+-- skip to heroku
+GRANT ALL
     ON TABLE
     client.bot TO bot
 ;

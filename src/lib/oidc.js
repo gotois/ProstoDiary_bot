@@ -1,10 +1,11 @@
 const Provider = require('oidc-provider');
 const { JWKS } = require('jose');
 const { SERVER, IS_PRODUCTION, SECURE_KEY } = require('../environment');
-const { pool } = require('../db/sql');
+const { pool, NotFoundError } = require('../db/sql');
 const RedisAdapter = require('../db/adapters/oidc-transport');
 const assistantQueries = require('../db/selectors/assistant');
 const Account = require('../app/models/account');
+const logger = require('./log');
 /**
  * @returns {Promise<Provider>}
  */
@@ -21,7 +22,16 @@ module.exports = async () => {
   const jwks = keystore.toJWKS(true);
 
   const CLIENTS = await pool.connect(async (connection) => {
-    const allAssistants = await connection.many(assistantQueries.selectAll());
+    let allAssistants;
+    try {
+      allAssistants = await connection.many(assistantQueries.selectAll());
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        logger.warn('Assistants not found');
+        return [];
+      }
+      throw error;
+    }
     return allAssistants.map((assistant) => {
       return {
         ...assistant,

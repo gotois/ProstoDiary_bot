@@ -7,6 +7,8 @@ CREATE
             ,content_id BIGINT NOT NULL
             ,PRIMARY KEY (id)
         )
-; GRANT ALL PRIVILEGES
+;
+-- skip to heroku
+GRANT ALL PRIVILEGES
     ON story.abstract TO bot
 ;
