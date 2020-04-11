@@ -26,6 +26,14 @@ FROM
     assistant.marketplace
 `;
   },
+  check(client_id, client_secret) {
+    return sql`SELECT
+    *
+FROM
+    assistant.marketplace
+    WHERE client_id = ${client_id} AND client_secret = ${client_secret}
+`;
+  },
   /**
    * @param {string} object - param object
    * @param {string} object.client_id - assistant name

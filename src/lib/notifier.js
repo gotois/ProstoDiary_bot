@@ -74,16 +74,25 @@ module.exports = async (document) => {
     }
     case 'tg@gotointeractive.com': {
       const telegramNotify = new TelegramNotifyObject(document);
-      // todo в пост передавать auth или токен
-      await post(`${SERVER.HOST}/assistant/tg`, {
-        subject: telegramNotify.subject,
-        html: telegramNotify.html,
-        url: telegramNotify.url,
-        messageId: telegramNotify.messageId,
-        chatId: telegramNotify.chatId,
-        parseMode: telegramNotify.parseMode,
-        attachments: telegramNotify.attachments,
-      });
+      await post(
+        `${SERVER.HOST}/assistant/tg`,
+        {
+          subject: telegramNotify.subject,
+          html: telegramNotify.html,
+          url: telegramNotify.url,
+          messageId: telegramNotify.messageId,
+          chatId: telegramNotify.chatId,
+          parseMode: telegramNotify.parseMode,
+          attachments: telegramNotify.attachments,
+        },
+        undefined,
+        undefined,
+        {
+          user: 'tg@gotointeractive.com',
+          pass: 'foobar', // fixme убрать хардкод. брать client_secret из БД
+          sendImmediately: false,
+        },
+      );
       break;
     }
     default: {
