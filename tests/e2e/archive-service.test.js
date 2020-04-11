@@ -1,14 +1,20 @@
-const fs = require('fs');
-
-// fixme перенести в health asisstant
 module.exports = async (t) => {
   t.timeout(1500);
-  // fixme использовать рандомный zip
-  const { unpack } = require('../../src/services/archive.service');
-  const fileZip = fs.readFileSync('tests/data/apple-health/export.zip');
-  const mapBuffer = await unpack(fileZip);
-  t.is(mapBuffer.size, 2);
-  mapBuffer.forEach((value) => {
+  const { unpack, pack } = require('../../src/services/archive.service');
+  const testPack = await pack([
+    {
+      buffer: Buffer.from('test', 'utf8'),
+      filename: 'test.txt',
+    },
+  ]);
+  const maptestUnpackBuffer = await unpack(testPack);
+  t.is(maptestUnpackBuffer.size, 1);
+  maptestUnpackBuffer.forEach((value) => {
     t.true(Buffer.isBuffer(value));
+    t.is(value.toString('utf8'), 'test');
   });
+  const testPackBase64 = testPack.toString('base64');
+  const testUnpackFromBase64 = Buffer.from(testPackBase64, 'base64');
+  const maptestUnpackBufferFromBase64 = await unpack(testUnpackFromBase64);
+  t.is(maptestUnpackBufferFromBase64.size, 1);
 };

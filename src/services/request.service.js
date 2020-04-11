@@ -118,9 +118,9 @@ const get = (url, qs = {}, headers = {}, encoding = null) => {
 /**
  * @param {string} url - url
  * @param {object} form - form
- * @param {object|undefined} headers - headers
- * @param {any} encoding - encoding
- * @param {object} auth - basic auth
+ * @param {object} [headers] - headers
+ * @param {any} [encoding] - encoding
+ * @param {object} [auth] - basic auth
  * @returns {Promise<string|Buffer|Error>}
  */
 const post = (

@@ -50,43 +50,48 @@ module.exports = async function (document, { passport }) {
       return subject.name === 'sorting';
     });
     const sorting = sortingValue.abstract;
-    const { stories, user } = await pool.connect(async (connection) => {
-      const botTable = await connection.one(
-        passportQueries.selectByPassport(passport.passport_id),
-      );
-      // check 2fa - todo uncomment
-      const valid = twoFactorAuthService.verifyUser(botTable.secret_key, token);
-      if (!valid) {
-        throw new Error('Неверный ключ. Попробуйте снова');
-      }
-      const userTable = await connection.one(
-        passportQueries.selectUserById(passport.passport_id),
-      );
-      const rows = await connection.many(
-        storyQueries.selectStoryByDate({
-          publisherEmail: botTable.email,
-          sorting,
-        }),
-      );
-      return {
-        stories: rows,
-        botTable,
-        user: userTable,
-      };
-    });
+    const { stories, user, storyJSON } = await pool.connect(
+      async (connection) => {
+        const botTable = await connection.one(
+          passportQueries.selectByPassport(passport.passport_id),
+        );
+        // check 2fa - todo uncomment
+        const valid = twoFactorAuthService.verifyUser(
+          botTable.secret_key,
+          token,
+        );
+        if (!valid) {
+          throw new Error('Неверный ключ. Попробуйте снова');
+        }
+        const userTable = await connection.one(
+          passportQueries.selectUserById(passport.passport_id),
+        );
+        const rows = await connection.many(
+          storyQueries.selectStoryByDate({
+            publisherEmail: botTable.email,
+            sorting,
+          }),
+        );
+        return {
+          stories: getTextFromStories(rows),
+          botTable,
+          user: userTable,
+          storyJSON: JSON.stringify(rows),
+        };
+      },
+    );
     const txtPack = await pack([
       {
-        buffer: getTextFromStories(stories),
+        buffer: stories,
         filename: `backup_${date}.txt`,
+      },
+      {
+        buffer: storyJSON,
+        filename: `backup_${date}.json`,
       },
     ]);
     const emailAction = AcceptEmailAction({
-      // todo убрать хардкод
-      sender: {
-        '@type': 'Organization',
-        'name': 'TEST_EMAIL',
-        'email': 'email@gotointeractive.com',
-      },
+      sender: document.agent,
       toRecipient: {
         '@type': 'Person',
         'name': 'My User',
@@ -99,7 +104,6 @@ module.exports = async function (document, { passport }) {
       messageAttachment: {
         '@type': 'CreativeWork',
         'name': 'backup.zip',
-        // 'text': '', // используется для фолбека если нет возможности отправить html
         'abstract': txtPack.toString('base64'),
         'encodingFormat': 'application/zip',
       },

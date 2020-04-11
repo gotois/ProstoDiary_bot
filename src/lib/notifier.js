@@ -2,7 +2,25 @@ const { post } = require('../services/request.service');
 const logger = require('../lib/log');
 const { SERVER } = require('../environment');
 
-class TelegramNotify {
+/* eslint-disable */
+class EmailNotifyObject {
+  constructor(document) {
+    // console.log('document', document)
+    // fixme насыщать из документа
+    this.tags = null;
+    this.content = null;
+    this.subject = null;
+    this.mime = null;
+    this.categories = null;
+    this.date = null;
+    this.telegram_message_id = null;
+    this.chat_id = null;
+    this.attachments = [];
+  }
+}
+/* eslint-enable */
+
+class TelegramNotifyObject {
   // AcceptAction or RejectAction jsonld
   constructor(document) {
     let isSilent = document.object.mainEntity.find((entity) => {
@@ -29,6 +47,15 @@ class TelegramNotify {
     this.url = document.purpose.url;
     this.chatId = telegramChatId;
     this.messageId = telegramMessageId;
+    this.attachments = [];
+    if (document.purpose.messageAttachment) {
+      this.attachments.push({
+        content: document.purpose.messageAttachment.abstract,
+        filename: document.purpose.messageAttachment.name,
+        type: document.purpose.messageAttachment.encodingFormat,
+      });
+      this.subject = document.purpose.about.name;
+    }
   }
 }
 /**
@@ -40,8 +67,14 @@ class TelegramNotify {
 module.exports = async (document) => {
   logger.info(document);
   switch (document.agent.email) {
+    case 'email@gotointeractive.com': {
+      // const emailNotify = new EmailNotifyObject(document);
+      // todo отправлять по урлу /assistant/email
+      break;
+    }
     case 'tg@gotointeractive.com': {
-      const telegramNotify = new TelegramNotify(document);
+      const telegramNotify = new TelegramNotifyObject(document);
+      // todo в пост передавать auth или токен
       await post(`${SERVER.HOST}/assistant/tg`, {
         subject: telegramNotify.subject,
         html: telegramNotify.html,
@@ -49,6 +82,7 @@ module.exports = async (document) => {
         messageId: telegramNotify.messageId,
         chatId: telegramNotify.chatId,
         parseMode: telegramNotify.parseMode,
+        attachments: telegramNotify.attachments,
       });
       break;
     }

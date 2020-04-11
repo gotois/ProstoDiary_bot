@@ -1,19 +1,21 @@
-const package_ = require('../../package.json');
-const { IS_AVA_OR_CI } = require('../environment');
-const { mail } = require('./sendgrid');
-const logger = require('./log');
+const package_ = require('../../../../package.json');
+const { IS_AVA_OR_CI } = require('../../../environment');
+const { mail } = require('../../../lib/sendgrid');
+const logger = require('../../../lib/log');
 /**
  * @description Отправляем сообщение. Попадает на почту на специально сгенерированный ящик gotois и после прочтения ботом удаляем
  * @param {object} requestObject - requestObject
- * @param {object} passport - passport credentions
  * @returns {Promise<string>}
  */
-async function notifyEmail(requestObject, passport) {
+async function notifyEmail(requestObject) {
   const {
+    from,
+    to,
     tags,
     content,
     subject,
     mime,
+    attachments,
     categories = ['notify'],
     date = Math.round(new Date().getTime() / 1000),
     telegram_message_id = null,
@@ -30,7 +32,7 @@ async function notifyEmail(requestObject, passport) {
   const message = {
     personalizations: [
       {
-        to: passport.userEmail,
+        to,
         headers,
         subject,
         customArgs: {
@@ -41,7 +43,7 @@ async function notifyEmail(requestObject, passport) {
         },
       },
     ],
-    from: passport.botEmail,
+    from,
     replyTo: {
       email: 'bugs@gotointeractive.com',
       name: 'Bug gotois',
@@ -59,7 +61,7 @@ async function notifyEmail(requestObject, passport) {
     },
     categories,
     // html,
-    // attachments,
+    attachments,
   };
   logger.info('mail.send');
   try {

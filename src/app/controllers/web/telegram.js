@@ -3,7 +3,7 @@ const bot = require('../../../include/telegram-bot/bot');
 const { pool } = require('../../../db/sql');
 const assistantChatQueries = require('../../../db/selectors/chat');
 const logger = require('../../../lib/log');
-const notifyTelegram = require('../../../lib/notify-tg');
+const notifyTelegram = require('../../../include/telegram-bot/services/notify-tg');
 /**
  * @param {object} body - telegram request body
  * @returns {Promise<object>}

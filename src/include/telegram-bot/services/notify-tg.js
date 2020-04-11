@@ -1,4 +1,4 @@
-const bot = require('../include/telegram-bot/bot');
+const bot = require('../bot');
 /**
  * @description Отправить документ телеграм ассистенту
  * @param {object} parameters - telegram parameters
@@ -26,12 +26,12 @@ ${html}
   } else {
     messageHTML = `${subject}${html}`;
   }
-  // если есть attachments, тогда отдельно нужно посылать файлы в телегу
+  // если есть attachments, отдельно посылаю каждый файл
   if (attachments.length > 0) {
     for (const attachment of attachments) {
       await bot.sendDocument(
         chatId,
-        Buffer.from(attachment.content),
+        Buffer.from(attachment.content, 'base64'),
         {
           caption: subject,
           parse_mode: parseMode,
