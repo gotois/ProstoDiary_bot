@@ -3,10 +3,12 @@ const Abstract = require('.');
 class AbstractCommand extends Abstract {
   /**
    * @param {object} data - data
+   * @param {object} [context] - context
    */
-  constructor(data) {
+  constructor(data, context) {
     super(data);
     this.command = data.command;
+    this._context = context || {};
   }
 
   get context() {
@@ -37,6 +39,7 @@ class AbstractCommand extends Abstract {
         'encodingFormat': 'text/plain',
         'mainEntity': this.objectMainEntity,
       },
+      ...this._context,
     };
   }
 }

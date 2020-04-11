@@ -5,7 +5,7 @@ const Abstract = require('../models/abstracts');
  * @returns {Promise<Abstract>}
  */
 module.exports = async function (parameters) {
-  // todo на основе данных возвращать нужный тип абстрактов
+  // todo на основе данных возвращать нужный тип абстрактов вида: PdfAbstract
   const abstractCommand = new Abstract({
     ...parameters,
   });

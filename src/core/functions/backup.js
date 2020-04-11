@@ -1,40 +1,35 @@
-const package_ = require('../../../package.json');
-
+const AbstractCommand = require('../models/abstracts/abstract-command');
 /**
- * @todo вместо отдачи jsonld производить прямой запрос на API
  * @description backup
- * @param {object} requestObject - requestObject
- * @returns {Promise<jsonld>}
+ * @param {object} parameters - requestObject
+ * @returns {Promise<AbstractCommand>}
  */
-module.exports = (requestObject) => {
-  const { date, token, sorting = 'Ascending' } = requestObject;
-
-  const document = {
-    '@context': 'http://schema.org',
-    '@type': 'AllocateAction',
-    'agent': {
-      '@type': 'Person',
-      'name': package_.name,
-      'url': package_.homepage,
+module.exports = async (parameters) => {
+  const { date, token, sorting = 'Ascending' } = parameters;
+  const abstractCommand = new AbstractCommand(
+    {
+      ...parameters,
+      command: 'Backup',
     },
-    'name': 'Backup',
-    'startTime': date,
-    'subjectOf': [
-      {
-        '@type': 'CreativeWork',
-        'name': 'token',
-        'abstract': token,
-        'encodingFormat': 'text/plain',
-        // еще может потребоваться поле dateCreated - которое будет детектировать когда этот токен пришел чтобы его лучше детектить
-      },
-      {
-        '@type': 'CreativeWork',
-        'name': 'sorting',
-        'abstract': sorting,
-        'encodingFormat': 'text/plain',
-      },
-    ],
-  };
-
-  return document;
+    {
+      startTime: date,
+      subjectOf: [
+        {
+          '@type': 'CreativeWork',
+          'name': 'token',
+          'abstract': token,
+          'encodingFormat': 'text/plain',
+          // еще может потребоваться поле dateCreated - которое будет детектировать когда этот токен пришел чтобы его лучше детектить
+        },
+        {
+          '@type': 'CreativeWork',
+          'name': 'sorting',
+          'abstract': sorting,
+          'encodingFormat': 'text/plain',
+        },
+      ],
+    },
+  );
+  await abstractCommand.prepare();
+  return abstractCommand;
 };

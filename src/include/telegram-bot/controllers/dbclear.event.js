@@ -23,10 +23,20 @@ class DatabaseClear extends TelegramBotRequest {
       message_id,
       async ({ text }) => {
         if (text !== 'YES') {
-          await this.bot.sendMessage(this.message.chat.id, 'Операция отменена');
+          await this.bot.sendMessage(
+            this.message.chat.id,
+            'Операция отменена пользователем',
+          );
           return;
         }
-        const jsonldAction = await destroyAction();
+        const jsonldAction = await destroyAction({
+          creator: this.creator,
+          publisher: this.publisher,
+          telegram: {
+            title: this.message.chat.title,
+            chatId: this.message.chat.id,
+          },
+        });
         await this.rpc(jsonldAction);
       },
     );

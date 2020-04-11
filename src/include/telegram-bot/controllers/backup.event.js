@@ -9,13 +9,17 @@ class Backup extends TelegramBotRequest {
    * @returns {Promise<void>}
    */
   async authReplyMessage({ text }) {
-    const result = await backupAction({
+    const jsonldAction = await backupAction({
       token: text,
       date: this.message.date,
       creator: this.creator,
       publisher: this.publisher,
+      telegram: {
+        title: this.message.chat.title,
+        chatId: this.message.chat.id,
+      },
     });
-    await this.bot.sendMessage(this.message.chat.id, result);
+    await this.rpc(jsonldAction);
   }
   async beginDialog(silent) {
     await super.beginDialog(silent);

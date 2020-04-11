@@ -8,7 +8,7 @@ const FOURSQUARE_HOST = 'api.foursquare.com';
 /**
  * @param {object} parameters - params
  * @param {object} parameters.ll - ll
- * @param {?object} parameters.query - query
+ * @param {?object} [parameters.query] - query
  * @param {object} parameters.limit - limit
  * @returns {Promise}
  */
