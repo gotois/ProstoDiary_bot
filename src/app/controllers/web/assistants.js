@@ -16,7 +16,7 @@ module.exports = class Marketplace {
       const values = MARKETPLACE.ASSISTANTS;
       await pool.connect(async (connection) => {
         const { rows } = await connection.query(assistantQueries.selectAll());
-        if (rows.length === 0) {
+        if (rows.length > 0) {
           response
             .status(400)
             .json({ error: 'Assistants exists. Please delete it if needs' });
