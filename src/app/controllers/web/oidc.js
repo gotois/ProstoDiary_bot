@@ -38,14 +38,14 @@ class OIDC {
       const decoded = jose.JWT.decode(tokenResult.id_token);
       const assistantData = await pool.connect(async (connection) => {
         // сверяем что такой client_id ассистента существует
-        const assistant = await connection.one(
+        const marketplace = await connection.one(
           assistantQueries.selectMarketAssistant(request.query.client_id),
         );
         const assistantBot = await connection.maybeOne(
           assistantQueries.selectAssistantBotByEmail(decoded.email),
         );
         if (assistantBot) {
-          // обновляется токен бота
+          logger.info('Updating current assistant.bot');
           await connection.query(
             assistantQueries.updateAssistantBotToken(
               tokenResult.id_token,
@@ -53,21 +53,20 @@ class OIDC {
             ),
           );
         } else {
-          // создается новый assistant.bot, ассистент сохраняет JWT
-          // а в таблицу client.bot записывается id ассистента (tg@gotointeractive.com)
+          logger.info('Creating new assistant.bot');
           await connection.query(
             assistantQueries.createAssistantBot({
-              assistant_marketplace_id: assistantBot.id,
+              assistant_marketplace_id: marketplace.id,
               token: tokenResult.id_token,
               bot_user_email: decoded.email,
             }),
           );
         }
-        return assistant;
+        return marketplace;
       });
       request.session.passportId = decoded.client_id;
       // в случае успеха надо перекидывать на homepage страницу ассистента
-      if (assistantData.homepage) {
+      if (assistantData.homepage.length > 0) {
         response.redirect(assistantData.homepage);
         return;
       }

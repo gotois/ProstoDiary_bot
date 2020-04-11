@@ -254,7 +254,9 @@ module.exports = class OAUTH {
       await mail.send({
         to: passport.email,
         from: email,
-        subject: `Passport ${package_.name}`,
+        subject: `Passport ${package_.name} ${
+          IS_PRODUCTION ? 'production' : 'development'
+        }`,
         html: `
         <h1>Добро пожаловать в систему ${package_.author.name}!</h1>
         <h2>Шаг 1: Настройте двухфакторную аутентификацию.</h2>
@@ -262,11 +264,9 @@ module.exports = class OAUTH {
         <img src="${secret.qr}" alt="${secret.base32}">
         <br>
         <h2>Шаг 2: Сохраните логин/пароль созданного бота в надежном и секретном месте.</h2>
-        <p>
-          <strong>EMAIL: ${email}</strong>
-          <strong>PASSWORD: ${secret.masterPassword}</strong>
-          <p>Дополнительно сохраните открытый и закрытый ключи SSL (* находятся в прикрепленных файлах)</p>
-        </p>
+        <div><strong>EMAIL: </strong><pre>${email}</pre></div>
+        <div><strong>PASSWORD: </strong><pre>${secret.masterPassword}</pre></div>
+        <p>Дополнительно сохраните открытый и закрытый ключи SSL (* находятся в прикрепленных файлах)</p>
         <br>
         <h2>Шаг 3: Активируйте бота и выберите ассистента.</h2>
         <p><a href="${SERVER.HOST}/bot/activate">[ Подтвердить регистрацию ]</a></p>
