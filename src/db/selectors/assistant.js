@@ -1,3 +1,4 @@
+const validator = require('validator');
 const { sql } = require('../sql');
 
 module.exports = {
@@ -47,6 +48,23 @@ FROM
     redirect_uris,
     homepage,
   }) {
+    if (!validator.isEmail(client_id)) {
+      throw new TypeError('Wrong client_id');
+    }
+    if (!Array.isArray(response_types)) {
+      throw new TypeError('Wrong response_types');
+    }
+    if (!Array.isArray(grant_types)) {
+      throw new TypeError('Wrong grant_types');
+    }
+    if (!Array.isArray(redirect_uris)) {
+      throw new TypeError('Wrong redirect_uris');
+    }
+    redirect_uris.forEach((uri) => {
+      if (!validator.isURL(uri)) {
+        throw new TypeError('Wrong uri: ' + uri);
+      }
+    });
     return sql`INSERT INTO assistant.marketplace
         (client_id, client_secret, application_type, response_types, token_endpoint_auth_method, grant_types, redirect_uris, homepage)
         VALUES (

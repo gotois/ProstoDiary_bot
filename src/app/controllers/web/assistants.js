@@ -1,5 +1,5 @@
 const template = require('../../views/assistants');
-const { SERVER, MARKETPLACE } = require('../../../environment');
+const { SERVER, IS_PRODUCTION, MARKETPLACE } = require('../../../environment');
 const { pool } = require('../../../db/sql');
 const assistantQueries = require('../../../db/selectors/assistant');
 
@@ -36,13 +36,17 @@ module.exports = class Marketplace {
           assistantQueries.selectAll(),
         );
         return allAssistants.map((assistant) => {
+          let redirectUris = [];
+          // насыщаем редиректами текущий урл сервера для дев
+          if (!IS_PRODUCTION) {
+            redirectUris.push(
+              SERVER.HOST + `/oidcallback?client_id=${assistant.client_id}`,
+            );
+          }
+          redirectUris = redirectUris.concat(assistant.redirect_uris);
           return {
             ...assistant,
-            redirect_uris: [
-              // насыщаем редирект текущим урлом сервера
-              SERVER.HOST + `/oidcallback?client_id=${assistant.client_id}`,
-              ...assistant.redirect_uris,
-            ],
+            redirect_uris: redirectUris,
           };
         });
       });

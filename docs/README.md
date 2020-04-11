@@ -69,10 +69,11 @@ npm start
 ```
 
 ### Create new assistant
-```bash
+1) ```bash
 npm run start:new-assistant
 ```
-Open server page `/marketplace/refresh`
+2) Open server page `/marketplace/refresh`
+3) Reload server
 
 Tools
 ---
