@@ -2,6 +2,10 @@ const backupAction = require('../../../core/functions/backup');
 const TelegramBotRequest = require('./telegram-bot-request');
 
 class Backup extends TelegramBotRequest {
+  constructor(message) {
+    super(message);
+    this.method = 'backup';
+  }
   /**
    * запрашиваем ключ от двухфакторной аутентификации
    *

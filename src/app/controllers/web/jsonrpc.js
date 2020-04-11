@@ -1,4 +1,5 @@
 const jose = require('jose');
+const validator = require('validator');
 const { v1: uuidv1 } = require('uuid');
 const package_ = require('../../../../package.json');
 const jsonRpcServer = require('../../../api/server');
@@ -15,6 +16,7 @@ const linkedDataSignature = require('../../../services/linked-data-signature.ser
  * @returns {Promise<jsonld>}
  */
 async function apiRequest(server, method, document, passport) {
+  logger.info('apiRequest');
   const signedDocument = await linkedDataSignature.signDocument(
     document,
     passport.public_key_cert.toString('utf8'),
@@ -54,18 +56,28 @@ async function apiRequest(server, method, document, passport) {
     );
   });
 }
-// json rpc server via header jwt
-module.exports = async (request, response, next) => {
-  logger.info(`JSONRPC:${request.body.method}`);
+/**
+ * json rpc server via header jwt
+ *
+ * @param {*} request - request
+ * @param {*} response - response
+ * @returns {Promise<void>}
+ */
+module.exports = async (request, response) => {
   try {
     response.header('X-Bot', [package_.name]);
     response.header('X-Bot-Version', [package_.version]);
+    if (!request.body.method) {
+      throw new TypeError('Empty method');
+    }
+    logger.info(`JSONRPC:${request.body.method}`);
     const passport = await pool.connect(async (connection) => {
       // By token auth
       if (request.headers.authorization) {
         // на данный момент считаем все токены вечными, затем надо будет их валидировать jose.JWT.verify(...)
         const [_basic, id_token] = request.headers.authorization.split(' ');
         const decoded = jose.JWT.decode(id_token);
+        // todo NotFound exception
         const botTable = await connection.one(
           passportQueries.selectBotByEmail(decoded.email),
         );
@@ -87,10 +99,10 @@ module.exports = async (request, response, next) => {
     );
     response.send(result);
   } catch (error) {
-    if (typeof error === 'string') {
+    if (validator.isJSON(error)) {
       response.status(400).json(JSON.parse(error));
       return;
     }
-    next(error);
+    response.status(400).json(error);
   }
 };

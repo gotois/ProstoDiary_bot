@@ -1,4 +1,5 @@
 const jsonld = require('jsonld');
+const validator = require('validator');
 /**
  * @description сериализатор
  * @param {any} compacted - compacted
@@ -30,9 +31,34 @@ const canonize = async (document) => {
   });
   return canonized;
 };
+/**
+ * @param {object} [document] - jsonld
+ * @returns {boolean}
+ */
+const isJSONLD = (document) => {
+  if (!document) {
+    return false;
+  }
+  let object;
+  if (typeof document === 'object') {
+    object = document;
+  }
+  if (typeof document === 'string') {
+    if (validator.isJSON(document)) {
+      object = JSON.parse(document);
+    }
+  }
+  if (typeof object === 'object') {
+    if (Object.keys(object).length > 0) {
+      return true;
+    }
+  }
+  return false;
+};
 
 module.exports = {
   toRDF,
   fromRDF,
   canonize,
+  isJSONLD,
 };

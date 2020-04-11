@@ -54,6 +54,15 @@ WHERE
 `;
   },
   /**
+   * @param {uuid} id - user id
+   * @returns {*}
+   */
+  selectUserById(id) {
+    return sql`
+      SELECT * FROM client.passport WHERE id = ${id}
+    `;
+  },
+  /**
    * @todo rename select by user email or telegram id
    * @param {string} login - telegram user id or user email
    * @returns {*}

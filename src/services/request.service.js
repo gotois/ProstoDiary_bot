@@ -1,7 +1,7 @@
 const request = require('request');
-const validator = require('validator');
 const package_ = require('../../package.json');
 const { SERVER, IS_AVA } = require('../environment');
+const { isJSONLD } = require('../lib/jsonld');
 let supertest;
 if (IS_AVA) {
   supertest = require('supertest');
@@ -60,7 +60,7 @@ const rpc = ({ body, auth, jwt }) => {
       }
       if (response.statusCode >= 400) {
         // decode jsonld reject
-        if (validator.isJSON(body)) {
+        if (isJSONLD(body)) {
           const message = JSON.parse(body);
           return reject({
             message: message.purpose.abstract,
@@ -79,7 +79,7 @@ const rpc = ({ body, auth, jwt }) => {
         });
       }
       // decode jsonld accept
-      if (validator.isJSON(body)) {
+      if (isJSONLD(body)) {
         return resolve(JSON.parse(body));
       }
       return resolve(body);

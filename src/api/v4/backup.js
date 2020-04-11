@@ -1,12 +1,14 @@
-const package_ = require('../../../package.json');
 const logger = require('../../lib/log');
 const passportQueries = require('../../db/selectors/passport');
-const { pool } = require('../../db/sql');
 const { pack } = require('../../services/archive.service');
 const twoFactorAuthService = require('../../services/2fa.service');
-const storyQueries = require('../../db/selectors/story');
+const commandLogger = require('../../services/command-logger.service');
 const { convertIn2DigitFormat } = require('../../services/date.service');
-
+const { pool } = require('../../db/sql');
+const storyQueries = require('../../db/selectors/story');
+const RejectAction = require('../../core/models/actions/reject');
+const AcceptAction = require('../../core/models/actions/accept');
+const AcceptEmailAction = require('../../core/models/actions/accept-email');
 /**
  * @param {Array} stories - entries
  * @returns {buffer}
@@ -31,91 +33,91 @@ const getTextFromStories = (stories) => {
     .trim();
   return Buffer.from(data, 'utf8');
 };
-
 /**
- * @param {jsonld} jsonld - parameters
+ * @param {object} document - parameters
  * @param {object} passport - passport gotoisCredentions
  * @returns {Promise<*>}
  */
-module.exports = async function (jsonld, { passport }) {
-  logger.info('ping');
-
-  const date = jsonld.startTime;
-  const tokenValue = jsonld.subjectOf.find((subject) => {
-    return subject.name === 'token';
-  });
-  const token = tokenValue.abstract;
-  const sortingValue = jsonld.subjectOf.find((subject) => {
-    return subject.name === 'sorting';
-  });
-  const sorting = sortingValue.abstract;
-  let stories;
-
+module.exports = async function (document, { passport }) {
+  logger.info('backup');
   try {
-    stories = await pool.connect(async (connection) => {
+    const date = document.startTime;
+    const tokenValue = document.subjectOf.find((subject) => {
+      return subject.name === 'token';
+    });
+    const token = tokenValue.abstract;
+    const sortingValue = document.subjectOf.find((subject) => {
+      return subject.name === 'sorting';
+    });
+    const sorting = sortingValue.abstract;
+    const { stories, user } = await pool.connect(async (connection) => {
       const botTable = await connection.one(
-        passportQueries.selectByPassport(passport.id),
+        passportQueries.selectByPassport(passport.passport_id),
       );
+      // check 2fa - todo uncomment
       const valid = twoFactorAuthService.verifyUser(botTable.secret_key, token);
       if (!valid) {
-        return Promise.reject(
-          this.error(400, 'Неверный ключ. Попробуйте снова'),
-        );
+        throw new Error('Неверный ключ. Попробуйте снова');
       }
+      const userTable = await connection.one(
+        passportQueries.selectUserById(passport.passport_id),
+      );
       const rows = await connection.many(
         storyQueries.selectStoryByDate({
           publisherEmail: botTable.email,
           sorting,
         }),
       );
-      return rows;
+      return {
+        stories: rows,
+        botTable,
+        user: userTable,
+      };
     });
-  } catch (error) {
-    return Promise.reject(this.error(400, error.message || 'db error'));
-  }
-  const txtPack = await pack([
-    {
-      buffer: getTextFromStories(stories),
-      filename: `backup_${date}.txt`,
-    },
-  ]);
-
-  // todo отправка на почту теперь будет делаться через ассистента
-  const document = {
-    '@context': 'http://schema.org',
-    '@type': 'AssignAction',
-    'agent': {
-      '@type': 'Person',
-      'name': package_.name,
-    },
-    'purpose': {
-      '@type': 'EmailMessage',
-      'sender': {
-        '@type': 'Person',
-        'name': 'Dom Portwood',
-        'email': 'dportwood@example.com',
+    const txtPack = await pack([
+      {
+        buffer: getTextFromStories(stories),
+        filename: `backup_${date}.txt`,
       },
-      'toRecipient': {
-        '@type': 'Person',
-        'name': 'Peter Gibbons',
-        'email': 'pgibbons@example.com',
+    ]);
+    const emailAction = AcceptEmailAction({
+      // todo убрать хардкод
+      sender: {
+        '@type': 'Organization',
+        'name': 'TEST_EMAIL',
+        'email': 'email@gotointeractive.com',
       },
-      'about': {
+      toRecipient: {
+        '@type': 'Person',
+        'name': 'My User',
+        'email': user.email,
+      },
+      about: {
         '@type': 'Thing',
         'name': 'Backup ProstoDiary: Your story backup',
       },
-      'messageAttachment': {
+      messageAttachment: {
         '@type': 'CreativeWork',
         'name': 'backup.zip',
-        // 'text': 'xxxxx', // используется для фолбека если нет возможности отправить html
+        // 'text': '', // используется для фолбека если нет возможности отправить html
         'abstract': txtPack.toString('base64'),
         'encodingFormat': 'application/zip',
       },
-    },
-    'result': {
-      '@type': 'Answer',
-      'text': 'Данные успешно отправлены на вашу почту',
-    },
-  };
-  return Promise.resolve(document);
+    });
+    commandLogger.info({
+      document: {
+        ...document,
+        ...emailAction,
+      },
+      passport,
+    });
+    const resultAction = AcceptAction({
+      abstract: 'Данные успешно отправлены на почту ' + user.email,
+    });
+    return Promise.resolve(resultAction);
+  } catch (error) {
+    return Promise.reject(
+      this.error(400, null, JSON.stringify(RejectAction(error))),
+    );
+  }
 };

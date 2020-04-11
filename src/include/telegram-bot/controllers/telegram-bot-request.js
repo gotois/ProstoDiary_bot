@@ -75,6 +75,9 @@ class TelegramBotRequest {
    * @returns {Promise<*>}
    */
   async rpc(action) {
+    if (!this.method) {
+      throw new Error('Empty method');
+    }
     for (const passport of this.message.passport) {
       await rpc({
         body: {
