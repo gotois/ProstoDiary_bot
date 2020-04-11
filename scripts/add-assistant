@@ -5,7 +5,9 @@ const inquirer = require('inquirer');
 const validator = require('validator');
 const logger = require('../src/lib/log');
 const package_ = require('../package.json');
-const { convertEnvironmentObjectToString } = require('../src/helpers/environments');
+const {
+  convertEnvironmentObjectToString,
+} = require('../src/helpers/environments');
 
 const ENV_NAME = 'assistants.env';
 const CLIENT_ID_DOMAIN = '@gotointeractive.com';
@@ -103,5 +105,7 @@ const questions = [
     },
   });
   fs.writeFileSync(ENV_NAME, environmentValues);
-  logger.info(`Assistant ${ENV_NAME} saved. Please set env to server. Open /marketplace/refresh`);
+  logger.info(
+    `Assistant ${ENV_NAME} saved. Please set env to server. Open /marketplace/refresh`,
+  );
 })();

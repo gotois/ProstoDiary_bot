@@ -2,7 +2,9 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
 const logger = require('../src/lib/log');
-const { convertEnvironmentObjectToString } = require('../src/helpers/environments');
+const {
+  convertEnvironmentObjectToString,
+} = require('../src/helpers/environments');
 /**
  * @constant
  * @type {string}

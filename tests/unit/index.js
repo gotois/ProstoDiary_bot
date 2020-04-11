@@ -5,6 +5,7 @@ const {
 } = require('../helpers');
 
 test('database config', require('./dbconfig.test'));
+test('helpers', require('./helpers.test'));
 test('logger', require('./log.test'));
 test('crypto', require('./crypto.test'));
 test('commands', require('./commands.test'));
