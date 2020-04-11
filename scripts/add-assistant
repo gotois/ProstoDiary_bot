@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 require('dotenv').config();
+const fs = require('fs');
 const inquirer = require('inquirer');
 const validator = require('validator');
-const { pool } = require('../src/db/sql');
-const assistantQueries = require('../src/db/selectors/assistant');
 const logger = require('../src/lib/log');
 const package_ = require('../package.json');
+const { convertEnvironmentObjectToString } = require('../src/helpers/environments');
 
+const ENV_NAME = 'assistants.env';
 const CLIENT_ID_DOMAIN = '@gotointeractive.com';
 let clientId = '';
 let redirectUri = '';
@@ -95,10 +96,12 @@ const questions = [
     grant_types: ['implicit', 'authorization_code'],
     redirect_uris: [redirectUri],
   };
-  await pool.connect(async (connection) => {
-    await connection.query(
-      assistantQueries.createAssistant(oidcValues, homepage),
-    );
+  const environmentValues = convertEnvironmentObjectToString({
+    assistants: {
+      ...oidcValues,
+      homepage,
+    },
   });
-  logger.info(`Assistant saved: ${JSON.stringify(oidcValues, null, 2)}`);
+  fs.writeFileSync(ENV_NAME, environmentValues);
+  logger.info(`Assistant ${ENV_NAME} saved. Please set env to server. Open /marketplace/refresh`);
 })();

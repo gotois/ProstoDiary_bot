@@ -59,6 +59,8 @@ SENTRY_DSN={ URL }
 
 GOOGLE_KNOWLEDGE_GRAPH={ key }
 REDIS_URL={ URL } # вида 127.0.0.1:6379
+
+ASSISTANTS={ object } # create from /scripts/add-assistant
 ```
 
 <details>

@@ -2,6 +2,7 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
 const logger = require('../src/lib/log');
+const { convertEnvironmentObjectToString } = require('../src/helpers/environments');
 /**
  * @constant
  * @type {string}
@@ -204,20 +205,6 @@ const questions = [
     message: 'SENTRY_DSN',
   },
 ];
-/**
- * @param {object} object - environments
- * @returns {string}
- */
-function convertEnvironmentObjectToString(object) {
-  return Object.keys(object)
-    .reduce((accumulator, key) => {
-      if (object[key]) {
-        accumulator.push(String(key + '=' + object[key]));
-      }
-      return accumulator;
-    }, [])
-    .join('\n');
-}
 
 (async function main() {
   if (fs.existsSync(ENV_NAME)) {

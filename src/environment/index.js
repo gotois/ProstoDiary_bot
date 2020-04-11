@@ -1,3 +1,5 @@
+const fs = require('fs');
+const dotenv = require('dotenv');
 const validator = require('validator');
 const herokuAPP = require('../../app.json');
 
@@ -53,6 +55,8 @@ const {
 
   SECURE_KEY,
   REDIS_URL,
+
+  ASSISTANTS,
 } = process.env;
 
 const ENV = {
@@ -142,6 +146,20 @@ const ENV = {
         throw new Error('SENDGRID_API_KEY_DEV is not initialized');
       }
       return SENDGRID_API_KEY_DEV;
+    },
+  },
+  MARKETPLACE: {
+    get ASSISTANTS() {
+      if (ASSISTANTS) {
+        if (validator.isJSON(ASSISTANTS)) {
+          return JSON.parse(ASSISTANTS);
+        }
+      } else {
+        const buf = fs.readFileSync('assistants.env');
+        const config = dotenv.parse(buf);
+        return JSON.parse(config.assistants);
+      }
+      throw new Error('Unknown ASSISTANTS env');
     },
   },
   OPEN_WEATHER: {

@@ -20,7 +20,7 @@ Virtual trackers: text diary, email listener, food analyze, health watcher, slee
 
 Install
 ---
-Dev only
+> Dev only
 ```bash
 brew install graphviz
 ```
@@ -72,6 +72,7 @@ npm start
 ```bash
 npm run start:new-assistant
 ```
+Open server page `/marketplace/refresh`
 
 Tools
 ---

@@ -34,21 +34,19 @@ FROM
    * @param {string} object.token_endpoint_auth_method - token_endpoint_auth_method
    * @param {Array<string>} object.grant_types - grant_types
    * @param {Array<string>} object.redirect_uris - redirect uris
-   * @param {string} [homepage] - assistant homepage
+   * @param {string} [object.homepage] - assistant homepage
    * @returns {*}
    */
-  createAssistant(
-    {
-      client_id,
-      client_secret,
-      application_type,
-      response_types,
-      token_endpoint_auth_method,
-      grant_types,
-      redirect_uris,
-    },
+  createAssistant({
+    client_id,
+    client_secret,
+    application_type,
+    response_types,
+    token_endpoint_auth_method,
+    grant_types,
+    redirect_uris,
     homepage,
-  ) {
+  }) {
     return sql`INSERT INTO assistant.marketplace
         (client_id, client_secret, application_type, response_types, token_endpoint_auth_method, grant_types, redirect_uris, homepage)
         VALUES (
