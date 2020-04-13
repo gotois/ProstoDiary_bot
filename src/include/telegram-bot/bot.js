@@ -21,7 +21,7 @@ if (IS_AVA_OR_CI || IS_CRON) {
 } else if (IS_PRODUCTION) {
   telegramBot = new TelegramBot(TELEGRAM.TOKEN);
   telegramBot
-    .setWebHook(`${SERVER.HEROKUAPP}/bot${TELEGRAM.TOKEN}`, {
+    .setWebHook(`${SERVER.HEROKUAPP}/telegram/bot${TELEGRAM.TOKEN}`, {
       max_connections: 10,
     })
     .then(() => {
@@ -36,7 +36,7 @@ if (IS_AVA_OR_CI || IS_CRON) {
 } else if (NGROK.URL) {
   telegramBot = new TelegramBot(TELEGRAM.TOKEN);
   telegramBot
-    .setWebHook(`${SERVER.HOST}/bot${TELEGRAM.TOKEN}`, {
+    .setWebHook(`${SERVER.HOST}/telegram/bot${TELEGRAM.TOKEN}`, {
       max_connections: 3,
     })
     .then(() => {

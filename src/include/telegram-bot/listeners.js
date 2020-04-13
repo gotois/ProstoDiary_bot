@@ -100,6 +100,8 @@ module.exports = (telegramBot) => {
           await botMessage.sendVoice();
           break;
         }
+        case 'supergroup_chat_created':
+        case 'channel_chat_created':
         case 'group_chat_created': {
           await botMessage.groupChatCreated();
           break;

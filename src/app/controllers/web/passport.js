@@ -1,6 +1,5 @@
 const { sql, pool } = require('../../../db/sql');
 
-// todo deprecated?
 module.exports = async (request, response, next) => {
   try {
     // todo использовать date для выборки по датам
