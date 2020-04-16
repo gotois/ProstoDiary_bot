@@ -1,5 +1,5 @@
 const auth = require('http-auth');
-const assistantQueries = require('../../db/selectors/assistant');
+const marketplaceQueries = require('../../db/selectors/marketplace');
 const { pool } = require('../../db/sql');
 const logger = require('../../lib/log');
 
@@ -9,13 +9,13 @@ const basic = auth.basic(
   },
   async (login, password, callback) => {
     try {
-      const assistant = await pool.connect(async (connection) => {
-        const assistant = await connection.maybeOne(
-          assistantQueries.check(login, password),
+      const market = await pool.connect(async (connection) => {
+        const result = await connection.maybeOne(
+          marketplaceQueries.check(login, password),
         );
-        return assistant;
+        return result;
       });
-      callback(Boolean(assistant));
+      callback(Boolean(market));
     } catch (error) {
       callback(false);
     }

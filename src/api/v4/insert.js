@@ -1,6 +1,4 @@
-const SchemaOrg = require('schema.org');
 const storyLogger = require('../../services/story-logger.service');
-const linkedDataSignature = require('../../services/linked-data-signature.service');
 const RejectAction = require('../../core/models/actions/reject');
 const AcceptAction = require('../../core/models/actions/accept');
 /**
@@ -8,13 +6,8 @@ const AcceptAction = require('../../core/models/actions/accept');
  * @param {object} passport - passport gotoisCredentions
  * @returns {Promise<*>}
  */
-module.exports = async function (document, { passport }) {
+module.exports = function (document, { passport }) {
   try {
-    const schemaOrg = new SchemaOrg();
-    if (schemaOrg.getType(document) === undefined) {
-      throw new Error('Broken JSONLD');
-    }
-    await linkedDataSignature.verifyDocument(document, passport);
     storyLogger.info({
       document,
       passport,

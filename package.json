@@ -31,7 +31,7 @@
     "check": "node -r dotenv/config src/app/server.js --check",
     "dev": "killall ngrok ; cross-env NODE_ENV=development PORT=9000 ROARR_LOG=true ./scripts/index",
     "dev:debug": "cross-env NODE_ENV=development --verbose --inspect ./scripts/index",
-    "lint": "eslint scripts/* src/**/*.js src/**/**/*.js tests/**/*.js --quiet",
+    "lint": "eslint scripts/* src/**/**/**/*.js src/**/**/*.js src/**/*.js tests/**/*.js",
     "lint:dependency": "depcruise --validate .dependency-cruiser.js src",
     "unit": "ava tests/unit/index.js",
     "unit:watch": "npm run unit -- --watch",

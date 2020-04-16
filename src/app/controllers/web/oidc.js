@@ -1,6 +1,9 @@
 const jose = require('jose');
+const { Ed25519KeyPair } = require('crypto-ld');
 const passportQueries = require('../../../db/selectors/passport');
+const marketplaceQueries = require('../../../db/selectors/marketplace');
 const assistantQueries = require('../../../db/selectors/assistant');
+const signatureQueries = require('../../../db/selectors/signature');
 const { pool } = require('../../../db/sql');
 const logger = require('../../../lib/log');
 const { post } = require('../../../services/request.service');
@@ -39,7 +42,7 @@ class OIDC {
       const assistantData = await pool.connect(async (connection) => {
         // сверяем что такой client_id ассистента существует
         const marketplace = await connection.one(
-          assistantQueries.selectMarketAssistant(request.query.client_id),
+          marketplaceQueries.selectMarketAssistant(request.query.client_id),
         );
         const assistantBot = await connection.maybeOne(
           assistantQueries.selectAssistantBotByEmail(decoded.email),
@@ -54,11 +57,30 @@ class OIDC {
           );
         } else {
           logger.info('Creating new assistant.bot');
-          await connection.query(
+          const {
+            privateKeyBase58,
+            publicKeyBase58,
+          } = await Ed25519KeyPair.generate({});
+          const assistant = await connection.query(
             assistantQueries.createAssistantBot({
               assistant_marketplace_id: marketplace.id,
               token: tokenResult.id_token,
               bot_user_email: decoded.email,
+              privateKeyBase58,
+              publicKeyBase58,
+            }),
+          );
+          const fingerprint = Ed25519KeyPair.fingerprintFromPublicKey({
+            publicKeyBase58,
+          });
+          await connection.query(
+            signatureQueries.create({
+              assistant_marketplace_id: marketplace.id,
+              // todo убрать хардкод 'tg'
+              verification:
+                'https://gotointeractive.com/marketplace/tg/keys/' +
+                assistant.id,
+              fingerprint,
             }),
           );
         }

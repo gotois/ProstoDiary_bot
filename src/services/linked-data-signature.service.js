@@ -1,104 +1,62 @@
 const jsigs = require('jsonld-signatures');
-const { RSAKeyPair } = require('crypto-ld');
-const { SERVER, IS_PRODUCTION } = require('../environment');
-
-// sign the document as a simple assertion
-const { RsaSignature2018 } = jsigs.suites;
-const { AssertionProofPurpose } = jsigs.purposes;
-const { SECURITY_CONTEXT_URL } = jsigs;
-
-const getControllerId = (passportId) => {
-  if (IS_PRODUCTION) {
-    return 'https://gotointeractive.com/i/' + passportId;
-  }
-  return SERVER.HOST + 'i/' + passportId;
-};
-/**
- * Specify the public key object
- *
- * @param {Buffer} publicKeyPem - public key
- * @param {Buffer} privateKeyPem - private key
- * @param {*} controller - user controller
- * @returns {RSAKeyPair}
- */
-const keyPair = (publicKeyPem, privateKeyPem, controller) => {
-  const controllerKey = controller + '/keys/' + 1; // // todo по-умолчанию ключ всегда первый
-  return new RSAKeyPair({
-    '@context': SECURITY_CONTEXT_URL,
-    'type': 'RsaVerificationKey2018',
-    'id': controllerKey,
-    'controller': controller,
-    publicKeyPem,
-    privateKeyPem,
-  });
-};
+const { Ed25519KeyPair } = require('crypto-ld');
+const { documentLoaders } = require('jsonld');
+const logger = require('../lib/log');
+const { Ed25519Signature2018 } = jsigs.suites;
+const { AuthenticationProofPurpose } = jsigs.purposes;
+const { node: documentLoader } = documentLoaders;
 /**
  * Create the JSON-LD document that should be signed
  *
  * @param {object} document - jsonld document
- * @param {*} publicKeyPem - key pem
- * @param {*} privateKeyPem - key pem
- * @param {string} passportId - passport id
+ * @param {object} key - controller
+ * @param {string} verificationMethod - verification
  * @returns {Promise<*>}
  */
-async function signDocument(document, publicKeyPem, privateKeyPem, passportId) {
-  const userController = getControllerId(passportId);
-  const key = keyPair(publicKeyPem, privateKeyPem, userController);
+async function signDocument(document, key, verificationMethod) {
   const signed = await jsigs.sign(document, {
-    suite: new RsaSignature2018({ key }),
-    purpose: new AssertionProofPurpose(),
+    suite: new Ed25519Signature2018({
+      verificationMethod,
+      key,
+    }),
+    purpose: new AuthenticationProofPurpose({
+      challenge: 'abc',
+      domain: 'example.com',
+    }),
   });
   return signed;
 }
 /**
- * проверка на валидность подписанного JSON-LD
+ * Проверка на валидности подписанного JSON-LD
  *
- * @todo передалать верификацию через website на основе урла контроллера
- * @param {object} signed - signed object
- * @param {object} passport - passport data
+ * @param {object} signed - signed document jsonld
+ * @param {object} publicKey - publicKey
  * @returns {Promise<void|Error>}
  */
-async function verifyDocument(signed, passport) {
-  const publicKeyPem = passport.public_key_cert.toString('utf8');
-  const privateKeyPem = passport.private_key_cert.toString('utf8');
-  const userId = passport.passport_id;
-  const userController = getControllerId(userId);
-  const controllerKey = userController + '/keys/' + 1; // todo по-умолчанию ключ всегда первый
-  const key = keyPair(publicKeyPem, privateKeyPem, userController);
-  const publicKey = {
-    '@context': SECURITY_CONTEXT_URL,
-    'type': 'RsaVerificationKey2018',
-    'id': controllerKey,
-    'controller': userController,
-    publicKeyPem,
+async function verifyDocument(signed, publicKey) {
+  const controller = {
+    '@context': jsigs.SECURITY_CONTEXT_URL,
+    // todo убрать хардкод 'tg'
+    'id': 'https://gotointeractive.com/marketplace/tg',
+    'publicKey': [publicKey],
+    // this authorizes this key to be used for authenticating
+    'authentication': [publicKey.id],
   };
-
-  // we will need the documentLoader to verify the controller
-  // verify the signed document
   const result = await jsigs.verify(signed, {
-    documentLoader: (url) => {
-      const CONTEXTS = {
-        [controllerKey]: publicKey,
-      };
-      return {
-        contextUrl: null, // this is for a context via a link header
-        document: CONTEXTS[url], // this is the actual document that was loaded
-        documentUrl: url, // this is the actual context URL after redirects
-      };
-    },
-    suite: new RsaSignature2018(key),
-    purpose: new AssertionProofPurpose({
-      // specify the public key controller object
-      controller: {
-        '@context': SECURITY_CONTEXT_URL,
-        'id': userController,
-        'publicKey': [publicKey],
-        // this authorizes this key to be used for making assertions
-        'assertionMethod': [publicKey.id],
-      },
+    documentLoader,
+    suite: new Ed25519Signature2018({
+      key: new Ed25519KeyPair(publicKey),
+    }),
+    purpose: new AuthenticationProofPurpose({
+      controller,
+      challenge: 'abc',
+      domain: 'example.com',
     }),
   });
-  if (!result.verified) {
+  if (result.verified) {
+    logger.info('Signature verified');
+  } else {
+    logger.error('Signature verification error');
     throw new Error(result.error);
   }
 }

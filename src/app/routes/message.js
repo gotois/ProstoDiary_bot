@@ -1,8 +1,9 @@
 const express = require('express');
 const basic = require('../middlewares/auth-user');
-const messageController = require('../controllers/web/message');
+const MessageController = require('../controllers/web/message');
 
 const router = express.Router();
-router.get('/:uuid', basic.check(messageController));
+router.get('/:uuid', basic.check(MessageController.message));
+router.get('/:uuid/:revision', basic.check(MessageController.messageRevision));
 
 module.exports = router;

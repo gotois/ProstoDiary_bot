@@ -2,6 +2,7 @@ const jose = require('jose');
 const bot = require('../../../include/telegram-bot/bot');
 const { pool } = require('../../../db/sql');
 const assistantChatQueries = require('../../../db/selectors/chat');
+const assistantBoQueries = require('../../../db/selectors/assistant');
 const logger = require('../../../lib/log');
 const notifyTelegram = require('../../../include/telegram-bot/services/notify-tg');
 /**
@@ -13,7 +14,7 @@ async function makeRequestBody(body) {
     body.message || body.channel_post || body.callback_query.message;
   const chatId = message.chat && message.chat.id;
   const userId = message.from && message.from.id;
-  const passports = await pool.connect(async (connection) => {
+  const { passports, assistant } = await pool.connect(async (connection) => {
     // сначала я получаю массив assistant_bot_id по чату
     // декодирую и передаю в passport - массив паспортов
     let results = [];
@@ -33,15 +34,18 @@ async function makeRequestBody(body) {
       logger.info('PUBLIC CHANNEL');
       return passports;
     }
+    let assistantBot;
     for (const result of results) {
+      assistantBot = await connection.one(
+        assistantBoQueries.selectAssistantBotByEmail(result.bot_user_email),
+      );
       // hack считаем что чаты начинающиеся с '-' являются публичными
       if (result.id.startsWith('-')) {
         logger.info('PUBLIC CHAT');
         passports.push({
           user: String(userId),
           assistant: result.client_id,
-          email: result.bot_user_email,
-          jwt: result.token,
+          email: assistantBot.bot_user_email,
         });
       } else {
         // fixme проверять срок через decoded.exp
@@ -52,11 +56,13 @@ async function makeRequestBody(body) {
           assistant: result.client_id,
           passportId: decoded.sub, // ID паспорт бота
           email: decoded.email, // почта бота пользователя
-          jwt: result.token,
         });
       }
     }
-    return passports;
+    return {
+      passports,
+      assistant: assistantBot,
+    };
   });
   return {
     ...body,
@@ -64,6 +70,7 @@ async function makeRequestBody(body) {
     message: {
       ...message,
       passport: passports,
+      assistant,
     },
   };
 }

@@ -11,7 +11,7 @@ module.exports = () => {
             name="phone"
             minlength="9"
             maxlength="17"
-            placeholder="+7(123)-456-78-90"
+            placeholder="+7(123)456-78-90"
         >
         <input type="submit">
     </form>

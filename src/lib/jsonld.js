@@ -1,5 +1,7 @@
+const SchemaOrg = require('schema.org');
 const jsonld = require('jsonld');
 const validator = require('validator');
+const schemaOrg = new SchemaOrg();
 /**
  * @description сериализатор
  * @param {any} compacted - compacted
@@ -49,8 +51,8 @@ const isJSONLD = (document) => {
     }
   }
   if (typeof object === 'object') {
-    if (Object.keys(object).length > 0) {
-      return true;
+    if (schemaOrg.getType(object) === undefined) {
+      return false;
     }
   }
   return false;

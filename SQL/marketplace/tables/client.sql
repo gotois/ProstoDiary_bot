@@ -1,7 +1,7 @@
--- Записи всех подключенных ассистентов к gotois marketplace (oidc provider)
+-- Записи всех подключенных третьих клиентов к marketplace (используя oidc provider)
 CREATE
     TABLE
-        IF NOT EXISTS assistant.marketplace (
+        IF NOT EXISTS marketplace.client (
             id UUID NOT NULL DEFAULT gen_random_uuid (
             )
            	,created_at TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP

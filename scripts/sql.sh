@@ -28,8 +28,12 @@ psql -U $PGUSER -d $PGDATABASE -a -f SQL/stories/tables/abstract.sql;
 # story views
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/stories/views/history.sql;
 
-# assistant
+# marketplace
+psql -U $PGUSER -d $PGDATABASE -a -f SQL/marketplace/schemas/schema.sql;
+psql -U $PGUSER -d $PGDATABASE -a -f SQL/marketplace/tables/clients.sql;
+psql -U $PGUSER -d $PGDATABASE -a -f SQL/marketplace/tables/signature.sql;
+
+# 3rd assistants
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/assistants/schemas/assistant.sql;
-psql -U $PGUSER -d $PGDATABASE -a -f SQL/assistants/tables/marketplace.sql;
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/assistants/tables/bot.sql;
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/assistants/tables/chat.sql;

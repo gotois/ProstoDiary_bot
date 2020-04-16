@@ -33,7 +33,7 @@ class AbstractWebpage extends Abstract {
 
   async prepare() {
     const { title } = await ogParser(this.url);
-    this.title = encodeURIComponent(title);
+    this.title = title;
   }
 }
 

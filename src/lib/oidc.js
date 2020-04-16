@@ -3,7 +3,7 @@ const { JWKS } = require('jose');
 const { SERVER, IS_PRODUCTION, SECURE_KEY } = require('../environment');
 const { pool, NotFoundError } = require('../db/sql');
 const RedisAdapter = require('../db/adapters/oidc-transport');
-const assistantQueries = require('../db/selectors/assistant');
+const marketplaceQueries = require('../db/selectors/marketplace');
 const Account = require('../app/models/account');
 const logger = require('./log');
 /**
@@ -22,9 +22,9 @@ module.exports = async () => {
   const jwks = keystore.toJWKS(true);
 
   const CLIENTS = await pool.connect(async (connection) => {
-    let allAssistants;
+    let marketplaces;
     try {
-      allAssistants = await connection.many(assistantQueries.selectAll());
+      marketplaces = await connection.many(marketplaceQueries.selectAll());
     } catch (error) {
       if (error instanceof NotFoundError) {
         logger.warn('Assistants not found');
@@ -32,7 +32,7 @@ module.exports = async () => {
       }
       throw error;
     }
-    return allAssistants.map((assistant) => {
+    return marketplaces.map((assistant) => {
       return {
         ...assistant,
         redirect_uris: [

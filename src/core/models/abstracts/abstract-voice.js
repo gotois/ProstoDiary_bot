@@ -117,7 +117,7 @@ class AbstractVoice extends Abstract {
       'subjectOf': [
         {
           '@type': 'CreativeWork',
-          'text': encodeURIComponent(this.text),
+          'text': this.text,
         },
       ],
     };

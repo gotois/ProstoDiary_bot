@@ -101,7 +101,7 @@ class AbstractText extends Abstract {
         this.subjectOf.push(subject);
       }
     }
-    this.abstract = encodeURIComponent(this.text).toString('base64');
+    this.abstract = this.text.toString('base64');
 
     // todo шифрование абстракта через openPGP (пока шифрование ботом излишне)
     // const crypt = require('../../services/crypt.service');
@@ -129,7 +129,8 @@ class AbstractText extends Abstract {
     function generateDocument(action) {
       const object = myForm({
         ...parameters, // параметры полученные от Diglogflow
-        name: encodeURIComponent(objectNames[0]), // в идеале должно браться из dialogflow, но если не получается, то берем существительное и прилагательное через NLP
+        // name: encodeURIComponent(objectNames[0]), // в идеале должно браться из dialogflow, но если не получается, то берем существительное и прилагательное через NLP
+        name: objectNames[0], // в идеале должно браться из dialogflow, но если не получается, то берем существительное и прилагательное через NLP
         // inLanguage: 'xxx' // язык
       });
 

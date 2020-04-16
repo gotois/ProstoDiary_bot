@@ -19,7 +19,7 @@ module.exports = {
    */
   selectByChatId(id) {
     return sql`
-      SELECT * FROM assistant.bot AS assistant, assistant.marketplace AS marketplace, assistant.chat AS chat WHERE chat.id = ${id} AND assistant.assistant_marketplace_id = marketplace.id
+      SELECT * FROM assistant.bot AS assistant, marketplace.client AS marketplace, assistant.chat AS chat WHERE chat.id = ${id} AND assistant.assistant_marketplace_id = marketplace.id
     `;
   },
 };

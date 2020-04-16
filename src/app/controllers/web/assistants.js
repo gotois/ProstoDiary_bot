@@ -1,7 +1,7 @@
 const template = require('../../views/assistants');
 const { SERVER, IS_PRODUCTION, MARKETPLACE } = require('../../../environment');
 const { pool } = require('../../../db/sql');
-const assistantQueries = require('../../../db/selectors/assistant');
+const marketplaceQueries = require('../../../db/selectors/marketplace');
 
 module.exports = class Marketplace {
   super() {}
@@ -15,14 +15,14 @@ module.exports = class Marketplace {
     try {
       const values = MARKETPLACE.ASSISTANTS;
       await pool.connect(async (connection) => {
-        const { rows } = await connection.query(assistantQueries.selectAll());
+        const { rows } = await connection.query(marketplaceQueries.selectAll());
         if (rows.length > 0) {
           response
             .status(400)
             .json({ error: 'Assistants exists. Please delete it if needs' });
           return;
         }
-        await connection.query(assistantQueries.createAssistant(values));
+        await connection.query(marketplaceQueries.createAssistant(values));
       });
       response.status(200).json(values);
     } catch (error) {
@@ -32,10 +32,10 @@ module.exports = class Marketplace {
   static async assistants(request, response) {
     try {
       const clients = await pool.connect(async (connection) => {
-        const allAssistants = await connection.many(
-          assistantQueries.selectAll(),
+        const marketplaces = await connection.many(
+          marketplaceQueries.selectAll(),
         );
-        return allAssistants.map((assistant) => {
+        return marketplaces.map((assistant) => {
           let redirectUris = [];
           // насыщаем редиректами текущий урл сервера для дев
           if (!IS_PRODUCTION) {

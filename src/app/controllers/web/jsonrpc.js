@@ -1,64 +1,43 @@
-const jose = require('jose');
 const validator = require('validator');
-const { v1: uuidv1 } = require('uuid');
+const jose = require('jose');
+const { Ed25519KeyPair } = require('crypto-ld');
 const package_ = require('../../../../package.json');
 const jsonRpcServer = require('../../../api/server');
-const { pool } = require('../../../db/sql');
-const passportQueries = require('../../../db/selectors/passport');
 const logger = require('../../../lib/log');
 const crypt = require('../../../services/crypt.service');
 const linkedDataSignature = require('../../../services/linked-data-signature.service');
+const { pool } = require('../../../db/sql');
+const signatureQueries = require('../../../db/selectors/signature');
 /**
- * @param {object} server - json rpc server
- * @param {string} method - json rpc method
- * @param {object} document - unsigned jsonld document
+ * @param {object} rpcValues - json rpc method
  * @param {object} passport - passport
  * @returns {Promise<jsonld>}
  */
-async function apiRequest(server, method, document, passport) {
+function apiRequest(rpcValues, passport) {
   logger.info('apiRequest');
-  const signedDocument = await linkedDataSignature.signDocument(
-    document,
-    passport.public_key_cert.toString('utf8'),
-    passport.private_key_cert.toString('utf8'),
-    passport.passport_id,
-  );
   return new Promise((resolve, reject) => {
-    server.call(
-      {
-        jsonrpc: '2.0',
-        id: uuidv1(),
-        method,
-        params: signedDocument,
-      },
-      {
-        passport,
-      },
-      async (error, result) => {
-        if (error) {
-          // сначала показываем jsonld, остальное фоллбэк
-          return reject(
-            error.error.data || error.error.message || error.error.code,
-          );
-        }
-        // пример реализации дешифровки
-        try {
-          const decryptAbstractMessage = await crypt.openpgpDecrypt(
-            result.result.purpose.abstract,
-            [passport.secret_key],
-          );
-          result.result.purpose.abstract = decryptAbstractMessage;
-          // eslint-disable-next-line no-empty
-        } catch {}
-
-        return resolve(result.result);
-      },
-    );
+    jsonRpcServer.call(rpcValues, { passport }, async (error, result) => {
+      if (error) {
+        // сначала показываем jsonld, остальное фоллбэк
+        return reject(
+          error.error.data || error.error.message || error.error.code,
+        );
+      }
+      // пример реализации дешифровки
+      try {
+        const decryptAbstractMessage = await crypt.openpgpDecrypt(
+          result.result.purpose.abstract,
+          [passport.secret_key],
+        );
+        result.result.purpose.abstract = decryptAbstractMessage;
+        // eslint-disable-next-line no-empty
+      } catch {}
+      return resolve(result.result);
+    });
   });
 }
 /**
- * json rpc server via header jwt
- *
+ * @description express.js wrapper for jayson server
  * @param {*} request - request
  * @param {*} response - response
  * @returns {Promise<void>}
@@ -70,33 +49,20 @@ module.exports = async (request, response) => {
     if (!request.body.method) {
       throw new TypeError('Empty method');
     }
-    logger.info(`JSONRPC:${request.body.method}`);
-    const passport = await pool.connect(async (connection) => {
-      // By token auth
-      if (request.headers.authorization) {
-        // на данный момент считаем все токены вечными, затем надо будет их валидировать jose.JWT.verify(...)
-        const [_basic, id_token] = request.headers.authorization.split(' ');
-        const decoded = jose.JWT.decode(id_token);
-        // todo NotFound exception
-        const botTable = await connection.one(
-          passportQueries.selectBotByEmail(decoded.email),
-        );
-        return botTable;
-      } else {
-        throw new Error('Unknown assistant');
-      }
+    logger.info(`JSONRPC_API: ${request.body.method}`);
+    const [_basic, id_token] = request.headers.authorization.split(' ');
+    const decoded = jose.JWT.decode(id_token);
+    const passport = request.session.passport[decoded.sub];
+    const { fingerprint } = await pool.connect(async (connection) => {
+      const result = await connection.one(
+        signatureQueries.selectByVerification(request.headers.verification),
+      );
+      return result;
     });
-    if (!passport) {
-      response.sendStatus(401).send('Unauthorized');
-      return;
-    }
-    logger.info(`API:${request.body.method}`);
-    const result = await apiRequest(
-      jsonRpcServer,
-      request.body.method,
-      request.body.params,
-      passport,
-    );
+    const publicKey = Ed25519KeyPair.fromFingerprint({ fingerprint });
+    publicKey.id = request.headers.verification;
+    await linkedDataSignature.verifyDocument(request.body.params, publicKey);
+    const result = await apiRequest(request.body, passport);
     response.send(result);
   } catch (error) {
     if (validator.isJSON(error)) {

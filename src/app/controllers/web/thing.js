@@ -1,3 +1,4 @@
+// const { sql, pool } = require('../../../db/sql');
 module.exports = (request, response, next) => {
   try {
     // todo https://github.com/gotois/ProstoDiary_bot/issues/511

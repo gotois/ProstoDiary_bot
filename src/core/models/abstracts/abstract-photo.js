@@ -24,7 +24,7 @@ class AbstractPhoto extends Abstract {
       'object': {
         '@type': 'CreativeWork',
         'name': 'photo',
-        'abstract': encodeURIComponent(this.imageBuffer).toString('base64'),
+        'abstract': this.imageBuffer.toString('base64'),
         'encodingFormat': this.mime,
       },
     };

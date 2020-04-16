@@ -84,7 +84,7 @@ ncu -u
 
 #### Fix lint
 ```bash
-npm run lint -- --fix
+npm run lint -- --fix --quite
 ```
 
 #### Show dependencies graph

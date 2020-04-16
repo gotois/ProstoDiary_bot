@@ -157,7 +157,7 @@ const ENV = {
       } else {
         const buf = fs.readFileSync('assistants.env');
         const config = dotenv.parse(buf);
-        return JSON.parse(config.assistants);
+        return JSON.parse(config.ASSISTANTS);
       }
       throw new Error('Unknown ASSISTANTS env');
     },

@@ -76,7 +76,8 @@ const openpgpDecrypt = async (buffer, passwords) => {
   }
   return utf8Content;
 };
-// можно заменить на jose
+// Генерация открытого и закрытого pem-ключа
+// deprecated?
 const generateRSA = () => {
   return new Promise((resolve, reject) => {
     const { generateKeyPair } = crypto;

@@ -5,8 +5,10 @@ CREATE
             )
             ,assistant_marketplace_id UUID
             ,token TEXT NOT NULL -- jwt id_token
+            ,private_key TEXT NOT NULL -- base58 key
+            ,public_key TEXT NOT NULL -- base58 key
             ,bot_user_email TEXT NOT NULL UNIQUE -- почта бота пользователя
-            ,FOREIGN KEY (assistant_marketplace_id) REFERENCES assistant.marketplace (id)  ON UPDATE CASCADE ON DELETE CASCADE
+            ,FOREIGN KEY (assistant_marketplace_id) REFERENCES marketplace.client (id)  ON UPDATE CASCADE ON DELETE CASCADE
             ,PRIMARY KEY (id)
         )
 ;

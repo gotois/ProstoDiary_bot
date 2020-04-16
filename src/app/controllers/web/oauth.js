@@ -7,8 +7,6 @@ const { mail } = require('../../../lib/sendgrid');
 const pddService = require('../../../services/pdd.service');
 const twoFactorAuthService = require('../../../services/2fa.service');
 const oauthService = require('../../../services/oauth.service');
-const cryptService = require('../../../services/crypt.service');
-const { pack } = require('../../../services/archive.service');
 const { IS_PRODUCTION, SERVER } = require('../../../environment');
 const registrationStartTemplate = require('../../views/registration/registration-start');
 const registrationOauthTemplate = require('../../views/registration/registration-oauth');
@@ -138,6 +136,7 @@ module.exports = class OAUTH {
     transactionConnection,
     { yandex, facebook },
   ) {
+    logger.info('oauth:updateOauthPassport');
     if (yandex) {
       const yandexPassport = await oauthService.yandex(yandex.raw);
       const passportTable = await OAUTH.getPassport(transactionConnection, {
@@ -222,10 +221,7 @@ module.exports = class OAUTH {
     // на будущее, бот сам следит за своей почтой, периодически обновляя пароли. Пользователя вообще не касается что данные сохраняются у него в почте
     const { email, password, uid } = await pddService.createYaMail(passport.id);
     try {
-      const { publicKey, privateKey } = await cryptService.generateRSA();
       logger.info('pre.createBot');
-      const publicKeyCert = Buffer.from(publicKey);
-      const privateKeyCert = Buffer.from(privateKey);
       await transactionConnection.query(
         passportQueries.createBot({
           passportId: passport.id,
@@ -234,51 +230,29 @@ module.exports = class OAUTH {
           emailPassword: password,
           secretKey: secret.base32,
           masterPassword: secret.masterPassword,
-          publicKeyCert,
-          privateKeyCert,
         }),
       );
-      logger.info('pre.pack');
-      const keys = await pack([
-        {
-          buffer: publicKeyCert,
-          filename: 'public_key.pem',
-        },
-        {
-          buffer: privateKey,
-          filename: 'private_key.pem',
-        },
-      ]);
-
       logger.info('pre.mail');
+      const subject = `Passport ${package_.name} ${
+        IS_PRODUCTION ? 'production' : 'development'
+      }`;
       await mail.send({
         to: passport.email,
         from: email,
-        subject: `Passport ${package_.name} ${
-          IS_PRODUCTION ? 'production' : 'development'
-        }`,
+        subject,
         html: `
         <h1>Добро пожаловать в систему ${package_.author.name}!</h1>
         <h2>Шаг 1: Настройте двухфакторную аутентификацию.</h2>
-        <p>Используйте камеру для распознавания QR-кода в приложении для двухэтапной аутентификации, например, Google Authenticator.</p>
+        <p>Используйте приложение для распознавания QR-кода в приложении для двухэтапной аутентификации, например, Google Authenticator.</p>
         <img src="${secret.qr}" alt="${secret.base32}">
         <br>
         <h2>Шаг 2: Сохраните логин/пароль созданного бота в надежном и секретном месте.</h2>
         <div><strong>EMAIL: </strong><pre>${email}</pre></div>
         <div><strong>PASSWORD: </strong><pre>${secret.masterPassword}</pre></div>
-        <p>Дополнительно сохраните открытый и закрытый ключи SSL (* находятся в прикрепленных файлах)</p>
         <br>
         <h2>Шаг 3: Активируйте бота и выберите ассистента.</h2>
         <p><a href="${SERVER.HOST}/bot/activate">[ Подтвердить регистрацию ]</a></p>
       `,
-        attachments: [
-          {
-            content: keys.toString('base64'),
-            filename: 'keys.zip',
-            type: 'application/zip',
-            disposition: 'attachment',
-          },
-        ],
       });
       return passport;
     } catch (error) {

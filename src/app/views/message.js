@@ -8,6 +8,8 @@ module.exports = (storyTable) => {
   switch (storyTable.content_type) {
     case 'text/plain':
     case 'plain/text': {
+      // todo насыщать storyTable ссылками из thing
+      //  ...
       html += `<p><b>RAW</b>: ${storyTable.content.toString()}</p>`;
       break;
     }
@@ -23,6 +25,7 @@ module.exports = (storyTable) => {
     }
   }
   html += `
+    <p><b>Publisher</b>: ${storyTable.publisher_email}</p>
     <p><b>STATUS</b>: ${storyTable.status}</p>
     <p><b>CREATED</b>: ${storyTable.created_at}</p>
   `;

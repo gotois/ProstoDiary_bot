@@ -103,8 +103,6 @@ WHERE
    * @param {string} obj.emailPassword - email password
    * @param {string} obj.masterPassword - master password
    * @param {string} obj.secretKey - secret key
-   * @param {buffer} obj.publicKeyCert - public key pem
-   * @param {buffer} obj.privateKeyCert - private key pem
    * @returns {*}
    */
   createBot({
@@ -114,12 +112,10 @@ WHERE
     emailPassword,
     secretKey,
     masterPassword,
-    publicKeyCert,
-    privateKeyCert,
   }) {
     return sql`
 INSERT INTO client.bot
-    (passport_id, email, email_uid, email_password, secret_key, master_password, public_key_cert, private_key_cert)
+    (passport_id, email, email_uid, email_password, secret_key, master_password)
 VALUES
     (
     ${passportId},
@@ -127,9 +123,7 @@ VALUES
     ${emailUID},
     ${emailPassword},
     ${secretKey},
-    crypt(${masterPassword}, gen_salt('bf', 8)),
-    ${sql.binary(publicKeyCert)},
-    ${sql.binary(privateKeyCert)}
+    crypt(${masterPassword}, gen_salt('bf', 8))
     )
 `;
   },

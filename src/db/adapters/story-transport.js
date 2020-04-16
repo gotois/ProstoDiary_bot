@@ -55,9 +55,7 @@ module.exports = class PsqlTransport extends Transport {
             const contentTable = await transactionConnection.one(
               storyQueries.createContent({
                 messageId: messageTable.id,
-                content: Buffer.from(
-                  decodeURIComponent(document.object.abstract),
-                ),
+                content: Buffer.from(document.object.abstract),
                 contentType: document.object.encodingFormat,
                 schema: document.object['@type'],
                 telegramMessageId: String(telegramMessageId),

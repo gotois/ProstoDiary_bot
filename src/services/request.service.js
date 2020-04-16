@@ -14,25 +14,28 @@ const formatMessage = (body) => {
   return Buffer.isBuffer(body) ? body.toString('utf8') : body;
 };
 /**
- * @description JSON-RPC 2 request
+ * @description JSON-RPC2 API request
  * @param {string} obj - obj
  * @param {object} obj.body - body
  * @param {object} obj.auth - basic auth
+ * @param {string} obj.verification - verification signatures Ed25519Signature2018
  * @returns {Promise<*>}
  */
-const rpc = ({ body, auth, jwt }) => {
-  const values = JSON.stringify(body);
+const rpc = ({ body, auth, jwt, verification }) => {
   const parameters = {
     method: 'POST',
     url: SERVER.HOST + '/api',
     headers: {
       'User-Agent': `${package_.name}/${package_.version}`,
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json; charset=utf-8',
       'Accept': 'application/schema+json',
-      'Content-Length': values.length,
     },
-    body: values,
+    body,
+    json: true,
   };
+  if (verification) {
+    parameters.headers['verification'] = verification;
+  }
   if (jwt) {
     parameters.headers['Authorization'] = 'Bearer ' + jwt;
   }
@@ -47,7 +50,7 @@ const rpc = ({ body, auth, jwt }) => {
         method: parameters.method,
         url: 'http://' + parameters.url,
         headers: parameters.headers,
-        body: values,
+        body,
       })
       .then((response) => {
         return response.body.result;
@@ -58,12 +61,17 @@ const rpc = ({ body, auth, jwt }) => {
       if (error) {
         return reject(error);
       }
+      if (!body) {
+        return reject({
+          message: response.statusMessage || 'body empty',
+          statusCode: response.statusCode || 400,
+        });
+      }
       if (response.statusCode >= 400) {
         // decode jsonld reject
         if (isJSONLD(body)) {
-          const message = JSON.parse(body);
           return reject({
-            message: message.purpose.abstract,
+            message: body.purpose.abstract,
             statusCode: response.statusCode,
           });
         }
@@ -71,16 +79,6 @@ const rpc = ({ body, auth, jwt }) => {
           message: body || response.statusMessage,
           statusCode: response.statusCode,
         });
-      }
-      if (!body) {
-        return reject({
-          message: response.statusMessage || 'body empty',
-          statusCode: 400,
-        });
-      }
-      // decode jsonld accept
-      if (isJSONLD(body)) {
-        return resolve(JSON.parse(body));
       }
       return resolve(body);
     });
