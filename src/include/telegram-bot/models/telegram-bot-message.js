@@ -34,7 +34,7 @@ class TelegramBotMessage {
   constructor(message) {
     // hack для запуска e2e тестов
     if (IS_AVA) {
-      message.passport = [
+      message.passports = [
         {
           activated: true,
           user: 'ava-test',
@@ -45,7 +45,7 @@ class TelegramBotMessage {
         },
       ];
     }
-    if (!Array.isArray(message.passport)) {
+    if (!Array.isArray(message.passports)) {
       throw new TypeError('gotois passport error');
     }
     // Нативное сообщение Telegram

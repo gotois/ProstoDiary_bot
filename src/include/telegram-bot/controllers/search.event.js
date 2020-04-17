@@ -1,5 +1,4 @@
 const { v1: uuidv1 } = require('uuid');
-const dictionary = require('../../../lib/dictionary');
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
 const { telegram } = require('../commands');
@@ -44,20 +43,11 @@ class Search extends TelegramBotRequest {
     }
     category = category.replace(/action$/i, '');
 
-    const { def } = await dictionary({ text: category });
-    const synonyms = [];
-    for (const d of def) {
-      synonyms.push(d.tr[0].text);
-      d.tr[0].syn.forEach((syn) => {
-        synonyms.push(syn.text);
-      });
-    }
-
     // todo лучше переделать на jsonld
     // todo валидировать параметры (dialogResult.parameters) и на основе них формировать лучшую выборку
     const rows = await pool.connect(async (connection) => {
       const result = await connection.many(
-        storyQueries.selectCategories(synonyms),
+        storyQueries.selectCategories(category),
       );
       return result;
     });

@@ -2,6 +2,7 @@ const jsigs = require('jsonld-signatures');
 const { Ed25519KeyPair } = require('crypto-ld');
 const { documentLoaders } = require('jsonld');
 const logger = require('../lib/log');
+
 const { Ed25519Signature2018 } = jsigs.suites;
 const { AuthenticationProofPurpose } = jsigs.purposes;
 const { node: documentLoader } = documentLoaders;
@@ -31,13 +32,13 @@ async function signDocument(document, key, verificationMethod) {
  *
  * @param {object} signed - signed document jsonld
  * @param {object} publicKey - publicKey
+ * @param {string} id - controller url
  * @returns {Promise<void|Error>}
  */
-async function verifyDocument(signed, publicKey) {
+async function verifyDocument(signed, publicKey, id) {
   const controller = {
     '@context': jsigs.SECURITY_CONTEXT_URL,
-    // todo убрать хардкод 'tg'
-    'id': 'https://gotointeractive.com/marketplace/tg',
+    'id': id,
     'publicKey': [publicKey],
     // this authorizes this key to be used for authenticating
     'authentication': [publicKey.id],

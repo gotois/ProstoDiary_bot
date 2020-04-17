@@ -19,21 +19,21 @@ class TelegramBotRequest {
   constructor(message) {
     this.bot = bot;
     this.#message = message;
-    this.userHash = crypto.createHash('md5').update(String(message.from.id)).digest("hex");
+    this.userHash = crypto.createHash('md5').update(String(message.from.id)).digest('hex');
   }
   get message() {
     return this.#message;
   }
-  get marketplace() {
-    return this.#message.marketplace;
+  get assistants() {
+    return this.message.assistants;
   }
   // todo для чатов возможно предстоит делать отдачу всех ассистентов указанных в паспорте
   get creator() {
-    return this.#message.passport[0].assistant;
+    return this.assistants[0];
   }
   // todo для чатов возможно предстоит делать отдачу всей почты боты указанных в паспорте?
   get publisher() {
-    return this.#message.passport[0].email;
+    return this.#message.passports[0].email;
   }
   /**
    * @returns {Array<string>}
@@ -56,6 +56,10 @@ class TelegramBotRequest {
     }
     return [...hashtags];
   }
+  /**
+   * @param {boolean} silent - silent
+   * @return {Promise<void>}
+   */
   async beginDialog(silent) {
     const instanceProto = Object.getPrototypeOf(this);
     logger.info('telegram: ' + instanceProto.constructor.name);
@@ -80,36 +84,36 @@ class TelegramBotRequest {
    * @param {Action} action - action
    * @returns {Promise<*>}
    */
-  async rpc(action) {
+  rpc(action) {
     if (!this.method) {
       throw new Error('Empty method');
     }
-    const keyPare = await Ed25519KeyPair.from({
-      privateKeyBase58: this.message.assistant.private_key,
-      publicKeyBase58: this.message.assistant.public_key,
+    this.assistants.forEach(async (assistant) => {
+      const keyPare = await Ed25519KeyPair.from({
+        privateKeyBase58: assistant.private_key,
+        publicKeyBase58: assistant.public_key,
+      });
+      const verificationMethod = `https://gotointeractive.com/marketplace/${assistant.name}/keys/` + assistant.id;
+      // Подписываем переданный документ ключом ассистента
+      const document = await linkedDataSignature.signDocument(
+        action.context,
+        keyPare,
+        verificationMethod,
+      );
+      await rpc({
+        body: {
+          jsonrpc: '2.0',
+          id: uuidv1(),
+          method: this.method,
+          params: document,
+        },
+        jwt: assistant.token,
+        verification: verificationMethod
+      });
     });
-    // todo убрать хардкод 'tg'
-    const verificationMethod = 'https://gotointeractive.com/marketplace/tg/keys/' + this.message.assistant.id;
-    // Подписываем переданный документ ключом ассистента
-    const document = await linkedDataSignature.signDocument(
-      action.context,
-      keyPare,
-      verificationMethod,
-    );
-    await rpc({
-      body: {
-        jsonrpc: '2.0',
-        id: uuidv1(),
-        method: this.method,
-        params: document,
-      },
-      jwt: this.message.assistant.token,
-      verification: verificationMethod
-    });
-
     // hack специальный вызов для тестирования E2E. Без явного ответа sendMessage возникает ошибка SubError
     if (IS_AVA) {
-      await this.bot.sendMessage(this.message.chat.id, jsonldMessage.purpose.abstract);
+      return this.bot.sendMessage(this.message.chat.id, jsonldMessage.purpose.abstract);
     }
   }
 }

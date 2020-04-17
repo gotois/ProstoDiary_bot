@@ -14,7 +14,7 @@ async function makeRequestBody(body) {
     body.message || body.channel_post || body.callback_query.message;
   const chatId = message.chat && message.chat.id;
   const userId = message.from && message.from.id;
-  const { passports, assistant } = await pool.connect(async (connection) => {
+  const { passports, assistants } = await pool.connect(async (connection) => {
     // сначала я получаю массив assistant_bot_id по чату
     // декодирую и передаю в passport - массив паспортов
     let results = [];
@@ -30,22 +30,30 @@ async function makeRequestBody(body) {
       logger.warn(error.message);
     }
     const passports = [];
+    const assistants = [];
     if (body.channel_post) {
       logger.info('PUBLIC CHANNEL');
       return passports;
     }
-    let assistantBot;
     for (const result of results) {
-      assistantBot = await connection.one(
+      const assistantTable = await connection.one(
         assistantBoQueries.selectAssistantBotByEmail(result.bot_user_email),
       );
+      const assistant = {
+        private_key: assistantTable.private_key,
+        public_key: assistantTable.public_key,
+        id: assistantTable.id,
+        token: assistantTable.token,
+        clientId: result.client_id,
+        name: result.client_id.split('@')[0],
+      };
+      assistants.push(assistant);
       // hack считаем что чаты начинающиеся с '-' являются публичными
       if (result.id.startsWith('-')) {
         logger.info('PUBLIC CHAT');
         passports.push({
           user: String(userId),
-          assistant: result.client_id,
-          email: assistantBot.bot_user_email,
+          email: result.bot_user_email,
         });
       } else {
         // fixme проверять срок через decoded.exp
@@ -53,7 +61,6 @@ async function makeRequestBody(body) {
         passports.push({
           activated: decoded.email_verified,
           user: String(userId),
-          assistant: result.client_id,
           passportId: decoded.sub, // ID паспорт бота
           email: decoded.email, // почта бота пользователя
         });
@@ -61,7 +68,7 @@ async function makeRequestBody(body) {
     }
     return {
       passports,
-      assistant: assistantBot,
+      assistants,
     };
   });
   return {
@@ -69,8 +76,8 @@ async function makeRequestBody(body) {
     // расширяем встроенный объект telegram
     message: {
       ...message,
-      passport: passports,
-      assistant,
+      passports,
+      assistants,
     },
   };
 }
@@ -85,13 +92,13 @@ module.exports = class TelegramController {
         logger.error(error);
       });
   }
-  static async webhookAPI(request, response, next) {
+  static async api(request, response) {
     try {
       const body = await makeRequestBody(request.body);
       bot.processUpdate(body);
       response.sendStatus(200);
     } catch (error) {
-      next(error);
+      response.sendStatus(400);
     }
   }
 };

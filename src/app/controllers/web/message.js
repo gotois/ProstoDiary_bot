@@ -44,15 +44,12 @@ module.exports = class MessageController {
             response.status(403).json({ message: 'forbidden' });
             return;
           }
-          // todo показывать отдельный список для пользователя/бота, и для сторонних людей - https://github.com/gotois/ProstoDiary_bot/issues/280#issuecomment-558048329
           switch (request.headers.accept) {
             case 'application/schema+json':
-            case 'application/json': {
-              response.status(200).json(storyTable);
-              return;
-            }
+            case 'application/json':
             default: {
-              response.status(200).send(template(storyTable));
+              const json = await template(storyTable);
+              response.status(200).json(json);
               return;
             }
           }

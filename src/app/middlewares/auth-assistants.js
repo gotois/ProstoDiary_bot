@@ -27,7 +27,9 @@ basic.on('success', (result) => {
 });
 
 basic.on('fail', (result) => {
-  logger.info(`Assistant authentication failed: ${result.user}`);
+  if (result.user) {
+    logger.warn(`Assistant authentication failed: ${result.user}`);
+  }
 });
 
 basic.on('error', (error) => {

@@ -1,4 +1,3 @@
-const validator = require('validator');
 const jose = require('jose');
 const { Ed25519KeyPair } = require('crypto-ld');
 const package_ = require('../../../../package.json');
@@ -43,13 +42,15 @@ function apiRequest(rpcValues, passport) {
  * @returns {Promise<void>}
  */
 module.exports = async (request, response) => {
+  logger.info(`JSONRPC_API: ${request.body.method}`);
   try {
-    response.header('X-Bot', [package_.name]);
-    response.header('X-Bot-Version', [package_.version]);
     if (!request.body.method) {
       throw new TypeError('Empty method');
     }
-    logger.info(`JSONRPC_API: ${request.body.method}`);
+    // set headers
+    response.header('X-Bot', [package_.name]);
+    response.header('X-Bot-Version', [package_.version]);
+    // decode auth
     const [_basic, id_token] = request.headers.authorization.split(' ');
     const decoded = jose.JWT.decode(id_token);
     const passport = request.session.passport[decoded.sub];
@@ -59,16 +60,18 @@ module.exports = async (request, response) => {
       );
       return result;
     });
-    const publicKey = Ed25519KeyPair.fromFingerprint({ fingerprint });
-    publicKey.id = request.headers.verification;
-    await linkedDataSignature.verifyDocument(request.body.params, publicKey);
+    // public key
+    // @see https://github.com/digitalbazaar/minimal-cipher
+    const publicKeyNode = Ed25519KeyPair.fromFingerprint({ fingerprint });
+    publicKeyNode.id = request.headers.verification;
+    await linkedDataSignature.verifyDocument(
+      request.body.params,
+      publicKeyNode,
+      `https://gotointeractive.com/marketplace/${decoded.aud.split('@')[0]}`,
+    );
     const result = await apiRequest(request.body, passport);
     response.send(result);
   } catch (error) {
-    if (validator.isJSON(error)) {
-      response.status(400).json(JSON.parse(error));
-      return;
-    }
-    response.status(400).json(error);
+    response.status(400).json({ error: error.message });
   }
 };

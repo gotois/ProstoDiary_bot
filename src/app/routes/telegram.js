@@ -4,6 +4,6 @@ const { TELEGRAM } = require('../../environment');
 const TelegramController = require('../controllers/web/telegram');
 
 const router = express.Router();
-router.post(`/bot${TELEGRAM.TOKEN}`, jsonParser, TelegramController.webhookAPI);
+router.post(`/bot${TELEGRAM.TOKEN}`, jsonParser, TelegramController.api);
 
 module.exports = router;
