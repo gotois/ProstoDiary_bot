@@ -6,11 +6,13 @@ module.exports = async (t) => {
   const textAction = require('../../src/core/functions/text');
   const result = await textAction({
     text: 'поел салат с сыром',
-    mime: 'plain/text',
-    creator: 'denis@baskovsky.ru',
-    date: Math.round(new Date().getTime() / 1000),
+    creator: 'ci@gotointeractive.com',
     publisher: 'test@gotointeractive.com',
-    telegram_message_id: 1234567890,
+    telegram: {
+      title: 'test',
+      chatId: 42,
+      messageId: 1234567890,
+    },
   });
   const response = await request(t.context.app)
     .post('/api')

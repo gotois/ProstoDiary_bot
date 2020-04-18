@@ -9,7 +9,7 @@ const notifier = require('../lib/notifier');
 const storyTransport = new StoryTransport();
 storyTransport.on('logged', async (info) => {
   logger.info('saveToDatabase:success');
-  logger.info(info.messageId);
+  logger.warn(info.messageId);
   const { document, passport } = info.message;
   await notifier({
     agent: document.agent,

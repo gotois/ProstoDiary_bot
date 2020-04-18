@@ -87,6 +87,7 @@ class TelegramBotRequest {
    * @returns {Promise<*>}
    */
   rpc(action) {
+    logger.info('telegram-bot-request:rpc');
     if (!this.method) {
       throw new Error('Empty method');
     }

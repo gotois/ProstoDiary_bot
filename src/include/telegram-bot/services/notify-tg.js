@@ -59,12 +59,26 @@ ${html}
       };
     /* eslint-enable */
 
-    await bot.editMessageText(subject, {
-      chat_id: chatId,
-      message_id: messageId,
-      parse_mode: parseMode,
-      reply_markup: replyMarkup,
-    });
+    try {
+      await bot.editMessageText(subject, {
+        chat_id: chatId,
+        message_id: messageId,
+        parse_mode: parseMode,
+        reply_markup: replyMarkup,
+      });
+    } catch (error) {
+      const body = error.toJSON();
+      // todo костыль для forward message
+      if (body.message.endsWith('t be edited')) {
+        await bot.sendMessage(chatId, subject, {
+          chat_id: chatId,
+          parse_mode: parseMode,
+          reply_markup: replyMarkup,
+        });
+        return;
+      }
+      throw error;
+    }
   } else {
     await bot.sendMessage(chatId, messageHTML, {
       parse_mode: parseMode,

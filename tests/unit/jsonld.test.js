@@ -5,9 +5,27 @@ module.exports = (t) => {
   t.false(isJSONLD(null));
   t.false(isJSONLD(''));
   t.false(isJSONLD([]));
-  t.true(
+  t.false(
     isJSONLD({
       '@id': 'something',
+    }),
+  );
+  t.false(
+    isJSONLD({
+      '@context': 'http://schema.org',
+      '@type': 'CreateAction',
+      'agent': {
+        '@type': 'Person',
+        'name': 'John',
+      },
+      'result': {
+        '@type': 'ExercisePlan',
+        'name': 'Some plan',
+      },
+      'participant': {
+        '@type': 'Person',
+        'name': 'Steve',
+      },
     }),
   );
 };

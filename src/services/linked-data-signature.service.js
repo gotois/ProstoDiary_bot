@@ -12,9 +12,10 @@ const { node: documentLoader } = documentLoaders;
  * @param {object} document - jsonld document
  * @param {object} key - controller
  * @param {string} verificationMethod - verification
- * @returns {Promise<*>}
+ * @returns {Promise<object>}
  */
 async function signDocument(document, key, verificationMethod) {
+  logger.info('signDocument');
   const signed = await jsigs.sign(document, {
     suite: new Ed25519Signature2018({
       verificationMethod,
@@ -36,6 +37,7 @@ async function signDocument(document, key, verificationMethod) {
  * @returns {Promise<void|Error>}
  */
 async function verifyDocument(signed, publicKey, id) {
+  logger.info('verifyDocument');
   const controller = {
     '@context': jsigs.SECURITY_CONTEXT_URL,
     'id': id,

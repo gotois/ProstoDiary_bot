@@ -19,9 +19,13 @@ class Photo extends TelegramBotRequest {
     const jsonldAction = await photoAction({
       imageBuffer,
       caption: this.message.caption,
+      telegram: {
+        title: this.message.chat.title,
+        chatId: this.message.chat.id,
+        messageId: this.message.message_id,
+      },
       date: this.message.date,
       hashtags: this.hashtags,
-      telegram_message_id: this.message.message_id,
     });
     await this.rpc(jsonldAction);
   }

@@ -28,14 +28,14 @@ const myForm = (parameters) => {
 };
 
 class AbstractText extends Abstract {
+  #creator;
+  #publisher;
   constructor(data) {
     super(data);
     this.text = data.text;
-    this.creator = data.creator;
-    this.publisher = data.publisher;
-    this.subjectOf = [];
+    this.#creator = data.creator;
+    this.#publisher = data.publisher;
   }
-
   get context() {
     return {
       ...super.context,
@@ -43,8 +43,8 @@ class AbstractText extends Abstract {
         schema: 'http://schema.org/',
         agent: 'schema:agent',
         startTime: 'schema:startTime',
-        subjectOf: 'schema:subjectOf',
         object: 'schema:object',
+        subjectOf: 'schema:subjectOf',
         name: 'schema:name',
         abstract: 'schema:abstract',
         encodingFormat: 'schema:encodingFormat',
@@ -56,7 +56,6 @@ class AbstractText extends Abstract {
         mainEntity: 'schema:mainEntity',
       },
       '@type': 'Action',
-      'subjectOf': this.subjectOf,
       'object': {
         '@type': 'CreativeWork',
         'name': 'text',
@@ -64,6 +63,7 @@ class AbstractText extends Abstract {
         'encodingFormat': 'text/plain',
         'mainEntity': this.objectMainEntity,
       },
+      'subjectOf': this.subjectOf,
       // location,
     };
   }
@@ -173,8 +173,8 @@ class AbstractText extends Abstract {
         const webpage = new AbstractWebpage({ url: lemma });
         await webpage.prepare();
         webpage.namespace = this.namespace; // hack - передача namespace от родителя к потомку
-        webpage.creator = this.creator; // hack - передача creator от родителя к потомку
-        webpage.publisher = this.publisher; // hack - передача publisher от родителя к потомку
+        webpage.creator = this.#creator; // hack - передача creator от родителя к потомку
+        webpage.publisher = this.#publisher; // hack - передача publisher от родителя к потомку
         subjects.push(webpage.context);
       }
       // TODO: names получить имена людей

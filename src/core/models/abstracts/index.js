@@ -3,6 +3,7 @@ const fromUnixTime = require('date-fns/fromUnixTime');
 
 class Abstract {
   constructor(data) {
+    this.subjectOf = [];
     this.objectMainEntity = [];
     this.objectMainEntity.push({
       '@type': 'PropertyValue',

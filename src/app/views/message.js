@@ -5,11 +5,13 @@ const { SERVER } = require('../../environment');
 module.exports = async (storyTable) => {
   const [action] = storyTable.categories;
   const [context] = storyTable.context;
+  // fixme нужно иметь представление каждой возможной сущности (в том числе неизвестной прежде) в виде ее краткого имени - Ложбан?
+  const name = context.object.name;
   const creator = storyTable.creator;
 
   const synonyms = [];
   const { def } = await dictionary({
-    text: context.object.name,
+    text: name,
     lang: 'ru-ru',
   });
   if (Array.isArray(def)) {
@@ -22,17 +24,22 @@ module.exports = async (storyTable) => {
       }
     }
   }
+  let sameAs = [];
+  if (synonyms.length > 0) {
+    sameAs = synonyms.map((synonym) => {
+      return `${SERVER.HOST}/thing/${creator}/` + synonym;
+    });
+  }
+
   // субъектом здесь представляется сам user
   return {
     ...context,
     '@context': 'https://schema.org', // hack переопределяю тип для известных словарей
     'object': {
       ...context.object,
-      url: `${SERVER.HOST}/thing/${creator}/` + context.object.name,
+      url: `${SERVER.HOST}/thing/${creator}/` + name,
     },
-    'sameAs': synonyms.map((synonym) => {
-      return `${SERVER.HOST}/thing/${creator}/` + synonym;
-    }),
+    sameAs,
     '@type': action,
     'agent': [
       {
@@ -43,6 +50,10 @@ module.exports = async (storyTable) => {
         email: storyTable.publisher,
       },
     ],
+    ...{
+      // возможно лучше подставлять image если content_type будет позволять
+      ['url']: `${SERVER.HOST}/message/${creator}/${storyTable.id}/raw`,
+    },
     'startTime': storyTable.created_at,
     'endTime': storyTable.updated_at,
   };

@@ -3,29 +3,18 @@
 module.exports = (request, response) => {
   try {
     const { name } = request.params;
-    // fixme получать content по идентификатору uid
-    const content = null;
-    const contentType = 'text/plain'; // fixme хардкод для теста
-    switch (contentType) {
-      case 'text/plain':
-      case 'plain/text': {
-        response.status(200).send(name);
-        break;
-      }
-      case 'image/jpeg': {
-        response
-          .status(200)
-          .send(
-            `<img src="data:image/jpeg;base64, ${content.toString(
-              'base64',
-            )}"/>`,
-          );
-        break;
-      }
-      default: {
-        throw new Error('Unknown mime');
-      }
-    }
+    // fixme насыщать вещь данными по идентификатору name и пользовательской истории
+    // ...
+    response.status(200).send({
+      '@context': 'http://schema.org/',
+      '@type': 'Thing',
+      'name': name,
+      // alternateName -- todo исправленный вариант слова через spellText
+      // description - краткое описание через GOOGLE_KNOWLEDGE_GRAPH
+      // sameAs -- похожее если находится в БД
+
+      // todo нужна агрегация по таймлайну входящих message URL
+    });
   } catch (error) {
     response.status(400).json({
       error: error.message,

@@ -44,10 +44,16 @@ module.exports = class PsqlTransport extends Transport {
               }),
             );
             // 'story.createContent'
+            let rawContent;
+            if (document.object.encodingFormat.startsWith('text')) {
+              rawContent = Buffer.from(document.object.abstract, 'utf8');
+            } else {
+              rawContent = Buffer.from(document.object.abstract, 'base64');
+            }
             const contentTable = await transactionConnection.one(
               storyQueries.createContent({
                 messageId: messageTable.id,
-                content: Buffer.from(document.object.abstract),
+                content: rawContent,
                 contentType: document.object.encodingFormat,
                 schema: document.object['@type'],
                 date: new Date(document.startTime), // created at
