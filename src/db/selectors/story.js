@@ -1,6 +1,12 @@
 const { sql } = require('../sql');
 
 module.exports = {
+  selectThing(name) {
+    return sql`
+     SELECT * FROM story.abstract
+     WHERE context ->> 'name' = ${name}
+   `;
+  },
   selectCategories(categories) {
     return sql`
     SELECT * FROM story WHERE

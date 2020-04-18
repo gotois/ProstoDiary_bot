@@ -1,19 +1,35 @@
-// const { sql, pool } = require('../../../db/sql');
+const { pool } = require('../../../db/sql');
+const storyQueries = require('../../../db/selectors/story');
+const googleKnowledgeGraph = require('../../../lib/google-knowledge-graph');
 
-module.exports = (request, response) => {
+module.exports = async (request, response) => {
   try {
     const { name } = request.params;
-    // fixme насыщать вещь данными по идентификатору name и пользовательской истории
+    // todo Поддержать редирект (307) вида: /thing/.../яблок => /thing/.../яблоко
     // ...
-    response.status(200).send({
+    const things = await pool.connect(async (connection) => {
+      const result = await connection.many(storyQueries.selectThing(name));
+      return result;
+    });
+    let gkgData;
+    if (things.length > 0) {
+      gkgData = await googleKnowledgeGraph.query(name);
+    }
+    response.status(200).json({
       '@context': 'http://schema.org/',
-      '@type': 'Thing',
-      'name': name,
-      // alternateName -- todo исправленный вариант слова через spellText
+      '@type': 'ItemList',
+      // насыщаем открытыми данными
+      'description': gkgData && gkgData.itemListElement[0].result.description,
+      'url': gkgData && gkgData.itemListElement[0].result.url,
+      'image': gkgData && gkgData.itemListElement[0].result.image,
       // description - краткое описание через GOOGLE_KNOWLEDGE_GRAPH
-      // sameAs -- похожее если находится в БД
-
-      // todo нужна агрегация по таймлайну входящих message URL
+      'itemListElement': things.map((thing, index) => {
+        return {
+          '@type': 'ListItem',
+          'position': index + 1,
+          'item': thing.context,
+        };
+      }),
     });
   } catch (error) {
     response.status(400).json({

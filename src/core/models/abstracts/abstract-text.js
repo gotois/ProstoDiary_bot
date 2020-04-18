@@ -116,6 +116,7 @@ class AbstractText extends Abstract {
           publisher: this.#publisher, // hack - передача publisher от родителя к потомку
         });
         action.subjectOf.push(webcontentThing);
+        action.name = webcontentThing.name;
       }
       // TODO: names получить имена людей
       //  ...
@@ -129,7 +130,7 @@ class AbstractText extends Abstract {
       switch (token.partOfSpeech.tag) {
         case 'NOUN': {
           // существительное обычно отвечает на формирование name
-          // todo если нет существительного что будет являться name? в сценарии когда присутствует ссылка например вида: `посмотрел HREF`
+          // todo если нет существительного что будет являться name?
           if (!action.name) {
             action.name = lemma;
           }
