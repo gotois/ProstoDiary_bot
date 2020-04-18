@@ -1,10 +1,11 @@
 const dictionary = require('../../lib/dictionary');
+const { SERVER } = require('../../environment');
 
 // todo показывать отдельный список для пользователя/бота, и для сторонних людей - https://github.com/gotois/ProstoDiary_bot/issues/280#issuecomment-558048329
 module.exports = async (storyTable) => {
   const [action] = storyTable.categories;
   const [context] = storyTable.context;
-  // const content = storyTable.content.toString();
+  const creator = storyTable.creator;
 
   const synonyms = [];
   const { def } = await dictionary({
@@ -24,19 +25,24 @@ module.exports = async (storyTable) => {
   // субъектом здесь представляется сам user
   return {
     ...context,
+    '@context': 'https://schema.org', // hack переопределяю тип для известных словарей
     'object': {
       ...context.object,
-      // todo брать данные юзера
-      url: 'https://gotointeractive.com/user/' + context.object.name,
+      url: `${SERVER.HOST}/thing/${creator}/` + context.object.name,
     },
     'sameAs': synonyms.map((synonym) => {
-      return 'https://gotointeractive.com/user/' + synonym;
+      return `${SERVER.HOST}/thing/${creator}/` + synonym;
     }),
     '@type': action,
-    'agent': {
-      identifier: storyTable.version,
-      email: storyTable.publisher_email,
-    },
+    'agent': [
+      {
+        identifier: storyTable.version,
+        email: storyTable.creator,
+      },
+      {
+        email: storyTable.publisher,
+      },
+    ],
     'startTime': storyTable.created_at,
     'endTime': storyTable.updated_at,
   };

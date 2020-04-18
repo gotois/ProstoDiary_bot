@@ -1,6 +1,5 @@
 const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
-const { publisher } = require('../../../../package.json');
 
 class Abstract {
   constructor(data) {
@@ -37,6 +36,7 @@ class Abstract {
   get agent() {
     // hack считаем что это ассистент tg@gotointeractive.com
     if (this.namespace) {
+      // fixme убрать хардкод
       if (this.namespace.includes('//t.me/')) {
         return {
           '@type': 'Organization',
@@ -46,16 +46,20 @@ class Abstract {
     }
     throw new Error('Unknown agent');
   }
+  // дополняемый участник - например посредник от ассистента к паспорту бота
+  get participant() {
+    return {
+      '@type': 'Organization',
+      'email': 'posrednik@example.com',
+    };
+  }
   get context() {
     return {
       // fixme для вложенных абстрактов требуется использовать $ref?
       //  https://github.com/APIDevTools/json-schema-ref-parser
       '@id': this.namespace, // изоляцинные идентификаторы сообщения
       'agent': this.agent,
-      'participant': {
-        '@type': 'Person',
-        'email': this.publisher, // fixme identifier user
-      },
+      'participant': this.participant,
       'startTime': format(
         fromUnixTime(Math.round(new Date().getTime() / 1000)),
         'yyyy-MM-dd',
@@ -79,7 +83,6 @@ class Abstract {
   get jurisdiction() {
     return JSON.stringify([
       {
-        publisher,
         coding: [
           {
             system: 'urn:iso:std:iso:3166',

@@ -18,6 +18,7 @@ const telegramRoutes = require('./routes/telegram');
 const messageRoutes = require('./routes/message');
 const assistantWebhookRoutes = require('./routes/assistant');
 const pingRoutes = require('./routes/ping');
+const thingRoutes = require('./routes/thing');
 const documentationRoutes = require('./routes/documentation');
 
 (async function main() {
@@ -38,6 +39,7 @@ const documentationRoutes = require('./routes/documentation');
   app.use(Sentry.Handlers.errorHandler());
   app.use('/', mainRoutes(oidcProvider));
   app.use('/ping', pingRoutes);
+  app.use('/thing', thingRoutes);
   app.use('/telegram', telegramRoutes);
   app.use('/documentation', documentationRoutes);
   app.use('/api', apiRoutes);

@@ -95,7 +95,8 @@ WHERE
           `;
   },
   createMessage({
-    /* creator, */ namespace,
+    creator,
+    namespace,
     publisher,
     version,
     experimental = false,
@@ -104,12 +105,14 @@ WHERE
           INSERT INTO story.message
           (
             namespace,
+            creator,
             publisher,
             version,
             experimental
           )
           VALUES (
           ${namespace},
+          ${creator},
           ${publisher},
           ${version},
           ${experimental}

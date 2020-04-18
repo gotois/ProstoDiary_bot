@@ -10,16 +10,14 @@ CREATE
                 version <> ''
             ) -- x-bot-version. отсюда же можно узнать и api version. Нужен для взаимодействия с ассистентами. Аналогичен version в package.json на момент записи - нужен для проверки необходимости обновить историю бота или изменению формата хранения
             ,updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
- -- fixme новое из startTime вида 2020-02-15
- --created_at TIMESTAMP NOT NULL,
- -- todo раскомментировать !
- -- Персона/Организация которая ответственна до попадания в assistant (например сам пользователь)
- -- creator UUID NOT NULL, -- ответственный за создание записи -- это assistant ID: Telegram или Email
- 			,publisher UUID NOT NULL -- ответственный за создание записи, Bot ID
+ --created_at TIMESTAMP NOT NULL, -- fixme поддержать из данных значения вида 2020-02-15
+  			,creator TEXT NOT NULL -- ответственный за создание записи, например бот пользователя -- todo сделать массивом
+ 			,publisher TEXT NOT NULL -- ответственный за публикацию записи, например агент tg -- todo сделать массивом
             ,PRIMARY KEY (id)
         )
-; --CREATE INDEX ON story.message (creator); // todo поддержать
- CREATE
+; CREATE
+	INDEX ON story.message (creator)
+; CREATE
     INDEX
         ON story.message (publisher)
 ;

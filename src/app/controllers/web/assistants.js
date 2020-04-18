@@ -29,6 +29,19 @@ module.exports = class Marketplace {
       response.status(400).json({ error: error.message });
     }
   }
+  static async one(request, response) {
+    try {
+      const client = await pool.connect(async (connection) => {
+        const marketplace = await connection.one(
+          marketplaceQueries.selectByClientId(request.params.id),
+        );
+        return marketplace;
+      });
+      response.status(200).json(client);
+    } catch (error) {
+      response.status(400).json({ error: error.message });
+    }
+  }
   static async assistants(request, response) {
     try {
       const clients = await pool.connect(async (connection) => {

@@ -28,10 +28,12 @@ class TelegramBotRequest {
     return this.message.assistants;
   }
   // todo для чатов возможно предстоит делать отдачу всех ассистентов указанных в паспорте
+  // выдача ассистента вида tg@gotointeractive.com
   get creator() {
     return this.assistants[0];
   }
   // todo для чатов возможно предстоит делать отдачу всей почты боты указанных в паспорте?
+  // выдача бота вида user-bot@gotointeractive.com
   get publisher() {
     return this.#message.passports[0].email;
   }
