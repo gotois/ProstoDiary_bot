@@ -1,4 +1,4 @@
-const dictionary = require('../../lib/dictionary');
+const { getSynonyms } = require('../../lib/dictionary');
 const { SERVER } = require('../../environment');
 
 // todo показывать отдельный список для пользователя/бота, и для сторонних людей - https://github.com/gotois/ProstoDiary_bot/issues/280#issuecomment-558048329
@@ -6,24 +6,10 @@ module.exports = async (storyTable) => {
   const [action] = storyTable.categories;
   const [context] = storyTable.context;
   // fixme нужно иметь представление каждой возможной сущности (в том числе неизвестной прежде) в виде ее краткого имени - Ложбан?
-  const name = context.object.name;
+  const name = context.name || context.object.name;
   const creator = storyTable.creator;
+  const synonyms = await getSynonyms(name);
 
-  const synonyms = [];
-  const { def } = await dictionary({
-    text: name,
-    lang: 'ru-ru',
-  });
-  if (Array.isArray(def)) {
-    for (const d of def) {
-      synonyms.push(d.tr[0].text);
-      if (Array.isArray(d.tr[0].syn)) {
-        d.tr[0].syn.forEach((syn) => {
-          synonyms.push(syn.text);
-        });
-      }
-    }
-  }
   let sameAs = [];
   if (synonyms.length > 0) {
     sameAs = synonyms.map((synonym) => {
@@ -31,7 +17,7 @@ module.exports = async (storyTable) => {
     });
   }
 
-  // субъектом здесь представляется сам user
+  // субъектом здесь представляется сам user/bot
   return {
     ...context,
     '@context': 'https://schema.org', // hack переопределяю тип для известных словарей

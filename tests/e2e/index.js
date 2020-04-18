@@ -131,18 +131,8 @@ skipTestForFastOrTravis('archive service', require('./archive-service.test'));
 skipTestForFastOrTravis('foursquare', require('./foursquare-service.test'));
 
 test('dictionary', async (t) => {
-  const dictionary = require('../../src/lib/dictionary');
-  const { def } = await dictionary({ text: 'eat' });
-
-  const synonyms = [];
-  for (const d of def) {
-    synonyms.push(d.tr[0].text);
-
-    d.tr[0].syn.forEach((syn) => {
-      synonyms.push(syn.text);
-    });
-  }
-
+  const { getSynonyms } = require('../../src/lib/dictionary');
+  const synonyms = await getSynonyms('eat');
   t.true(Array.isArray(synonyms));
 });
 

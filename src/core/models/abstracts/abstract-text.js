@@ -1,31 +1,9 @@
 const validator = require('validator');
-const SchemaOrg = require('schema.org');
-const dialogService = require('../../../services/dialog.service'); // в моделях не должно быть сервисов
-const logger = require('../../../lib/log'); // в моделях не должно быть сервисов
+const logger = require('../../../lib/log');
 const languageService = require('../../../services/nlp.service'); // в моделях не должно быть сервисов
 const Abstract = require('.');
-const AbstractWebpage = require('./abstract-webpage');
-const Action = require('../actions/action');
-/**
- * @todo на основе набора свойств пытаюсь насытить schema.org
- * затем получать родителя из схемы и насыщать ее по необходимости из истории
- * example:
- * myForm({
- *   "availability": "http://schema.org/InStock",
- *   'priceCurrency': 'USD',
- *   'price': 900,
- * })
- * @param {object} parameters
- * @returns {object} - тип JSON-LD
- */
-const myForm = (parameters) => {
-  const schemaOrg = new SchemaOrg();
-  const type = schemaOrg.getType(parameters);
-  return {
-    '@type': type || 'Thing',
-    ...parameters,
-  };
-};
+const DynamicAction = require('../actions/dynamic-action');
+const WebContent = require('../things/web-content');
 
 class AbstractText extends Abstract {
   #creator;
@@ -110,72 +88,34 @@ class AbstractText extends Abstract {
     // ]);
     // this.abstract = encrypted.data.toString('base64')
   }
-
   /**
    * @param {string} text - sentence text
    */
   async detectBySentense(text) {
     logger.info('detectBySentense');
+    const action = await DynamicAction({ text });
 
-    if (text.length > 256) {
-      throw new Error('So big for detect');
-    }
-    const subjects = [];
-
-    /**
-     * @param {Action} action - JSON-LD action
-     * @returns {object}
-     */
-    function generateDocument(action) {
-      const object = myForm({
-        ...parameters, // параметры полученные от Diglogflow
-        // name: encodeURIComponent(objectNames[0]), // в идеале должно браться из dialogflow, но если не получается, то берем существительное и прилагательное через NLP
-        name: objectNames[0], // в идеале должно браться из dialogflow, но если не получается, то берем существительное и прилагательное через NLP
-        // inLanguage: 'xxx' // язык
-      });
-
-      const innerDocument = {
-        // предполагаю что контекст будет создавать Space для каждого отдельного события это будет вида: 'https://gotointeractive.com/:object/:subject
-        '@context': {
-          schema: 'http://schema.org/',
-          object: 'schema:object',
-          // для валидации schema
-          ...Object.keys(parameters).reduce((accumulator, k) => {
-            accumulator[k] = 'schema:' + k;
-            return accumulator;
-          }, {}),
-        },
-        '@type': action.type,
-        object,
-        // actionStatus: action.status,
-      };
-      return innerDocument;
-    }
-
-    // todo возможно исключение, надо его правильно обработать
-    // todo поменять uid
-    const dialogflowResult = await dialogService.detect(text, 'test-uid');
-    const parameters = dialogService.formatParameters(dialogflowResult);
+    // todo поддержать массивы экшенов в зависимости от понятых глаголов
+    const actions = [action];
 
     const { tokens } = await languageService.analyzeSyntax(
-      dialogflowResult.queryText,
+      text,
     );
-    const objectNames = [];
     for (const token of tokens) {
       const { lemma } = token;
 
       if (validator.isEmail(lemma)) {
-        // this.abstracts.push(new AbstractEmail(lemma));
+        // todo насыщать AbstractEmail
       } else if (validator.isMobilePhone(lemma)) {
-        // this.abstracts.push(new AbstractPhone(lemma));
+        // todo насыщать AbstractPhone
       } else if (validator.isURL(lemma)) {
-        logger.info('webpage preparing');
-        const webpage = new AbstractWebpage({ url: lemma });
-        await webpage.prepare();
-        webpage.namespace = this.namespace; // hack - передача namespace от родителя к потомку
-        webpage.creator = this.#creator; // hack - передача creator от родителя к потомку
-        webpage.publisher = this.#publisher; // hack - передача publisher от родителя к потомку
-        subjects.push(webpage.context);
+        const webcontentThing = await WebContent({
+          url: lemma,
+          namespace: this.namespace, // hack - передача namespace от родителя к потомку
+          creator: this.#creator.clientId, // hack - передача creator от родителя к потомку
+          publisher: this.#publisher, // hack - передача publisher от родителя к потомку
+        });
+        action.subjectOf.push(webcontentThing);
       }
       // TODO: names получить имена людей
       //  ...
@@ -187,17 +127,17 @@ class AbstractText extends Abstract {
       //  ...
 
       switch (token.partOfSpeech.tag) {
-        // соединитель - союз, нужно увеличить возвращаемый массив на один
-        // case 'CONJ': {
-        //   resCount++;
-        //   break;
-        // }
         case 'NOUN': {
-          objectNames.push(lemma);
+          // существительное обычно отвечает на формирование name
+          // todo если нет существительного что будет являться name? в сценарии когда присутствует ссылка например вида: `посмотрел HREF`
+          if (!action.name) {
+            action.name = lemma;
+          }
           break;
         }
         case 'VERB': {
-          // categories.add(lemma); // fixme здесь использовать существительное tag === 'NOUN'
+          // todo глагол обычно отвечает на формирование Action
+          // "поел и поработал" - формиует два: EatAction, WorkAction
           break;
         }
         default: {
@@ -206,11 +146,7 @@ class AbstractText extends Abstract {
       }
     }
 
-    subjects.push(
-      generateDocument(new Action(dialogflowResult.intent.displayName)),
-    );
-
-    return subjects;
+    return actions;
   }
 }
 

@@ -1,4 +1,3 @@
-// yandex dictionary
 const { get } = require('../services/request.service');
 const { YANDEX } = require('../environment');
 /**
@@ -7,10 +6,13 @@ const { YANDEX } = require('../environment');
  */
 const DICTIONARY_HOST = 'dictionary.yandex.net';
 /**
+ * Yandex dictionary
+ *
  * @param {object} obj - object
  * @param {string} obj.text - Текст для проверки
+ * @returns {object}
  */
-module.exports = async ({ text, lang = 'en-ru' }) => {
+async function dictionary({ text, lang = 'en-ru' }) {
   const result = await get(
     `https://${DICTIONARY_HOST}/api/v1/dicservice.json/lookup`,
     {
@@ -22,4 +24,28 @@ module.exports = async ({ text, lang = 'en-ru' }) => {
     'utf8',
   );
   return result;
+}
+
+async function getSynonyms(name) {
+  const synonyms = [];
+  const { def } = await dictionary({
+    text: name,
+    lang: 'ru-ru',
+  });
+  if (Array.isArray(def)) {
+    for (const d of def) {
+      synonyms.push(d.tr[0].text);
+      if (Array.isArray(d.tr[0].syn)) {
+        d.tr[0].syn.forEach((syn) => {
+          synonyms.push(syn.text);
+        });
+      }
+    }
+  }
+  return synonyms;
+}
+
+module.exports = {
+  dictionary,
+  getSynonyms,
 };
