@@ -11,7 +11,7 @@ psql -U $PGUSER -d $PGDATABASE -a -f SQL/session/tables/sessions.sql;
 # client
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/client/schemas/schema.sql;
 # client tables
-psql -U $PGUSER -d $PGDATABASE -a -f SQL/client/tables/user.sql;
+psql -U $PGUSER -d $PGDATABASE -a -f SQL/client/tables/passport.sql;
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/client/tables/bot.sql;
 # client views
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/client/views/roles.sql;
