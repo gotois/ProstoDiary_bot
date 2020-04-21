@@ -8,6 +8,9 @@ class AbstractDsl extends Abstract {
     super(parameters);
     this.buffer = parameters.buffer;
   }
+  /**
+   * @returns {jsonldApiRequest}
+   */
   get context() {
     return {
       ...super.context,

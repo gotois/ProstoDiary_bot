@@ -14,6 +14,9 @@ class AbstractText extends Abstract {
     this.#creator = data.creator;
     this.#publisher = data.publisher;
   }
+  /**
+   * @returns {jsonldApiRequest}
+   */
   get context() {
     return {
       ...super.context,

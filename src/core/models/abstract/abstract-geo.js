@@ -33,7 +33,9 @@ class AbstractGeo extends Abstract {
       this.#near = search.near;
     }
   }
-
+  /**
+   * @returns {jsonldApiRequest}
+   */
   get context() {
     return {
       ...super.context,

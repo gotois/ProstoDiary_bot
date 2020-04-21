@@ -9,7 +9,9 @@ class AbstractPhoto extends Abstract {
     // todo caption должен быть записан в контекст
     this.caption = data.caption;
   }
-
+  /**
+   * @returns {jsonldApiRequest}
+   */
   get context() {
     return {
       ...super.context,

@@ -6,7 +6,9 @@ class AbstractArchive extends Abstract {
   constructor(data) {
     super(data);
   }
-
+  /**
+   * @returns {jsonldApiRequest}
+   */
   get context() {
     return {
       ...super.context,

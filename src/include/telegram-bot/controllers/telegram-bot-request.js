@@ -83,8 +83,8 @@ class TelegramBotRequest {
   /**
    * Бродкаст всех сообщений по паспортам ботов по API
    *
-   * @param {object} document - JSON-LD Request
-   * @returns {Promise<*>}
+   * @param {jsonldApiRequest} document - JSON-LD Request
+   * @returns {Promise<object|Error>}
    */
   rpc(document) {
     logger.info('telegram-bot-request:rpc');

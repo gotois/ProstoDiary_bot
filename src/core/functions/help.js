@@ -2,7 +2,7 @@ const AbstractCommand = require('../models/abstract/abstract-command');
 /**
  * @description Помощь
  * @param {object} parameters - object
- * @returns {Promise<object>}
+ * @returns {Promise<jsonldApiRequest>}
  */
 module.exports = async function (parameters) {
   const abstractCommand = new AbstractCommand({

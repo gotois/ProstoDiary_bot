@@ -2,7 +2,7 @@ const Abstract = require('../models/abstract');
 /**
  * @description работа с документами
  * @param {*} parameters - object
- * @returns {Promise<object>}
+ * @returns {Promise<jsonldApiRequest>}
  */
 module.exports = async function (parameters) {
   // todo на основе данных возвращать нужный тип абстрактов вида: PdfAbstract

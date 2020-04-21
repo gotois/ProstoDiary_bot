@@ -88,7 +88,9 @@ class AbstractVoice extends Abstract {
     this.duration = data.duration;
     this.uid = data.uid;
   }
-
+  /**
+   * @returns {jsonldApiRequest}
+   */
   get context() {
     return {
       ...super.context,

@@ -10,7 +10,9 @@ class AbstractCommand extends Abstract {
     this.command = data.command;
     this._context = context || {};
   }
-
+  /**
+   * @returns {jsonldApiRequest}
+   */
   get context() {
     return {
       ...super.context,

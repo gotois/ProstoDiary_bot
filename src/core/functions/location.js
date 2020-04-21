@@ -1,7 +1,7 @@
 const AbstractGeo = require('../models/abstract/abstract-geo');
 /**
  * @param {object} parameters - parameters
- * @returns {Promise<object>}
+ * @returns {Promise<jsonldApiRequest>}
  */
 module.exports = async function (parameters) {
   const locationGeo = new AbstractGeo({

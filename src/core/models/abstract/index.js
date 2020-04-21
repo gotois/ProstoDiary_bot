@@ -54,6 +54,9 @@ class Abstract {
       'email': 'posrednik@example.com',
     };
   }
+  /**
+   * @returns {jsonldApiRequest}
+   */
   get context() {
     return {
       // fixme для вложенных абстрактов требуется использовать $ref?

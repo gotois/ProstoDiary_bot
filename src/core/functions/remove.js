@@ -3,7 +3,7 @@ const package_ = require('../../../package.json');
  * @todo добавить враппер
  * @description Удаление записи
  * @param {object} requestObject - requestObject
- * @returns {Promise<object>}
+ * @returns {Promise<jsonldApiRequest>}
  */
 module.exports = (requestObject) => {
   const { id } = requestObject;
