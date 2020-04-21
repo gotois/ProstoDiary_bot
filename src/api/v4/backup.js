@@ -6,9 +6,9 @@ const commandLogger = require('../../services/command-logger.service');
 const { convertIn2DigitFormat } = require('../../services/date.service');
 const { pool } = require('../../db/sql');
 const storyQueries = require('../../db/selectors/story');
-const RejectAction = require('../../core/models/actions/reject');
-const AcceptAction = require('../../core/models/actions/accept');
-const AcceptEmailAction = require('../../core/models/actions/accept-email');
+const RejectAction = require('../../core/models/action/reject');
+const AcceptAction = require('../../core/models/action/accept');
+const AcceptEmailAction = require('../../core/models/action/accept-email');
 /**
  * @param {Array} stories - entries
  * @returns {buffer}

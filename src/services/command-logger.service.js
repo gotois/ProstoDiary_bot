@@ -1,5 +1,5 @@
 const winston = require('winston');
-const RejectAction = require('../core/models/actions/reject');
+const RejectAction = require('../core/models/action/reject');
 const CommandTransport = require('../db/adapters/command-transport');
 const notifier = require('../lib/notifier');
 

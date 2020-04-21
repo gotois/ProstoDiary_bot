@@ -11,16 +11,18 @@ class Document extends TelegramBotRequest {
     const fileBuffer = await this.getTelegramFile(
       this.message.document.file_id,
     );
-    const jsonldAction = await documentAction({
+    const jsonldRequest = await documentAction({
       buffer: fileBuffer,
       mimeType: this.message.document.mime_type,
       date: this.message.date,
+      creator: this.creator,
+      publisher: this.publisher,
       telegram: {
         messageId: this.message.message_id,
       },
       silent,
     });
-    await this.rpc(jsonldAction);
+    await this.rpc(jsonldRequest);
   }
 }
 /**

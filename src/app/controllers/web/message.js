@@ -91,7 +91,10 @@ module.exports = class MessageController {
             case 'application/json':
             default: {
               const json = await template(storyTable);
-              response.status(200).json(json);
+              response
+                .contentType('application/ld+json')
+                .status(200)
+                .json(json);
               return;
             }
           }

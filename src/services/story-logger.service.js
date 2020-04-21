@@ -1,6 +1,6 @@
 const winston = require('winston');
-const AcceptAction = require('../core/models/actions/accept');
-const RejectAction = require('../core/models/actions/reject');
+const AcceptAction = require('../core/models/action/accept');
+const RejectAction = require('../core/models/action/reject');
 const StoryTransport = require('../db/adapters/story-transport');
 const { SERVER } = require('../environment');
 const logger = require('../lib/log');

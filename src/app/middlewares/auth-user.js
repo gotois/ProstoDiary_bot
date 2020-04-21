@@ -16,6 +16,7 @@ const basic = auth.basic(
         );
         return botId;
       });
+      // todo проверять rbac'ом
       callback(Boolean(botId));
     } catch (error) {
       callback(false);

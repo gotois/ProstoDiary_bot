@@ -26,7 +26,7 @@ class Text extends TelegramBotRequest {
       await this.bot.sendChatAction(this.message.chat.id, 'typing');
     }
     try {
-      const jsonldAction = await textAction({
+      const jsonldRequest = await textAction({
         text: this.message.text,
         hashtags: this.hashtags,
         telegram: {
@@ -38,7 +38,7 @@ class Text extends TelegramBotRequest {
         publisher: this.publisher,
         silent,
       });
-      await this.rpc(jsonldAction);
+      await this.rpc(jsonldRequest);
     } catch (error) {
       logger.error(error);
       if (!silent) {

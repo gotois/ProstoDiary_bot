@@ -9,7 +9,7 @@ class Voice extends TelegramBotRequest {
   async beginDialog(silent) {
     await super.beginDialog(silent);
     const fileBuffer = await this.getTelegramFile(this.message.voice.file_id);
-    const jsonldAction = await voiceAction({
+    const jsonldRequest = await voiceAction({
       buffer: fileBuffer,
       date: this.message.date,
       chat_id: this.message.chat.id,
@@ -17,9 +17,12 @@ class Voice extends TelegramBotRequest {
       fileSize: this.message.voice.file_size,
       duration: this.message.voice.duration,
       uid: this.userHash,
+      creator: this.creator,
+      publisher: this.publisher,
+      // todo добавить telegram свойство
       passportId: this.message.passports[0].id,
     });
-    await this.rpc(jsonldAction);
+    await this.rpc(jsonldRequest);
   }
 }
 /**

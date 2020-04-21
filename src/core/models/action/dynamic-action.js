@@ -1,5 +1,5 @@
 const dialogService = require('../../../services/dialog.service'); // в моделях не должно быть сервисов
-const dynamicThing = require('../things/dynamic');
+const dynamicThing = require('../thing/dynamic');
 
 function convertIntentToActionName(intent) {
   switch (intent) {

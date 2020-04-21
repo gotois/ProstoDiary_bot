@@ -1,8 +1,8 @@
-const AbstractText = require('../models/abstracts/abstract-text');
+const AbstractText = require('../models/abstract/abstract-text');
 const textService = require('../../services/text.service');
 /**
  * @param {object} parameters - object
- * @returns {Promise<AbstractText>}
+ * @returns {Promise<object>}
  */
 module.exports = async (parameters) => {
   const abstractText = new AbstractText({
@@ -10,5 +10,5 @@ module.exports = async (parameters) => {
     text: await textService.correctionText(parameters.text),
   });
   await abstractText.prepare();
-  return abstractText;
+  return abstractText.context;
 };

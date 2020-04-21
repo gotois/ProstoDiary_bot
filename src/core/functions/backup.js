@@ -1,8 +1,8 @@
-const AbstractCommand = require('../models/abstracts/abstract-command');
+const AbstractCommand = require('../models/abstract/abstract-command');
 /**
  * @description backup
  * @param {object} parameters - requestObject
- * @returns {Promise<AbstractCommand>}
+ * @returns {Promise<object>}
  */
 module.exports = async (parameters) => {
   const { date, token, sorting = 'Ascending' } = parameters;
@@ -31,5 +31,5 @@ module.exports = async (parameters) => {
     },
   );
   await abstractCommand.prepare();
-  return abstractCommand;
+  return abstractCommand.context;
 };

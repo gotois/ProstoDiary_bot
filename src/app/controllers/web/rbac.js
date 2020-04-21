@@ -1,4 +1,4 @@
-// todo это не должно быть в контроллере, перенести в более подходящую директорию
+// todo это не должно быть в контроллере, перенести в более подходящую директорию - например мидлвар в Express
 const AccessControl = require('accesscontrol');
 
 const ac = new AccessControl();

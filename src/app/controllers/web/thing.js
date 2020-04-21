@@ -15,22 +15,24 @@ module.exports = async (request, response) => {
     if (things.length > 0) {
       gkgData = await googleKnowledgeGraph.query(name);
     }
-    response.status(200).json({
-      '@context': 'http://schema.org/',
-      '@type': 'ItemList',
-      // насыщаем открытыми данными
-      'description': gkgData && gkgData.itemListElement[0].result.description,
-      'url': gkgData && gkgData.itemListElement[0].result.url,
-      'image': gkgData && gkgData.itemListElement[0].result.image,
-      // description - краткое описание через GOOGLE_KNOWLEDGE_GRAPH
-      'itemListElement': things.map((thing, index) => {
-        return {
-          '@type': 'ListItem',
-          'position': index + 1,
-          'item': thing.context,
-        };
-      }),
-    });
+    response
+      .contentType('application/ld+json')
+      .status(200)
+      .json({
+        '@context': 'http://schema.org/',
+        '@type': 'ItemList',
+        // насыщаем открытыми данными
+        'description': gkgData && gkgData.itemListElement[0].result.description,
+        'url': gkgData && gkgData.itemListElement[0].result.url,
+        'image': gkgData && gkgData.itemListElement[0].result.image,
+        'itemListElement': things.map((thing, index) => {
+          return {
+            '@type': 'ListItem',
+            'position': index + 1,
+            'item': thing.context,
+          };
+        }),
+      });
   } catch (error) {
     response.status(400).json({
       error: error.message,

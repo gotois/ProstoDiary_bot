@@ -8,7 +8,7 @@ class Ping extends TelegramBotRequest {
   }
   async beginDialog(silent) {
     await super.beginDialog(silent);
-    const jsonldAction = await pingAction({
+    const jsonldRequest = await pingAction({
       telegram: {
         title: this.message.chat.title,
         chatId: this.message.chat.id,
@@ -17,7 +17,7 @@ class Ping extends TelegramBotRequest {
       publisher: this.publisher,
       silent,
     });
-    await this.rpc(jsonldAction);
+    await this.rpc(jsonldRequest);
   }
 }
 /**

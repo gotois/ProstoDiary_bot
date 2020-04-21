@@ -5,16 +5,20 @@ class Location extends TelegramBotRequest {
   async beginDialog(silent) {
     await super.beginDialog(silent);
     const { latitude, longitude } = this.message.location;
-    const jsonldAction = await locationAction({
+    const jsonldRequest = await locationAction({
       latitude,
       longitude,
       date: this.message.date,
-      telegram_message_id: this.message.message_id,
       creator: this.creator,
       publisher: this.publisher,
+      telegram: {
+        title: this.message.chat.title,
+        chatId: this.message.chat.id,
+        messageId: this.message.message_id,
+      },
       silent,
     });
-    await this.rpc(jsonldAction);
+    await this.rpc(jsonldRequest);
   }
 }
 /**

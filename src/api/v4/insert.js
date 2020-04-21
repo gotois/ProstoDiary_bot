@@ -1,7 +1,7 @@
 const logger = require('../../lib/log');
 const storyLogger = require('../../services/story-logger.service');
-const RejectAction = require('../../core/models/actions/reject');
-const AcceptAction = require('../../core/models/actions/accept');
+const RejectAction = require('../../core/models/action/reject');
+const AcceptAction = require('../../core/models/action/accept');
 /**
  * @param {object} document - jsonld document
  * @param {object} passport - passport gotoisCredentions

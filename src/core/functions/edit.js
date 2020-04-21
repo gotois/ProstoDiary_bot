@@ -1,9 +1,9 @@
 const package_ = require('../../../package.json');
-
 /**
+ * @todo использовать враппер
  * @description edit
  * @param {object} requestObject - requestObject
- * @returns {Promise<string>}
+ * @returns {Promise<object>}
  */
 module.exports = (requestObject) => {
   const { text, date, telegram_message_id, telegram_user_id } = requestObject;

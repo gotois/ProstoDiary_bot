@@ -1,9 +1,9 @@
 const package_ = require('../../../package.json');
-
 /**
+ * @todo добавить враппер
  * @description Удаление записи
  * @param {object} requestObject - requestObject
- * @returns {Promise<jsold>}
+ * @returns {Promise<object>}
  */
 module.exports = (requestObject) => {
   const { id } = requestObject;

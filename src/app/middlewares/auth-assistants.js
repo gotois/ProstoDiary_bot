@@ -15,6 +15,7 @@ const basic = auth.basic(
         );
         return result;
       });
+      // todo проверять rbac'ом
       callback(Boolean(market));
     } catch (error) {
       callback(false);

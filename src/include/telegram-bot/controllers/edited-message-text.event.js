@@ -31,7 +31,7 @@ class EditMessageText extends TelegramBotRequest {
         return this.message.text.toLowerCase() === del.toLowerCase();
       })
     ) {
-      const result = await deleteAction({
+      const jsonldRequest = await deleteAction({
         telegram: {
           title: this.message.chat.title,
           chatId: this.message.chat.id,
@@ -40,7 +40,7 @@ class EditMessageText extends TelegramBotRequest {
         publisher: this.publisher,
         silent,
       });
-      await this.rpc(result);
+      await this.rpc(jsonldRequest);
     } else {
       // TODO: https://github.com/gotois/ProstoDiary_bot/issues/34
       const result = await editAction({

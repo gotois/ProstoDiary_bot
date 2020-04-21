@@ -1,9 +1,9 @@
-const AbstractCommand = require('../models/abstracts/abstract-command');
+const AbstractCommand = require('../models/abstract/abstract-command');
 /**
  * @todo дать возможность очищать не все, а только определенные истории
  * @description Удаление всей истории пользователя целиком
  * @param {object} requestObject - requestObject
- * @returns {Promise<AbstractCommand>}
+ * @returns {Promise<object>}
  */
 module.exports = async function (requestObject) {
   const abstractCommand = new AbstractCommand({
@@ -11,5 +11,5 @@ module.exports = async function (requestObject) {
     command: 'Destroy',
   });
   await abstractCommand.prepare();
-  return abstractCommand;
+  return abstractCommand.context;
 };

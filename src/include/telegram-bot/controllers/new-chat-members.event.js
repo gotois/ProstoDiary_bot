@@ -41,8 +41,7 @@ class NewChatMembers extends TelegramBotRequest {
   }
 }
 /**
- * Добавление нового участника в чат
- *
+ * @description Добавление нового участника в чат
  * @param {TelegramMessage} message - message
  * @param {boolean} silent - silent dialog
  * @returns {Promise<undefined>}

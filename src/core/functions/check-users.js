@@ -6,6 +6,7 @@ const passportQueries = require('../../db/selectors/passport');
 const imapService = require('../../services/imap.service');
 const logger = require('../../lib/log');
 
+// todo это должно быть в другой директории
 module.exports = async () => {
   await pool.connect(async (connection) => {
     const passportsTable = await connection.many(

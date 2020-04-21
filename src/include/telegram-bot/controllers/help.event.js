@@ -8,7 +8,7 @@ class Help extends TelegramBotRequest {
   }
   async beginDialog(silent) {
     await super.beginDialog(silent);
-    const jsonldAction = await helpAction({
+    const jsonldRequest = await helpAction({
       telegram: {
         title: this.message.chat.title,
         chatId: this.message.chat.id,
@@ -17,7 +17,7 @@ class Help extends TelegramBotRequest {
       publisher: this.publisher,
       silent,
     });
-    await this.rpc(jsonldAction);
+    await this.rpc(jsonldRequest);
   }
 }
 /**

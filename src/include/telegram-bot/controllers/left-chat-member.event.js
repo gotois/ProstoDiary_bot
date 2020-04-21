@@ -6,4 +6,5 @@ const logger = require('../../../lib/log');
 module.exports = (message) => {
   logger.info(message);
   // todo здесь надо удалять бота из числа ассистентов чатов
+  return undefined;
 };

@@ -2,8 +2,8 @@ const validator = require('validator');
 const logger = require('../../../lib/log');
 const languageService = require('../../../services/nlp.service'); // в моделях не должно быть сервисов
 const Abstract = require('.');
-const DynamicAction = require('../actions/dynamic-action');
-const WebContent = require('../things/web-content');
+const DynamicAction = require('../action/dynamic-action');
+const WebContent = require('../thing/web-content');
 
 class AbstractText extends Abstract {
   #creator;

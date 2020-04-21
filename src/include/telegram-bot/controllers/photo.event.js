@@ -16,9 +16,11 @@ class Photo extends TelegramBotRequest {
       return;
     }
     const imageBuffer = await this.getTelegramFile(mediumPhoto.file_id);
-    const jsonldAction = await photoAction({
+    const jsonldRequest = await photoAction({
       imageBuffer,
       caption: this.message.caption,
+      creator: this.creator,
+      publisher: this.publisher,
       telegram: {
         title: this.message.chat.title,
         chatId: this.message.chat.id,
@@ -27,7 +29,7 @@ class Photo extends TelegramBotRequest {
       date: this.message.date,
       hashtags: this.hashtags,
     });
-    await this.rpc(jsonldAction);
+    await this.rpc(jsonldRequest);
   }
 }
 /**

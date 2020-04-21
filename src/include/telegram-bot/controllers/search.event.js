@@ -8,6 +8,7 @@ const dialogService = require('../../../services/dialog.service');
 const TelegramBotRequest = require('./telegram-bot-request');
 const { IS_PRODUCTION } = require('../../../environment');
 
+// todo поддержать Jena
 class Search extends TelegramBotRequest {
   /**
    * @constant

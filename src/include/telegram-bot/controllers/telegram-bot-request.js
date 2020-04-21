@@ -83,10 +83,10 @@ class TelegramBotRequest {
   /**
    * Бродкаст всех сообщений по паспортам ботов по API
    *
-   * @param {Action} action - action
+   * @param {object} document - JSON-LD Request
    * @returns {Promise<*>}
    */
-  rpc(action) {
+  rpc(document) {
     logger.info('telegram-bot-request:rpc');
     if (!this.method) {
       throw new Error('Empty method');
@@ -98,8 +98,8 @@ class TelegramBotRequest {
       });
       const verificationMethod = `https://gotointeractive.com/marketplace/${assistant.name}/keys/` + assistant.id;
       // Подписываем переданный документ ключом ассистента
-      const document = await linkedDataSignature.signDocument(
-        action.context,
+      const signedDocument = await linkedDataSignature.signDocument(
+        document,
         keyPare,
         verificationMethod,
       );
@@ -108,7 +108,7 @@ class TelegramBotRequest {
           jsonrpc: '2.0',
           id: uuidv1(),
           method: this.method,
-          params: document,
+          params: signedDocument,
         },
         jwt: assistant.token,
         verification: verificationMethod

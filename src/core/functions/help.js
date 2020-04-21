@@ -1,8 +1,8 @@
-const AbstractCommand = require('../models/abstracts/abstract-command');
+const AbstractCommand = require('../models/abstract/abstract-command');
 /**
  * @description Помощь
  * @param {object} parameters - object
- * @returns {Promise<AbstractCommand>}
+ * @returns {Promise<object>}
  */
 module.exports = async function (parameters) {
   const abstractCommand = new AbstractCommand({
@@ -10,5 +10,5 @@ module.exports = async function (parameters) {
     command: 'Help',
   });
   await abstractCommand.prepare();
-  return abstractCommand;
+  return abstractCommand.context;
 };

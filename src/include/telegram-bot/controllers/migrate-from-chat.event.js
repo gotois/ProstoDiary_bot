@@ -5,4 +5,5 @@ const logger = require('../../../lib/log');
  */
 module.exports = (message) => {
   logger.info(message);
+  return undefined;
 };
