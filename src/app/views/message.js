@@ -23,8 +23,9 @@ module.exports = async (storyTable) => {
   let object = {};
   if (name) {
     object = {
+      '@type': 'Thing',
       ...context.object,
-      url: `${SERVER.HOST}/thing/${creator}/` + name,
+      'url': `${SERVER.HOST}/thing/${creator}/` + name,
     };
   }
   // субъектом здесь представляется сам user/bot
@@ -36,11 +37,13 @@ module.exports = async (storyTable) => {
     '@type': type,
     'agent': [
       {
-        identifier: storyTable.version,
-        email: storyTable.creator,
+        '@type': 'Organization',
+        'identifier': storyTable.version,
+        'email': storyTable.creator,
       },
       {
-        email: storyTable.publisher,
+        '@type': 'Organization',
+        'email': storyTable.publisher,
       },
     ],
     ...{

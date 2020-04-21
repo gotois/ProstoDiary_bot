@@ -36,7 +36,10 @@ module.exports = async (request, response) => {
           return {
             '@type': 'ListItem',
             'position': index + 1,
-            'item': thing.context,
+            'item': {
+              // "url": "https://example.com/", // todo необходимо расширять url для валидности
+              ...thing.context,
+            },
           };
         }),
       });
