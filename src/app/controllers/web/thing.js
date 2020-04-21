@@ -5,15 +5,23 @@ const googleKnowledgeGraph = require('../../../lib/google-knowledge-graph');
 module.exports = async (request, response) => {
   try {
     const { name } = request.params;
+    let description = null;
+    let url = null;
+    let image = null;
     // todo Поддержать редирект (307) вида: /thing/.../яблок => /thing/.../яблоко
     // ...
     const things = await pool.connect(async (connection) => {
       const result = await connection.many(storyQueries.selectThing(name));
       return result;
     });
-    let gkgData;
     if (things.length > 0) {
-      gkgData = await googleKnowledgeGraph.query(name);
+      // насыщаем открытыми данными
+      const gkgData = await googleKnowledgeGraph.query(name);
+      if (gkgData.itemListElement.length > 0) {
+        description = gkgData.itemListElement[0].result.description;
+        url = gkgData.itemListElement[0].result.url;
+        image = gkgData.itemListElement[0].result.image;
+      }
     }
     response
       .contentType('application/ld+json')
@@ -21,10 +29,9 @@ module.exports = async (request, response) => {
       .json({
         '@context': 'http://schema.org/',
         '@type': 'ItemList',
-        // насыщаем открытыми данными
-        'description': gkgData && gkgData.itemListElement[0].result.description,
-        'url': gkgData && gkgData.itemListElement[0].result.url,
-        'image': gkgData && gkgData.itemListElement[0].result.image,
+        'description': description,
+        'url': url,
+        'image': image,
         'itemListElement': things.map((thing, index) => {
           return {
             '@type': 'ListItem',

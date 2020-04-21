@@ -6,7 +6,7 @@ CREATE
             ,updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             ,message_id UUID NOT NULL
             ,content BYTEA NOT NULL  -- здесь находится первоначальный текст/фото/видео сообщения (zip если архив)
-            ,content_type VARCHAR (20) NOT NULL CHECK (
+            ,content_type VARCHAR (50) NOT NULL CHECK (
                 content_type <> ''
             ) -- mime тип raw сообщения или encodingFormat
             ,telegram_message_id TEXT CONSTRAINT must_be_different UNIQUE NOT NULL -- сообщение телеграмма

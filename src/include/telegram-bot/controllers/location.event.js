@@ -2,6 +2,10 @@ const TelegramBotRequest = require('./telegram-bot-request');
 const locationAction = require('../../../core/functions/location');
 
 class Location extends TelegramBotRequest {
+  constructor(message) {
+    super(message);
+    this.method = 'insert';
+  }
   async beginDialog(silent) {
     await super.beginDialog(silent);
     const { latitude, longitude } = this.message.location;

@@ -35,7 +35,7 @@ class AbstractPhoto extends Abstract {
       '@type': 'Action',
       'object': {
         '@type': 'CreativeWork',
-        'name': 'photo',
+        'name': 'photo', // todo нужно иметь представление каждой возможной сущности (в том числе неизвестной прежде) в виде ее краткого имени - Ложбан?
         'abstract': this.imageBuffer.toString('base64'),
         'encodingFormat': this.mime,
         'mainEntity': this.objectMainEntity,
@@ -53,10 +53,7 @@ class AbstractPhoto extends Abstract {
       this.subjectOf.push({
         '@type': 'CreativeWork',
         'description': annotation.description,
-        'object': {
-          '@type': 'Thing',
-          'name': annotation.mid, // todo больше хак, потому что хранится строка вида "/m/014cnc"
-        },
+        'name': annotation.mid, // todo больше хак, потому что хранится строка вида "/m/014cnc"
       });
     });
   }

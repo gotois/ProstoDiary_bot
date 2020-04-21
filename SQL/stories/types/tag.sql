@@ -33,3 +33,5 @@ CREATE
         ,'mood' -- настроение и твореческое выражение
     )
 ;
+
+ALTER TYPE SCHEMA ADD VALUE 'Place'

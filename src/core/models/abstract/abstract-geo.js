@@ -1,37 +1,36 @@
 const Abstract = require('.');
-const package_ = require('../../../../package.json');
-const foursquare = require('../../../lib/foursquare');
-const { getFullName, getWeather, getGeoCode } = require('../../../services/location.service');
-
-/**
- * @param {Array} parsedData - geocode parsed data
- * @returns {Error|string}
- */
-const getLocShortName = (parsedData) => {
-  const resultLength = parsedData.length;
-  if (!resultLength) {
-    throw new Error('No results');
-  }
-  return parsedData[resultLength - 1].address_components[0].short_name;
-};
+const { getGeoCode } = require('../../../services/location.service');
 
 class AbstractGeo extends Abstract {
-  #latlng;
-  #near;
+  #latitude;
+  #longitude;
   #name;
   /**
-   * @param {object} search - latlng
+   * @param {object} data - data
    */
-  constructor(search) {
-    super();
-    if (search.latitude && search.longitude) {
-      this.#latlng = {
-        latitude: search.latitude,
-        longitude: search.longitude,
-      };
+  constructor(data) {
+    super(data);
+    if (data.latitude && data.longitude) {
+      this.#latitude = data.latitude;
+      this.#longitude = data.longitude;
     } else {
-      this.#near = search.near;
+      throw new TypeError('latitude or longitude not found');
     }
+  }
+  get geoJSON() {
+    return JSON.stringify({
+      'type': 'Feature',
+      'geometry': {
+        'type': 'Point',
+        'coordinates': [
+          this.#latitude,
+          this.#longitude,
+        ],
+      },
+      'properties': {
+        'name': this.#name,
+      },
+    });
   }
   /**
    * @returns {jsonldApiRequest}
@@ -39,61 +38,75 @@ class AbstractGeo extends Abstract {
   get context() {
     return {
       ...super.context,
-      '@context': 'http://schema.org',
-      '@type': 'AllocateAction',
-      // добавить сведения о погоде https://github.com/schemaorg/schemaorg/issues/362#issuecomment-154098889
-      // this.weatherInfo = await getWeather(this.#latlng);
-      'agent': {
-        '@type': 'Person',
-        'name': package_.name,
-        'url': package_.homepage,
+      '@context': {
+        schema: 'http://schema.org/',
+        agent: 'schema:agent',
+        name: 'schema:name',
+        startTime: 'schema:startTime',
+        object: 'schema:object',
+        subjectOf: 'schema:subjectOf',
+        abstract: 'schema:abstract',
+        description: 'schema:description',
+        encodingFormat: 'schema:encodingFormat',
+        identifier: 'schema:identifier',
+        provider: 'schema:provider',
+        participant: 'schema:participant',
+        value: 'schema:value',
+        email: 'schema:email',
+        geo: 'schema:geo',
+        addressCountry: 'schema:Country',
+        addressLocality: 'schema:Text',
+        addressRegion: 'schema:Text',
+        streetAddress: 'schema:Text',
+        postalCode: 'schema:Text',
+        address: 'schema:address',
+        latitude: 'schema:latitude',
+        longitude: 'schema:longitude',
+        mainEntity: 'schema:mainEntity',
       },
-      'name': 'Location',
+      '@type': 'Action',
       'object': {
         '@type': 'CreativeWork',
-        'name': 'location',
-        'abstract': JSON.stringify({
-          "type": "Feature",
-          "geometry": {
-            "type": "Point",
-            "coordinates": [
-              this.#latlng.latitude,
-              this.#latlng.longitude,
-            ]
-          },
-          "properties": {
-            "name": this.#name,
-          }
-        }).toString('base64'),
+        'name': 'Location',
+        'abstract': this.geoJSON.toString('base64'),
         'encodingFormat': 'application/vnd.geo+json',
+        'mainEntity': this.objectMainEntity,
       },
+      'subjectOf': this.subjectOf,
     };
   }
 
   async prepare() {
-    let ll;
-    if (this.#latlng) {
-      ll = `${this.#latlng.latitude},${this.#latlng.longitude}`;
-    }
-    this.fqData = await foursquare.search({
-      ll,
-      near: this.#near,
-      limit: 1,
+    const [geocode] = await getGeoCode({
+      latitude: this.#latitude,
+      longitude: this.#longitude,
     });
-    if (Array.isArray(this.fqData.venues)) {
-      this.#latlng = {
-        latitude: this.fqData.venues[0].location.lat,
-        longitude: this.fqData.venues[0].location.lng,
+    if (geocode) {
+      const streetAddress = geocode.address_components.find(address => address.types.includes('route'));
+      const postalCode = geocode.address_components.find(address => address.types.includes('postal_code'));
+      const addressCountry = geocode.address_components.find(address => address.types.includes('country'));
+      const addressLocality = geocode.address_components.find(address => address.types.includes('locality'));
+      const addressRegion = geocode.address_components.find(address => address.types.includes('sublocality'));
+      this.address = {
+        '@type': 'PostalAddress',
+        'addressCountry': addressCountry.short_name,
+        'addressLocality': addressLocality.short_name,
+        'addressRegion': addressRegion.short_name,
+        'postalCode': postalCode.short_name,
+        'streetAddress': streetAddress.short_name,
       };
-      this.#name = this.fqData.venues[0].name;
-    } else {
-      this.#name = this.fqData.geocode.feature.name;
+      this.#name = geocode.formatted_address;
     }
-
-    this.geocode = await getGeoCode(this.#latlng);
-    // todo похоже на костыль
-    // const locShortName = getLocShortName(this.geocode[0]);
-    // this.currencies = await getFullName(locShortName);
+    this.subjectOf.push({
+      '@type': 'Place',
+      'name': `${this.#latitude},${this.#longitude}`,
+      'address': this.address,
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": this.#latitude,
+        "longitude": this.#longitude,
+      },
+    })
   }
 }
 

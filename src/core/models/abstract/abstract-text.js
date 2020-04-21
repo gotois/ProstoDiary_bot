@@ -39,7 +39,7 @@ class AbstractText extends Abstract {
       '@type': 'Action',
       'object': {
         '@type': 'CreativeWork',
-        'name': 'text',
+        'name': 'text', // todo нужно иметь представление каждой возможной сущности (в том числе неизвестной прежде) в виде ее краткого имени - Ложбан?
         'abstract': this.abstract,
         'encodingFormat': 'text/plain',
         'mainEntity': this.objectMainEntity,

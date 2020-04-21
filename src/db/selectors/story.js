@@ -55,6 +55,7 @@ WHERE
        ${orderBy}
        `;
   },
+  // сохранение JSONLD типов
   createAbstract({ category, context, contentId }) {
     return sql`
           INSERT INTO story.abstract
@@ -65,11 +66,12 @@ WHERE
           )
           VALUES (
             ${category},
-            ${context},
+            ${sql.json(context)},
             ${contentId}
           )
           RETURNING id`;
   },
+  // Сохранение первичных бинарных данных
   createContent({
     content,
     contentType,

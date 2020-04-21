@@ -45,7 +45,9 @@ module.exports = class PsqlTransport extends Transport {
             );
             // 'story.createContent'
             let rawContent;
-            if (document.object.encodingFormat.startsWith('text')) {
+            if (document.object.encodingFormat.endsWith('vnd.geo+json')) {
+              rawContent = Buffer.from(document.object.abstract, 'utf8');
+            } else if (document.object.encodingFormat.startsWith('text')) {
               rawContent = Buffer.from(document.object.abstract, 'utf8');
             } else {
               rawContent = Buffer.from(document.object.abstract, 'base64');
@@ -67,7 +69,7 @@ module.exports = class PsqlTransport extends Transport {
               await transactionConnection.query(
                 storyQueries.createAbstract({
                   category: subject['@type'],
-                  context: JSON.stringify(subject),
+                  context: subject,
                   contentId: contentTable.id,
                 }),
               );

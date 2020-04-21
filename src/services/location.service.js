@@ -7,6 +7,8 @@ const { GOOGLE } = require('../environment');
  */
 const MAPS_HOST = 'maps.googleapis.com';
 /**
+ * Google Maps
+ *
  * @param {object} obj - obj
  * @param {number} obj.latitude - latitude
  * @param {number} obj.longitude - longitude

@@ -38,6 +38,10 @@ module.exports = class MessageController {
               response.send(storyTable.content.toString('utf8'));
               break;
             }
+            case 'application/vnd.geo+json': {
+              response.json(JSON.parse(storyTable.content.toString('utf8')));
+              break;
+            }
             default: {
               response.send(storyTable.content);
               break;

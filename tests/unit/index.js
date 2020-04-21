@@ -5,6 +5,7 @@ const {
 } = require('../helpers');
 
 test('database config', require('./dbconfig.test'));
+test('schema.org', require('./schemaorg.test'));
 test('helpers', require('./helpers.test'));
 test('jsonld', require('./jsonld.test'));
 test('logger', require('./log.test'));
