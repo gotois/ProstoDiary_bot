@@ -127,7 +127,7 @@
     "node-telegram-bot-api": "0.40.0",
     "oidc-provider": "6.23.5",
     "openapi-jsonrpc-jsdoc": "1.0.3",
-    "openpgp": "4.10.1",
+    "openpgp": "4.10.4",
     "openweather-apis": "4.2.0",
     "qrcode": "1.4.4",
     "qs": "6.9.3",
