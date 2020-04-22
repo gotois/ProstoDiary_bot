@@ -1,6 +1,5 @@
 const mm = require('music-metadata');
 const speech = require('@google-cloud/speech');
-const package_ = require('../../../../package.json');
 const dialogService = require('../../../services/dialog.service');
 const logger = require('../../../lib/log');
 const { GOOGLE } = require('../../../environment');
@@ -94,29 +93,14 @@ class AbstractVoice extends Abstract {
   get context() {
     return {
       ...super.context,
-      '@context': {
-        schema: 'http://schema.org/',
-        agent: 'schema:agent',
-        name: 'schema:name',
-        object: 'schema:object',
-        abstract: 'schema:abstract',
-        encodingFormat: 'schema:encodingFormat',
-        subjectOf: 'schema:subjectOf',
-      },
       '@type': 'AllocateAction',
-      'agent': {
-        '@type': 'Person',
-        'name': package_.name,
-        'url': package_.homepage,
-      },
       'name': 'Voice',
-      'object': {
+      'result': {
         '@type': 'CreativeWork',
-        'name': 'voice',
         'abstract': this.buffer.toString('base64'),
         'encodingFormat': this.mimeType,
       },
-      'subjectOf': [
+      'object': [
         {
           '@type': 'CreativeWork',
           'text': this.text,

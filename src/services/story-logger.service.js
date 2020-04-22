@@ -12,9 +12,7 @@ storyTransport.on('logged', async (info) => {
   logger.warn(info.messageId);
   const { document, passport } = info.message;
   await notifier({
-    agent: document.agent,
-    object: document.object,
-    purpose: document.purpose,
+    ...document,
     ...AcceptAction({
       abstract: 'Запись добавлена',
       url: `${SERVER.HOST}/message/${passport.email}/${info.messageId}`,

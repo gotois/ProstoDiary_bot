@@ -18,10 +18,10 @@ module.exports = class CommandTransport extends Transport {
         this.emit('logged', info);
       });
     } catch (error) {
-      const telegramMessageId = document.object.mainEntity.find((entity) => {
+      const telegramMessageId = document.object[0].mainEntity.find((entity) => {
         return entity.name === 'TelegramMessageId';
       })['value'];
-      const telegramChatId = document.object.mainEntity.find((entity) => {
+      const telegramChatId = document.object[0].mainEntity.find((entity) => {
         return entity.name === 'TelegramChatId';
       })['value'];
       callback(

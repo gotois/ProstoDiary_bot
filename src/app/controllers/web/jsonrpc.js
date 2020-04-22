@@ -3,10 +3,10 @@ const { Ed25519KeyPair } = require('crypto-ld');
 const package_ = require('../../../../package.json');
 const jsonRpcServer = require('../../../api/server');
 const logger = require('../../../lib/log');
-const crypt = require('../../../services/crypt.service');
 const linkedDataSignature = require('../../../services/linked-data-signature.service');
 const { pool } = require('../../../db/sql');
 const signatureQueries = require('../../../db/selectors/signature');
+const RejectAction = require('../../../core/models/action/reject');
 /**
  * @param {object} rpcValues - json rpc method
  * @param {object} passport - passport
@@ -15,22 +15,17 @@ const signatureQueries = require('../../../db/selectors/signature');
 function apiRequest(rpcValues, passport) {
   logger.info('apiRequest');
   return new Promise((resolve, reject) => {
-    jsonRpcServer.call(rpcValues, { passport }, async (error, result) => {
-      if (error) {
-        // сначала показываем jsonld, остальное фоллбэк
+    jsonRpcServer.call(rpcValues, { passport }, (error = {}, result) => {
+      if (error.error) {
         return reject(
-          error.error.data || error.error.message || error.error.code,
+          jsonRpcServer.error(
+            error.error.code,
+            error.error.message,
+            JSON.stringify(RejectAction(error.error.data)),
+          ),
         );
       }
-      // пример реализации дешифровки
-      try {
-        const decryptAbstractMessage = await crypt.openpgpDecrypt(
-          result.result.purpose.abstract,
-          [passport.secret_key],
-        );
-        result.result.purpose.abstract = decryptAbstractMessage;
-        // eslint-disable-next-line no-empty
-      } catch {}
+      // todo здесь должна быть обертка AcceptAction
       return resolve(result.result);
     });
   });

@@ -5,6 +5,7 @@ module.exports = async ({ url, namespace, creator, publisher }) => {
   logger.info('webpage preparing');
   const { title, name, encodingFormat } = await ogParser(url);
   return {
+    '@type': 'WebContent',
     '@context': {
       schema: 'http://schema.org/',
       creator: 'schema:creator',
@@ -18,7 +19,6 @@ module.exports = async ({ url, namespace, creator, publisher }) => {
     'namespace': namespace,
     'creator': creator,
     'publisher': publisher,
-    '@type': 'WebContent',
     'alternativeHeadline': title,
     'name': name,
     'encodingFormat': encodingFormat,

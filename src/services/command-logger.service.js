@@ -6,7 +6,6 @@ const notifier = require('../lib/notifier');
 const commandTransport = new CommandTransport();
 commandTransport.on('logged', async (info) => {
   const { document } = info.message;
-  // todo здесь преобразовывать в AcceptAction
   await notifier(document);
 });
 

@@ -15,32 +15,15 @@ class AbstractPhoto extends Abstract {
   get context() {
     return {
       ...super.context,
-      '@context': {
-        schema: 'http://schema.org/',
-        agent: 'schema:agent',
-        name: 'schema:name',
-        startTime: 'schema:startTime',
-        object: 'schema:object',
-        subjectOf: 'schema:subjectOf',
-        abstract: 'schema:abstract',
-        description: 'schema:description',
-        encodingFormat: 'schema:encodingFormat',
-        identifier: 'schema:identifier',
-        provider: 'schema:provider',
-        participant: 'schema:participant',
-        value: 'schema:value',
-        email: 'schema:email',
-        mainEntity: 'schema:mainEntity',
-      },
       '@type': 'Action',
-      'object': {
+      'name': 'photo', // todo нужно иметь представление каждой возможной сущности (в том числе неизвестной прежде) в виде ее краткого имени - Ложбан?
+      'result': {
         '@type': 'CreativeWork',
-        'name': 'photo', // todo нужно иметь представление каждой возможной сущности (в том числе неизвестной прежде) в виде ее краткого имени - Ложбан?
         'abstract': this.imageBuffer.toString('base64'),
         'encodingFormat': this.mime,
         'mainEntity': this.objectMainEntity,
       },
-      'subjectOf': this.subjectOf,
+      'object': this.object,
     };
   }
 
@@ -50,7 +33,7 @@ class AbstractPhoto extends Abstract {
     const visionResult = await visionService.labelDetection(this.imageBuffer);
     // todo распознавать интент-намерение в самой картинке через Vision
     visionResult.labelAnnotations.forEach((annotation) => {
-      this.subjectOf.push({
+      this.object.push({
         '@type': 'CreativeWork',
         'description': annotation.description,
         'name': annotation.mid, // todo больше хак, потому что хранится строка вида "/m/014cnc"

@@ -20,47 +20,19 @@ class AbstractText extends Abstract {
   get context() {
     return {
       ...super.context,
-      '@context': {
-        schema: 'http://schema.org/',
-        agent: 'schema:agent',
-        startTime: 'schema:startTime',
-        object: 'schema:object',
-        subjectOf: 'schema:subjectOf',
-        name: 'schema:name',
-        abstract: 'schema:abstract',
-        encodingFormat: 'schema:encodingFormat',
-        identifier: 'schema:identifier',
-        provider: 'schema:provider',
-        participant: 'schema:participant',
-        value: 'schema:value',
-        email: 'schema:email',
-        mainEntity: 'schema:mainEntity',
-      },
       '@type': 'Action',
-      'object': {
+      'name': 'text', // todo нужно иметь представление каждой возможной сущности (в том числе неизвестной прежде) в виде ее краткого имени - Ложбан?
+      'result': {
         '@type': 'CreativeWork',
-        'name': 'text', // todo нужно иметь представление каждой возможной сущности (в том числе неизвестной прежде) в виде ее краткого имени - Ложбан?
         'abstract': this.abstract,
         'encodingFormat': 'text/plain',
         'mainEntity': this.objectMainEntity,
       },
-      'subjectOf': this.subjectOf,
-      // location,
+      'object': this.object,
     };
   }
 
   async prepare() {
-    // eslint-disable-next-line
-    const location = {
-      '@type': 'Place',
-      'geo': {
-        '@type': 'GeoCoordinates',
-        'latitude': '40.75',
-        'longitude': '73.98',
-      },
-      'name': 'Empire State Building',
-    };
-
     // todo это хэштеги. поддержать функциональность
     // const categories = new Set();
     // this.tags.forEach(tag => {
@@ -79,7 +51,7 @@ class AbstractText extends Abstract {
 
     for (const sentense of languageService.splitTextBySentences(this.text)) {
       for (const subject of await this.detectBySentense(sentense)) {
-        this.subjectOf.push(subject);
+        this.object.push(subject);
       }
     }
     this.abstract = this.text.toString('base64');
@@ -118,7 +90,7 @@ class AbstractText extends Abstract {
           creator: this.#creator.clientId, // hack - передача creator от родителя к потомку
           publisher: this.#publisher, // hack - передача publisher от родителя к потомку
         });
-        action.subjectOf.push(webcontentThing);
+        action.object.push(webcontentThing);
         action.name = webcontentThing.name;
       }
       // TODO: names получить имена людей

@@ -4,7 +4,6 @@ const { telegram } = require('../../include/telegram-bot/commands');
 const { IS_PRODUCTION } = require('../../environment');
 const { getCheckSum } = require('../../services/crypt.service');
 const commandLogger = require('../../services/command-logger.service');
-const RejectAction = require('../../core/models/action/reject');
 const AcceptAction = require('../../core/models/action/accept');
 /**
  * @returns {string}
@@ -50,14 +49,13 @@ module.exports = function (document, { passport }) {
     commandLogger.info({
       document: {
         ...document,
+        // todo превращать в AcceptAction внутри `commandTransport.on('logged' ...`
         ...resultAction,
       },
       passport,
     });
     return Promise.resolve(resultAction);
   } catch (error) {
-    return Promise.reject(
-      this.error(400, null, JSON.stringify(RejectAction(error))),
-    );
+    return Promise.reject(this.error(400, error.message, error));
   }
 };

@@ -1,7 +1,6 @@
 const request = require('request');
 const package_ = require('../../package.json');
 const { SERVER, IS_AVA } = require('../environment');
-const { isJSONLD } = require('../lib/jsonld');
 let supertest;
 if (IS_AVA) {
   supertest = require('supertest');
@@ -63,20 +62,13 @@ const rpc = ({ body, auth, jwt, verification }) => {
       }
       if (!body) {
         return reject({
-          message: response.statusMessage || 'body empty',
-          statusCode: response.statusCode || 400,
+          message: 'Unknown empty body',
+          statusCode: 500,
         });
       }
       if (response.statusCode >= 400) {
-        // decode jsonld reject
-        if (isJSONLD(body)) {
-          return reject({
-            message: body.purpose.abstract,
-            statusCode: response.statusCode,
-          });
-        }
         return reject({
-          message: body || response.statusMessage,
+          message: body.error,
           statusCode: response.statusCode,
         });
       }

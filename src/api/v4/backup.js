@@ -6,7 +6,6 @@ const commandLogger = require('../../services/command-logger.service');
 const { convertIn2DigitFormat } = require('../../services/date.service');
 const { pool } = require('../../db/sql');
 const storyQueries = require('../../db/selectors/story');
-const RejectAction = require('../../core/models/action/reject');
 const AcceptAction = require('../../core/models/action/accept');
 const AcceptEmailAction = require('../../core/models/action/accept-email');
 /**
@@ -115,13 +114,12 @@ module.exports = async function (document, { passport }) {
       },
       passport,
     });
+    // todo логика оборачивания в AcceptAction должна быть в jsonrpc.js
     const resultAction = AcceptAction({
       abstract: 'Данные успешно отправлены на почту ' + user.email,
     });
     return Promise.resolve(resultAction);
   } catch (error) {
-    return Promise.reject(
-      this.error(400, null, JSON.stringify(RejectAction(error))),
-    );
+    return Promise.reject(this.error(400, error.message, error));
   }
 };

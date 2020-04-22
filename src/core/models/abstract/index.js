@@ -3,7 +3,7 @@ const fromUnixTime = require('date-fns/fromUnixTime');
 
 class Abstract {
   constructor(data) {
-    this.subjectOf = [];
+    this.object = [];
     this.objectMainEntity = [];
     this.objectMainEntity.push({
       '@type': 'PropertyValue',
@@ -47,7 +47,28 @@ class Abstract {
     }
     throw new Error('Unknown agent');
   }
-  // дополняемый участник - например посредник от ассистента к паспорту бота
+  get instrument() {
+    return {
+      '@type': 'Thing',
+      'name': 'Core',
+      'url': 'https://github.com/gotois/core',
+    };
+  }
+  get target() {
+    return {
+      '@type': 'EntryPoint',
+      'actionApplication': {
+        '@type': 'SoftwareApplication',
+        'name': 'Telegram',
+      },
+    };
+  }
+  get startTime() {
+    return format(
+      fromUnixTime(Math.round(new Date().getTime() / 1000)),
+      'yyyy-MM-dd',
+    );
+  }
   get participant() {
     return {
       '@type': 'Organization',
@@ -61,21 +82,44 @@ class Abstract {
     return {
       // fixme для вложенных абстрактов требуется использовать $ref?
       //  https://github.com/APIDevTools/json-schema-ref-parser
+      '@context': {
+        mainEntity: 'schema:mainEntity',
+        schema: 'http://schema.org/',
+        agent: 'schema:agent',
+        name: 'schema:name',
+        startTime: 'schema:startTime',
+        object: 'schema:object',
+        target: 'schema:target',
+        result: 'schema:result',
+        actionApplication: 'schema:actionApplication',
+        subjectOf: 'schema:subjectOf',
+        abstract: 'schema:abstract',
+        description: 'schema:description',
+        instrument: 'schema:instrument',
+        encodingFormat: 'schema:encodingFormat',
+        identifier: 'schema:identifier',
+        provider: 'schema:provider',
+        participant: 'schema:participant',
+        value: 'schema:value',
+        url: 'schema:url',
+        email: 'schema:email',
+        geo: 'schema:geo',
+        addressCountry: 'schema:Country',
+        addressLocality: 'schema:Text',
+        addressRegion: 'schema:Text',
+        streetAddress: 'schema:Text',
+        postalCode: 'schema:Text',
+        address: 'schema:address',
+        latitude: 'schema:latitude',
+        longitude: 'schema:longitude',
+      },
       '@id': this.namespace, // изоляцинные идентификаторы сообщения
-      'agent': this.agent,
-      'participant': this.participant,
-      'startTime': format(
-        fromUnixTime(Math.round(new Date().getTime() / 1000)),
-        'yyyy-MM-dd',
-      ),
-      // uncomment
-      // target: {
-      //   "@type": "EntryPoint",
-      //   actionApplication: {
-      //     "@type": "SoftwareApplication",
-      //     "name": "Telegram", // или email
-      //   }
-      // }
+      'agent': this.agent, // ассистент, например tg
+      'participant': this.participant, // прочие агенты - например посредник от ассистента к паспорту бота
+      'startTime': this.startTime, // время отправки отданное создателем
+      // endTime: null // todo время отправки сообщение которое пришло после ответа API боту
+      'instrument': this.instrument, // core инструмент
+      'target': this.target, // ПО чем было записано, например TelegramWeb
     };
   }
   /**

@@ -38,41 +38,15 @@ class AbstractGeo extends Abstract {
   get context() {
     return {
       ...super.context,
-      '@context': {
-        schema: 'http://schema.org/',
-        agent: 'schema:agent',
-        name: 'schema:name',
-        startTime: 'schema:startTime',
-        object: 'schema:object',
-        subjectOf: 'schema:subjectOf',
-        abstract: 'schema:abstract',
-        description: 'schema:description',
-        encodingFormat: 'schema:encodingFormat',
-        identifier: 'schema:identifier',
-        provider: 'schema:provider',
-        participant: 'schema:participant',
-        value: 'schema:value',
-        email: 'schema:email',
-        geo: 'schema:geo',
-        addressCountry: 'schema:Country',
-        addressLocality: 'schema:Text',
-        addressRegion: 'schema:Text',
-        streetAddress: 'schema:Text',
-        postalCode: 'schema:Text',
-        address: 'schema:address',
-        latitude: 'schema:latitude',
-        longitude: 'schema:longitude',
-        mainEntity: 'schema:mainEntity',
-      },
       '@type': 'Action',
-      'object': {
+      'name': this.#name,
+      'result': {
         '@type': 'CreativeWork',
-        'name': 'Location',
         'abstract': this.geoJSON.toString('base64'),
         'encodingFormat': 'application/vnd.geo+json',
         'mainEntity': this.objectMainEntity,
       },
-      'subjectOf': this.subjectOf,
+      'object': this.object,
     };
   }
 
@@ -97,7 +71,7 @@ class AbstractGeo extends Abstract {
       };
       this.#name = geocode.formatted_address;
     }
-    this.subjectOf.push({
+    this.object.push({
       '@type': 'Place',
       'name': `${this.#latitude},${this.#longitude}`,
       'address': this.address,

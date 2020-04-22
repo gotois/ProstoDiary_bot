@@ -23,7 +23,7 @@ class EmailNotifyObject {
 class TelegramNotifyObject {
   // AcceptAction or RejectAction jsonld
   constructor(document) {
-    let isSilent = document.object.mainEntity.find((entity) => {
+    let isSilent = document.result.mainEntity.find((entity) => {
       return entity.name === 'silent';
     });
     isSilent = isSilent && isSilent['value'];
@@ -31,11 +31,11 @@ class TelegramNotifyObject {
       logger.info('skip notify message');
       return;
     }
-    let telegramMessageId = document.object.mainEntity.find((entity) => {
+    let telegramMessageId = document.result.mainEntity.find((entity) => {
       return entity.name === 'TelegramMessageId';
     });
     telegramMessageId = telegramMessageId && telegramMessageId['value'];
-    let telegramChatId = document.object.mainEntity.find((entity) => {
+    let telegramChatId = document.result.mainEntity.find((entity) => {
       return entity.name === 'TelegramChatId';
     });
     telegramChatId = telegramChatId && telegramChatId['value'];

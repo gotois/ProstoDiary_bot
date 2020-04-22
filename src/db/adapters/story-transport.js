@@ -22,7 +22,7 @@ module.exports = class PsqlTransport extends Transport {
     const { document, passport } = info.message;
 
     // todo пока телега обязательна для записи
-    const telegramMessageId = document.object.mainEntity.find((entity) => {
+    const telegramMessageId = document.result.mainEntity.find((entity) => {
       return entity.name === 'TelegramMessageId';
     })['value'];
 
@@ -37,7 +37,7 @@ module.exports = class PsqlTransport extends Transport {
                 namespace: document['@id'],
                 creator: passport.email, // todo дополнить `document.participant.email` когда переведу на массив
                 publisher: document.agent.email,
-                version: package_.version,
+                version: package_.version, // todo брать это из instrument
                 experimental: false, // todo включать для dev окружения
                 // todo поддержать еще created_at
                 // created_at: document.startTime,
@@ -45,26 +45,26 @@ module.exports = class PsqlTransport extends Transport {
             );
             // 'story.createContent'
             let rawContent;
-            if (document.object.encodingFormat.endsWith('vnd.geo+json')) {
-              rawContent = Buffer.from(document.object.abstract, 'utf8');
-            } else if (document.object.encodingFormat.startsWith('text')) {
-              rawContent = Buffer.from(document.object.abstract, 'utf8');
+            if (document.result.encodingFormat.endsWith('vnd.geo+json')) {
+              rawContent = Buffer.from(document.result.abstract, 'utf8');
+            } else if (document.result.encodingFormat.startsWith('text')) {
+              rawContent = Buffer.from(document.result.abstract, 'utf8');
             } else {
-              rawContent = Buffer.from(document.object.abstract, 'base64');
+              rawContent = Buffer.from(document.result.abstract, 'base64');
             }
             const contentTable = await transactionConnection.one(
               storyQueries.createContent({
                 messageId: messageTable.id,
                 content: rawContent,
-                contentType: document.object.encodingFormat,
-                schema: document.object['@type'],
+                contentType: document.result.encodingFormat,
+                schema: document.result['@type'],
                 date: new Date(document.startTime), // created at
                 // идея была в том чтобы хранить данные в СУБД, но лучше подойдет JENA
                 telegramMessageId: String(telegramMessageId), // todo deprecated
                 // emailMessageId: content.emailMessageId, // todo deprecated
               }),
             );
-            for (const subject of document.subjectOf) {
+            for (const subject of document.object) {
               // 'story.createAbstract'
               await transactionConnection.query(
                 storyQueries.createAbstract({
@@ -74,10 +74,10 @@ module.exports = class PsqlTransport extends Transport {
                 }),
               );
             }
-            await transactionConnection.query(storyQueries.refreshView());
             return messageTable;
           },
         );
+        await connection.query(storyQueries.refreshView());
         return result;
       });
       info.messageId = id;
@@ -86,7 +86,7 @@ module.exports = class PsqlTransport extends Transport {
         this.emit('logged', info);
       });
     } catch (error) {
-      const telegramChatId = document.object.mainEntity.find((entity) => {
+      const telegramChatId = document.result.mainEntity.find((entity) => {
         return entity.name === 'TelegramChatId';
       })['value'];
       callback(
