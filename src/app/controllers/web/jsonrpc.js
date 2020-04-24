@@ -65,7 +65,7 @@ module.exports = async (request, response) => {
       `https://gotointeractive.com/marketplace/${decoded.aud.split('@')[0]}`,
     );
     const result = await apiRequest(request.body, passport);
-    response.contentType('application/ld+json').status(200).json(result);
+    response.contentType('application/ld+json').status(200).send(result);
   } catch (error) {
     response.status(400).json({ error: error.message });
   }

@@ -15,7 +15,7 @@ module.exports = async (request, response) => {
     response
       .contentType('application/ld+json')
       .status(200)
-      .json({
+      .send({
         '@context': [
           'http://www.w3.org/ns/anno.jsonld',
           'http://www.w3.org/ns/ldp.jsonld',

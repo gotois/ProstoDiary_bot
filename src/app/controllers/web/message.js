@@ -98,7 +98,7 @@ module.exports = class MessageController {
               response
                 .contentType('application/ld+json')
                 .status(200)
-                .json(json);
+                .send(json);
               return;
             }
           }

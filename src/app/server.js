@@ -20,6 +20,7 @@ const assistantWebhookRoutes = require('./routes/assistant');
 const pingRoutes = require('./routes/ping');
 const thingRoutes = require('./routes/thing');
 const documentationRoutes = require('./routes/documentation');
+const passportRoutes = require('./routes/passport');
 
 (async function main() {
   Sentry.init({
@@ -42,6 +43,7 @@ const documentationRoutes = require('./routes/documentation');
   app.use('/thing', thingRoutes);
   app.use('/telegram', telegramRoutes);
   app.use('/documentation', documentationRoutes);
+  app.use('/passport', passportRoutes);
   app.use('/api', apiRoutes);
   app.use('/bot', botRoutes);
   app.use('/user', userRoutes);

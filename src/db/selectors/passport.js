@@ -127,6 +127,15 @@ VALUES
     )
 `;
   },
+  getPassportByEmail(email) {
+    return sql`SELECT
+    *
+FROM
+    client.passport
+    WHERE email = ${email}
+    LIMIT 1
+`;
+  },
   getPassports() {
     return sql`SELECT
     *
