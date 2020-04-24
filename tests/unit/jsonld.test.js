@@ -10,7 +10,7 @@ module.exports = (t) => {
       '@id': 'something',
     }),
   );
-  t.false(
+  t.true(
     isJSONLD({
       '@context': 'http://schema.org',
       '@type': 'CreateAction',
