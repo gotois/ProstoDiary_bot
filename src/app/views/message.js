@@ -1,3 +1,4 @@
+const googleKnowledgeGraph = require('../../lib/google-knowledge-graph');
 const { getSynonyms } = require('../../lib/dictionary');
 const { SERVER } = require('../../environment');
 
@@ -6,6 +7,12 @@ module.exports = async (storyTable) => {
   const [context] = storyTable.context;
   let name = '';
   let sameAs = [];
+  const creator = storyTable.creator;
+  let description = null;
+  let url = null;
+  let image = null;
+  let object = {};
+
   if (context) {
     name = context.name;
     if (context.object && context.object.name) {
@@ -18,10 +25,17 @@ module.exports = async (storyTable) => {
       });
     }
   }
-
-  const creator = storyTable.creator;
-  let object = {};
   if (name) {
+    // насыщаем открытыми данными
+    const gkgData = await googleKnowledgeGraph.query(name);
+    if (gkgData.itemListElement.length > 0) {
+      description = gkgData.itemListElement[0].result.description;
+      url = gkgData.itemListElement[0].result.url;
+      image = {
+        '@type': 'ImageObject',
+        ...gkgData.itemListElement[0].result.image,
+      };
+    }
     object = {
       '@type': 'Thing',
       ...context.object,
@@ -34,6 +48,8 @@ module.exports = async (storyTable) => {
     '@context': 'https://schema.org', // hack переопределяю тип для известных словарей
     'object': object,
     sameAs,
+    description,
+    image,
     '@type': type,
     'agent': [
       {
@@ -46,10 +62,7 @@ module.exports = async (storyTable) => {
         'email': storyTable.publisher,
       },
     ],
-    ...{
-      // возможно лучше подставлять image если content_type будет позволять
-      ['url']: `${SERVER.HOST}/message/${creator}/${storyTable.id}/raw`,
-    },
+    url,
     'startTime': storyTable.created_at,
     'endTime': storyTable.updated_at,
   };

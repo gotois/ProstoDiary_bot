@@ -3,8 +3,9 @@ const { sql } = require('../sql');
 module.exports = {
   selectThing(name) {
     return sql`
-     SELECT * FROM story.abstract
-     WHERE context ->> 'name' = ${name}
+    SELECT * FROM story.abstract AS abstract
+    LEFT JOIN story.content AS content ON abstract.content_id = content.id
+    WHERE context ->> 'name' = ${name}
    `;
   },
   selectCategories(categories) {
