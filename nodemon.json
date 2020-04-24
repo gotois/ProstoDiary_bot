@@ -10,7 +10,8 @@
     "SQL/",
     "logs/",
     "docs/",
-    "node_modules/"
+    "node_modules/",
+    "src/include/"
   ],
   "ext": "js",
   "delay": "3000"

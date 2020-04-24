@@ -7,10 +7,11 @@ module.exports = {
       id: -1001109151044,
       title: 'gotois',
       username: 'qweeto',
-      type: 'channel'
+      type: 'channel',
     },
     date: 1585511466,
-    text: 'chore(deps): update dependency ava to v3.5.1\n' +
+    text:
+      'chore(deps): update dependency ava to v3.5.1\n' +
       'By qertis Media\n' +
       '\n' +
       'March 29, 2020 at 10:48PM\n' +

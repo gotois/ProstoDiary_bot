@@ -56,12 +56,19 @@ const {
 
   SECURE_KEY,
   REDIS_URL,
+  JENA_URL,
 
   ASSISTANTS,
 } = process.env;
 
 const ENV = {
   SECURE_KEY, // Heroku securekey
+  JENA: {
+    URL: JENA_URL,
+    DATABASE: {
+      NAME: 'mytest', // todo исправить и занести в .env
+    },
+  },
   NGROK: {
     TOKEN: NGROK,
     URL: NGROK_URL,

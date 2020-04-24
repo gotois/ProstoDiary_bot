@@ -1,7 +1,7 @@
 // @deprecated
 // вместо этого используется core
 module.exports = (t) => {
-  const { mailExample } = require('../data/database/mail');
+  const { mailExample } = require('../fixtures/database/mail');
 
   const messageId = '<xxxxxxxxxxxxx_5XtptB-A@ismtpd0001p1lon1.sendgrid.net>'.replace(
     'xxxxxxxxxxxxx',

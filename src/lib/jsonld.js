@@ -51,8 +51,8 @@ const isJSONLD = (document) => {
     }
   }
   if (typeof object === 'object') {
-    if (schemaOrg.getType(object) === undefined) {
-      return false;
+    if (schemaOrg.getType(object) !== undefined) {
+      return true;
     }
   }
   return false;
