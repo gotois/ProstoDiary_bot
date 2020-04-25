@@ -1,12 +1,13 @@
 const validator = require('validator');
 const logger = require('../../../lib/log');
 const package_ = require('../../../../package.json');
-const { pool, NotFoundError } = require('../../../db/sql');
+const { pool } = require('../../../db/sql');
 const passportQueries = require('../../../db/selectors/passport');
 const { mail } = require('../../../lib/sendgrid');
 const pddService = require('../../../services/pdd.service');
 const twoFactorAuthService = require('../../../services/2fa.service');
-const oauthService = require('../../../services/oauth.service');
+const yandexGraphAPI = require('../../../lib/yandex');
+const facebookGraphAPI = require('../../../lib/facebook');
 const { IS_PRODUCTION, SERVER } = require('../../../environment');
 const registrationStartTemplate = require('../../views/registration/registration-start');
 const registrationOauthTemplate = require('../../views/registration/registration-oauth');
@@ -44,39 +45,36 @@ module.exports = class OAUTH {
         throw new Error('Unknown provider oauth');
       }
       const result = await pool.connect(async (connection) => {
-        const transactionResult = await connection.transaction(
-          async (transactionConnection) => {
-            try {
-              const passport = await OAUTH.updateOauthPassport(
+        const client = await connection.maybeOne(
+          passportQueries.selectUserByPhone(phone),
+        );
+        if (client) {
+          await OAUTH.updateOauthPassport(connection, client, {
+            yandex,
+            facebook,
+          });
+          // todo добавить еще отправку письма про апдейт паспорта
+          // ...
+          request.session.passportId = client.id;
+          return 'Вы успешно обновили данные своего паспорта.';
+        } else {
+          // такого phone в БД нет
+          const transactionResult = await connection.transaction(
+            async (transactionConnection) => {
+              const client = await OAUTH.createOauthPassport(
                 transactionConnection,
                 {
                   yandex,
                   facebook,
+                  phone,
                 },
               );
-              // todo добавить еще отправку письма про апдейт паспорта
-              // ...
-              request.session.passportId = passport.id;
-              return 'Вы успешно обновили данные своего паспорта.';
-            } catch (error) {
-              if (error instanceof NotFoundError) {
-                const passport = await OAUTH.createOauthPassport(
-                  transactionConnection,
-                  {
-                    yandex,
-                    facebook,
-                    phone,
-                  },
-                );
-                request.session.passportId = passport.id;
-                return 'На привязанную почту вам отправлено письмо от вашего бота. Активируйте бота следуя инструкциям в письме.';
-              }
-              logger.error(error);
-              throw error;
-            }
-          },
-        );
-        return transactionResult;
+              request.session.passportId = client.id;
+              return 'На привязанную почту вам отправлено письмо от вашего бота. Активируйте бота следуя инструкциям в письме.';
+            },
+          );
+          return transactionResult;
+        }
       });
       logger.info(result);
       response.status(200).send(
@@ -89,9 +87,15 @@ module.exports = class OAUTH {
     }
   }
   registrationStart(request, response) {
-    response.status(200).send(registrationStartTemplate());
+    logger.info('web:registrationStart');
+    try {
+      response.status(200).send(registrationStartTemplate());
+    } catch (error) {
+      response.status(400).json({ error: error.message });
+    }
   }
   registrationOauth(request, response) {
+    logger.info('web:registrationOauth');
     try {
       let { phone = '' } = request.body;
       phone = phone
@@ -110,38 +114,18 @@ module.exports = class OAUTH {
   }
   /**
    * @param {*} transactionConnection - transactionConnection
-   * @param {object} oauth - oauth providers
-   * @returns {Promise<*>}
-   */
-  static async getPassport(
-    transactionConnection,
-    { telegram_id = null, yandex_id = null, facebook_id = null },
-  ) {
-    const passportTable = await transactionConnection.maybeOne(
-      passportQueries.selectAll(telegram_id, yandex_id, facebook_id),
-    );
-    if (!passportTable) {
-      throw new NotFoundError('Passport not found');
-    }
-    return passportTable;
-  }
-  /**
-   * @todo есть уязвимость, нужно усложнить выборку, используя oauth провайдеры
-   *
-   * @param {*} transactionConnection - transactionConnection
+   * @param {object} passportTable - passportTable
    * @param {object} oauth - oauth providers
    * @returns {Promise<*>}
    */
   static async updateOauthPassport(
     transactionConnection,
+    passportTable,
     { yandex, facebook },
   ) {
     logger.info('oauth:updateOauthPassport');
     if (yandex) {
-      const yandexPassport = await oauthService.yandex(yandex.raw);
-      const passportTable = await OAUTH.getPassport(transactionConnection, {
-        yandex_id: yandexPassport.client_id,
-      });
+      const yandexPassport = await yandexGraphAPI(yandex.raw);
       await transactionConnection.query(
         passportQueries.updateYandexPassportByPassportId(
           yandexPassport,
@@ -149,13 +133,9 @@ module.exports = class OAUTH {
           passportTable.id,
         ),
       );
-      return passportTable;
-    }
-    if (facebook) {
-      const fbPassport = await oauthService.facebook(facebook.raw);
-      const passportTable = await OAUTH.getPassport(transactionConnection, {
-        facebook_id: fbPassport.id,
-      });
+      return;
+    } else if (facebook) {
+      const fbPassport = await facebookGraphAPI(facebook.raw);
       await transactionConnection.query(
         passportQueries.updateFacebookPassportByPassportId(
           fbPassport,
@@ -163,7 +143,7 @@ module.exports = class OAUTH {
           passportTable.id,
         ),
       );
-      return passportTable;
+      return;
     }
     throw new Error('Unknown Passport');
   }
@@ -179,12 +159,12 @@ module.exports = class OAUTH {
     const passportEmails = [];
     let yaData;
     if (yandex.raw) {
-      yaData = await oauthService.yandex(yandex.raw);
+      yaData = await yandexGraphAPI(yandex.raw);
       passportEmails.push(yaData.emails);
     }
     let fbData;
     if (facebook.raw) {
-      fbData = await oauthService.facebook(facebook.raw);
+      fbData = await facebookGraphAPI(facebook.raw);
       passportEmails.push(fbData.email);
     }
     let tgData;
@@ -196,9 +176,6 @@ module.exports = class OAUTH {
     }
     const [primaryEmail] = passportEmails.flat();
     logger.info('pre.createPassport');
-    // todo нужно устанавливать минимально рабочий json-ld
-    // const linkedData = await transactionConnection.one(ldQueries.createLD({}));
-    // todo rename userPassport
     const passport = await transactionConnection.one(
       passportQueries.createPassport({
         email: primaryEmail,

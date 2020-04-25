@@ -1,6 +1,11 @@
 const { sql } = require('../sql');
 
 module.exports = {
+  selectUserByPhone(phone) {
+    return sql`
+        SELECT * FROM client.passport WHERE phone = ${phone}
+    `;
+  },
   selectRoleByEmail(email) {
     return sql`
         SELECT role FROM client.roles WHERE email = ${email}
@@ -143,7 +148,11 @@ FROM
     client.passport
 `;
   },
-  selectAll(telegram_id, yandex_id = null, facebook_id = null) {
+  selectPassportByAnyProvider(
+    telegram_id,
+    yandex_id = null,
+    facebook_id = null,
+  ) {
     return sql`
 SELECT *
     FROM
@@ -189,6 +198,7 @@ WHERE
     id = ${passportUID}
 `;
   },
+  // todo rename createClientPassport
   createPassport({
     email,
     phone,
