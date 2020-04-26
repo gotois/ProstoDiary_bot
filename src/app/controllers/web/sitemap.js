@@ -1,4 +1,4 @@
-const { website } = require('../../../app.json');
+const { website } = require('../../../../app.json');
 
 module.exports = (request, response) => {
   response.type('text/plain');

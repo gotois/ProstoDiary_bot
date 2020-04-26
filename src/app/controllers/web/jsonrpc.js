@@ -16,7 +16,7 @@ function apiRequest(rpcValues, passport) {
   logger.info('apiRequest');
   return new Promise((resolve, reject) => {
     jsonRpcServer.call(rpcValues, { passport }, (error = {}, result) => {
-      if (error.error) {
+      if (error && error.error) {
         return reject(
           jsonRpcServer.error(
             error.error.code,
