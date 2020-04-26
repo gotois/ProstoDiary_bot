@@ -1,8 +1,8 @@
 const express = require('express');
 // const csrf = require('csurf');
 const jsonParser = require('body-parser').json();
-const robotsParser = require('../middlewares/robots');
-const sitemapParser = require('../middlewares/sitemap');
+const robotsParser = require('../controllers/web/robots');
+const sitemapParser = require('../controllers/web/sitemap');
 const setNoCache = require('../middlewares/no-cache');
 const mailAPI = require('../middlewares/mail');
 const OidcController = require('../controllers/web/oidc');

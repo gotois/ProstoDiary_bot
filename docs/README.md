@@ -28,6 +28,7 @@ brew install graphviz
 ```bash
 brew install git-lfs
 brew install redis
+brew install memcached
 git lfs clone git@github.com:gotois/ProstoDiary_bot.git
 chmod +x scripts/index
 chmod +x scripts/pre-install

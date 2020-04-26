@@ -124,6 +124,7 @@
     "jsonld-signatures": "5.0.1",
     "jsqr": "1.2.0",
     "mailparser": "2.7.7",
+    "memjs": "1.2.2",
     "music-metadata": "6.3.7",
     "node-fetch": "2.6.0",
     "node-telegram-bot-api": "0.40.0",

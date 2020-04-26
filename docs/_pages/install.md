@@ -13,6 +13,7 @@ Heroku addons
 * Secure Key 
 * SendGrid 
 * Sentry
+* MemCachier
 
 Server Environments
 ---
@@ -61,6 +62,11 @@ GOOGLE_KNOWLEDGE_GRAPH={ key }
 REDIS_URL={ URL } # вида 127.0.0.1:6379
 JENA_URL={ URL }
 ASSISTANTS={ object } # create from /scripts/add-assistant
+
+# memcache
+MEMCACHIER_SERVERS={ }
+MEMCACHIER_USERNAME={ }
+MEMCACHIER_PASSWORD={ }
 ```
 
 <details>

@@ -1,4 +1,5 @@
 const ac = require('./rbac');
+const mc = require('../../middlewares/memcache');
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
 const passportQueries = require('../../../db/selectors/passport');
@@ -94,11 +95,16 @@ module.exports = class MessageController {
             case 'application/schema+json':
             case 'application/json':
             default: {
-              const json = await template(storyTable);
-              response
-                .contentType('application/ld+json')
-                .status(200)
-                .send(json);
+              const key = 'message:' + role + request.params.uuid;
+              const prime = await mc.get(key);
+              response.contentType('application/ld+json');
+              if (prime && prime.value) {
+                response.send(JSON.parse(prime.value));
+              } else {
+                const values = await template(storyTable);
+                await mc.set(key, JSON.stringify(values), { expires: 500 });
+                response.send(values);
+              }
               return;
             }
           }

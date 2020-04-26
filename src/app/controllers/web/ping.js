@@ -1,5 +1,5 @@
 const template = require('../../views/ping');
 
 module.exports = (request, response) => {
-  response.status(200).send(template());
+  response.contentType('text/html; charset=utf-8').send(template());
 };
