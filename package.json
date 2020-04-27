@@ -153,7 +153,7 @@
     "cz-conventional-changelog": "3.1.0",
     "dependency-cruiser": "8.2.0",
     "eslint": "6.8.0",
-    "eslint-config-prettier": "6.10.1",
+    "eslint-config-prettier": "6.11.0",
     "eslint-plugin-ava": "10.2.0",
     "eslint-plugin-jsdoc": "22.1.0",
     "eslint-plugin-json": "2.1.1",
