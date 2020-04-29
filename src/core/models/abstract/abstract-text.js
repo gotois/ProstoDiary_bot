@@ -8,9 +8,11 @@ const WebContent = require('../thing/web-content');
 class AbstractText extends Abstract {
   #creator;
   #publisher;
+  #hashtags;
   constructor(data) {
     super(data);
     this.text = data.text;
+    this.#hashtags = data.hashtags || [];
     this.#creator = data.creator;
     this.#publisher = data.publisher;
   }
@@ -33,12 +35,6 @@ class AbstractText extends Abstract {
   }
 
   async prepare() {
-    // todo это хэштеги. поддержать функциональность
-    // const categories = new Set();
-    // this.tags.forEach(tag => {
-    //   categories.add(tag);
-    // });
-
     // const { entities, language } = await languageService.analyzeEntities(this.text);
     // todo получение информации по локации
     // for (let entity of entities) {
@@ -48,6 +44,13 @@ class AbstractText extends Abstract {
     //     }));
     //   }
     // }
+
+    for (const hashtag of this.#hashtags) {
+      this.object.push({
+        '@type': 'Thing',
+        name: hashtag,
+      });
+    }
 
     for (const sentense of languageService.splitTextBySentences(this.text)) {
       for (const subject of await this.detectBySentense(sentense)) {

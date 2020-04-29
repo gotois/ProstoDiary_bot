@@ -47,12 +47,15 @@ class TelegramBotRequest {
         .filter((entity) => {
           return entity.type === 'hashtag';
         })
-        .forEach((entity) => {
+        .map(entity => {
           // eslint-disable-next-line unicorn/prefer-string-slice
           const hashtag = this.message.text.substr(
             entity.offset + 1,
             entity.length - 1,
           );
+          return hashtag;
+        })
+        .forEach((hashtag) => {
           hashtags.add(hashtag);
         });
     }
