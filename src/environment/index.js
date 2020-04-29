@@ -185,6 +185,10 @@ const ENV = {
   GOOGLE: {
     GOOGLE_MAPS_GEOCODING_API,
     GOOGLE_KNOWLEDGE_GRAPH,
+    CLOUD: {
+      // Bucket where the file resides
+      bucketName: 'prostodiary.appspot.com',
+    },
     get CREDENTIALS() {
       if (!GOOGLE_APPLICATION_CREDENTIALS) {
         throw new Error(

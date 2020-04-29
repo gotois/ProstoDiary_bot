@@ -21,11 +21,7 @@ class Photo extends TelegramBotRequest {
       caption: this.message.caption,
       creator: this.creator,
       publisher: this.publisher,
-      telegram: {
-        title: this.message.chat.title,
-        chatId: this.message.chat.id,
-        messageId: this.message.message_id,
-      },
+      telegram: this.chatData,
       date: this.message.date,
       hashtags: this.hashtags,
     });

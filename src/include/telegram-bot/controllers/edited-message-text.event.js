@@ -32,10 +32,7 @@ class EditMessageText extends TelegramBotRequest {
       })
     ) {
       const jsonldRequest = await deleteAction({
-        telegram: {
-          title: this.message.chat.title,
-          chatId: this.message.chat.id,
-        },
+        telegram: this.chatData,
         creator: this.creator,
         publisher: this.publisher,
         silent,
@@ -44,10 +41,7 @@ class EditMessageText extends TelegramBotRequest {
     } else {
       // TODO: https://github.com/gotois/ProstoDiary_bot/issues/34
       const result = await editAction({
-        telegram: {
-          title: this.message.chat.title,
-          chatId: this.message.chat.id,
-        },
+        telegram: this.chatData,
         creator: this.creator,
         publisher: this.publisher,
         silent,

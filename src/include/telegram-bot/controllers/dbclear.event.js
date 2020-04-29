@@ -32,10 +32,7 @@ class DatabaseClear extends TelegramBotRequest {
         const jsonldAction = await destroyAction({
           creator: this.creator,
           publisher: this.publisher,
-          telegram: {
-            title: this.message.chat.title,
-            chatId: this.message.chat.id,
-          },
+          telegram: this.chatData,
         });
         await this.rpc(jsonldAction);
       },

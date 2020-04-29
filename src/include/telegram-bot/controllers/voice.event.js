@@ -19,7 +19,7 @@ class Voice extends TelegramBotRequest {
       uid: this.userHash,
       creator: this.creator,
       publisher: this.publisher,
-      // todo добавить telegram свойство
+      telegram: this.chatData,
       passportId: this.message.passports[0].id,
     });
     await this.rpc(jsonldRequest);

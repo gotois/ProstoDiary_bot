@@ -58,6 +58,20 @@ class TelegramBotRequest {
     }
     return [...hashtags];
   }
+  get chatData () {
+    if (this.message.forward_from) {
+      return {
+        title: this.message.forward_from.username,
+        chatId: this.message.chat.id,
+        messageId: this.message.message_id,
+      }
+    }
+    return {
+      title: this.message.chat.title,
+      chatId: this.message.chat.id,
+      messageId: this.message.message_id,
+    }
+  }
   /**
    * @param {boolean} silent - silent
    * @return {Promise<void>}

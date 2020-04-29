@@ -13,13 +13,13 @@ class Document extends TelegramBotRequest {
     );
     const jsonldRequest = await documentAction({
       buffer: fileBuffer,
+      filename: this.message.document.file_name,
+      filesize: this.message.document.file_size,
       mimeType: this.message.document.mime_type,
       date: this.message.date,
       creator: this.creator,
       publisher: this.publisher,
-      telegram: {
-        messageId: this.message.message_id,
-      },
+      telegram: this.chatData,
       silent,
     });
     await this.rpc(jsonldRequest);

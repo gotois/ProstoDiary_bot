@@ -30,8 +30,7 @@ class Text extends TelegramBotRequest {
         text: this.message.text,
         hashtags: this.hashtags,
         telegram: {
-          title: this.message.chat.title,
-          chatId: this.message.chat.id,
+          ...this.chatData,
           messageId: tgMessageId,
         },
         creator: this.creator,

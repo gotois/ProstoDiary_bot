@@ -15,11 +15,7 @@ class Location extends TelegramBotRequest {
       date: this.message.date,
       creator: this.creator,
       publisher: this.publisher,
-      telegram: {
-        title: this.message.chat.title,
-        chatId: this.message.chat.id,
-        messageId: this.message.message_id,
-      },
+      telegram: this.chatData,
       silent,
     });
     await this.rpc(jsonldRequest);

@@ -6,7 +6,7 @@ const JENA_SERVER = JENA.URL + '/' + JENA.DATABASE.NAME + '/query';
  * @param {string} query - sparql string
  * @returns {PromiseLike<any> | undefined | Observable<any> | Promise<any>}
  */
-module.exports = async (query) => {
+module.exports = async function (query) {
   const body = 'query=' + encodeURIComponent(query);
   const headers = {
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',

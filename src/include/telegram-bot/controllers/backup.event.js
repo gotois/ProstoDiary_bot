@@ -18,10 +18,7 @@ class Backup extends TelegramBotRequest {
       date: this.message.date,
       creator: this.creator,
       publisher: this.publisher,
-      telegram: {
-        title: this.message.chat.title,
-        chatId: this.message.chat.id,
-      },
+      telegram: this.chatData,
     });
     await this.rpc(jsonldRequest);
   }

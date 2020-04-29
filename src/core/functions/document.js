@@ -1,16 +1,18 @@
-const Abstract = require('../models/abstract');
+const AbstractPDF = require('../models/abstract/abstract-pdf');
 /**
  * @description работа с документами
  * @param {*} parameters - object
- * @returns {Promise<jsonldApiRequest>}
+ * @returns {Promise<jsonldApiRequest|Error>}
  */
 module.exports = async function (parameters) {
-  // todo на основе данных возвращать нужный тип абстрактов вида: PdfAbstract
-  //  добавить проверку на входящие параметры для этого
-  // ...
-  const abstractCommand = new Abstract({
-    ...parameters,
-  });
-  await abstractCommand.prepare();
-  return abstractCommand.context;
+  switch (parameters.mimeType) {
+    case 'application/pdf': {
+      const abstractPdf = new AbstractPDF(parameters);
+      await abstractPdf.prepare();
+      return abstractPdf.context;
+    }
+    default: {
+      throw new Error('Unknown document mimetype: ' + parameters.mimeType);
+    }
+  }
 };
