@@ -6,7 +6,7 @@ const { JWK } = require('jose');
  * @param {*} t - ava test
  * @returns {{privateKey: Buffer | string, publicKey: Buffer | string}}
  */
-module.exports.getPemKeys = function (t) {
+const getPemKeys = (t) => {
   let publicKey;
   let privateKey;
   if (!fs.existsSync('tests/data/keys')) {
@@ -34,4 +34,8 @@ module.exports.getPemKeys = function (t) {
     publicKey,
     privateKey,
   };
+};
+
+module.exports = {
+  getPemKeys,
 };

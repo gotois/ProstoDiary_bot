@@ -2,7 +2,7 @@
  * @param {object} object - environments
  * @returns {string}
  */
-module.exports.convertEnvironmentObjectToString = function (object) {
+const convertEnvironmentObjectToString = (object) => {
   return Object.keys(object)
     .reduce((accumulator, key) => {
       if (object[key]) {
@@ -23,4 +23,8 @@ module.exports.convertEnvironmentObjectToString = function (object) {
       return accumulator;
     }, [])
     .join('\n');
+};
+
+module.exports = {
+  convertEnvironmentObjectToString,
 };
