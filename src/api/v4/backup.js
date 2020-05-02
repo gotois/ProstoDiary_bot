@@ -66,8 +66,8 @@ module.exports = async function (document, { passport }) {
           passportQueries.selectUserById(passport.passport_id),
         );
         const rows = await connection.many(
-          storyQueries.selectStoryByDate({
-            publisherEmail: botTable.email,
+          storyQueries.selectPublisherStoryByDate({
+            publisher: botTable.email,
             sorting,
           }),
         );

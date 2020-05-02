@@ -1,6 +1,7 @@
 const { sql } = require('../sql');
 
 module.exports = {
+  // fixme нужно фильтровать и отдавать те где publisherEmail равен автору
   selectThing(name) {
     return sql`
     SELECT * FROM story.abstract AS abstract
@@ -8,6 +9,7 @@ module.exports = {
     WHERE context ->> 'name' = ${name}
    `;
   },
+  // fixme нужно фильтровать и отдавать те где publisherEmail равен автору
   selectCategories(categories) {
     return sql`
     SELECT * FROM story WHERE
@@ -24,6 +26,7 @@ module.exports = {
     return sql`REFRESH MATERIALIZED VIEW public.story
 `;
   },
+  // fixme нужно фильтровать и отдавать те где publisherEmail равен автору
   selectLatestStories(limit) {
     return sql`
 SELECT
@@ -43,10 +46,31 @@ WHERE
     id = ${id}
 `;
   },
-  selectStoryByDate({ publisherEmail, from = '2000-01-01', until, sorting }) {
-    if (!until) {
+  /**
+   * @param {object} parameters - parameters
+   * @param {string} parameters.creator - creator email
+   * @param {string} parameters.from - like '2000-01-01'
+   * @param {string} parameters.to - like '2000-01-01'
+   * @returns {*}
+   */
+  selectCreatorStoryByDate({ creator, from, to }) {
+    return sql`SELECT * FROM story
+       WHERE creator = ${creator}
+       AND created_at BETWEEN ${from} AND ${to}
+       `;
+  },
+  /**
+   * @param {object} parameters - parameters
+   * @param {string} parameters.publisher - publisher email
+   * @param {string} [parameters.from] - default '2000-01-01'
+   * @param {string} [parameters.to] - to date
+   * @param {string} [parameters.sorting] - sorting
+   * @returns {*}
+   */
+  selectPublisherStoryByDate({ publisher, from = '2000-01-01', to, sorting }) {
+    if (!to) {
       // todo раньше был sql.raw('now()') но он перестал работать
-      until = 'now()';
+      to = 'now()';
     }
     let orderBy;
     // hack - при проброске напрямую возникает ошибка
@@ -60,8 +84,8 @@ WHERE
 `;
     }
     return sql`SELECT * FROM story
-       WHERE publisher_email = ${publisherEmail}
-       AND created_at BETWEEN ${from} AND ${until}
+       WHERE publisher = ${publisher}
+       AND created_at BETWEEN ${from} AND ${to}
        ${orderBy}
        `;
   },

@@ -6,9 +6,10 @@ module.exports = {
         SELECT * FROM client.passport WHERE phone = ${phone}
     `;
   },
+  // выборка соответствия почты к типу bot или user
   selectRoleByEmail(email) {
     return sql`
-        SELECT role FROM client.roles WHERE email = ${email}
+        SELECT * FROM client.roles WHERE email = ${email}
     `;
   },
   /**
@@ -161,17 +162,6 @@ client.passport
 telegram_id = ${telegram_id} OR
 yandex_id = ${yandex_id} OR
 facebook_id = ${facebook_id}
-`;
-  },
-  updateTelegramPassportByPassportId(telegram, passportUID) {
-    return sql`
-UPDATE
-    client.passport
-SET
-    telegram_id = ${telegram.from.id},
-    telegram_passport = ${sql.json(telegram.from)}
-WHERE
-    id = ${passportUID}
 `;
   },
   updateYandexPassportByPassportId(passport, session, passportUID) {
