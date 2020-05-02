@@ -1,8 +1,8 @@
 /**
- * @todo переименовать в "все команды"
+ * @see https://github.com/gotois/ProstoDiary_bot/issues/571
  * @type {object}
  */
-const telegram = {
+const allCommands = {
   BACKUP: {
     event: 'backup.event',
     alias: /^\/(backup|бэкап)$/,
@@ -66,13 +66,18 @@ const telegram = {
     description: '',
   },
 };
-// todo переименовать в "системные команды"
-const botCommands = Object.keys(telegram).filter((key) => {
-  return telegram[key].alias instanceof RegExp;
-});
 
 module.exports = {
-  // todo перенести команды в геттеры
-  telegram,
-  botCommands,
+  // todo переименовать в "all"
+  get telegram() {
+    return allCommands;
+  },
+  // todo переименовать в "systemCommands"
+  get botCommands() {
+    const allCommands = this.telegram;
+    return Object.keys(allCommands).filter((key) => {
+      return allCommands[key].alias instanceof RegExp;
+    });
+  },
+  // todo добавить "nativeCommands", где все комманды созданные telegram'ом вида: document, photo, text
 };

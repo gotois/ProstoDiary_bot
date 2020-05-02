@@ -1,5 +1,5 @@
 const express = require('express');
-const jsonParser = require('body-parser').json();
+const jsonParser = require('body-parser').json({ limit: '1mb' });
 const tokenAuth = require('../middlewares/token-auth');
 const rpcAPI = require('../controllers/web/jsonrpc');
 

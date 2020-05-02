@@ -1,5 +1,6 @@
 const request = require('request');
 const package_ = require('../../package.json');
+const logger = require('../lib/log');
 const { SERVER, IS_AVA } = require('../environment');
 let supertest;
 if (IS_AVA) {
@@ -21,6 +22,7 @@ const formatMessage = (body) => {
  * @returns {Promise<*>}
  */
 const rpc = ({ body, auth, jwt, verification }) => {
+  logger.info('rpc');
   const parameters = {
     method: 'POST',
     url: SERVER.HOST + '/api',
