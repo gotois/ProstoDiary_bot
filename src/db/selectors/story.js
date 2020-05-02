@@ -24,6 +24,15 @@ module.exports = {
     return sql`REFRESH MATERIALIZED VIEW public.story
 `;
   },
+  selectLatestStories(limit) {
+    return sql`
+SELECT
+    *
+FROM
+    public.story
+LIMIT ${Number(limit)}
+`;
+  },
   selectStoryById(id) {
     return sql`
 SELECT

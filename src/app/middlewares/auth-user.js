@@ -25,6 +25,9 @@ const basic = auth.basic(
 );
 
 basic.on('success', (result) => {
+  if (!result.user) {
+    throw new Error('unknown user');
+  }
   logger.info(`User authenticated: ${result.user}`);
 });
 

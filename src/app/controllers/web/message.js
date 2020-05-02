@@ -4,19 +4,34 @@ const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
 const passportQueries = require('../../../db/selectors/passport');
 const template = require('../../views/message');
+const templateList = require('../../views/message-list');
 
 module.exports = class MessageController {
-  // eslint-disable-next-line
-  static async messageRevision(request, response, next) {
-    // todo поддержать ревизии сообщения
+  // Отдаваем последние сообщения
+  static async latest(request, response) {
+    try {
+      const { limit = '10' } = request.params;
+      await pool.connect(async (connection) => {
+        const { role } = await connection.maybeOne(
+          passportQueries.selectRoleByEmail(request.user),
+        );
+        if (!role) {
+          response.status(403).json({ message: 'forbidden' });
+          return;
+        }
+        const storyTable = await connection.many(
+          storyQueries.selectLatestStories(limit),
+        );
+        response.contentType('application/ld+json');
+        response.send(templateList(storyTable));
+      });
+    } catch (error) {
+      response.status(400).json({ error: error.message });
+    }
   }
-  // отображаем данные как есть
+  // отображаем первоначальные данные какими они были отправлены
   static async messageRaw(request, response) {
     try {
-      if (!request.user) {
-        response.status(403).json({ message: 'unknown user' });
-        return;
-      }
       if (!request.params.uuid) {
         response.status(400).json({ message: 'unknown uuid' });
         return;
@@ -58,12 +73,9 @@ module.exports = class MessageController {
   }
   // Для доступа к сообщениям, пользователю необходимо вести свой email и master password
   // отображение прикрепленных JSON-LD включающий ссылки на остальные документы
+  // todo поддержать ревизии сообщения
   static async message(request, response) {
     try {
-      if (!request.user) {
-        response.status(403).json({ message: 'unknown user' });
-        return;
-      }
       if (!request.params.uuid) {
         response.status(400).json({ message: 'unknown uuid' });
         return;
