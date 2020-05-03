@@ -2,12 +2,15 @@
 <title>
   {% if page.title %}{{ page.title | escape }}{% else %}{{ site.title | escape }}{% endif %}
 </title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <meta property="og:title" content="{{ site.title }}">
 <meta property="og:description" content="{{ site.description }}">
 <meta property="og:image" content="https://gotointeractive.com/assets/images/logo-512x256.png">
 <meta property="og:site_name" content="ProstoDiary">
+<meta property="og:type" content="website"/>
+
+<meta property="fb:app_id" content="343874242487006"/>
 
 <meta name="title" content="{{ site.title }}">
 <meta name="description" content="{{ site.description }}">
@@ -76,8 +79,9 @@
 <!-- Fallback color the status bar on mobile devices -->
 <meta name="theme-color" content="#16161d">
 
-<link rel="canonical" href="https://prosto-diary.gotointeractive.com/">
+<link rel="canonical" href="https://gotointeractive.com/">
 <link rel="shortcut icon" href="//telegram.org/favicon.ico?3" type="image/x-icon">
 
+<link rel="manifest" href="/assets/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/main.css">
 <link rel="stylesheet" href="/css/styles.css">

@@ -118,3 +118,6 @@ Run Telegram Bot
 2) `? something search` - Поиск
 3) `! something execute` - Выполнение поручения
 4) `/command` - API command
+
+---
+With ❤️
