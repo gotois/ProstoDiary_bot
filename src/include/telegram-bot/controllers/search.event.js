@@ -1,7 +1,7 @@
 const { v1: uuidv1 } = require('uuid');
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
-const { telegram } = require('../commands');
+const { allCommands } = require('../commands');
 const logger = require('../../../lib/log');
 const requestService = require('../../../services/request.service');
 const dialogService = require('../../../services/dialog.service');
@@ -21,7 +21,7 @@ class Search extends TelegramBotRequest {
   }
   constructor(message) {
     message.text = message.text
-      .replace(telegram.SEARCH.alias, '')
+      .replace(allCommands.SEARCH.alias, '')
       .trim()
       .toLowerCase();
     super(message);
@@ -114,7 +114,7 @@ class Search extends TelegramBotRequest {
         }
       }
     } catch (error) {
-      logger.error(error);
+      logger.error(error.stack);
       await this.bot.sendMessage(
         this.message.chat.id,
         `Assistant ${intentName} unavailable`,

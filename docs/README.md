@@ -98,7 +98,7 @@ npm run depcruise
 npm run lint:dependency
 ```
 
-#### docs
+#### docs only Dev
 #### Install
 ```bash
 sudo gem install bundler jekyll
@@ -113,6 +113,8 @@ npm run docs:serve
 
 Run Telegram Bot
 ---
-```
-/start
-```
+Возможности управления системой используя текст
+1) `something text` - Запись. Используется по-умолчанию
+2) `? something search` - Поиск
+3) `! something execute` - Выполнение поручения
+4) `/command` - API command

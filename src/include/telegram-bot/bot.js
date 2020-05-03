@@ -16,7 +16,7 @@ if (IS_AVA_OR_CI || IS_CRON) {
   });
   telegramBot.startPolling({ restart: false });
   telegramBot.on('polling_error', (error) => {
-    logger.error(error.toString());
+    logger.error(error.stack);
   });
 } else if (IS_PRODUCTION) {
   telegramBot = new TelegramBot(TELEGRAM.TOKEN);
@@ -28,10 +28,10 @@ if (IS_AVA_OR_CI || IS_CRON) {
       logger.info('set webhook completed');
     })
     .catch((error) => {
-      logger.error(error.message);
+      logger.error(error.stack);
     });
   telegramBot.on('webhook_error', (error) => {
-    logger.error(error.toString());
+    logger.error(error.stack);
   });
 } else if (NGROK.URL) {
   telegramBot = new TelegramBot(TELEGRAM.TOKEN);
@@ -43,16 +43,16 @@ if (IS_AVA_OR_CI || IS_CRON) {
       logger.info('set webhook completed');
     })
     .catch((error) => {
-      logger.error(error.message);
+      logger.error(error.stack);
     });
   telegramBot.on('webhook_error', (error) => {
-    logger.error(error.toString());
+    logger.error(error.stack);
   });
 } else {
   telegramBot = new TelegramBot(TELEGRAM.TOKEN);
   telegramBot.startPolling({ restart: false });
   telegramBot.on('polling_error', (error) => {
-    logger.error(error.toString());
+    logger.error(error.stack);
   });
 }
 require('./listeners')(telegramBot);

@@ -1,5 +1,5 @@
 module.exports = (t) => {
-  const { telegram } = require('../../src/include/telegram-bot/commands');
+  const { allCommands } = require('../../src/include/telegram-bot/commands');
   const {
     PING,
     BACKUP,
@@ -9,7 +9,7 @@ module.exports = (t) => {
     SEARCH,
     EDITED_MESSAGE_TEXT,
     LOCATION,
-  } = telegram;
+  } = allCommands;
 
   t.true(BACKUP.alias instanceof RegExp);
   t.true(DBCLEAR.alias instanceof RegExp);

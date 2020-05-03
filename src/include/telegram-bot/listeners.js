@@ -1,6 +1,5 @@
 const TelegramBotMessage = require('./models/telegram-bot-message');
 const logger = require('../../lib/log');
-const { telegram, botCommands } = require('./commands');
 const { pool } = require('../../db/sql');
 const assistantChatQueries = require('../../db/selectors/chat');
 const assistantQueries = require('../../db/selectors/assistant');
@@ -54,10 +53,9 @@ module.exports = (telegramBot) => {
    * @returns {undefined}
    */
   const messageListener = async (message, metadata) => {
-    const { type } = metadata;
     logger.info('telegram.message');
     try {
-      const botMessage = new TelegramBotMessage(message);
+      const { type } = metadata;
       // подтверждение договора и первичная валидация установки через телеграм
       if (
         type === 'contact' &&
@@ -71,16 +69,22 @@ module.exports = (telegramBot) => {
         telegramBot.emit('reply_to_message', message, metadata);
         return;
       }
-      switch (type) {
+      const botMessage = new TelegramBotMessage(message, metadata);
+      switch (botMessage.type) {
+        case 'system-diary': {
+          await botMessage.sendCommand(botMessage.requestEvent);
+          break;
+        }
+        case 'executive-diary': {
+          await botMessage.sendExecuteText();
+          break;
+        }
+        case 'searching-diary': {
+          await botMessage.sendSearchText();
+          break;
+        }
         case 'text': {
-          // send commands
-          for (const key of botCommands) {
-            if (telegram[key].alias.test(message.text)) {
-              await botMessage.sendCommand(telegram[key].event);
-              return;
-            }
-          }
-          // send text
+          // по-умолчанию действует режим writing
           await botMessage.sendText();
           break;
         }

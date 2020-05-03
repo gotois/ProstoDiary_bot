@@ -1,4 +1,4 @@
-for (const api of ['backup', 'health', 'help', 'ping', 'insert']) {
+for (const api of ['backup', 'help', 'ping', 'insert']) {
   /**
    * @returns {object}
    */

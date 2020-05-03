@@ -1,6 +1,6 @@
 const packageLock_ = require('../../../package-lock.json');
 const logger = require('../../lib/log');
-const { telegram } = require('../../include/telegram-bot/commands');
+const { allCommands } = require('../../include/telegram-bot/commands');
 const { IS_PRODUCTION } = require('../../environment');
 const { getCheckSum } = require('../../services/crypt.service');
 const commandLogger = require('../../services/command-logger.service');
@@ -9,7 +9,7 @@ const AcceptAction = require('../../core/models/action/accept');
  * @returns {string}
  */
 function response() {
-  const helpData = Object.entries(telegram).reduce(
+  const helpData = Object.entries(allCommands).reduce(
     (accumulator, [command, object]) => {
       if (object.description.length === 0) {
         return accumulator;

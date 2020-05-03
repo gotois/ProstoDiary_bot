@@ -1,4 +1,4 @@
-const { telegram, botCommands } = require('../commands');
+const { allCommands, systemCommands } = require('../commands');
 const { IS_AVA } = require('../../../environment');
 const logger = require('../../../lib/log');
 
@@ -7,8 +7,8 @@ const checkMessage = (message) => {
   if (Array.isArray(message.entities)) {
     if (message.entities[0].type === 'bot_command') {
       // Пропускаем зарезервированные команды
-      const commandReserved = botCommands.some((command) => {
-        return message.text.search(telegram[command].alias) >= 0;
+      const commandReserved = systemCommands.some((command) => {
+        return message.text.search(allCommands[command].alias) >= 0;
       });
       if (!commandReserved) {
         throw new Error('Unknown command. Enter /help');
@@ -29,9 +29,10 @@ const checkMentionMessage = (message) => {
 class TelegramBotMessage {
   /**
    * @param {TelegramMessage} message - message
+   * @param {object} metadata - metadata
    * @returns {undefined}
    */
-  constructor(message) {
+  constructor(message, metadata = {}) {
     // hack для запуска e2e тестов
     if (IS_AVA) {
       message.passports = [
@@ -50,6 +51,8 @@ class TelegramBotMessage {
     }
     // Нативное сообщение Telegram
     this.message = message;
+    // Метаданные сообщения Telegram
+    this.metadata = metadata;
     // тихий режим, когда результат не отображается пользователю
     this.silent = false;
 
@@ -64,6 +67,46 @@ class TelegramBotMessage {
         throw new Error('Reply message not supported');
       }
     }
+    switch (metadata.type) {
+      // расширяем собственными типами запросов
+      case 'text': {
+        // case 1: system command
+        for (const key of systemCommands) {
+          if (allCommands[key].alias.test(message.text)) {
+            this.type = 'system-diary';
+            checkMessage(message);
+            // hack - можно сделать лучше, в конструкторе инициализируя require нужного ивента
+            this.requestEvent = allCommands[key].event;
+            return;
+          }
+        }
+        // case 2: executive command
+        if (message.text.startsWith('! ')) {
+          this.type = 'executive-diary';
+          // todo надо очищать "!" из запроса
+          return;
+        }
+        // case 3: searching
+        if (message.text.startsWith('? ')) {
+          this.type = 'searching-diary';
+          // todo надо очищать "?" из запроса
+          return;
+        }
+        // case 4: writing
+        if (message.text.startsWith('. ')) {
+          // todo надо очищать "." из запроса
+          this.type = 'text';
+          return;
+        }
+        checkMessage(message);
+        this.type = metadata.type;
+        break;
+      }
+      default: {
+        this.type = metadata.type;
+        break;
+      }
+    }
   }
   async sendCommand(event) {
     logger.info('sendCommand');
@@ -72,13 +115,21 @@ class TelegramBotMessage {
       logger.info('sendCommand:skip');
       return;
     }
-    checkMessage(message);
     await require('../controllers/' + event)(message, this.silent);
+  }
+  // todo Выполнение поручения заданное пользователем
+  // eslint-disable-next-line
+  async sendExecuteText() {
+    logger.info('sendExecuteText');
+  }
+  // todo Выполнение поиска в истории
+  // eslint-disable-next-line
+  async sendSearchText() {
+    logger.info('sendSearchText');
   }
   async sendText() {
     logger.info('sendText');
     const { message } = this;
-    checkMessage(message);
     if (message.reply_to_message) {
       return;
     }

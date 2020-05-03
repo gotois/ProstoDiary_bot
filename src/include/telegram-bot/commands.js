@@ -1,18 +1,7 @@
 /**
- * @see https://github.com/gotois/ProstoDiary_bot/issues/571
  * @type {object}
  */
-const allCommands = {
-  BACKUP: {
-    event: 'backup.event',
-    alias: /^\/(backup|бэкап)$/,
-    description: 'Выгрузка бэкапа',
-  },
-  DBCLEAR: {
-    event: 'dbclear.event',
-    alias: /^\/dbclear$/,
-    description: 'Очищение БД',
-  },
+const nativeCommands = {
   DOCUMENT: {
     event: 'document.event',
     alias: 'document',
@@ -22,11 +11,6 @@ const allCommands = {
     event: 'edited-message-text.event',
     alias: 'edited_message_text',
     description: '',
-  },
-  HELP: {
-    event: 'help.event',
-    alias: /^\/help|man|помощь$/,
-    description: 'Помощь',
   },
   LOCATION: {
     event: 'location.event',
@@ -38,10 +22,43 @@ const allCommands = {
     alias: 'photo',
     description: '',
   },
+  VOICE: {
+    event: 'voice.event',
+    alias: 'voice',
+    description: '',
+  },
+};
+/**
+ * @type {object}
+ */
+const apiCommands = {
+  BACKUP: {
+    event: 'backup.event',
+    alias: /^\/(backup|бэкап)$/,
+    description: 'Выгрузка бэкапа',
+  },
+  HELP: {
+    event: 'help.event',
+    alias: /^\/help|man|помощь$/,
+    description: 'Помощь',
+  },
   PING: {
     event: 'ping.event',
     alias: /^\/(ping|пинг)$/,
     description: 'Проверка сети',
+  },
+};
+/**
+ * @type {object}
+ */
+const allCommands = {
+  ...nativeCommands,
+  ...apiCommands,
+
+  DBCLEAR: {
+    event: 'dbclear.event',
+    alias: /^\/dbclear$/,
+    description: 'Очищение БД',
   },
   SEARCH: {
     event: 'search.event',
@@ -60,24 +77,22 @@ const allCommands = {
     alias: /^\/$/,
     description: '',
   },
-  VOICE: {
-    event: 'voice.event',
-    alias: 'voice',
-    description: '',
-  },
 };
 
 module.exports = {
-  // todo переименовать в "all"
-  get telegram() {
+  get allCommands() {
     return allCommands;
   },
-  // todo переименовать в "systemCommands"
-  get botCommands() {
-    const allCommands = this.telegram;
+  get systemCommands() {
+    const { allCommands } = this;
     return Object.keys(allCommands).filter((key) => {
       return allCommands[key].alias instanceof RegExp;
     });
   },
-  // todo добавить "nativeCommands", где все комманды созданные telegram'ом вида: document, photo, text
+  get apiCommands() {
+    return apiCommands;
+  },
+  get nativeCommands() {
+    return nativeCommands;
+  },
 };

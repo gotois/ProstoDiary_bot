@@ -39,7 +39,7 @@ class Text extends TelegramBotRequest {
       });
       await this.rpc(jsonldRequest);
     } catch (error) {
-      logger.error(error);
+      logger.error(error.stack);
       if (!silent) {
         await this.bot.editMessageText(String(error.message), {
           chat_id: this.message.chat.id,

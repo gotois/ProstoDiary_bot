@@ -89,7 +89,7 @@ module.exports = class TelegramController {
     notifyTelegram(request.body)
       .then(() => {})
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.stack);
       });
   }
   static async api(request, response) {

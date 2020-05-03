@@ -20,7 +20,7 @@ module.exports = async () => {
         // пингуем тем самым проверяем что пользователь активен
         await bot.sendChatAction(passport.telegram_id, 'typing');
       } catch (error) {
-        logger.error(error);
+        logger.error(error.stack);
         switch (error.response && error.response.statusCode) {
           case 403: {
             await connection.query(

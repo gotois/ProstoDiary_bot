@@ -233,7 +233,7 @@ module.exports = class OAUTH {
       });
       return passport;
     } catch (error) {
-      logger.error(error);
+      logger.error(error.stack);
       await pddService.deleteYaMail(uid);
       throw error;
     }
