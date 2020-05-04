@@ -5,10 +5,7 @@ const Abstract = require('../models/abstract');
  * @returns {Promise<jsonldApiRequest|Error>}
  */
 module.exports = async function (parameters) {
-  const AnyAbstract = await Abstract.getAbstractFromDocument(
-    parameters.buffer,
-    parameters.filename,
-  );
+  const AnyAbstract = await Abstract.getAbstractFromDocument(parameters.buffer);
   const anyAbstract = new AnyAbstract(parameters);
   await anyAbstract.prepare();
   return anyAbstract.context;

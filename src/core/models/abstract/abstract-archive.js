@@ -5,6 +5,7 @@ const { unpack } = require('../../../services/archive.service');
 class AbstractArchive extends Abstract {
   constructor(data) {
     super(data);
+    this.buffer = data.buffer;
   }
   /**
    * @returns {jsonldApiRequest}
@@ -17,11 +18,20 @@ class AbstractArchive extends Abstract {
   }
 
   async prepare() {
-    // eslint-disable-next-line
-    for await (const [_fileName, buffer] of unpack(content)) {
-      // buffer.toString()
-      // todo в зависимости от буффера создавать абстракты
+    const context = [];
+    const zipMap = await unpack(this.buffer);
+    for (const [filename, buffer] of zipMap) {
+      const AnyAbstract = await Abstract.getAbstractFromDocument(buffer);
+      const anyAbstract = new AnyAbstract({
+        ...this._data,
+        buffer: buffer,
+        filename: filename, // todo поддержать в абстрактах
+      });
+      await anyAbstract.prepare();
+      context.push(anyAbstract.context);
     }
+    // todo насыщенить объектами
+    // ...
   }
 }
 

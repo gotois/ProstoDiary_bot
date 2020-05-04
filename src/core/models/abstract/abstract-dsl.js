@@ -23,7 +23,7 @@ class AbstractDsl extends Abstract {
       ignoreNameSpace: false,
       allowBooleanAttributes: true,
       parseNodeValue: true,
-      parseAttributeValue: false,
+      parseAttributeValue: true,
       trimValues: true,
       parseTrueNumberOnly: false,
     };
@@ -31,7 +31,9 @@ class AbstractDsl extends Abstract {
     if (!parser.validate(string)) {
       throw new TypeError('Its not XML');
     }
-    this.json = parser.parse(string, parserOptions);
+    this.json = parser.parse(string, parserOptions, false);
+    // todo в зависимости от свойств файла (например, ClinicalDocument, HTML) присваивать уникальный тип элементу
+    // ...
   }
 }
 

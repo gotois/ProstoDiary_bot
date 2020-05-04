@@ -1,5 +1,6 @@
 const AbstractDsl = require('./abstract-dsl');
 
+// OFX - схема для выгрузки из банковских счетов
 class AbstractOfx extends AbstractDsl {
   constructor(parameters) {
     super(parameters);

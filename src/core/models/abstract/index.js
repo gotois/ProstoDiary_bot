@@ -5,6 +5,8 @@ const { unpack } = require('../../../services/archive.service');
 
 class Abstract {
   constructor(data) {
+    // это параметры которые были установлены при создании
+    this._data = data;
     this.object = [];
     this.objectMainEntity = [];
     this.objectMainEntity.push({
@@ -37,12 +39,14 @@ class Abstract {
   }
   /**
    * @param {buffer} buffer - buffer
-   * @param {string} filename - filename
    * @returns {Promise<AbstractOfx|AbstractDsl|AbstractPDF>}
    */
-  static async getAbstractFromDocument(buffer, filename) {
-    const { mime } = await FileType.fromBuffer(buffer);
+  static async getAbstractFromDocument(buffer) {
+    const { mime, ext } = await FileType.fromBuffer(buffer);
     switch (mime) {
+      case 'application/zip': {
+        return require('./abstract-archive');
+      }
       case 'application/octet-stream': {
         const mapBuffer = await unpack(buffer);
         if (mapBuffer.size === 0) {
@@ -56,7 +60,7 @@ class Abstract {
       }
       case 'application/xml': {
         // hack но пока не пойму как лучше детектировать ofx
-        if (filename.endsWith('.ofx')) {
+        if (ext === 'ofx') {
           return require('./abstract-ofx');
         } else {
           return require('./abstract-dsl');

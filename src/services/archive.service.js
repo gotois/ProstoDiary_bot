@@ -67,16 +67,19 @@ const readZipFiles = (zip) => {
 };
 /**
  * @param {Buffer} buffer - buffer
+ * @param {object} [options] - yauzlOptions
  * @returns {Promise<Map>}
  */
-const unpack = (buffer) => {
+const unpack = (
+  buffer,
+  options = {
+    lazyEntries: true,
+    decodeStrings: true,
+    validateEntrySizes: true,
+  },
+) => {
   return new Promise((resolve, reject) => {
-    const yauzlOptions = {
-      lazyEntries: true,
-      decodeStrings: true,
-      validateEntrySizes: true,
-    };
-    yauzl.fromBuffer(buffer, yauzlOptions, async (error, zipfile) => {
+    yauzl.fromBuffer(buffer, options, async (error, zipfile) => {
       if (error) {
         return reject(error);
       }
