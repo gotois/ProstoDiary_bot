@@ -1,5 +1,7 @@
+const FileType = require('file-type');
 const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
+const { unpack } = require('../../../services/archive.service');
 
 class Abstract {
   constructor(data) {
@@ -31,6 +33,41 @@ class Abstract {
     } else {
       // сообщение пришло из почты
       // this.namespace будет устанавливаться из Message-Id письма
+    }
+  }
+  /**
+   * @param {buffer} buffer - buffer
+   * @param {string} filename - filename
+   * @returns {Promise<AbstractOfx|AbstractDsl|AbstractPDF>}
+   */
+  static async getAbstractFromDocument(buffer, filename) {
+    const { mime } = await FileType.fromBuffer(buffer);
+    switch (mime) {
+      case 'application/octet-stream': {
+        const mapBuffer = await unpack(buffer);
+        if (mapBuffer.size === 0) {
+          throw new Error('Empty file');
+        }
+        // eslint-disable-next-line
+        mapBuffer.forEach((buffer) => {
+          // todo нужен рекурсивных обход документов
+        });
+        break;
+      }
+      case 'application/xml': {
+        // hack но пока не пойму как лучше детектировать ofx
+        if (filename.endsWith('.ofx')) {
+          return require('./abstract-ofx');
+        } else {
+          return require('./abstract-dsl');
+        }
+      }
+      case 'application/pdf': {
+        return require('./abstract-pdf');
+      }
+      default: {
+        throw new Error('Unknown document mimetype: ' + mime);
+      }
     }
   }
   // identifier assistant
