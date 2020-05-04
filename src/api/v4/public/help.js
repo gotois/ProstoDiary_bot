@@ -1,10 +1,10 @@
-const packageLock_ = require('../../../package-lock.json');
-const logger = require('../../lib/log');
-const { allCommands } = require('../../include/telegram-bot/commands');
-const { IS_PRODUCTION } = require('../../environment');
-const { getCheckSum } = require('../../services/crypt.service');
-const commandLogger = require('../../services/command-logger.service');
-const AcceptAction = require('../../core/models/action/accept');
+const packageLock_ = require('../../../../package-lock.json');
+const logger = require('../../../lib/log');
+const { allCommands } = require('../../../include/telegram-bot/commands');
+const { IS_PRODUCTION } = require('../../../environment');
+const { getCheckSum } = require('../../../services/crypt.service');
+const commandLogger = require('../../../services/command-logger.service');
+const AcceptAction = require('../../../core/models/action/accept');
 /**
  * @returns {string}
  */

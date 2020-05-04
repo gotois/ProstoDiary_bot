@@ -1,5 +1,5 @@
 const jayson = require('jayson/promise');
-const API = require('./v4');
+const API = require('./v4/public');
 
 const server = jayson.server(
   {

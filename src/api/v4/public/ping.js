@@ -1,5 +1,5 @@
-const commandLogger = require('../../services/command-logger.service');
-const AcceptAction = require('../../core/models/action/accept');
+const commandLogger = require('../../../services/command-logger.service');
+const AcceptAction = require('../../../core/models/action/accept');
 /**
  * @param {object} document - parameters
  * @param {object} passport - passport client user
