@@ -13,6 +13,7 @@ class Document extends TelegramBotRequest {
     );
     const jsonldRequest = await documentAction({
       buffer: fileBuffer,
+      caption: this.message.caption,
       filename: this.message.document.file_name,
       filesize: this.message.document.file_size,
       mimeType: this.message.document.mime_type,
@@ -20,6 +21,7 @@ class Document extends TelegramBotRequest {
       creator: this.creator,
       publisher: this.publisher,
       telegram: this.chatData,
+      hashtags: this.hashtags,
       silent,
     });
     await this.rpc(jsonldRequest);

@@ -38,26 +38,40 @@ class TelegramBotRequest {
     return this.#message.passports[0].email;
   }
   /**
+   * @param {Array<object>} entities - entities object
+   * @param {string} text - caption or text
+   * @returns {Array<string>}
+   */
+  getHashtagsFromEntities(entities, text) {
+    return entities
+      .filter((entity) => {
+        return entity.type === 'hashtag';
+      })
+      .map(entity => {
+        // eslint-disable-next-line unicorn/prefer-string-slice
+        const hashtag = text.substr(
+          entity.offset + 1,
+          entity.length - 1,
+        );
+        return hashtag;
+      });
+  }
+  /**
    * @returns {Array<string>}
    */
   get hashtags() {
     const hashtags = new Set();
+    // caption entities
+    if (Array.isArray(this.message.caption_entities)) {
+      this.getHashtagsFromEntities(this.message.caption_entities, this.message.caption).forEach((hashtag) => {
+        hashtags.add(hashtag);
+      });
+    }
+    // entities
     if (Array.isArray(this.message.entities)) {
-      this.message.entities
-        .filter((entity) => {
-          return entity.type === 'hashtag';
-        })
-        .map(entity => {
-          // eslint-disable-next-line unicorn/prefer-string-slice
-          const hashtag = this.message.text.substr(
-            entity.offset + 1,
-            entity.length - 1,
-          );
-          return hashtag;
-        })
-        .forEach((hashtag) => {
-          hashtags.add(hashtag);
-        });
+      this.getHashtagsFromEntities(this.message.entities, this.message.text).forEach((hashtag) => {
+        hashtags.add(hashtag);
+      });
     }
     return [...hashtags];
   }
