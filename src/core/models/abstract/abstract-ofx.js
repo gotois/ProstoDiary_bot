@@ -17,14 +17,19 @@ class AbstractOfx extends AbstractDsl {
     await super.prepare();
     const { BANKTRANLIST } = this.json.OFX.BANKMSGSRSV1.STMTTRNRS.STMTRS;
     BANKTRANLIST.STMTTRN.forEach((stmttrn) => {
-      // TODO: эти данные нужно сохранять в History
-      stmttrn.TRNTYPE;
-      stmttrn.DTPOSTED;
-      stmttrn.TRNAMT;
-      stmttrn.FITID;
-      stmttrn.NAME;
-      stmttrn.MEMO;
-      stmttrn.CURRENCY;
+      this.object.push({
+        '@type': 'Thing',
+        'name': stmttrn.NAME,
+        'amount': {
+          '@type': stmttrn.TRNTYPE,
+          'currency': stmttrn.CURRENCY,
+          // todo добавить
+          // stmttrn.DTPOSTED,
+          // stmttrn.TRNAMT,
+          // stmttrn.FITID,
+          // stmttrn.MEMO,
+        },
+      });
     });
   }
 }
