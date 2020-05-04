@@ -1,8 +1,7 @@
 const parser = require('fast-xml-parser');
 const Abstract = require('.');
-const { unpack } = require('../../../services/archive.service');
 
-// html, xml, json и пр
+// преобразование html, xml в json
 class AbstractDsl extends Abstract {
   constructor(parameters) {
     super(parameters);
@@ -14,15 +13,10 @@ class AbstractDsl extends Abstract {
   get context() {
     return {
       ...super.context,
-      // todo add ...
     };
   }
-
+  // eslint-disable-next-line
   async prepare() {
-    const mapBuffer = await unpack(this.buffer);
-    if (mapBuffer.size === 0) {
-      throw new Error('Empty file');
-    }
     const parserOptions = {
       attributeNamePrefix: '',
       ignoreAttributes: false,
@@ -33,11 +27,11 @@ class AbstractDsl extends Abstract {
       trimValues: true,
       parseTrueNumberOnly: false,
     };
-    mapBuffer.forEach((buffer) => {
-      const string = buffer.toString('utf8');
-      // eslint-disable-next-line
-      const jsonObject = parser.parse(string, parserOptions);
-    });
+    const string = this.buffer.toString();
+    if (!parser.validate(string)) {
+      throw new TypeError('Its not XML');
+    }
+    this.json = parser.parse(string, parserOptions);
   }
 }
 
