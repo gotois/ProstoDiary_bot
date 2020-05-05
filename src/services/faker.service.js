@@ -31,7 +31,21 @@ class FakerText {
   }
 }
 
+class FakerPassport {
+  static get passport() {
+    return {
+      activated: true,
+      user: 'ava-test',
+      passportId: '-1',
+      assistant: 'e2e@gotointeractive.com',
+      email: 'e2e@gotointeractive.com',
+      jwt: 'YOUR_VALID_JWT',
+    };
+  }
+}
+
 module.exports = {
   Device,
   FakerText,
+  FakerPassport,
 };

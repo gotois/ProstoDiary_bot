@@ -6,21 +6,51 @@ const assistantBoQueries = require('../../../db/selectors/assistant');
 const logger = require('../../../lib/log');
 const notifyTelegram = require('../../../include/telegram-bot/services/notify-tg');
 /**
+ * @param {object} body - telegram native body
+ * @returns {object}
+ */
+const getMessageFromBody = (body) => {
+  let message;
+  let type;
+  if (body.message) {
+    type = 'message';
+    message = body.message;
+  } else if (body.edited_message) {
+    type = 'edited_message';
+    message = body.edited_message;
+  } else if (body.channel_post) {
+    type = 'channel_post';
+    message = body.channel_post;
+  } else if (body.callback_query) {
+    type = 'callback_query';
+    message = body.callback_query.message;
+  } else {
+    throw new Error('Unknown telegram body');
+  }
+
+  const chatId = String(message.chat && message.chat.id);
+  const userId = String(message.from && message.from.id);
+  return {
+    type,
+    message,
+    chatId,
+    userId,
+  };
+};
+/**
+ * @description Расширяем встроенный объект telegram request message
  * @param {object} body - telegram request body
- * @returns {Promise<object>}
+ * @returns {Promise<object|Error>}
  */
 async function makeRequestBody(body) {
-  const message =
-    body.message || body.channel_post || body.callback_query.message;
-  const chatId = message.chat && message.chat.id;
-  const userId = message.from && message.from.id;
+  const { message, type, chatId, userId } = getMessageFromBody(body);
   const { passports, assistants } = await pool.connect(async (connection) => {
     // сначала я получаю массив assistant_bot_id по чату
     // декодирую и передаю в passport - массив паспортов
     let results = [];
     try {
       results = await connection.many(
-        assistantChatQueries.selectByChatId(String(chatId)),
+        assistantChatQueries.selectByChatId(chatId),
       );
       if (results.length === 0) {
         logger.warn('you need to connect this assistant');
@@ -52,7 +82,7 @@ async function makeRequestBody(body) {
       if (result.id.startsWith('-')) {
         logger.info('PUBLIC CHAT');
         passports.push({
-          user: String(userId),
+          user: userId,
           email: result.bot_user_email,
         });
       } else {
@@ -60,7 +90,7 @@ async function makeRequestBody(body) {
         const decoded = jose.JWT.decode(result.token);
         passports.push({
           activated: decoded.email_verified,
-          user: String(userId),
+          user: userId,
           passportId: decoded.sub, // ID паспорт бота
           email: decoded.email, // почта бота пользователя
         });
@@ -73,9 +103,9 @@ async function makeRequestBody(body) {
   });
   return {
     ...body,
-    // расширяем встроенный объект telegram
     message: {
       ...message,
+      type,
       passports,
       assistants,
     },
@@ -92,7 +122,9 @@ module.exports = class TelegramController {
         logger.error(error.stack);
       });
   }
+  // webhook telegram message
   static async api(request, response) {
+    logger.info('telegram api request');
     try {
       const body = await makeRequestBody(request.body);
       bot.processUpdate(body);

@@ -1,6 +1,7 @@
 const { allCommands, systemCommands } = require('../commands');
 const { IS_AVA } = require('../../../environment');
 const logger = require('../../../lib/log');
+const { FakerPassport } = require('../../../services/faker.service');
 
 const checkMessage = (message) => {
   // Пропускаем команды бота
@@ -35,16 +36,7 @@ class TelegramBotMessage {
   constructor(message, metadata = {}) {
     // hack для запуска e2e тестов
     if (IS_AVA) {
-      message.passports = [
-        {
-          activated: true,
-          user: 'ava-test',
-          passportId: '-1',
-          assistant: 'e2e@gotointeractive.com',
-          email: 'e2e@gotointeractive.com',
-          jwt: 'YOUR_VALID_JWT',
-        },
-      ];
+      message.passports = [FakerPassport.passport];
     }
     if (!Array.isArray(message.passports)) {
       throw new TypeError('gotois passport error');
@@ -62,6 +54,7 @@ class TelegramBotMessage {
         this.silent = true;
       }
     }
+    // todo перенести в web/telegram.js
     if (message.reply_to_message instanceof Object) {
       if (!message.reply_to_message.from.is_bot) {
         throw new Error('Reply message not supported');
@@ -70,6 +63,11 @@ class TelegramBotMessage {
     switch (metadata.type) {
       // расширяем собственными типами запросов
       case 'text': {
+        if (message.type === 'edited_message') {
+          this.type = 'edit-text';
+          checkMessage(message);
+          return;
+        }
         // case 1: system command
         for (const key of systemCommands) {
           if (allCommands[key].alias.test(message.text)) {
@@ -111,6 +109,7 @@ class TelegramBotMessage {
   async sendCommand(event) {
     logger.info('sendCommand');
     const { message } = this;
+    // todo перенести эту логику в web/telegram.js
     if (this.inGroup && this.silent) {
       logger.info('sendCommand:skip');
       return;
@@ -127,48 +126,52 @@ class TelegramBotMessage {
   async sendSearchText() {
     logger.info('sendSearchText');
   }
+  async editText() {
+    logger.info('editText');
+    await require('../controllers/edited-message-text.event')(
+      this.message,
+      this.silent,
+    );
+  }
   async sendText() {
     logger.info('sendText');
     const { message } = this;
+    // todo перенести эту логику в web/telegram.js
     if (message.reply_to_message) {
       return;
     }
-    await require('../controllers/text.event')(message, this.silent);
+    await require('../controllers/text.event')(this.message, this.silent);
   }
   async sendPhoto() {
     logger.info('sendPhoto');
-    const { message } = this;
-    await require('../controllers/photo.event')(message, this.silent);
+    await require('../controllers/photo.event')(this.message, this.silent);
   }
   async sendDocument() {
     logger.info('sendDocument');
-    const { message } = this;
-    await require('../controllers/document.event')(message, this.silent);
+    await require('../controllers/document.event')(this.message, this.silent);
   }
   async sendLocation() {
     logger.info('sendLocation');
-    const { message } = this;
-    await require('../controllers/location.event')(message, this.silent);
+    await require('../controllers/location.event')(this.message, this.silent);
   }
   async sendVoice() {
     logger.info('sendVoice');
-    const { message } = this;
-    await require('../controllers/voice.event')(message, this.silent);
+    await require('../controllers/voice.event')(this.message, this.silent);
   }
   async groupChatCreated() {
-    logger.info('groupChatCreated');
+    logger.info('group chat created');
     await require('../controllers/group-chat-created.event')(this.message);
   }
   async newChatMembers() {
-    logger.info('newChatMembers');
+    logger.info('new chat members');
     await require('../controllers/new-chat-members.event')(this.message);
   }
   async migrateFromChat() {
-    logger.info('migrateFromChat');
+    logger.info('migrate from chat');
     await require('../controllers/migrate-from-chat.event')(this.message);
   }
   async leftChatMember() {
-    logger.info('leftChatMember');
+    logger.info('left chat member');
     await require('../controllers/left-chat-member.event')(this.message);
   }
 }

@@ -25,6 +25,7 @@ class EditMessageText extends TelegramBotRequest {
     // await bot.sendMessage(this.message.chat.id, 'Запись не найдена');
     // return;
     // }
+    // todo перенести это в telegram-bot-message.js с новым типом delete-text
     // Сообщение удалено?
     if (
       EditMessageText.DELETE_VARIABLES.some((del) => {

@@ -56,6 +56,7 @@ module.exports = (telegramBot) => {
     logger.info('telegram.message');
     try {
       const { type } = metadata;
+      // todo перенести в web/telegram.js с типом auth_by_contact
       // подтверждение договора и первичная валидация установки через телеграм
       if (
         type === 'contact' &&
@@ -65,6 +66,7 @@ module.exports = (telegramBot) => {
         await onAgree(message);
         return;
       }
+      // todo перенести в web/telegram.js с типом reply_to_message_bot
       if (message.reply_to_message && message.reply_to_message.from.is_bot) {
         telegramBot.emit('reply_to_message', message, metadata);
         return;
@@ -86,6 +88,10 @@ module.exports = (telegramBot) => {
         case 'text': {
           // по-умолчанию действует режим writing
           await botMessage.sendText();
+          break;
+        }
+        case 'edit-text': {
+          await botMessage.editText();
           break;
         }
         case 'photo': {
@@ -133,4 +139,7 @@ module.exports = (telegramBot) => {
   };
 
   telegramBot.on('message', messageListener);
+  telegramBot.on('error', () => {
+    logger.error('telegram fatal error');
+  });
 };
