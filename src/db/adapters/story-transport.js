@@ -3,6 +3,7 @@ const storyQueries = require('../selectors/story');
 const { pool } = require('../sql');
 const package_ = require('../../../package.json');
 const TelegramNotifyError = require('../../core/models/errors/telegram-notify-error');
+const { SERVER } = require('../../environment');
 
 module.exports = class PsqlTransport extends Transport {
   constructor(options) {
@@ -19,11 +20,15 @@ module.exports = class PsqlTransport extends Transport {
    * @returns {Promise<void>}
    */
   async log(info, callback) {
+    this.emit('pre-logged', {});
     const { document, passport } = info.message;
 
     // todo пока телега обязательна для записи
     const telegramMessageId = document.result.mainEntity.find((entity) => {
       return entity.name === 'TelegramMessageId';
+    })['value'];
+    const telegramChatId = document.result.mainEntity.find((entity) => {
+      return entity.name === 'TelegramChatId';
     })['value'];
 
     try {
@@ -83,12 +88,27 @@ module.exports = class PsqlTransport extends Transport {
       info.messageId = id;
       callback();
       setImmediate(() => {
-        this.emit('logged', info);
+        // eslint-disable-next-line
+        console.warn(id);
+
+        switch (document.agent.email) {
+          case 'tg@gotointeractive.com': {
+            this.emit('tg-logged', {
+              subject: 'Запись добавлена',
+              html: 'Открыть запись',
+              url: `${SERVER.HOST}/message/${passport.email}/${id}`,
+              chatId: telegramChatId,
+              messageId: telegramMessageId,
+              parseMode: 'HTML',
+            });
+            break;
+          }
+          default: {
+            throw new Error('Unknown agent');
+          }
+        }
       });
     } catch (error) {
-      const telegramChatId = document.result.mainEntity.find((entity) => {
-        return entity.name === 'TelegramChatId';
-      })['value'];
       callback(
         new TelegramNotifyError(
           error.message,

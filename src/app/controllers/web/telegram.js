@@ -4,7 +4,90 @@ const { pool } = require('../../../db/sql');
 const assistantChatQueries = require('../../../db/selectors/chat');
 const assistantBoQueries = require('../../../db/selectors/assistant');
 const logger = require('../../../lib/log');
-const notifyTelegram = require('../../../include/telegram-bot/services/notify-tg');
+
+async function notifyTelegram(parameters) {
+  const {
+    subject,
+    html = '',
+    url,
+    attachments = [],
+    messageId,
+    chatId,
+    parseMode = 'HTML',
+  } = parameters;
+  let messageHTML = '';
+  if (parseMode === 'HTML') {
+    messageHTML = `
+        <b>${subject}</b>
+${html}
+      `.trim();
+    if (html.includes('<h')) {
+      throw new Error('Unknown html tag for telegram');
+    }
+  } else {
+    messageHTML = `${subject}${html}`;
+  }
+  // если есть attachments, отдельно посылаю каждый файл
+  if (attachments.length > 0) {
+    for (const attachment of attachments) {
+      await bot.sendDocument(
+        chatId,
+        Buffer.from(attachment.content, 'base64'),
+        {
+          caption: subject,
+          parse_mode: parseMode,
+          disable_notification: true,
+        },
+        {
+          filename: attachment.filename,
+          contentType: attachment.type,
+        },
+      );
+    }
+  } else if (messageId) {
+    /* eslint-disable */
+    const replyMarkup = !url
+      ? null
+      : {
+        inline_keyboard: [
+          [
+            {
+              text: html,
+              url: url,
+            },
+          ],
+        ],
+      };
+    /* eslint-enable */
+
+    try {
+      await bot.editMessageText(subject, {
+        chat_id: chatId,
+        message_id: messageId,
+        parse_mode: parseMode,
+        reply_markup: replyMarkup,
+      });
+    } catch (error) {
+      const body = error.toJSON();
+      // todo костыль для forward message
+      if (body.message.endsWith('t be edited')) {
+        await bot.sendMessage(chatId, subject, {
+          chat_id: chatId,
+          parse_mode: parseMode,
+          reply_markup: replyMarkup,
+        });
+        return;
+      }
+      throw error;
+    }
+  } else {
+    await bot.sendMessage(chatId, messageHTML, {
+      parse_mode: parseMode,
+      disable_notification: true,
+      disable_web_page_preview: true,
+    });
+  }
+}
 /**
  * @param {object} body - telegram native body
  * @returns {object}
@@ -113,9 +196,22 @@ async function makeRequestBody(body) {
 }
 
 module.exports = class TelegramController {
-  // not async specific for webhook
-  static webhookAssistant(request, response) {
-    response.status(200).send('OK');
+  static notifyProcessing(request, response) {
+    response.status(202).send();
+    logger.info('processing');
+    // todo ...
+    //  в зависимости от silent свойства либо уведомляем либо нет
+  }
+  /**
+   * @description Отправить нотификацию телеграм ассистенту с вебхукой
+   * @param {*} request - request
+   * @param {*} response - response
+   * @returns {Promise<undefined>}
+   */
+  static notify(request, response) {
+    response.status(202).send();
+    // todo ...
+    //  в зависимости от silent свойства либо уведомляем либо нет
     notifyTelegram(request.body)
       .then(() => {})
       .catch((error) => {

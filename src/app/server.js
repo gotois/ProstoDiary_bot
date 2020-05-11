@@ -16,7 +16,6 @@ const apiRoutes = require('./routes/api');
 const marketplaceRoutes = require('./routes/marketplace');
 const telegramRoutes = require('./routes/telegram');
 const messageRoutes = require('./routes/message');
-const assistantWebhookRoutes = require('./routes/assistant');
 const pingRoutes = require('./routes/ping');
 const thingRoutes = require('./routes/thing');
 const documentationRoutes = require('./routes/documentation');
@@ -49,7 +48,6 @@ const passportRoutes = require('./routes/passport');
   app.use('/user', userRoutes);
   app.use('/message', messageRoutes);
   app.use('/marketplace', marketplaceRoutes);
-  app.use('/assistant', assistantWebhookRoutes);
   app.use('/oidc/', oidcProvider.callback);
 
   // Express error handler

@@ -13,6 +13,7 @@ class Text extends TelegramBotRequest {
     let tgMessageId = this.message.message_id;
     logger.info(this.message);
     if (!silent) {
+      // todo этот текст надо вставлять внутри hooks/message-processing
       const { message_id } = await this.bot.sendMessage(
         this.message.chat.id,
         `_${textService.previousInput(this.message.text)}_ 📝`,
