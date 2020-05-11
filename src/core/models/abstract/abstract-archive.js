@@ -6,6 +6,7 @@ class AbstractArchive extends Abstract {
   constructor(data) {
     super(data);
     this.buffer = data.buffer;
+    this._objectContext = [];
   }
   /**
    * @returns {jsonldApiRequest}
@@ -13,25 +14,23 @@ class AbstractArchive extends Abstract {
   get context() {
     return {
       ...super.context,
-      // todo ...
+      '@type': 'Action',
+      'object': this._objectContext,
     };
   }
 
   async prepare() {
-    const context = [];
     const zipMap = await unpack(this.buffer);
     for (const [filename, buffer] of zipMap) {
-      const AnyAbstract = await Abstract.getAbstractFromDocument(buffer);
-      const anyAbstract = new AnyAbstract({
+      const DynamicAbstract = await Abstract.getAbstractFromDocument(buffer);
+      const anyAbstract = new DynamicAbstract({
         ...this._data,
         buffer: buffer,
-        filename: filename, // todo поддержать в абстрактах
+        filename,
       });
       await anyAbstract.prepare();
-      context.push(anyAbstract.context);
+      this._objectContext.push(anyAbstract.context);
     }
-    // todo насыщенить объектами
-    // ...
   }
 }
 

@@ -7,6 +7,7 @@ class Abstract {
   constructor(data) {
     // это параметры которые были установлены при создании
     this._data = data;
+    this.filename = data.filename || undefined;
     this.object = [];
     this.objectMainEntity = [];
     this.objectMainEntity.push({
@@ -59,18 +60,13 @@ class Abstract {
         break;
       }
       case 'application/xml': {
-        // hack но пока не пойму как лучше детектировать ofx
-        if (ext === 'ofx') {
-          return require('./abstract-ofx');
-        } else {
-          return require('./abstract-dsl');
-        }
+        return require('./abstract-dsl');
       }
       case 'application/pdf': {
         return require('./abstract-pdf');
       }
       default: {
-        throw new Error('Unknown document mimetype: ' + mime);
+        throw new Error(`Unknown ${ext} document mimetype: ${mime}`);
       }
     }
   }
