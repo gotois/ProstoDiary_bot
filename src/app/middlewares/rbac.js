@@ -1,9 +1,17 @@
-// todo это не должно быть в контроллере, перенести в более подходящую директорию - например мидлвар в Express
 const AccessControl = require('accesscontrol');
 
 const ac = new AccessControl();
-ac.grant('demo');
-ac.grant('bot').readOwn('message');
+ac.grant('bot').readOwn('message', ['*']);
+ac.grant('bot').readAny('message', [
+  '*',
+  '!object',
+  '!subjectOf',
+  '!sameAs',
+  '!agent',
+  '!startTime',
+  '!endTime',
+  '!image.url',
+]);
 ac.grant('user').extend('bot');
 
 module.exports = ac;

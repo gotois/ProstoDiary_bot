@@ -3,8 +3,28 @@ const mc = require('../../middlewares/memcache');
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
 const passportQueries = require('../../../db/selectors/passport');
-const template = require('../../views/message');
+const templateMessage = require('../../views/message');
 const templateList = require('../../views/message-list');
+/**
+ * Фильтруем выдачу в зависимост от доступа RBAC
+ *
+ * @param {jsonld} data - jsonld
+ * @param {boolean} isOwner - isOwner
+ * @param {*} role - role
+ * @returns {object}
+ */
+const filter = (data, isOwner, role) => {
+  let permission;
+  if (isOwner) {
+    permission = ac.can(role).readOwn('message');
+  } else {
+    permission = ac.can(role).readAny('message');
+  }
+  if (!permission.granted) {
+    throw new Error('forbidden');
+  }
+  return permission.filter(data);
+};
 
 module.exports = class MessageController {
   /**
@@ -16,14 +36,13 @@ module.exports = class MessageController {
   static async date(request, response) {
     try {
       const { from, to, bot } = request.params;
-      await pool.connect(async (connection) => {
+      const { storyTable } = await pool.connect(async (connection) => {
         const roleTable = await connection.one(
           passportQueries.selectRoleByEmail(request.user),
         );
         const { role } = roleTable;
         if (!role) {
-          response.status(403).json({ message: 'forbidden' });
-          return;
+          throw new Error('forbidden');
         }
         const storyTable = await connection.many(
           storyQueries.selectCreatorStoryByDate({
@@ -32,9 +51,13 @@ module.exports = class MessageController {
             to,
           }),
         );
-        response.contentType('application/ld+json');
-        response.send(templateList(storyTable));
+        return {
+          storyTable,
+          role,
+        };
       });
+      response.contentType('application/ld+json');
+      response.send(templateList(storyTable));
     } catch (error) {
       response.status(400).json({ error: error.message });
     }
@@ -48,20 +71,32 @@ module.exports = class MessageController {
   static async latest(request, response) {
     try {
       const { limit = '10' } = request.params;
-      await pool.connect(async (connection) => {
+      const { storyTable, role } = await pool.connect(async (connection) => {
         const { role } = await connection.maybeOne(
           passportQueries.selectRoleByEmail(request.user),
         );
         if (!role) {
-          response.status(403).json({ message: 'forbidden' });
-          return;
+          throw new Error('forbidden');
         }
         const storyTable = await connection.many(
           storyQueries.selectLatestStories(limit),
         );
-        response.contentType('application/ld+json');
-        response.send(templateList(storyTable));
+        return {
+          storyTable,
+          role,
+        };
       });
+      response.contentType('application/ld+json');
+      const key = 'latest:' + role + request.user + request.params.limit;
+      const prime = await mc.get(key);
+      if (prime && prime.value) {
+        response.send(JSON.parse(prime.value));
+      } else {
+        const temporary = templateList(storyTable);
+        const values = filter(temporary, role);
+        await mc.set(key, JSON.stringify(values), { expires: 500 });
+        response.send(values);
+      }
     } catch (error) {
       response.status(400).json({ error: error.message });
     }
@@ -75,40 +110,37 @@ module.exports = class MessageController {
   static async messageRaw(request, response) {
     try {
       if (!request.params.uuid) {
-        response.status(400).json({ message: 'unknown uuid' });
-        return;
+        throw new Error('unknown uuid');
       }
-      await pool.connect(async (connection) => {
+      const { storyTable } = await pool.connect(async (connection) => {
         const { role } = await connection.maybeOne(
           passportQueries.selectRoleByEmail(request.user),
         );
         if (!role) {
-          response.status(403).json({ message: 'forbidden' });
-          return;
+          throw new Error('forbidden');
         }
-        try {
-          const storyTable = await connection.one(
-            storyQueries.selectStoryById(request.params.uuid),
-          );
-          response.contentType(storyTable.content_type);
-          switch (storyTable.content_type) {
-            case 'text/plain': {
-              response.send(storyTable.content.toString('utf8'));
-              break;
-            }
-            case 'application/vnd.geo+json': {
-              response.json(JSON.parse(storyTable.content.toString('utf8')));
-              break;
-            }
-            default: {
-              response.send(storyTable.content);
-              break;
-            }
-          }
-        } catch (error) {
-          response.status(404).json({ message: error.message });
-        }
+        const storyTable = await connection.one(
+          storyQueries.selectStoryById(request.params.uuid),
+        );
+        return {
+          storyTable,
+        };
       });
+      response.contentType(storyTable.content_type);
+      switch (storyTable.content_type) {
+        case 'text/plain': {
+          response.send(storyTable.content.toString('utf8'));
+          break;
+        }
+        case 'application/vnd.geo+json': {
+          response.json(JSON.parse(storyTable.content.toString('utf8')));
+          break;
+        }
+        default: {
+          response.send(storyTable.content);
+          break;
+        }
+      }
     } catch (error) {
       response.status(400).json({ error: error.message });
     }
@@ -124,53 +156,44 @@ module.exports = class MessageController {
   static async message(request, response) {
     try {
       if (!request.params.uuid) {
-        response.status(400).json({ message: 'unknown uuid' });
-        return;
+        throw new Error('unknown uuid');
       }
-      await pool.connect(async (connection) => {
-        const { role } = await connection.maybeOne(
-          passportQueries.selectRoleByEmail(request.user),
-        );
-        if (!role) {
-          response.status(403).json({ message: 'forbidden' });
-          return;
-        }
-        try {
+      const { role, storyTable, isOwner } = await pool.connect(
+        async (connection) => {
+          const { role } = await connection.maybeOne(
+            passportQueries.selectRoleByEmail(request.user),
+          );
+          if (!role) {
+            throw new Error('forbidden');
+          }
           const storyTable = await connection.one(
             storyQueries.selectStoryById(request.params.uuid),
           );
-          const permission = ac.can(role).readOwn('message');
-          // todo поправить новую выдачу
-          // if (storyTable.publisher_email === request.user) {
-          //   permission = ac.can(role).readOwn('message');
-          // } else {
-          //   permission = ac.can(role).readAny('message');
-          // }
-          if (!permission.granted) {
-            response.status(403).json({ message: 'forbidden' });
-            return;
+          return {
+            role,
+            storyTable,
+            isOwner: false, // todo использовать данные из storyTable.creator и связывать с хозяином бота
+          };
+        },
+      );
+      switch (request.headers.accept) {
+        case 'application/schema+json':
+        case 'application/json':
+        default: {
+          const key = 'message:' + role + request.params.uuid;
+          const prime = await mc.get(key);
+          response.contentType('application/ld+json');
+          if (prime && prime.value) {
+            response.send(JSON.parse(prime.value));
+          } else {
+            const temporary = await templateMessage(storyTable, role);
+            const values = filter(temporary, isOwner, role);
+            await mc.set(key, JSON.stringify(values), { expires: 500 });
+            response.send(values);
           }
-          switch (request.headers.accept) {
-            case 'application/schema+json':
-            case 'application/json':
-            default: {
-              const key = 'message:' + role + request.params.uuid;
-              const prime = await mc.get(key);
-              response.contentType('application/ld+json');
-              if (prime && prime.value) {
-                response.send(JSON.parse(prime.value));
-              } else {
-                const values = await template(storyTable);
-                await mc.set(key, JSON.stringify(values), { expires: 500 });
-                response.send(values);
-              }
-              return;
-            }
-          }
-        } catch (error) {
-          response.status(404).json({ message: error.message });
+          break;
         }
-      });
+      }
     } catch (error) {
       response.status(400).json({ error: error.message });
     }
