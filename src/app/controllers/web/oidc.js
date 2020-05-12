@@ -99,7 +99,11 @@ class OIDC {
       response.status(400).json({ error: error.message });
     }
   }
-  // @see https://github.com/panva/node-oidc-provider/blob/master/example/routes/express.js
+  /**
+   * @see https://github.com/panva/node-oidc-provider/blob/master/example/routes/express.js
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   async interactionUID(request, response) {
     logger.info('interactionUID');
     try {
@@ -182,7 +186,12 @@ class OIDC {
       response.status(400).json({ error: error.message });
     }
   }
-  // authenticate
+  /**
+   * authenticate
+   *
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   async interactionLogin(request, response) {
     logger.info('interactionLogin');
     try {
@@ -216,6 +225,10 @@ class OIDC {
       response.status(400).json({ error: error.message });
     }
   }
+  /**
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   async interactionContinue(request, response) {
     logger.info('interactionContinue');
     try {
@@ -238,6 +251,10 @@ class OIDC {
       response.status(400).json({ error: error.message });
     }
   }
+  /**
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   async interactionConfirm(request, response) {
     logger.info('interactionConfirm');
     try {
@@ -258,6 +275,10 @@ class OIDC {
       response.status(400).json({ error: error.message });
     }
   }
+  /**
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   async interactionAbort(request, response) {
     logger.info('interactionAbort');
     try {

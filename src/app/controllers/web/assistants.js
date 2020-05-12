@@ -9,7 +9,6 @@ module.exports = class Marketplace {
    * @description Обновление таблицы ассистентов из env
    * @param {Request} request - request
    * @param {Response} response - response
-   * @returns {Promise<void>}
    */
   static async refresh(request, response) {
     try {
@@ -29,6 +28,10 @@ module.exports = class Marketplace {
       response.status(400).json({ error: error.message });
     }
   }
+  /**
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   static async one(request, response) {
     try {
       const client = await pool.connect(async (connection) => {
@@ -42,6 +45,10 @@ module.exports = class Marketplace {
       response.status(400).json({ error: error.message });
     }
   }
+  /**
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   static async assistants(request, response) {
     try {
       const clients = await pool.connect(async (connection) => {

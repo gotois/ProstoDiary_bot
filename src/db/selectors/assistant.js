@@ -10,6 +10,10 @@ module.exports = {
       AND assistant.bot_user_email = bot.email
     `;
   },
+  /**
+   * @param {string} bot_user_email - bot user email
+   * @returns {sql}
+   */
   selectAssistantBotByEmail(bot_user_email) {
     return sql`SELECT
     *

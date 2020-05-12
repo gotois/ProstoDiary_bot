@@ -15,7 +15,7 @@ module.exports = {
   },
   /**
    * @param {string} id - chat id
-   * @returns {*}
+   * @returns {sql}
    */
   selectByChatId(id) {
     return sql`

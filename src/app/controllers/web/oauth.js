@@ -19,6 +19,10 @@ module.exports = class OAUTH {
   constructor() {
     // здесь устанавливать pool подключение в БД
   }
+  /**
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   async callback(request, response) {
     logger.info('web:oauth');
     try {
@@ -86,6 +90,10 @@ module.exports = class OAUTH {
       response.status(400).json(error);
     }
   }
+  /**
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   registrationStart(request, response) {
     logger.info('web:registrationStart');
     try {
@@ -94,6 +102,10 @@ module.exports = class OAUTH {
       response.status(400).json({ error: error.message });
     }
   }
+  /**
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   registrationOauth(request, response) {
     logger.info('web:registrationOauth');
     try {

@@ -6,7 +6,12 @@ const twoFactorAuthService = require('../../../services/2fa.service');
 
 module.exports = class Bot {
   constructor() {}
-  // Авторизация и разблокировка чтения/приема и общей работы бота
+  /**
+   * Авторизация и разблокировка чтения/приема и общей работы бота
+   *
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   static async signin(request, response) {
     logger.info('signin', request.session.passportId);
     try {
@@ -40,7 +45,12 @@ module.exports = class Bot {
       response.status(400).json({ error: error.message });
     }
   }
-  // блокировки чтения/приема и общей работы бота
+  /**
+   * блокировки чтения/приема и общей работы бота
+   *
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   static async signout(request, response) {
     try {
       if (!request.session.passportId) {

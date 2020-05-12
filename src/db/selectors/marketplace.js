@@ -33,7 +33,7 @@ FROM
    * @param {Array<string>} object.grant_types - grant_types
    * @param {Array<string>} object.redirect_uris - redirect uris
    * @param {string} [object.homepage] - assistant homepage
-   * @returns {*}
+   * @returns {sql|TypeError}
    */
   createAssistant({
     client_id,

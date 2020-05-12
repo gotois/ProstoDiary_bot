@@ -15,7 +15,7 @@ module.exports = {
   /**
    * @param {string} login - user email or telegram id
    * @param {string} password - bot master password
-   * @returns {*}
+   * @returns {sql}
    */
   checkByEmailAndMasterPassword(login, password) {
     return sql`SELECT 1 FROM client.passport AS passportUser, client.bot AS passportBot
@@ -27,7 +27,7 @@ passportBot.master_password = crypt(${password}, master_password)
   /**
    * @param {string} login - botEmail
    * @param {string} password - MasterPassword
-   * @returns {*}
+   * @returns {sql}
    */
   getPassport(login, password) {
     return sql`SELECT
@@ -61,7 +61,7 @@ WHERE
   },
   /**
    * @param {uuid} id - user id
-   * @returns {*}
+   * @returns {sql}
    */
   selectUserById(id) {
     return sql`
@@ -71,7 +71,7 @@ WHERE
   /**
    * @todo rename select by user email or telegram id
    * @param {string} login - telegram user id or user email
-   * @returns {*}
+   * @returns {sql}
    */
   selectUserByEmail(login) {
     return sql`
@@ -109,7 +109,7 @@ WHERE
    * @param {string} obj.emailPassword - email password
    * @param {string} obj.masterPassword - master password
    * @param {string} obj.secretKey - secret key
-   * @returns {*}
+   * @returns {sql}
    */
   createBot({
     passportId,

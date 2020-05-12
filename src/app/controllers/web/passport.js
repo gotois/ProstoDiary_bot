@@ -2,7 +2,10 @@ const mc = require('../../middlewares/memcache');
 const { pool } = require('../../../db/sql');
 const passportQueries = require('../../../db/selectors/passport');
 const template = require('../../views/passport');
-
+/**
+ * @param {Request} request - request
+ * @param {Response} response - response
+ */
 module.exports = async (request, response) => {
   try {
     const key = 'passport:' + request.params.user;

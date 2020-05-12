@@ -1,4 +1,4 @@
-const ac = require('./rbac');
+const ac = require('../../middlewares/rbac');
 const mc = require('../../middlewares/memcache');
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
@@ -7,7 +7,12 @@ const template = require('../../views/message');
 const templateList = require('../../views/message-list');
 
 module.exports = class MessageController {
-  // Отдаваем последние сообщения по дате
+  /**
+   * Отдаваем последние сообщения по дате
+   *
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   static async date(request, response) {
     try {
       const { from, to, bot } = request.params;
@@ -34,7 +39,12 @@ module.exports = class MessageController {
       response.status(400).json({ error: error.message });
     }
   }
-  // Отдаваем последние сообщения
+  /**
+   * Отдаваем последние сообщения
+   *
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   static async latest(request, response) {
     try {
       const { limit = '10' } = request.params;
@@ -56,7 +66,12 @@ module.exports = class MessageController {
       response.status(400).json({ error: error.message });
     }
   }
-  // отображаем первоначальные данные какими они были отправлены
+  /**
+   * отображаем первоначальные данные какими они были отправлены
+   *
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   static async messageRaw(request, response) {
     try {
       if (!request.params.uuid) {
@@ -98,9 +113,14 @@ module.exports = class MessageController {
       response.status(400).json({ error: error.message });
     }
   }
-  // Для доступа к сообщениям, пользователю необходимо вести свой email и master password
-  // отображение прикрепленных JSON-LD включающий ссылки на остальные документы
-  // todo поддержать ревизии сообщения
+  /**
+   * Для доступа к сообщениям, пользователю необходимо вести свой email и master password
+   * отображение прикрепленных JSON-LD включающий ссылки на остальные документы
+   *
+   * @todo поддержать ревизии сообщения
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
   static async message(request, response) {
     try {
       if (!request.params.uuid) {
