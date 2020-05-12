@@ -4,7 +4,7 @@ const { allCommands } = require('../../../include/telegram-bot/commands');
 const { IS_PRODUCTION } = require('../../../environment');
 const { getCheckSum } = require('../../../services/crypt.service');
 const commandLogger = require('../../../services/command-logger.service');
-const AcceptAction = require('../../../core/models/action/accept');
+const AssignAction = require('../../../core/models/action/assign');
 /**
  * @returns {string}
  */
@@ -39,22 +39,25 @@ function response() {
  * @param {object} passport - passport gotoisCredentions
  * @returns {Promise<*>}
  */
-module.exports = function (document, { passport }) {
+module.exports = function (document, { marketplace, passport }) {
   logger.info('help');
   try {
-    const resultAction = AcceptAction({
-      abstract: response(),
-      encodingFormat: 'text/markdown',
-    });
+    const result = {
+      '@type': 'Answer',
+      'abstract': response(),
+      'encodingFormat': 'text/markdown',
+    };
     commandLogger.info({
-      document: {
-        ...document,
-        // todo превращать в AcceptAction внутри `commandTransport.on('logged' ...`
-        ...resultAction,
-      },
+      document,
       passport,
+      marketplace,
+      result,
     });
-    return Promise.resolve(resultAction);
+    return Promise.resolve(
+      AssignAction({
+        agent: document.agent,
+      }),
+    );
   } catch (error) {
     return Promise.reject(this.error(400, error.message, error));
   }

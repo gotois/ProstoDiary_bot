@@ -1,37 +1,59 @@
 const winston = require('winston');
-const RejectAction = require('../core/models/action/reject');
 const StoryTransport = require('../db/adapters/story-transport');
-const { SERVER } = require('../environment');
 const logger = require('../lib/log');
-const Notifier = require('../lib/notifier');
-const { v1: uuidv1 } = require('uuid');
 const { post } = require('../services/request.service');
 
 const storyTransport = new StoryTransport();
+/**
+ * @todo копипаста из command-logger.service.js
+ * @param {Array<object>} mainEntity - main entity
+ * @returns {boolean}
+ */
+const isSilent = (mainEntity) => {
+  const silentValue = mainEntity.find((entity) => {
+    return entity.name === 'silent';
+  });
+  return silentValue && silentValue['value'];
+};
 
 // уведомляем что данные обрабатываются в очереди
-storyTransport.on('pre-logged', async () => {
-  const headers = {
-    'User-Agent': 'Bot-Hookshot',
-    'Content-Type': 'application/json; charset=utf-8',
-    'X-Bot-Delivery': uuidv1(),
-    'X-Bot-Assistant': 'tg',
-  };
-  await post(`${SERVER.HOST}/telegram/hooks/message-processing`, {}, headers);
+storyTransport.on('pre-logged', async (authorizeAction, auth) => {
+  // зависимости от silent свойства либо уведомляем либо нет
+  if (isSilent(authorizeAction.mainEntity)) {
+    logger.info('skip notify pre-logged');
+    return;
+  }
+  await post(
+    `${authorizeAction.agent.url}/hooks/message-processing`,
+    authorizeAction,
+    {
+      'User-Agent': 'Bot-Hookshot',
+      'Content-Type': 'application/json; charset=utf-8',
+      'X-Bot-Delivery': authorizeAction.identifier,
+      'X-Bot-Assistant': authorizeAction.agent.email,
+    },
+    undefined,
+    auth,
+  );
 });
 // уведомляем вебхукой что данные сохранены
-storyTransport.on('tg-logged', async (formData) => {
-  logger.info('saveToDatabase:success');
-  const headers = {
-    'User-Agent': 'Bot-Hookshot',
-    'Content-Type': 'application/json; charset=utf-8',
-    'X-Bot-Delivery': uuidv1(),
-    'X-Bot-Assistant': 'tg',
-  };
+storyTransport.on('logged', async (acceptAction, auth) => {
+  // зависимости от silent свойства либо уведомляем либо нет
+  if (isSilent(acceptAction.mainEntity)) {
+    logger.info('skip notify logged');
+    return;
+  }
   await post(
-    `${SERVER.HOST}/telegram/hooks/message-inserted`,
-    formData,
-    headers,
+    `${acceptAction.agent.url}/hooks/message-inserted`,
+    acceptAction,
+    {
+      'User-Agent': 'Bot-Hookshot',
+      'Content-Type': 'application/json; charset=utf-8',
+      'X-Bot-Delivery': acceptAction.identifier,
+      'X-Bot-Assistant': acceptAction.agent.email,
+    },
+    undefined,
+    auth,
   );
 });
 
@@ -39,20 +61,22 @@ const storyLogger = winston.createLogger({
   transports: [storyTransport],
 });
 // уведомляем вебхукой что данные не сохранены
-storyLogger.on('error', async (error) => {
-  const notifyObject = new Notifier.convertToTelegramNotifyObject(
-    RejectAction(error),
-  );
-  const headers = {
-    'User-Agent': 'Bot-Hookshot',
-    'Content-Type': 'application/json; charset=utf-8',
-    'X-Bot-Delivery': uuidv1(),
-    'X-Bot-Assistant': 'tg',
-  };
+storyLogger.on('error', async (rejectAction, auth) => {
+  if (isSilent(rejectAction.mainEntity)) {
+    logger.info('skip notify logged');
+    return;
+  }
   await post(
-    `${SERVER.HOST}/telegram/hooks/message-error`,
-    notifyObject,
-    headers,
+    `${rejectAction.agent.url}/hooks/message-error`,
+    rejectAction,
+    {
+      'User-Agent': 'Bot-Hookshot',
+      'Content-Type': 'application/json; charset=utf-8',
+      'X-Bot-Delivery': rejectAction.identifier,
+      'X-Bot-Assistant': rejectAction.agent.email,
+    },
+    undefined,
+    auth,
   );
 });
 

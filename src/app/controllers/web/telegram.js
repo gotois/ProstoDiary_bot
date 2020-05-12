@@ -4,93 +4,9 @@ const { pool } = require('../../../db/sql');
 const assistantChatQueries = require('../../../db/selectors/chat');
 const assistantBoQueries = require('../../../db/selectors/assistant');
 const logger = require('../../../lib/log');
-
-async function notifyTelegram(parameters) {
-  const {
-    subject,
-    html = '',
-    url,
-    attachments = [],
-    messageId,
-    chatId,
-    parseMode = 'HTML',
-  } = parameters;
-  let messageHTML = '';
-  if (parseMode === 'HTML') {
-    messageHTML = `
-        <b>${subject}</b>
-${html}
-      `.trim();
-    if (html.includes('<h')) {
-      throw new Error('Unknown html tag for telegram');
-    }
-  } else {
-    messageHTML = `${subject}${html}`;
-  }
-  // если есть attachments, отдельно посылаю каждый файл
-  if (attachments.length > 0) {
-    for (const attachment of attachments) {
-      await bot.sendDocument(
-        chatId,
-        Buffer.from(attachment.content, 'base64'),
-        {
-          caption: subject,
-          parse_mode: parseMode,
-          disable_notification: true,
-        },
-        {
-          filename: attachment.filename,
-          contentType: attachment.type,
-        },
-      );
-    }
-  } else if (messageId) {
-    /* eslint-disable */
-    const replyMarkup = !url
-      ? null
-      : {
-        inline_keyboard: [
-          [
-            {
-              text: html,
-              url: url,
-            },
-          ],
-        ],
-      };
-    /* eslint-enable */
-
-    try {
-      await bot.editMessageText(subject, {
-        chat_id: chatId,
-        message_id: messageId,
-        parse_mode: parseMode,
-        reply_markup: replyMarkup,
-      });
-    } catch (error) {
-      const body = error.toJSON();
-      // todo костыль для forward message
-      if (body.message.endsWith('t be edited')) {
-        await bot.sendMessage(chatId, subject, {
-          chat_id: chatId,
-          parse_mode: parseMode,
-          reply_markup: replyMarkup,
-        });
-        return;
-      }
-      throw error;
-    }
-  } else {
-    await bot.sendMessage(chatId, messageHTML, {
-      parse_mode: parseMode,
-      disable_notification: true,
-      disable_web_page_preview: true,
-    });
-  }
-}
 /**
  * @param {object} body - telegram native body
- * @returns {object}
+ * @returns {object|Error}
  */
 const getMessageFromBody = (body) => {
   let message;
@@ -121,12 +37,10 @@ const getMessageFromBody = (body) => {
   };
 };
 /**
- * @description Расширяем встроенный объект telegram request message
  * @param {object} body - telegram request body
  * @returns {Promise<object|Error>}
  */
-async function makeRequestBody(body) {
-  const { message, type, chatId, userId } = getMessageFromBody(body);
+async function makeRequestBody({ chatId, userId }) {
   const { passports, assistants } = await pool.connect(async (connection) => {
     // сначала я получаю массив assistant_bot_id по чату
     // декодирую и передаю в passport - массив паспортов
@@ -144,10 +58,6 @@ async function makeRequestBody(body) {
     }
     const passports = [];
     const assistants = [];
-    if (body.channel_post) {
-      logger.info('PUBLIC CHANNEL');
-      return passports;
-    }
     for (const result of results) {
       const assistantTable = await connection.one(
         assistantBoQueries.selectAssistantBotByEmail(result.bot_user_email),
@@ -185,45 +95,220 @@ async function makeRequestBody(body) {
     };
   });
   return {
-    ...body,
-    message: {
-      ...message,
-      type,
-      passports,
-      assistants,
-    },
+    passports,
+    assistants,
   };
 }
 
 module.exports = class TelegramController {
+  /**
+   * @param {object} parameters - telegram object response
+   * @param {string} parameters.subject - subject text
+   * @param {string} parameters.messageId - message id
+   * @param {string} parameters.chatId - chat id
+   * @param {string} parameters.html - html text
+   * @param {string} parameters.parseMode - parse mode html or markdown
+   * @param {string} [parameters.url] - url
+   * @param {Array} [parameters.attachments] - file attachments
+   * @returns {Promise<Array>} - bot promise
+   */
+  static notifyTelegram(parameters) {
+    const {
+      subject,
+      url,
+      messageId,
+      chatId,
+      html,
+      parseMode,
+      attachments = [],
+    } = parameters;
+    // если есть attachments, отдельно посылаю каждый файл через массив промисов
+    if (attachments.length > 0) {
+      return Promise.all(
+        attachments.map((attachment) => {
+          return bot.sendDocument(
+            chatId,
+            Buffer.from(attachment.content, 'base64'),
+            {
+              caption: subject,
+              parse_mode: parseMode,
+              disable_notification: true,
+            },
+            {
+              filename: attachment.filename,
+              contentType: attachment.type,
+            },
+          );
+        }),
+      );
+    } else if (messageId && url) {
+      return bot.sendMessage(chatId, subject, {
+        parse_mode: parseMode,
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: html,
+                url: url,
+              },
+            ],
+          ],
+        },
+      });
+    } else if (url) {
+      return bot.editMessageText(subject, {
+        chat_id: chatId,
+        message_id: messageId,
+        parse_mode: parseMode,
+        reply_markup: null,
+      });
+    } else {
+      return bot.sendMessage(chatId, html, {
+        parse_mode: parseMode,
+        chat_id: chatId,
+        disable_notification: true,
+        disable_web_page_preview: true,
+      });
+    }
+  }
+  /**
+   * @param {jsonld} document - jsonld
+   * @returns {{attachments: [], chatId: *, subject: (string|string), messageId: *, html: *, parseMode: (string), url: *}}
+   */
+  static convertJsonLdToTelegramObject(document) {
+    const telegramMessageId = document.mainEntity.find((entity) => {
+      return entity.name === 'TelegramMessageId';
+    });
+    const messageId = telegramMessageId && telegramMessageId['value'];
+    const telegramChatId = document.mainEntity.find((entity) => {
+      return entity.name === 'TelegramChatId';
+    });
+    const chatId = telegramChatId && telegramChatId['value'];
+    let subject = document.result.abstract;
+    const url = document.result.url;
+
+    const attachments = [];
+    let html;
+    let parseMode;
+
+    switch (document.result.encodingFormat) {
+      case 'text/markdown': {
+        parseMode = 'Markdown';
+        html = `${subject}`;
+        if (document.result.text) {
+          html += `\n${document.result.text}`;
+        }
+        break;
+      }
+      default: {
+        parseMode = 'HTML';
+        if (url) {
+          html = `${subject}`;
+        } else {
+          html = `<b>${subject}</b>`;
+          if (document.result.text) {
+            html += document.result.text;
+          }
+        }
+        if (html.includes('<h')) {
+          throw new Error('Unknown html tag for telegram');
+        }
+        break;
+      }
+    }
+    if (document.result.messageAttachment) {
+      attachments.push({
+        content: document.result.messageAttachment.abstract,
+        filename: document.result.messageAttachment.name,
+        type: document.result.messageAttachment.encodingFormat,
+      });
+      subject = document.result.about.name;
+    }
+    return {
+      subject,
+      parseMode,
+      html: html.trim(),
+      url,
+      chatId,
+      messageId,
+      attachments,
+    };
+  }
   static notifyProcessing(request, response) {
     response.status(202).send();
     logger.info('processing');
-    // todo ...
-    //  в зависимости от silent свойства либо уведомляем либо нет
+    const telegramObjectResponse = TelegramController.convertJsonLdToTelegramObject(
+      request.body,
+    );
+    logger.info(telegramObjectResponse);
   }
-  /**
-   * @description Отправить нотификацию телеграм ассистенту с вебхукой
-   * @param {*} request - request
-   * @param {*} response - response
-   * @returns {Promise<undefined>}
-   */
-  static notify(request, response) {
+  static notifyError(request, response) {
     response.status(202).send();
-    // todo ...
-    //  в зависимости от silent свойства либо уведомляем либо нет
-    notifyTelegram(request.body)
+    logger.warn('notify error');
+    const telegramObjectResponse = TelegramController.convertJsonLdToTelegramObject(
+      request.body,
+    );
+    TelegramController.notifyTelegram(telegramObjectResponse)
       .then(() => {})
       .catch((error) => {
         logger.error(error.stack);
       });
   }
-  // webhook telegram message
+  /**
+   * @description Отправить нотификацию телеграм ассистенту с вебхукой
+   * @param {Request} request - request
+   * @param {Response} response - response
+   */
+  static notify(request, response) {
+    response.status(202).send();
+    const telegramObjectResponse = TelegramController.convertJsonLdToTelegramObject(
+      request.body,
+    );
+    TelegramController.notifyTelegram(telegramObjectResponse)
+      .then(() => {})
+      .catch((error) => {
+        logger.error(error.stack);
+      });
+  }
+  /**
+   * @description webhook telegram message
+   * @param {Request} request - request
+   * @param {Response} response - response
+   * @returns {Promise<void>}
+   */
   static async api(request, response) {
     logger.info('telegram api request');
     try {
-      const body = await makeRequestBody(request.body);
-      bot.processUpdate(body);
+      const { message, type, chatId, userId } = getMessageFromBody(
+        request.body,
+      );
+      // специальная упрощенная логика для публичных каналов
+      if (request.body.channel_post) {
+        logger.info('PUBLIC CHANNEL');
+        // Расширяем встроенный объект telegram request message
+        bot.processUpdate({
+          ...request.body,
+          message: {
+            ...message,
+            type,
+          },
+        });
+      } else {
+        const { passports, assistants } = await makeRequestBody({
+          chatId,
+          userId,
+        });
+        // Расширяем встроенный объект telegram request message
+        bot.processUpdate({
+          ...request.body,
+          message: {
+            ...message,
+            type,
+            passports,
+            assistants,
+          },
+        });
+      }
       response.sendStatus(200);
     } catch (error) {
       response.sendStatus(400);

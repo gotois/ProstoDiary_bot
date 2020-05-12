@@ -7,8 +7,8 @@ module.exports = class Marketplace {
   super() {}
   /**
    * @description Обновление таблицы ассистентов из env
-   * @param {*} request - request
-   * @param {*} response - response
+   * @param {Request} request - request
+   * @param {Response} response - response
    * @returns {Promise<void>}
    */
   static async refresh(request, response) {

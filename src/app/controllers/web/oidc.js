@@ -15,8 +15,8 @@ class OIDC {
   }
   /**
    * @description callback должен выполняться на ассистенте и записывать JWT в свою БД
-   * @param {*} request - request
-   * @param {*} response - response
+   * @param {Request} request - request
+   * @param {Response} response - response
    * @returns {Promise<void>}
    */
   async oidcallback(request, response) {

@@ -6,8 +6,7 @@ const commandLogger = require('../../../services/command-logger.service');
 const { convertIn2DigitFormat } = require('../../../services/date.service');
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
-const AcceptAction = require('../../../core/models/action/accept');
-const AcceptEmailAction = require('../../../core/models/action/accept-email');
+const AssignAction = require('../../../core/models/action/assign');
 /**
  * @param {Array} stories - entries
  * @returns {buffer}
@@ -37,7 +36,7 @@ const getTextFromStories = (stories) => {
  * @param {object} passport - passport gotoisCredentions
  * @returns {Promise<*>}
  */
-module.exports = async function (document, { passport }) {
+module.exports = async function (document, { marketplace, passport }) {
   logger.info('backup');
   try {
     const date = document.startTime;
@@ -89,36 +88,38 @@ module.exports = async function (document, { passport }) {
         filename: `backup_${date}.json`,
       },
     ]);
-    const emailAction = AcceptEmailAction({
-      sender: document.agent,
-      toRecipient: {
+    const result = {
+      '@type': 'EmailMessage',
+      'sender': document.agent,
+      'toRecipient': {
         '@type': 'Person',
         'name': 'My User',
         'email': user.email,
       },
-      about: {
+      'about': {
         '@type': 'Thing',
         'name': 'Backup ProstoDiary: Your story backup',
       },
-      messageAttachment: {
+      'name': 'Backup',
+      'description': 'Данные успешно отправлены на почту ' + user.email,
+      'messageAttachment': {
         '@type': 'CreativeWork',
         'name': 'backup.zip',
         'abstract': txtPack.toString('base64'),
         'encodingFormat': 'application/zip',
       },
-    });
+    };
     commandLogger.info({
-      document: {
-        ...document,
-        ...emailAction,
-      },
+      document,
       passport,
+      marketplace,
+      result,
     });
-    // todo логика оборачивания в AcceptAction должна быть в jsonrpc.js
-    const resultAction = AcceptAction({
-      abstract: 'Данные успешно отправлены на почту ' + user.email,
-    });
-    return Promise.resolve(resultAction);
+    return Promise.resolve(
+      AssignAction({
+        agent: document.agent,
+      }),
+    );
   } catch (error) {
     return Promise.reject(this.error(400, error.message, error));
   }

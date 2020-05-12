@@ -20,7 +20,7 @@ module.exports = {
   /**
    * refresh materialized view
    *
-   * @returns {*}
+   * @returns {sql}
    */
   refreshView() {
     return sql`REFRESH MATERIALIZED VIEW public.story
@@ -51,7 +51,7 @@ WHERE
    * @param {string} parameters.creator - creator email
    * @param {string} parameters.from - like '2000-01-01'
    * @param {string} parameters.to - like '2000-01-01'
-   * @returns {*}
+   * @returns {sql}
    */
   selectCreatorStoryByDate({ creator, from, to }) {
     return sql`SELECT * FROM story
@@ -65,7 +65,7 @@ WHERE
    * @param {string} [parameters.from] - default '2000-01-01'
    * @param {string} [parameters.to] - to date
    * @param {string} [parameters.sorting] - sorting
-   * @returns {*}
+   * @returns {sql}
    */
   selectPublisherStoryByDate({ publisher, from = '2000-01-01', to, sorting }) {
     if (!to) {

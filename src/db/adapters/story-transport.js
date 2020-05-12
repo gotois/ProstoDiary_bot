@@ -2,8 +2,12 @@ const Transport = require('winston-transport');
 const storyQueries = require('../selectors/story');
 const { pool } = require('../sql');
 const package_ = require('../../../package.json');
-const TelegramNotifyError = require('../../core/models/errors/telegram-notify-error');
 const { SERVER } = require('../../environment');
+const AcceptAction = require('../../core/models/action/accept');
+const RejectAction = require('../../core/models/action/reject');
+const AuthorizeAction = require('../../core/models/action/authorize');
+const logger = require('../../lib/log');
+const textService = require('../../services/text.service');
 
 module.exports = class PsqlTransport extends Transport {
   constructor(options) {
@@ -20,15 +24,39 @@ module.exports = class PsqlTransport extends Transport {
    * @returns {Promise<void>}
    */
   async log(info, callback) {
-    this.emit('pre-logged', {});
-    const { document, passport } = info.message;
+    const { document, marketplace, passport } = info.message;
+    let rawContent;
+    let preContent;
+    if (document.result.encodingFormat.endsWith('vnd.geo+json')) {
+      rawContent = Buffer.from(document.result.abstract, 'utf8');
+      preContent = 'posting geo';
+    } else if (document.result.encodingFormat.startsWith('text')) {
+      rawContent = Buffer.from(document.result.abstract, 'utf8');
+      preContent = document.result.abstract;
+    } else {
+      rawContent = Buffer.from(document.result.abstract, 'base64');
+      preContent = 'posting buffer';
+    }
+    this.emit(
+      'pre-logged',
+      AuthorizeAction({
+        agent: document.agent,
+        mainEntity: document.result.mainEntity,
+        result: {
+          encodingFormat: 'text/markdown',
+          abstract: `_${textService.previousInput(preContent)}_ 📝`,
+        },
+      }),
+      {
+        user: marketplace.client_id,
+        pass: marketplace.client_secret,
+        sendImmediately: false,
+      },
+    );
 
     // todo пока телега обязательна для записи
     const telegramMessageId = document.result.mainEntity.find((entity) => {
       return entity.name === 'TelegramMessageId';
-    })['value'];
-    const telegramChatId = document.result.mainEntity.find((entity) => {
-      return entity.name === 'TelegramChatId';
     })['value'];
 
     try {
@@ -49,14 +77,6 @@ module.exports = class PsqlTransport extends Transport {
               }),
             );
             // 'story.createContent'
-            let rawContent;
-            if (document.result.encodingFormat.endsWith('vnd.geo+json')) {
-              rawContent = Buffer.from(document.result.abstract, 'utf8');
-            } else if (document.result.encodingFormat.startsWith('text')) {
-              rawContent = Buffer.from(document.result.abstract, 'utf8');
-            } else {
-              rawContent = Buffer.from(document.result.abstract, 'base64');
-            }
             const contentTable = await transactionConnection.one(
               storyQueries.createContent({
                 messageId: messageTable.id,
@@ -88,33 +108,42 @@ module.exports = class PsqlTransport extends Transport {
       info.messageId = id;
       callback();
       setImmediate(() => {
-        // eslint-disable-next-line
-        console.warn(id);
-
-        switch (document.agent.email) {
-          case 'tg@gotointeractive.com': {
-            this.emit('tg-logged', {
-              subject: 'Запись добавлена',
-              html: 'Открыть запись',
-              url: `${SERVER.HOST}/message/${passport.email}/${id}`,
-              chatId: telegramChatId,
-              messageId: telegramMessageId,
-              parseMode: 'HTML',
-            });
-            break;
-          }
-          default: {
-            throw new Error('Unknown agent');
-          }
-        }
+        logger.warn(id);
+        this.emit(
+          'logged',
+          AcceptAction({
+            result: {
+              '@type': 'Answer',
+              'abstract': 'Запись добавлена',
+              'encodingFormat': 'text/html',
+              'text': 'Открыть запись',
+              'url': `${SERVER.HOST}/message/${passport.email}/${id}`,
+            },
+            agent: document.agent,
+            participant: {
+              email: passport.email,
+            },
+            mainEntity: document.result.mainEntity,
+          }),
+          {
+            user: marketplace.client_id,
+            pass: marketplace.client_secret,
+            sendImmediately: false,
+          },
+        );
       });
     } catch (error) {
       callback(
-        new TelegramNotifyError(
-          error.message,
-          telegramMessageId,
-          telegramChatId,
-        ),
+        RejectAction({
+          message: error.message,
+          agent: document.agent,
+          mainEntity: document.result.mainEntity,
+        }),
+        {
+          user: marketplace.client_id,
+          pass: marketplace.client_secret,
+          sendImmediately: false,
+        },
       );
     }
   }

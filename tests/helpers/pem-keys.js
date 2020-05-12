@@ -3,7 +3,7 @@ const { JWK } = require('jose');
 /**
  * Проверяем что существует тестовый файл passport ключей
  *
- * @param {*} t - ava test
+ * @param {ava} t - ava test
  * @returns {{privateKey: Buffer | string, publicKey: Buffer | string}}
  */
 const getPemKeys = (t) => {

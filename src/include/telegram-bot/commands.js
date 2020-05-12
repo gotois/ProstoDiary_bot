@@ -63,7 +63,7 @@ const allCommands = {
   SEARCH: {
     event: 'search.event',
     alias: /^бот|bot(\s)|\?$/,
-    description: 'Бот список вхождения?',
+    description: 'Бот список вхождения?', // использовать SPARQL запросы
   },
   START: {
     event: 'start.event',

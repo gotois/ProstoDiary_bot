@@ -1,22 +1,30 @@
 const commandLogger = require('../../../services/command-logger.service');
-const AcceptAction = require('../../../core/models/action/accept');
+const AssignAction = require('../../../core/models/action/assign');
 /**
  * @param {object} document - parameters
- * @param {object} passport - passport client user
+ * @param {object} object - object
+ * @param {object} object.passport - passport client user
+ * @param {object} object.marketplace - marketplace
  * @returns {Promise<*>}
  */
-module.exports = function (document, { passport }) {
+module.exports = function (document, { marketplace, passport }) {
   try {
-    const resultAction = AcceptAction({ abstract: 'pong' });
+    const result = {
+      '@type': 'Answer',
+      'abstract': 'pong',
+      'encodingFormat': 'text/markdown',
+    };
     commandLogger.info({
-      document: {
-        ...document,
-        // todo превращать в AcceptAction внутри `commandTransport.on('logged' ...`
-        ...resultAction,
-      },
+      document,
+      marketplace,
       passport,
+      result,
     });
-    return Promise.resolve(resultAction);
+    return Promise.resolve(
+      AssignAction({
+        agent: document.agent,
+      }),
+    );
   } catch (error) {
     return Promise.reject(this.error(400, error.message, error));
   }

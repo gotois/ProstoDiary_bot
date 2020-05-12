@@ -7,7 +7,7 @@ if (IS_AVA) {
   supertest = require('supertest');
 }
 /**
- * @param {any} body - response body
+ * @param {Buffer|string} body - response body
  * @returns {string}
  */
 const formatMessage = (body) => {

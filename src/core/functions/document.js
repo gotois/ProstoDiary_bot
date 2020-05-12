@@ -1,7 +1,7 @@
 const Abstract = require('../models/abstract');
 /**
- * @description работа с документами
- * @param {*} parameters - object
+ * @description обработка документов
+ * @param {object} parameters - object
  * @returns {Promise<jsonldApiRequest|Error>}
  */
 module.exports = async function (parameters) {
