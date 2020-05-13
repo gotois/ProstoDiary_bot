@@ -32,7 +32,7 @@ class OIDC {
       }
       const tokenResult = await post(SERVER.HOST + '/oidc/token', {
         client_id: request.query.client_id,
-        client_secret: 'foobar',
+        client_secret: 'foobar', // todo хардкод
         code: request.query.code,
         grant_type: 'authorization_code',
         redirect_uri:

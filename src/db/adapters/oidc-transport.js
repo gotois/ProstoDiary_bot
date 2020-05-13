@@ -1,13 +1,5 @@
 const client = require('../redis');
-
-function isEmpty(value) {
-  return (
-    value === undefined ||
-    value === null ||
-    (typeof value === 'object' && Object.keys(value).length === 0) ||
-    (typeof value === 'string' && value.trim().length === 0)
-  );
-}
+const { isEmpty } = require('../../helpers/utilities');
 
 const consumable = new Set(['AuthorizationCode', 'RefreshToken', 'DeviceCode']);
 

@@ -1,3 +1,4 @@
+const { website } = require('../../../../app.json');
 /**
  * @param {Request} request - request
  * @param {Response} response - response
@@ -8,7 +9,7 @@ module.exports = (request, response) => {
     `
     User-agent: *
     Disallow: /
-    SITEMAP: https://prosto-diary.herokuapp.com/sitemap.txt
+    SITEMAP: ${website}/sitemap.txt
     `.trim(),
   );
 };

@@ -22,6 +22,7 @@ function apiRequest(rpcValues, passport, marketplace) {
       { passport, marketplace },
       (error = {}, result) => {
         if (error && error.error) {
+          // todo RejectAction должен формироваться до этого
           return reject(
             jsonRpcServer.error(
               error.error.code,
@@ -30,7 +31,6 @@ function apiRequest(rpcValues, passport, marketplace) {
             ),
           );
         }
-        // todo здесь должна быть обертка AcceptAction
         return resolve(result.result);
       },
     );
@@ -40,7 +40,6 @@ function apiRequest(rpcValues, passport, marketplace) {
  * @description express.js wrapper for jayson server
  * @param {Request} request - request
  * @param {Response} response - response
- * @returns {Promise<void>}
  */
 module.exports = async (request, response) => {
   logger.info(`JSONRPC_API: ${request.body.method}`);
@@ -48,7 +47,6 @@ module.exports = async (request, response) => {
     if (!request.body.method) {
       throw new TypeError('Empty method');
     }
-    // set headers
     response.header('X-Bot', [package_.name]);
     response.header('X-Bot-Version', [package_.version]);
     // decode auth
