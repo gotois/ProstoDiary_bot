@@ -2,26 +2,32 @@ const auth = require('http-auth');
 const passportQueries = require('../../db/selectors/passport');
 const { pool } = require('../../db/sql');
 const logger = require('../../lib/log');
+/**
+ * @param {string} login - login
+ * @param {string} password - password
+ * @param {Function} callback - callback
+ * @returns {Promise<boolean>}
+ */
+const checker = async (login, password, callback) => {
+  try {
+    const botId = await pool.connect(async (connection) => {
+      const result = await connection.maybeOne(
+        passportQueries.checkByEmailAndMasterPassword(login, password),
+      );
+      return result;
+    });
+    // todo проверять rbac'ом
+    callback(Boolean(botId));
+  } catch (error) {
+    callback(false);
+  }
+};
 
-// example: demo@gotointeractive.com:demo
 const basic = auth.basic(
   {
     realm: 'Web.', // for website
   },
-  async (login, password, callback) => {
-    try {
-      const botId = await pool.connect(async (connection) => {
-        const botId = await connection.maybeOne(
-          passportQueries.checkByEmailAndMasterPassword(login, password),
-        );
-        return botId;
-      });
-      // todo проверять rbac'ом
-      callback(Boolean(botId));
-    } catch (error) {
-      callback(false);
-    }
-  },
+  checker,
 );
 
 basic.on('success', (result) => {

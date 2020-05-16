@@ -2,25 +2,32 @@ const auth = require('http-auth');
 const marketplaceQueries = require('../../db/selectors/marketplace');
 const { pool } = require('../../db/sql');
 const logger = require('../../lib/log');
+/**
+ * @param {string} login - login
+ * @param {string} password - password
+ * @param {Function} callback - callback
+ * @returns {Promise<boolean>}
+ */
+const checker = async (login, password, callback) => {
+  try {
+    const market = await pool.connect(async (connection) => {
+      const result = await connection.maybeOne(
+        marketplaceQueries.check(login, password),
+      );
+      return result;
+    });
+    // todo проверять rbac'ом
+    callback(Boolean(market));
+  } catch (error) {
+    callback(false);
+  }
+};
 
 const basic = auth.basic(
   {
     realm: 'API.',
   },
-  async (login, password, callback) => {
-    try {
-      const market = await pool.connect(async (connection) => {
-        const result = await connection.maybeOne(
-          marketplaceQueries.check(login, password),
-        );
-        return result;
-      });
-      // todo проверять rbac'ом
-      callback(Boolean(market));
-    } catch (error) {
-      callback(false);
-    }
-  },
+  checker,
 );
 
 basic.on('success', (result) => {

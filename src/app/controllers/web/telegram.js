@@ -184,9 +184,14 @@ module.exports = class TelegramController {
       return entity.name === 'TelegramChatId';
     });
     const chatId = telegramChatId && telegramChatId['value'];
+    if (!document.result) {
+      return {
+        chatId,
+        messageId,
+      };
+    }
     let subject = document.result.abstract;
     const url = document.result.url;
-
     const attachments = [];
     let html;
     let parseMode;
