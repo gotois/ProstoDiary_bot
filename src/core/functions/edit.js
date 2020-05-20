@@ -3,7 +3,7 @@ const package_ = require('../../../package.json');
  * @todo использовать враппер
  * @description edit
  * @param {object} requestObject - requestObject
- * @returns {Promise<jsonldApiRequest>}
+ * @returns {Promise<jsonldAction>}
  */
 module.exports = (requestObject) => {
   const { text, date, telegram_message_id, telegram_user_id } = requestObject;

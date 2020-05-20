@@ -1,7 +1,7 @@
 const AbstractVoice = require('../models/abstract/abstract-voice');
 /**
  * @param {object} requestObject - parameters
- * @returns {Promise<jsonldApiRequest>}
+ * @returns {Promise<jsonldAction>}
  */
 module.exports = async function (requestObject) {
   const abstractVoice = new AbstractVoice({

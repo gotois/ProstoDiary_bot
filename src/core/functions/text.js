@@ -2,7 +2,7 @@ const AbstractText = require('../models/abstract/abstract-text');
 const textService = require('../../services/text.service');
 /**
  * @param {object} parameters - object
- * @returns {Promise<jsonldApiRequest>}
+ * @returns {Promise<jsonldAction>}
  */
 module.exports = async (parameters) => {
   const abstractText = new AbstractText({

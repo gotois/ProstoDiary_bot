@@ -3,7 +3,7 @@ const AbstractCommand = require('../models/abstract/abstract-command');
  * @todo дать возможность очищать не все, а только определенные истории
  * @description Удаление всей истории пользователя целиком
  * @param {object} requestObject - requestObject
- * @returns {Promise<jsonldApiRequest>}
+ * @returns {Promise<jsonldAction>}
  */
 module.exports = async function (requestObject) {
   const abstractCommand = new AbstractCommand({

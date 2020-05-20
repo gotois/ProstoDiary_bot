@@ -113,7 +113,7 @@ class Abstract {
     };
   }
   /**
-   * @returns {jsonldApiRequest}
+   * @returns {jsonldAction}
    */
   get context() {
     return {

@@ -3,7 +3,7 @@ const AbstractPhoto = require('../models/abstract/abstract-photo');
  * @param {object} requestObject - object
  * @param {string} requestObject.caption - photo caption text
  * @param {Buffer} requestObject.fileBuffer - file buffer
- * @returns {Promise<jsonldApiRequest>}
+ * @returns {Promise<jsonldAction>}
  */
 module.exports = async function (requestObject) {
   const abstractPhoto = new AbstractPhoto({

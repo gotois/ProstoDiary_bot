@@ -3,7 +3,7 @@
  */
 /**
  * @description API request
- * @typedef {object} jsonldApiRequest
+ * @typedef {object} jsonldAction
  * @property {string} @id - jsonld context
  * @property {object} @context - jsonld context
  * @property {object} @type - jsonld type

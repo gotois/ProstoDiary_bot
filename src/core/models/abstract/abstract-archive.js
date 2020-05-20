@@ -1,5 +1,5 @@
 const Abstract = require('.');
-const { unpack } = require('../../../services/archive.service');
+const archiveAnalyze = require('../analyze/archive-analyze');
 
 // zip, gzip, rar,  ..
 class AbstractArchive extends Abstract {
@@ -9,7 +9,7 @@ class AbstractArchive extends Abstract {
     this._objectContext = [];
   }
   /**
-   * @returns {jsonldApiRequest}
+   * @returns {jsonldAction}
    */
   get context() {
     return {
@@ -20,17 +20,7 @@ class AbstractArchive extends Abstract {
   }
 
   async prepare() {
-    const zipMap = await unpack(this.buffer);
-    for (const [filename, buffer] of zipMap) {
-      const DynamicAbstract = await Abstract.getAbstractFromDocument(buffer);
-      const anyAbstract = new DynamicAbstract({
-        ...this._data,
-        buffer: buffer,
-        filename,
-      });
-      await anyAbstract.prepare();
-      this._objectContext.push(anyAbstract.context);
-    }
+    await archiveAnalyze(this);
   }
 }
 

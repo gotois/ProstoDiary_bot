@@ -1,7 +1,6 @@
-const SchemaOrg = require('schema.org');
 const jsonld = require('jsonld');
 const validator = require('validator');
-const schemaOrg = new SchemaOrg();
+const schemaOrg = require('./schema');
 /**
  * @description сериализатор
  * @param {any} compacted - compacted

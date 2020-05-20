@@ -1,6 +1,5 @@
-const visionService = require('../../../lib/vision');
-const googleStorage = require('../../../lib/google-storage');
 const Abstract = require('.');
+const pdfAnalze = require('../analyze/pdf-analyze');
 
 class AbstractPDF extends Abstract {
   constructor(data) {
@@ -11,7 +10,7 @@ class AbstractPDF extends Abstract {
     this.mimeType = data.mimeType;
   }
   /**
-   * @returns {jsonldApiRequest}
+   * @returns {jsonldAction}
    */
   get context() {
     return {
@@ -28,19 +27,9 @@ class AbstractPDF extends Abstract {
       'object': this.object,
     };
   }
-  // загружаем бинарник в cloud, производим расчеты, получаем сгенерированный json, разбиваем его на объекты
+
   async prepare() {
-    const filename = await googleStorage.uploadFile(this.buffer, this.filename);
-    const file = await visionService.pdfReader(filename);
-    const storageFile = await googleStorage.getFile(file);
-    const filesResponse = JSON.parse(storageFile.toString());
-    const [{ fullTextAnnotation, context }] = filesResponse.responses;
-    const { /* pages, */ text } = fullTextAnnotation;
-    this.object.push({
-      '@type': 'CreativeWork',
-      'description': text,
-      'url': context.uri,
-    });
+    await pdfAnalze(this);
   }
 }
 

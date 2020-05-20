@@ -2,7 +2,7 @@ const AbstractCommand = require('../models/abstract/abstract-command');
 /**
  * @description backup
  * @param {object} parameters - requestObject
- * @returns {Promise<jsonldApiRequest>}
+ * @returns {Promise<jsonldAction>}
  */
 module.exports = async (parameters) => {
   const { date, token, sorting = 'Ascending' } = parameters;

@@ -1,58 +1,8 @@
 const parser = require('fast-xml-parser');
 const Abstract = require('.');
-
-// AppleHealth - схема для выгрузки
-const clinicalDocumentReader = (json) => {
-  const objects = [];
-  // todo дополнить схемой
-  json.ClinicalDocument.recordTarget.patientRole;
-
-  return objects;
-};
-
-const healthData = (json) => {
-  const objects = [];
-
-  // todo странные данные - возможно дополнить в схему
-  // json.HealthData.Me;
-
-  json.HealthData.ClinicalRecord.map((record) => {
-    return {
-      '@type': 'MedicalEntity',
-      'name': record.type,
-      'identifier': record.identifier,
-      'description': record.sourceName,
-      'url': record.sourceURL,
-      // fhirVersion: '1.0.2',
-      // receivedDate: '2018-12-18 14:06:24 -0600',
-    };
-  }).forEach((record) => {
-    objects.push(record);
-  });
-  return objects;
-};
-
-// OFX - схема для выгрузки из банковских счетов
-const ofxReader = (json) => {
-  const { BANKTRANLIST } = json.OFX.BANKMSGSRSV1.STMTTRNRS.STMTRS;
-  const objects = BANKTRANLIST.STMTTRN.map((stmttrn) => {
-    return {
-      '@type': 'FinancialProduct',
-      'name': stmttrn.NAME,
-      // broker
-      'amount': {
-        '@type': stmttrn.TRNTYPE,
-        'currency': stmttrn.CURRENCY,
-        // todo добавить
-        // stmttrn.DTPOSTED,
-        // stmttrn.TRNAMT,
-        // stmttrn.FITID,
-        // stmttrn.MEMO,
-      },
-    };
-  });
-  return objects;
-};
+const ofxAnalyze = require('../analyze/ofx-analyze');
+const healthAnalyze = require('../analyze/health-analyze');
+const clinicalAnalyze = require('../analyze/clinical-analyze');
 
 // преобразование html, xml в json
 class AbstractDsl extends Abstract {
@@ -71,7 +21,7 @@ class AbstractDsl extends Abstract {
     };
   }
   /**
-   * @returns {jsonldApiRequest}
+   * @returns {jsonldAction}
    */
   get context() {
     return {
@@ -90,20 +40,17 @@ class AbstractDsl extends Abstract {
     // AppleHealth
     // eslint-disable-next-line no-prototype-builtins
     if (this.json.hasOwnProperty('HealthData')) {
-      const healthObjects = healthData(this.json);
-      this.object.concat(healthObjects);
+      healthAnalyze(this);
     }
     // eslint-disable-next-line no-prototype-builtins
     if (this.json.hasOwnProperty('ClinicalDocument:')) {
-      const clinicalObjects = clinicalDocumentReader(this.json);
-      this.object.concat(clinicalObjects);
+      clinicalAnalyze(this);
     }
 
     // OFX
     // eslint-disable-next-line no-prototype-builtins
     if (this.json.hasOwnProperty('OFX')) {
-      const financeObjects = ofxReader(this.json);
-      this.object.concat(financeObjects);
+      ofxAnalyze(this);
     }
   }
 }

@@ -114,7 +114,7 @@ class TelegramBotRequest {
   /**
    * Бродкаст всех сообщений по паспортам ботов по API
    *
-   * @param {jsonldApiRequest} document - JSON-LD Request
+   * @param {jsonldAction} document - JSON-LD Request
    * @returns {Promise<object|Error>}
    */
   rpc(document) {

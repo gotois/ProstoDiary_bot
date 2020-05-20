@@ -1,6 +1,5 @@
-const FileType = require('file-type');
-const visionService = require('../../../lib/vision');
 const Abstract = require('.');
+const photoAnalyze = require('../analyze/photo-analyze');
 
 class AbstractPhoto extends Abstract {
   constructor(data) {
@@ -10,7 +9,7 @@ class AbstractPhoto extends Abstract {
     this.caption = data.caption;
   }
   /**
-   * @returns {jsonldApiRequest}
+   * @returns {jsonldAction}
    */
   get context() {
     return {
@@ -28,17 +27,7 @@ class AbstractPhoto extends Abstract {
   }
 
   async prepare() {
-    const { mime } = await FileType.fromBuffer(this.imageBuffer);
-    this.mime = mime;
-    const visionResult = await visionService.labelDetection(this.imageBuffer);
-    // todo распознавать интент-намерение в самой картинке через Vision
-    visionResult.labelAnnotations.forEach((annotation) => {
-      this.object.push({
-        '@type': 'CreativeWork',
-        'description': annotation.description,
-        'name': annotation.mid, // todo больше хак, потому что хранится строка вида "/m/014cnc"
-      });
-    });
+    await photoAnalyze(this);
   }
 }
 

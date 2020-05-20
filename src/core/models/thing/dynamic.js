@@ -1,6 +1,4 @@
-const SchemaOrg = require('schema.org');
-
-const schemaOrg = new SchemaOrg();
+const schemaOrg = require('../../../lib/schema');
 /**
  * @description На основе набора свойств пытаюсь насытить schema.org
  * @todo покрыть тестами
