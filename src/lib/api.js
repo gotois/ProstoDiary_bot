@@ -1,5 +1,5 @@
-const jsonRpcServerPublic = require('../api/v4/public/server');
-const jsonRpcServerPrivate = require('../api/v4/private/server');
+const jsonRpcServerPublic = require('../api/public/server');
+const jsonRpcServerPrivate = require('../api/private/server');
 const RejectAction = require('../core/models/action/reject');
 
 module.exports.private = (rpcValues) => {
