@@ -1,77 +1,44 @@
-const { pool } = require('../../../db/sql');
-const passportQueries = require('../../../db/selectors/passport');
-const logger = require('../../../lib/log');
-// eslint-disable-next-line
-const twoFactorAuthService = require('../../../services/2fa.service');
+const apiRequest = require('../../../lib/api').private;
 
 module.exports = class Bot {
-  constructor() {}
   /**
-   * Авторизация и разблокировка чтения/приема и общей работы бота
-   *
+   * @description Авторизация и разблокировка чтения/приема и общей работы бота
    * @param {Request} request - request
    * @param {Response} response - response
    */
   static async signin(request, response) {
-    logger.info('signin', request.session.passportId);
     try {
-      if (!request.session.passportId) {
-        throw new Error('Session not found');
-      }
-      const passportId = request.session.passportId;
-      await pool.connect(async (connection) => {
-        const botTable = await connection.one(
-          passportQueries.selectByPassport(passportId),
-        );
-        // Бот уже был деактивирован
-        if (botTable.activated) {
-          return;
-        }
-        /*
-        const valid = twoFactorAuthService.verifyUser(passport.secret_key, token);
-        if (!valid) {
-          // todo Превышено число попыток входа. Начните снова через N секунд
-          //  ...
-        }
-        */
-
-        await connection.query(
-          passportQueries.activateByPassportId(passportId),
-        );
+      const values = await apiRequest({
+        jsonrpc: '2.0',
+        id: 'xxxxx',
+        method: 'bot-sign-in',
+        params: {
+          session: request.session,
+          ...request.params,
+        },
       });
-
-      response.status(200).send('Бот активирован');
+      response.status(200).send(values);
     } catch (error) {
       response.status(400).json({ error: error.message });
     }
   }
   /**
-   * блокировки чтения/приема и общей работы бота
-   *
+   * @description Блокировка чтения/приема сообщений к боту
    * @param {Request} request - request
    * @param {Response} response - response
    */
   static async signout(request, response) {
     try {
-      if (!request.session.passportId) {
-        throw new Error('Session not found');
-      }
-      const passportId = request.session.passportId;
-      await pool.connect(async (connection) => {
-        const botTable = await connection.one(
-          passportQueries.selectByPassport(passportId),
-        );
-        // Бот уже был деактивирован
-        if (!botTable.activated) {
-          return;
-        }
-        // todo: деактивировать почтовый ящик https://yandex.ru/dev/pdd/doc/reference/email-edit-docpage/
-        //  ...
-        await connection.query(
-          passportQueries.deactivateByPassportId(passportId),
-        );
+      const values = await apiRequest({
+        jsonrpc: '2.0',
+        id: 'xxxxx',
+        method: 'bot-sign-out',
+        params: {
+          session: request.session,
+          ...request.params,
+        },
       });
-      response.status(200).send('Бот деактивирован');
+      response.status(200).send(values);
     } catch (error) {
       response.status(400).json({ error: error.message });
     }

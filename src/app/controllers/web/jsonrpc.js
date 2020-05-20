@@ -1,41 +1,12 @@
 const jose = require('jose');
 const { Ed25519KeyPair } = require('crypto-ld');
 const package_ = require('../../../../package.json');
-const jsonRpcServer = require('../../../api/server');
 const logger = require('../../../lib/log');
+const apiRequest = require('../../../lib/api').public;
 const linkedDataSignature = require('../../../services/linked-data-signature.service');
 const { pool } = require('../../../db/sql');
 const signatureQueries = require('../../../db/selectors/signature');
 const marketplaceQueries = require('../../../db/selectors/marketplace');
-const RejectAction = require('../../../core/models/action/reject');
-/**
- * @param {object} rpcValues - json rpc method
- * @param {object} passport - passport
- * @param {object} marketplace - marketplace
- * @returns {Promise<jsonld>}
- */
-function apiRequest(rpcValues, passport, marketplace) {
-  logger.info('apiRequest');
-  return new Promise((resolve, reject) => {
-    jsonRpcServer.call(
-      rpcValues,
-      { passport, marketplace },
-      (error = {}, result) => {
-        if (error && error.error) {
-          // todo RejectAction должен формироваться до этого
-          return reject(
-            jsonRpcServer.error(
-              error.error.code,
-              error.error.message,
-              JSON.stringify(RejectAction(error.error.data)),
-            ),
-          );
-        }
-        return resolve(result.result);
-      },
-    );
-  });
-}
 /**
  * @description express.js wrapper for jayson server
  * @param {Request} request - request
