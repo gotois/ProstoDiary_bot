@@ -1,5 +1,7 @@
 const { SERVER } = require('../../../environment');
-
+/**
+ * @returns {string}
+ */
 module.exports = () => {
   return `
     <h1>Registration Step 2</h1>

@@ -3,8 +3,8 @@ const mc = require('../../middlewares/memcache');
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
 const passportQueries = require('../../../db/selectors/passport');
-const templateMessage = require('../../views/message');
-const templateList = require('../../views/message-list');
+const templateMessage = require('../../views/message/message');
+const templateList = require('../../views/message/message-list');
 /**
  * Фильтруем выдачу в зависимост от доступа RBAC
  *

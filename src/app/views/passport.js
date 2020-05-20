@@ -1,6 +1,9 @@
 const crypto = require('crypto');
 const { SERVER } = require('../../environment');
-
+/**
+ * @param {object} passport - passport
+ * @returns {jsonld}
+ */
 module.exports = (passport) => {
   let email;
   let gender;

@@ -1,6 +1,8 @@
 const qs = require('qs');
 const { SERVER } = require('../../environment');
-
+/**
+ * @returns {jsonld}
+ */
 module.exports = ({ clients }) => {
   const data = clients.map((client) => {
     const linkQuery = qs.stringify({

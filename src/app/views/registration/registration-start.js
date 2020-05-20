@@ -1,3 +1,6 @@
+/**
+ * @returns {string}
+ */
 module.exports = () => {
   return `
     <h1>Registration Step 1</h1>

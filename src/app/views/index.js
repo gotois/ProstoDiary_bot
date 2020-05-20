@@ -1,3 +1,6 @@
+/**
+ * @returns {string}
+ */
 module.exports = () => {
   let html = '';
   html += `

@@ -8,7 +8,8 @@ const pddService = require('../../../services/pdd.service');
 const twoFactorAuthService = require('../../../services/2fa.service');
 const yandexGraphAPI = require('../../../lib/yandex');
 const facebookGraphAPI = require('../../../lib/facebook');
-const { IS_PRODUCTION, SERVER } = require('../../../environment');
+const { IS_PRODUCTION } = require('../../../environment');
+const oauthFinishTemplate = require('../../views/oauth/finish');
 const registrationStartTemplate = require('../../views/registration/registration-start');
 const registrationOauthTemplate = require('../../views/registration/registration-oauth');
 const registrationSuccessTemplate = require('../../views/registration/registration-success');
@@ -229,19 +230,7 @@ module.exports = class OAUTH {
         to: passport.email,
         from: email,
         subject,
-        html: `
-        <h1>Добро пожаловать в систему ${package_.author.name}!</h1>
-        <h2>Шаг 1: Настройте двухфакторную аутентификацию.</h2>
-        <p>Используйте приложение для распознавания QR-кода в приложении для двухэтапной аутентификации, например, Google Authenticator.</p>
-        <img src="${secret.qr}" alt="${secret.base32}">
-        <br>
-        <h2>Шаг 2: Сохраните логин/пароль созданного бота в надежном и секретном месте.</h2>
-        <div><strong>EMAIL: </strong><pre>${email}</pre></div>
-        <div><strong>PASSWORD: </strong><pre>${secret.masterPassword}</pre></div>
-        <br>
-        <h2>Шаг 3: Активируйте бота и выберите ассистента.</h2>
-        <p><a href="${SERVER.HOST}/bot/activate">[ Подтвердить регистрацию ]</a></p>
-      `,
+        html: oauthFinishTemplate({ secret, email }),
       });
       return passport;
     } catch (error) {

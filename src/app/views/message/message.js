@@ -1,6 +1,6 @@
-const googleKnowledgeGraph = require('../../lib/google-knowledge-graph');
-const { getSynonyms } = require('../../lib/dictionary');
-const { SERVER } = require('../../environment');
+const googleKnowledgeGraph = require('../../../lib/google-knowledge-graph');
+const { getSynonyms } = require('../../../lib/dictionary');
+const { SERVER } = require('../../../environment');
 
 module.exports = async (storyTable) => {
   const [type] = storyTable.categories;
