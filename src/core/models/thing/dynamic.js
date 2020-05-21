@@ -4,9 +4,9 @@ const schemaOrg = require('../../../lib/schema');
  * @todo покрыть тестами
  * example:
  * myForm({
- *   "availability": "http://schema.org/InStock",
- *   'priceCurrency': 'USD',
- *   'price': 900,
+ * "availability": "http://schema.org/InStock",
+ * 'priceCurrency': 'USD',
+ * 'price': 900,
  * })
  * @param {object} parameters - Параметры полученные например от Diglogflow
  * @returns {object} - тип JSON-LD

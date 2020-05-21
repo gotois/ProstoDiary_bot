@@ -20,7 +20,8 @@ class NewChatMembers extends TelegramBotRequest {
       );
       if (!assistantBot) {
         throw new Error(
-          'добавлять бота может только участник gotois создавший с ассистентом личный чат',
+          // eslint-disable-next-line max-len
+          'Добавлять бота может только участник создавший с ассистентом личный чат',
         );
       }
       await connection.query(

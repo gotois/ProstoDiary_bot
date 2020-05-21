@@ -9,6 +9,7 @@ const logger = require('../../../lib/log');
 const { post } = require('../../../services/request.service');
 const { SERVER } = require('../../../environment');
 
+// @todo переделать под API
 class OIDC {
   constructor(provider) {
     this.oidc = provider;

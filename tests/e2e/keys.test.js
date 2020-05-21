@@ -1,7 +1,8 @@
+const ldSignature = require('../../src/services/linked-data-signature.service');
+
 module.exports = async (t) => {
-  const linkedDataSignature = require('../../src/services/linked-data-signature.service');
   const document = require('../fixtures/documents/eat-action');
-  const signedDocument = await linkedDataSignature.signDocument(
+  const signedDocument = await ldSignature.signDocument(
     document,
     t.context.publicKey,
     t.context.privateKey,

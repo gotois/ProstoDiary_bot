@@ -10,16 +10,14 @@ const yandexGraphAPI = require('../../../lib/yandex');
 const facebookGraphAPI = require('../../../lib/facebook');
 const { IS_PRODUCTION } = require('../../../environment');
 const oauthFinishTemplate = require('../../views/oauth/finish');
-const registrationStartTemplate = require('../../views/registration/registration-start');
-const registrationOauthTemplate = require('../../views/registration/registration-oauth');
-const registrationSuccessTemplate = require('../../views/registration/registration-success');
+const regStartTmpl = require('../../views/registration/registration-start');
+const regOauthTmpl = require('../../views/registration/registration-oauth');
+const regSuccessTmpl = require('../../views/registration/registration-success');
 
+// @todo переделать под API и сделать статические методы
+// подтверждение авторизации oauth. Сначала переходить сначала по ссылке вида https://cd0b2563.eu.ngrok.io/connect/yandex
+// Через localhost не будет работать
 module.exports = class OAUTH {
-  // подтверждение авторизации oauth. Сначала переходить сначала по ссылке вида https://cd0b2563.eu.ngrok.io/connect/yandex
-  // Через localhost не будет работать
-  constructor() {
-    // здесь устанавливать pool подключение в БД
-  }
   /**
    * @param {Request} request - request
    * @param {Response} response - response
@@ -75,6 +73,7 @@ module.exports = class OAUTH {
                 },
               );
               request.session.passportId = client.id;
+              // eslint-disable-next-line max-len
               return 'На привязанную почту вам отправлено письмо от вашего бота. Активируйте бота следуя инструкциям в письме.';
             },
           );
@@ -83,7 +82,7 @@ module.exports = class OAUTH {
       });
       logger.info(result);
       response.status(200).send(
-        registrationSuccessTemplate({
+        regSuccessTmpl({
           message: result,
         }),
       );
@@ -98,7 +97,7 @@ module.exports = class OAUTH {
   registrationStart(request, response) {
     logger.info('web:registrationStart');
     try {
-      response.status(200).send(registrationStartTemplate());
+      response.status(200).send(regStartTmpl());
     } catch (error) {
       response.status(400).json({ error: error.message });
     }
@@ -120,7 +119,7 @@ module.exports = class OAUTH {
         throw new Error(`${request.body.phone} Not a phone`);
       }
       request.session.phone = phone;
-      response.status(200).send(registrationOauthTemplate());
+      response.status(200).send(regOauthTmpl());
     } catch (error) {
       response.status(400).json({ error: error.message });
     }

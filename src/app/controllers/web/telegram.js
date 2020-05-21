@@ -242,18 +242,18 @@ module.exports = class TelegramController {
   static notifyProcessing(request, response) {
     response.status(202).send();
     logger.info('processing');
-    const telegramObjectResponse = TelegramController.convertJsonLdToTelegramObject(
+    const tgObjectResponse = TelegramController.convertJsonLdToTelegramObject(
       request.body,
     );
-    logger.info(telegramObjectResponse);
+    logger.info(tgObjectResponse);
   }
   static notifyError(request, response) {
     response.status(202).send();
     logger.warn('notify error');
-    const telegramObjectResponse = TelegramController.convertJsonLdToTelegramObject(
+    const tgObjectResponse = TelegramController.convertJsonLdToTelegramObject(
       request.body,
     );
-    TelegramController.notifyTelegram(telegramObjectResponse)
+    TelegramController.notifyTelegram(tgObjectResponse)
       .then(() => {})
       .catch((error) => {
         logger.error(error.stack);
@@ -266,10 +266,10 @@ module.exports = class TelegramController {
    */
   static notify(request, response) {
     response.status(202).send();
-    const telegramObjectResponse = TelegramController.convertJsonLdToTelegramObject(
+    const tgObjectResponse = TelegramController.convertJsonLdToTelegramObject(
       request.body,
     );
-    TelegramController.notifyTelegram(telegramObjectResponse)
+    TelegramController.notifyTelegram(tgObjectResponse)
       .then(() => {})
       .catch((error) => {
         logger.error(error.stack);

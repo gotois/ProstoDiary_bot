@@ -2,8 +2,10 @@
 // вместо этого используется core
 module.exports = (t) => {
   const { mailExample } = require('../fixtures/database/mail');
+  const messageIdString =
+    '<xxxxxxxxxxxxx_5XtptB-A@ismtpd0001p1lon1.sendgrid.net>';
 
-  const messageId = '<xxxxxxxxxxxxx_5XtptB-A@ismtpd0001p1lon1.sendgrid.net>'.replace(
+  const messageId = messageIdString.replace(
     'xxxxxxxxxxxxx',
     String(Math.random()).slice(3, 3 + 13),
   );

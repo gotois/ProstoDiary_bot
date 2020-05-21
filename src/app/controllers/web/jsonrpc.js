@@ -3,7 +3,7 @@ const { Ed25519KeyPair } = require('crypto-ld');
 const package_ = require('../../../../package.json');
 const logger = require('../../../lib/log');
 const apiRequest = require('../../../lib/api').public;
-const linkedDataSignature = require('../../../services/linked-data-signature.service');
+const ldSignature = require('../../../services/linked-data-signature.service');
 const { pool } = require('../../../db/sql');
 const signatureQueries = require('../../../db/selectors/signature');
 const marketplaceQueries = require('../../../db/selectors/marketplace');
@@ -24,6 +24,7 @@ module.exports = async (request, response) => {
     const [_basic, id_token] = request.headers.authorization.split(' ');
     const decoded = jose.JWT.decode(id_token);
     const passport = request.session.passport[decoded.sub];
+    // сделать через API
     const { fingerprint, marketplace } = await pool.connect(
       async (connection) => {
         const result = await connection.one(
@@ -42,7 +43,7 @@ module.exports = async (request, response) => {
     // @see https://github.com/digitalbazaar/minimal-cipher
     const publicKeyNode = Ed25519KeyPair.fromFingerprint({ fingerprint });
     publicKeyNode.id = request.headers.verification;
-    await linkedDataSignature.verifyDocument(
+    await ldSignature.verifyDocument(
       request.body.params,
       publicKeyNode,
       `https://gotointeractive.com/marketplace/${decoded.aud.split('@')[0]}`,

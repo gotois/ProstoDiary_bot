@@ -9,6 +9,7 @@ class Account {
     store.set(this.accountId, this);
   }
   // todo использовать scope и use для выборки
+  // todo переделать под private API
   async claims(/* use, scope */) {
     const botInfo = await pool.connect(async (connection) => {
       const botTable = await connection.one(
