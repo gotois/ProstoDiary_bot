@@ -47,7 +47,7 @@ module.exports = (telegramBot) => {
     );
   };
   /**
-   * @param {TelegramMessage} message - message
+   * @param {TelegramBotMessage} message - message
    * @param {object} metadata - matcher
    * @param {string} metadata.type - matcher type
    * @returns {undefined}

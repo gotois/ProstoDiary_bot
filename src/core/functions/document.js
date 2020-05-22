@@ -1,4 +1,5 @@
 const Abstract = require('../models/abstract');
+const jsonldAction = require('../models/action/base');
 /**
  * @description обработка документов
  * @param {object} parameters - object

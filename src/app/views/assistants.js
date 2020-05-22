@@ -1,7 +1,7 @@
 const qs = require('qs');
 const { SERVER } = require('../../environment');
 /**
- * @returns {jsonld}
+ * @returns {object} - jsonld
  */
 module.exports = ({ clients }) => {
   const data = clients.map((client) => {

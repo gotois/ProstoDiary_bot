@@ -1,4 +1,5 @@
 const AbstractPhoto = require('../models/abstract/abstract-photo');
+const jsonldAction = require('../models/action/base');
 /**
  * @param {object} requestObject - object
  * @param {string} requestObject.caption - photo caption text

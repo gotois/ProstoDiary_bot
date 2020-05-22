@@ -69,14 +69,14 @@ const convertToNormalDate = (date) => {
   if (dd > 31 || mm > 12) {
     throw new Error('Invalid Date day or month');
   }
-  const newDate = new Date();
-  newDate.setDate(dd);
-  newDate.setMonth(mm);
-  newDate.setYear(yyyy);
-  if (!dateFns.isValid(newDate)) {
+  const currentDate = new Date();
+  currentDate.setDate(dd);
+  currentDate.setMonth(mm);
+  currentDate.setYear(yyyy);
+  if (!dateFns.isValid(currentDate)) {
     throw new Error('Date is invalid');
   }
-  return newDate;
+  return currentDate;
 };
 /**
  *

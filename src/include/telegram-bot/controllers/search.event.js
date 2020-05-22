@@ -6,6 +6,7 @@ const logger = require('../../../lib/log');
 const requestService = require('../../../services/request.service');
 const dialogService = require('../../../services/dialog.service');
 const TelegramBotRequest = require('./telegram-bot-request');
+const TelegramMessage = require('../models/telegram-bot-message');
 const { IS_PRODUCTION } = require('../../../environment');
 
 // todo поддержать Jena

@@ -2,6 +2,7 @@ const FileType = require('file-type');
 const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
 const { unpack } = require('../../../services/archive.service');
+const jsonldAction = require('../action/base');
 
 class Abstract {
   constructor(data) {
@@ -39,8 +40,8 @@ class Abstract {
     }
   }
   /**
-   * @param {buffer} buffer - buffer
-   * @returns {Promise<AbstractOfx|AbstractDsl|AbstractPDF>}
+   * @param {Buffer} buffer - buffer
+   * @returns {Promise<Abstract>}
    */
   static async getAbstractFromDocument(buffer) {
     const { mime, ext } = await FileType.fromBuffer(buffer);

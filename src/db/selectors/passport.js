@@ -60,7 +60,7 @@ WHERE
 `;
   },
   /**
-   * @param {uuid} id - user id
+   * @param {string} id - user uuid
    * @returns {sql}
    */
   selectUserById(id) {
@@ -103,9 +103,9 @@ WHERE
   },
   /**
    * @param {object} obj - bot object
-   * @param {uid} obj.passportId - passport ID
+   * @param {string} obj.passportId - passport uuid
    * @param {string} obj.email - email
-   * @param {uid} obj.emailUID - email id
+   * @param {string} obj.emailUID - email uuid
    * @param {string} obj.emailPassword - email password
    * @param {string} obj.masterPassword - master password
    * @param {string} obj.secretKey - secret key

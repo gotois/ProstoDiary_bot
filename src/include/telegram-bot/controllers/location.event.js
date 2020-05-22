@@ -1,5 +1,6 @@
 const TelegramBotRequest = require('./telegram-bot-request');
 const locationAction = require('../../../core/functions/location');
+const TelegramMessage = require('../models/telegram-bot-message');
 
 class Location extends TelegramBotRequest {
   constructor(message) {

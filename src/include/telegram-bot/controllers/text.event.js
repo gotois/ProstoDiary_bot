@@ -1,4 +1,5 @@
 const TelegramBotRequest = require('./telegram-bot-request');
+const TelegramMessage = require('../models/telegram-bot-message');
 const textAction = require('../../../core/functions/text');
 const logger = require('../../../lib/log');
 

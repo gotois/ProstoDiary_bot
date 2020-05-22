@@ -1,5 +1,6 @@
 const Abstract = require('.');
 const geoAnalyze = require('../analyze/geo-analyze');
+const jsonldAction = require('../action/base');
 
 class AbstractGeo extends Abstract {
   #latitude;

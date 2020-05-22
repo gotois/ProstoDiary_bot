@@ -4,7 +4,7 @@ const { JENA } = require('../../../environment');
 const JENA_SERVER = JENA.URL + '/' + JENA.DATABASE.NAME + '/query';
 /**
  * @param {string} query - sparql string
- * @returns {PromiseLike<any> | undefined | Observable<any> | Promise<any>}
+ * @returns {any}
  */
 module.exports = async function (query) {
   const body = 'query=' + encodeURIComponent(query);

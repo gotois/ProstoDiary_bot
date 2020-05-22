@@ -1,9 +1,11 @@
+// eslint-disable-next-line ava/use-test
+const { ExecutionContext } = require('ava');
 const fs = require('fs');
 const { JWK } = require('jose');
 /**
  * Проверяем что существует тестовый файл passport ключей
  *
- * @param {ava} t - ava test
+ * @param {ExecutionContext} t - ava test
  * @returns {{privateKey: Buffer | string, publicKey: Buffer | string}}
  */
 const getPemKeys = (t) => {

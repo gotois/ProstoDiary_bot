@@ -1,10 +1,11 @@
+const e = require('express');
 const apiRequest = require('../../../lib/api').private;
 
 module.exports = class Bot {
   /**
    * @description Авторизация и разблокировка чтения/приема и общей работы бота
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   static async signin(request, response) {
     try {
@@ -24,8 +25,8 @@ module.exports = class Bot {
   }
   /**
    * @description Блокировка чтения/приема сообщений к боту
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   static async signout(request, response) {
     try {

@@ -1,5 +1,6 @@
 const pingAction = require('../../../core/functions/ping');
 const TelegramBotRequest = require('./telegram-bot-request');
+const TelegramMessage = require('../models/telegram-bot-message');
 
 class Ping extends TelegramBotRequest {
   constructor(message) {

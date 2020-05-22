@@ -9,7 +9,7 @@ const storyQueries = require('../../../db/selectors/story');
 const AssignAction = require('../../../core/models/action/assign');
 /**
  * @param {Array} stories - entries
- * @returns {buffer}
+ * @returns {Buffer}
  */
 const getTextFromStories = (stories) => {
   let currentDateString = '';

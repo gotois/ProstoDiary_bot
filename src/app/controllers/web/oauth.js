@@ -1,4 +1,5 @@
 const validator = require('validator');
+const e = require('express');
 const logger = require('../../../lib/log');
 const package_ = require('../../../../package.json');
 const { pool } = require('../../../db/sql');
@@ -19,8 +20,8 @@ const regSuccessTmpl = require('../../views/registration/registration-success');
 // Через localhost не будет работать
 module.exports = class OAUTH {
   /**
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   async callback(request, response) {
     logger.info('web:oauth');
@@ -91,8 +92,8 @@ module.exports = class OAUTH {
     }
   }
   /**
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   registrationStart(request, response) {
     logger.info('web:registrationStart');
@@ -103,8 +104,8 @@ module.exports = class OAUTH {
     }
   }
   /**
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   registrationOauth(request, response) {
     logger.info('web:registrationOauth');

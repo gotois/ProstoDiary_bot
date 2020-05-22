@@ -2,7 +2,7 @@ const ac = require('../app/middlewares/rbac');
 /**
  * Фильтруем выдачу в зависимост от доступа RBAC
  *
- * @param {jsonld} data - jsonld
+ * @param {object} data - jsonld
  * @param {boolean} isOwner - isOwner
  * @param {*} role - role
  * @returns {object}
@@ -17,6 +17,7 @@ const filter = (data, isOwner, role) => {
   if (!permission.granted) {
     throw new Error('forbidden');
   }
+  // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
   return permission.filter(data);
 };
 

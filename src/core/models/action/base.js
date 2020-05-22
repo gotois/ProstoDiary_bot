@@ -1,7 +1,4 @@
 /**
- * @module types
- */
-/**
  * @description API request
  * @typedef {object} jsonldAction
  * @property {string} @id - jsonld context

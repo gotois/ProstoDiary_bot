@@ -1,4 +1,5 @@
 const jose = require('jose');
+const e = require('express');
 const { Ed25519KeyPair } = require('crypto-ld');
 const passportQueries = require('../../../db/selectors/passport');
 const marketplaceQueries = require('../../../db/selectors/marketplace');
@@ -16,8 +17,8 @@ class OIDC {
   }
   /**
    * @description callback должен выполняться на ассистенте и записывать JWT в свою БД
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    * @returns {Promise<void>}
    */
   async oidcallback(request, response) {
@@ -102,8 +103,8 @@ class OIDC {
   }
   /**
    * @see https://github.com/panva/node-oidc-provider/blob/master/example/routes/express.js
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   async interactionUID(request, response) {
     logger.info('interactionUID');
@@ -188,10 +189,9 @@ class OIDC {
     }
   }
   /**
-   * authenticate
-   *
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @description authenticate
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   async interactionLogin(request, response) {
     logger.info('interactionLogin');
@@ -227,8 +227,8 @@ class OIDC {
     }
   }
   /**
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   async interactionContinue(request, response) {
     logger.info('interactionContinue');
@@ -253,8 +253,8 @@ class OIDC {
     }
   }
   /**
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   async interactionConfirm(request, response) {
     logger.info('interactionConfirm');
@@ -277,8 +277,8 @@ class OIDC {
     }
   }
   /**
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   async interactionAbort(request, response) {
     logger.info('interactionAbort');

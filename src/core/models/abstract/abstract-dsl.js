@@ -3,6 +3,7 @@ const Abstract = require('.');
 const ofxAnalyze = require('../analyze/ofx-analyze');
 const healthAnalyze = require('../analyze/health-analyze');
 const clinicalAnalyze = require('../analyze/clinical-analyze');
+const jsonldAction = require('../action/base');
 
 // преобразование html, xml в json
 class AbstractDsl extends Abstract {

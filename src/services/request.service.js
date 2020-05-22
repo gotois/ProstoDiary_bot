@@ -152,8 +152,8 @@ const post = (
 };
 /**
  * @param {string} url - url
- * @param {form} form - form
- * @param {headers} headers - headers
+ * @param {object} form - form
+ * @param {object} headers - headers
  * @returns {Promise<*>}
  */
 const patch = (

@@ -1,4 +1,5 @@
 const AbstractGeo = require('../models/abstract/abstract-geo');
+const jsonldAction = require('../models/action/base');
 /**
  * @param {object} parameters - parameters
  * @returns {Promise<jsonldAction>}

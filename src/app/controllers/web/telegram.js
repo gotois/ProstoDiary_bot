@@ -1,5 +1,7 @@
 const jose = require('jose');
+const e = require('express');
 const bot = require('../../../include/telegram-bot/bot');
+const jsonldAction = require('../../../core/models/action/base');
 const { pool } = require('../../../db/sql');
 const assistantChatQueries = require('../../../db/selectors/chat');
 const assistantBoQueries = require('../../../db/selectors/assistant');
@@ -172,7 +174,7 @@ module.exports = class TelegramController {
     }
   }
   /**
-   * @param {jsonld} document - jsonld
+   * @param {jsonldAction} document - jsonld
    * @returns {{attachments: [], chatId: *, subject: (string|string), messageId: *, html: *, parseMode: (string), url: *}}
    */
   static convertJsonLdToTelegramObject(document) {
@@ -261,8 +263,8 @@ module.exports = class TelegramController {
   }
   /**
    * @description Отправить нотификацию телеграм ассистенту с вебхукой
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   static notify(request, response) {
     response.status(202).send();
@@ -277,8 +279,8 @@ module.exports = class TelegramController {
   }
   /**
    * @description webhook telegram message
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    * @returns {Promise<void>}
    */
   static async api(request, response) {

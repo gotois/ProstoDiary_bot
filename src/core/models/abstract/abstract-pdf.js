@@ -1,5 +1,6 @@
 const Abstract = require('.');
 const pdfAnalze = require('../analyze/pdf-analyze');
+const jsonldAction = require('../action/base');
 
 class AbstractPDF extends Abstract {
   constructor(data) {

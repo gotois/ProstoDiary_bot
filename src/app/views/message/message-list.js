@@ -1,7 +1,7 @@
 const { SERVER } = require('../../../environment');
 /**
  * @param {Array<object>} storyTable - stories
- * @returns {jsonld}
+ * @returns {object} - jsonld
  */
 module.exports = (storyTable) => {
   const itemListElement = storyTable.map((story, index) => {

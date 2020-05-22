@@ -1,4 +1,5 @@
 const TelegramBotRequest = require('./telegram-bot-request');
+const TelegramMessage = require('../models/telegram-bot-message');
 const voiceAction = require('../../../core/functions/voice');
 
 class Voice extends TelegramBotRequest {

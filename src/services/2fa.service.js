@@ -1,5 +1,6 @@
 const cryptoRandomString = require('crypto-random-string');
 const speakeasy = require('speakeasy');
+const { GeneratedSecret } = require('speakeasy');
 const QRCode = require('qrcode');
 /**
  * @constant
@@ -25,7 +26,7 @@ const generateUserSecret = async (options) => {
 };
 /**
  * @param {string} name - bot name
- * @returns {*}
+ * @returns {GeneratedSecret}
  */
 const generateBotSecret = (name) => {
   return speakeasy.generateSecret({

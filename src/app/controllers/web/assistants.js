@@ -1,14 +1,15 @@
+const e = require('express');
 const template = require('../../views/assistants');
 const { SERVER, IS_PRODUCTION, MARKETPLACE } = require('../../../environment');
 const { pool } = require('../../../db/sql');
 const marketplaceQueries = require('../../../db/selectors/marketplace');
 
+// @todo переделать под API
 module.exports = class Marketplace {
-  super() {}
   /**
-   * @description Обновление таблицы ассистентов из env
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @description Обновление таблицы ассистентов из env.
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   static async refresh(request, response) {
     try {
@@ -29,8 +30,8 @@ module.exports = class Marketplace {
     }
   }
   /**
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   static async one(request, response) {
     try {
@@ -46,8 +47,8 @@ module.exports = class Marketplace {
     }
   }
   /**
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   static async assistants(request, response) {
     try {

@@ -26,7 +26,22 @@ const checkMentionMessage = (message) => {
   }
   return false;
 };
-
+/**
+ * @typedef {object} TelegramMessage
+ * @property {object} chat - chat
+ * @property {object} from - from
+ * @property {string} text - text
+ * @property {any} voice - voice
+ * @property {any} document - document
+ * @property {Array<object>} photo - photo
+ * @property {Array<object>} passports - passports
+ * @property {Array<object>} assistants - assistants
+ * @property {object} location - location
+ * @property {string} caption - caption
+ * @property {object} reply_to_message - message
+ * @property {number} message_id - id message
+ * @property {number} date - unix time
+ */
 class TelegramBotMessage {
   /**
    * @param {TelegramMessage} message - message
@@ -162,6 +177,7 @@ class TelegramBotMessage {
     logger.info('group chat created');
     await require('../controllers/group-chat-created.event')(this.message);
   }
+  // eslint-disable-next-line unicorn/no-keyword-prefix
   async newChatMembers() {
     logger.info('new chat members');
     await require('../controllers/new-chat-members.event')(this.message);

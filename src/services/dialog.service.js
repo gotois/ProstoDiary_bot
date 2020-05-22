@@ -47,7 +47,7 @@ const formatQuery = (query) => {
 };
 /**
  * @param {string} rawMessage - raw message
- * @param {GUID|undefined} uid - uuid
+ * @param {string} [uid] - uuid
  * @returns {Promise<string>}
  */
 const search = async (rawMessage, uid) => {
@@ -76,7 +76,9 @@ const search = async (rawMessage, uid) => {
  * Детектируем actions
  *
  * @todo перенести в core
- * @example 'купил овощи 30 рублей';
+ * @example // произошла покупка
+ * detect('купил овощи 30 рублей', 'xxx');
+ *
  * @description получаем и разбираем Intent (если есть)
  * @param {string} rawMessage - raw message
  * @param {string} uid - uuid

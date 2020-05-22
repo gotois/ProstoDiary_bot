@@ -1,7 +1,8 @@
+const e = require('express');
 const apiRequest = require('../../../lib/api').private;
 /**
- * @param {Request} request - request
- * @param {Response} response - response
+ * @param {e.Request} request - request
+ * @param {e.Response} response - response
  */
 module.exports = async (request, response) => {
   try {

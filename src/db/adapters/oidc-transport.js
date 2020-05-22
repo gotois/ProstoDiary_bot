@@ -80,11 +80,13 @@ class RedisAdapter {
 
   async findByUid(uid) {
     const id = await client.get(uidKeyFor(uid));
+    // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
     return this.find(id);
   }
 
   async findByUserCode(userCode) {
     const id = await client.get(userCodeKeyFor(userCode));
+    // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
     return this.find(id);
   }
 

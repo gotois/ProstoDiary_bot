@@ -1,5 +1,6 @@
 const Abstract = require('.');
 const archiveAnalyze = require('../analyze/archive-analyze');
+const jsonldAction = require('../action/base');
 
 // zip, gzip, rar,  ..
 class AbstractArchive extends Abstract {

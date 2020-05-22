@@ -77,10 +77,9 @@ class Vzor extends Imap {
       this.end();
     }
   }
-
   /**
    * @param {Array} search - imap search
-   * @returns {Promise<Set<Mail>>}
+   * @returns {Promise<Set<object>>}
    */
   async search(search) {
     logger.info('imap search');
@@ -128,7 +127,7 @@ class Vzor extends Imap {
 
   /**
    * @description дешифровка
-   * @param {Mail} mail - email
+   * @param {object} mail - email
    * @returns {Promise<void>}
    */
   async decryptAttachment(mail) {
@@ -153,11 +152,10 @@ class Vzor extends Imap {
       }
     }
   }
-
   /**
    * @description Парсер возвращающий контент письма
    * @param {number} uid - mail uid
-   * @returns {Promise<Mail>}
+   * @returns {Promise<object>} - Mail
    */
   parser(uid) {
     return new Promise((resolve, reject) => {

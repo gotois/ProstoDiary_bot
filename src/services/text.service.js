@@ -17,7 +17,9 @@ const replaceBetween = (string, start, end, what) => {
 };
 /**
  * @description Исправляем очевидные ошибки. Важно! Данные берутся относительно текущего месторасположения, включая VPN
- * @example 'await spellText('рублкй')' -> рублей
+ * @example // рублей
+ * spellText('рублкй');
+ *
  * @param {string} text - user text
  * @param {string} [lang] - text language
  * @returns {Promise<string>}

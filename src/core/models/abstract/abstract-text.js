@@ -1,5 +1,6 @@
 const Abstract = require('.');
 const textAnalyze = require('../analyze/text-analyze');
+const jsonldAction = require('../action/base');
 
 class AbstractText extends Abstract {
   #creator;

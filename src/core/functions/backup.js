@@ -1,4 +1,5 @@
 const AbstractCommand = require('../models/abstract/abstract-command');
+const jsonldAction = require('../models/action/base');
 /**
  * @description backup
  * @param {object} parameters - requestObject

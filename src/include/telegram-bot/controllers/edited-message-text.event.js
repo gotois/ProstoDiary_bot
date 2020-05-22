@@ -1,6 +1,7 @@
 const editAction = require('../../../core/functions/edit');
 const deleteAction = require('../../../core/functions/remove');
 const TelegramBotRequest = require('./telegram-bot-request');
+const TelegramMessage = require('../models/telegram-bot-message');
 
 class EditMessageText extends TelegramBotRequest {
   /**

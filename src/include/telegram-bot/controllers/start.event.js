@@ -1,6 +1,7 @@
 const fs = require('fs');
 const bot = require('../../../include/telegram-bot/bot');
 const TelegramBotRequest = require('./telegram-bot-request');
+const TelegramMessage = require('../models/telegram-bot-message');
 
 class Start extends TelegramBotRequest {
   constructor(message) {
@@ -16,9 +17,6 @@ class Start extends TelegramBotRequest {
     await super.beginDialog(silent);
     await this.dialog.next();
   }
-  /**
-   * @returns {IterableIterator}
-   */
   *messageIterator() {
     // Выводим оферту
     const offerta = fs.readFileSync('docs/_pages/offerta.md').toString();

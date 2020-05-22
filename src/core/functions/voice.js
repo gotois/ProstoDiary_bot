@@ -1,4 +1,5 @@
 const AbstractVoice = require('../models/abstract/abstract-voice');
+const jsonldAction = require('../models/action/base');
 /**
  * @param {object} requestObject - parameters
  * @returns {Promise<jsonldAction>}

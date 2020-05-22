@@ -1,4 +1,5 @@
 const TelegramBotRequest = require('./telegram-bot-request');
+const TelegramMessage = require('../models/telegram-bot-message');
 const { pool, sql } = require('../../../db/sql');
 const assistantChatQueries = require('../../../db/selectors/chat');
 const logger = require('../../../lib/log');
@@ -7,13 +8,13 @@ class NewChatMembers extends TelegramBotRequest {
   async beginDialog(silent) {
     await super.beginDialog(silent);
 
-    const newMember =
+    const member =
       this.message.new_chat_participant || this.message.new_chat_member;
-    if (!newMember.is_bot) {
+    if (!member.is_bot) {
       logger.warn('SKIP: new member is not a bot');
       return;
     }
-    logger.info(newMember);
+    logger.info(member);
     await pool.connect(async (connection) => {
       const assistantBot = await connection.one(
         sql`select * from assistant.chat where id = ${this.message.from.id}`,
@@ -48,6 +49,6 @@ class NewChatMembers extends TelegramBotRequest {
  * @returns {Promise<undefined>}
  */
 module.exports = async (message, silent) => {
-  const newChatMembers = new NewChatMembers(message);
-  await newChatMembers.beginDialog(silent);
+  const chatMembers = new NewChatMembers(message);
+  await chatMembers.beginDialog(silent);
 };

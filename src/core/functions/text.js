@@ -1,5 +1,6 @@
 const AbstractText = require('../models/abstract/abstract-text');
 const textService = require('../../services/text.service');
+const jsonldAction = require('../models/action/base');
 /**
  * @param {object} parameters - object
  * @returns {Promise<jsonldAction>}

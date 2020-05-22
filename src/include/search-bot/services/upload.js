@@ -3,7 +3,7 @@ const FormData = require('form-data');
 const { JENA } = require('../../../environment');
 /**
  * @description выгрузка документа на Jena server
- * @param {buffer} jsonld - json-ld
+ * @param {Buffer} jsonld - json-ld
  * @returns {Promise}
  */
 const upload = async (jsonld) => {

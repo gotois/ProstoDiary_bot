@@ -1,4 +1,5 @@
 const Abstract = require('.');
+const jsonldAction = require('../action/base');
 
 class AbstractCommand extends Abstract {
   /**

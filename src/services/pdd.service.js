@@ -38,7 +38,7 @@ const deleteYaMail = async (uid) => {
 };
 /**
  * @todo вообще думаю что нужно заложить сценарий более читаемых имен
- * @param {uid|string} login - login
+ * @param {string} login - uid login
  * @returns {Promise<string|Buffer|Error|*>}
  * @see https://yandex.ru/dev/pdd/doc/reference/email-add-docpage/
  */

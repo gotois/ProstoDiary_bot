@@ -1,10 +1,11 @@
+const e = require('express');
 const apiRequest = require('../../../lib/api').private;
 
 module.exports = class MessageController {
   /**
    * @description Отдаваем последние сообщения по дате
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   static async date(request, response) {
     try {
@@ -25,8 +26,8 @@ module.exports = class MessageController {
   }
   /**
    * @description Отдаваем последние сообщения
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   static async latest(request, response) {
     try {
@@ -47,8 +48,8 @@ module.exports = class MessageController {
   }
   /**
    * @description отображаем первоначальные данные какими они были отправлены
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   static async messageRaw(request, response) {
     try {
@@ -84,8 +85,8 @@ module.exports = class MessageController {
    * Для доступа к сообщениям, пользователю необходимо вести свой email и master password
    * отображение прикрепленных JSON-LD включающий ссылки на остальные документы
    *
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   static async message(request, response) {
     try {

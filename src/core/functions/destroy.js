@@ -1,4 +1,5 @@
 const AbstractCommand = require('../models/abstract/abstract-command');
+const jsonldAction = require('../models/action/base');
 /**
  * @todo дать возможность очищать не все, а только определенные истории
  * @description Удаление всей истории пользователя целиком

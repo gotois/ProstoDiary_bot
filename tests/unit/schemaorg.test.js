@@ -1,6 +1,5 @@
 module.exports = (t) => {
-  const SchemaOrg = require('../../src/lib/schema');
-  const schemaOrg = new SchemaOrg();
+  const schemaOrg = require('../../src/lib/schema');
   const placeGet = schemaOrg.get('Place');
   t.is(placeGet.label, 'Place');
 };

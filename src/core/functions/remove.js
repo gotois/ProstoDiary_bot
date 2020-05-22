@@ -1,4 +1,5 @@
 const package_ = require('../../../package.json');
+const jsonldAction = require('../models/action/base');
 /**
  * @todo добавить враппер
  * @description Удаление записи

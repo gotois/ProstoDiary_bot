@@ -1,5 +1,6 @@
 const backupAction = require('../../../core/functions/backup');
 const TelegramBotRequest = require('./telegram-bot-request');
+const TelegramMessage = require('../models/telegram-bot-message');
 
 class Backup extends TelegramBotRequest {
   constructor(message) {

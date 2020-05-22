@@ -1,10 +1,11 @@
+const e = require('express');
 const openapiJsonrpcJsdoc = require('openapi-jsonrpc-jsdoc');
 const { SERVER } = require('../../../environment');
 
 module.exports = class DocumentationController {
   /**
-   * @param {Request} request - request
-   * @param {Response} response - response
+   * @param {e.Request} request - request
+   * @param {e.Response} response - response
    */
   static async openApi(request, response) {
     try {

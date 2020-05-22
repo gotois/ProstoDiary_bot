@@ -23,7 +23,7 @@ module.exports.private = (rpcValues) => {
  * @param {object} rpcValues - json rpc method
  * @param {object} passport - passport
  * @param {object} marketplace - marketplace
- * @returns {Promise<jsonld>}
+ * @returns {Promise<object>} - jsonld
  */
 module.exports.public = (rpcValues, passport, marketplace) => {
   return new Promise((resolve, reject) => {

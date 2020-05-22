@@ -1,5 +1,6 @@
 const helpAction = require('../../../core/functions/help');
 const TelegramBotRequest = require('./telegram-bot-request');
+const TelegramMessage = require('../models/telegram-bot-message');
 
 class Help extends TelegramBotRequest {
   constructor(message) {

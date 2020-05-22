@@ -3,7 +3,7 @@ const {
   skipTestForFastOrTravis,
   skipTestForFast,
 } = require('../helpers');
-const package_ = require('../../package');
+const package_ = require('../../package.json');
 const TelegramServer = require('telegram-test-api');
 const { mail } = require('../../src/lib/sendgrid');
 const {

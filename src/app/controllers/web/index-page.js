@@ -1,7 +1,8 @@
+const e = require('express');
 const template = require('../../views');
 /**
- * @param {Request} request - request
- * @param {Response} response - response
+ * @param {e.Request} request - request
+ * @param {e.Response} response - response
  */
 module.exports = (request, response) => {
   response.status(200).send(template());

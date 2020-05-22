@@ -1,6 +1,7 @@
+// fixme в ассистента
 const databaseFoods = async (t) => {
   const { IS_PRODUCTION } = require('../../src/environment');
-  // fixme в ассистента
+  // fixme path
   const databaseFoods_ = require('../../src/db/foods.database');
   const rows = await databaseFoods_.get('actimel ');
   // todo: test show

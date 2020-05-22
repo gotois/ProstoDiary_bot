@@ -1,4 +1,5 @@
 const jose = require('jose');
+const e = require('express');
 const { Ed25519KeyPair } = require('crypto-ld');
 const package_ = require('../../../../package.json');
 const logger = require('../../../lib/log');
@@ -9,8 +10,8 @@ const signatureQueries = require('../../../db/selectors/signature');
 const marketplaceQueries = require('../../../db/selectors/marketplace');
 /**
  * @description express.js wrapper for jayson server
- * @param {Request} request - request
- * @param {Response} response - response
+ * @param {e.Request} request - request
+ * @param {e.Response} response - response
  */
 module.exports = async (request, response) => {
   logger.info(`JSONRPC_API: ${request.body.method}`);
