@@ -1,16 +1,10 @@
 const jose = require('jose');
 const e = require('express');
-const { Ed25519KeyPair } = require('crypto-ld');
-const passportQueries = require('../../../db/selectors/passport');
-const marketplaceQueries = require('../../../db/selectors/marketplace');
-const assistantQueries = require('../../../db/selectors/assistant');
-const signatureQueries = require('../../../db/selectors/signature');
-const { pool } = require('../../../db/sql');
 const logger = require('../../../lib/log');
 const { post } = require('../../../services/request.service');
 const { SERVER } = require('../../../environment');
+const apiRequest = require('../../../lib/api').private;
 
-// @todo переделать под API
 class OIDC {
   constructor(provider) {
     this.oidc = provider;
@@ -32,6 +26,7 @@ class OIDC {
           request.query.error + '\n' + request.query.error_description,
         );
       }
+      // перенести в апи marketplace-one
       const tokenResult = await post(SERVER.HOST + '/oidc/token', {
         client_id: request.query.client_id,
         client_secret: 'foobar', // todo хардкод
@@ -41,57 +36,50 @@ class OIDC {
           SERVER.HOST + `/oidcallback?client_id=${request.query.client_id}`,
       });
       const decoded = jose.JWT.decode(tokenResult.id_token);
-      const assistantData = await pool.connect(async (connection) => {
-        // сверяем что такой client_id ассистента существует
-        const marketplace = await connection.one(
-          marketplaceQueries.selectMarketAssistant(request.query.client_id),
-        );
-        const assistantBot = await connection.maybeOne(
-          assistantQueries.selectAssistantBotByEmail(decoded.email),
-        );
-        if (assistantBot) {
-          logger.info('Updating current assistant.bot');
-          await connection.query(
-            assistantQueries.updateAssistantBotToken(
-              tokenResult.id_token,
-              assistantBot.bot_user_email,
-            ),
-          );
-        } else {
-          logger.info('Creating new assistant.bot');
-          const {
-            privateKeyBase58,
-            publicKeyBase58,
-          } = await Ed25519KeyPair.generate({});
-          const assistant = await connection.query(
-            assistantQueries.createAssistantBot({
-              assistant_marketplace_id: marketplace.id,
-              token: tokenResult.id_token,
-              bot_user_email: decoded.email,
-              privateKeyBase58,
-              publicKeyBase58,
-            }),
-          );
-          const fingerprint = Ed25519KeyPair.fingerprintFromPublicKey({
-            publicKeyBase58,
-          });
-          await connection.query(
-            signatureQueries.create({
-              assistant_marketplace_id: marketplace.id,
-              // todo убрать хардкод 'tg'
-              verification:
-                'https://gotointeractive.com/marketplace/tg/keys/' +
-                assistant.id,
-              fingerprint,
-            }),
-          );
-        }
-        return marketplace;
+      const marketplace = await apiRequest({
+        jsonrpc: '2.0',
+        id: 'xxxxx',
+        method: 'marketplace-one',
+        params: {
+          client_id: request.query.client_id,
+        },
       });
+      const assistantBot = await apiRequest({
+        jsonrpc: '2.0',
+        id: 'xxxxx',
+        method: 'assistant-one-by-email',
+        params: {
+          email: decoded.email,
+        },
+      });
+      if (assistantBot) {
+        logger.info('Updating current assistant.bot');
+        await apiRequest({
+          jsonrpc: '2.0',
+          id: 'xxxxx',
+          method: 'assistant-update-token',
+          params: {
+            token: tokenResult.id_token,
+            bot_user_email: assistantBot.bot_user_email,
+          },
+        });
+      } else {
+        logger.info('Creating new assistant.bot');
+        await apiRequest({
+          jsonrpc: '2.0',
+          id: 'xxxxx',
+          method: 'assistant-create-new',
+          params: {
+            assistantMarketplaceId: marketplace.id,
+            token: tokenResult.id_token,
+            bot_user_email: decoded.email,
+          },
+        });
+      }
       request.session.passportId = decoded.client_id;
       // в случае успеха надо перекидывать на homepage страницу ассистента
-      if (assistantData.homepage.length > 0) {
-        response.redirect(assistantData.homepage);
+      if (marketplace.homepage.length > 0) {
+        response.redirect(marketplace.homepage);
         return;
       }
       response.send(
@@ -102,6 +90,7 @@ class OIDC {
     }
   }
   /**
+   * @todo перенести в views
    * @see https://github.com/panva/node-oidc-provider/blob/master/example/routes/express.js
    * @param {e.Request} request - request
    * @param {e.Response} response - response
@@ -200,19 +189,12 @@ class OIDC {
         prompt: { name },
       } = await this.oidc.interactionDetails(request, response);
       logger.info('name: ' + name);
-      const botInfo = await pool.connect(async (connection) => {
-        const result = await connection.maybeOne(
-          passportQueries.getPassport(
-            request.body.email,
-            request.body.password,
-          ),
-        );
-        return result;
+      const botInfo = await apiRequest({
+        jsonrpc: '2.0',
+        id: 'xxxxx',
+        method: 'bot-get-passport',
+        params: request.body,
       });
-
-      if (!botInfo) {
-        throw new Error('Invalid email or password.');
-      }
       const result = {
         select_account: {}, // make sure its skipped by the interaction policy since we just logged in
         login: {

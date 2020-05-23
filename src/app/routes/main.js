@@ -15,13 +15,11 @@ const body = express.urlencoded({ extended: false });
 module.exports = (oidcProvider) => {
   // OpenID Connect server
   const oidc = new OidcController(oidcProvider);
-  const oauth = new OauthController();
 
-  // todo перенести в routes/registration
-  // registration
-  router.get('/registration', oauth.registrationStart);
-  router.post('/registration/oauth', body, oauth.registrationOauth);
-  router.get('/oauth', oauth.callback); // todo rename to registration/oauth/callback
+  // registration - todo перенести в routes/registration
+  router.get('/registration', OauthController.registrationStart);
+  router.post('/registration/oauth', body, OauthController.registrationOauth);
+  router.get('/oauth', OauthController.registractionCallback);
 
   router.get('/robots.txt', robotsParser);
   router.get('/sitemap.txt', sitemapParser);
