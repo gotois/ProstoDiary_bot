@@ -4,6 +4,17 @@ const jayson = require('jayson/promise');
 module.exports = jayson.server({
   'ping': require('./v1/ping'),
 
+  // assistants
+  'assistant-creates': require('./v1/assistant-creates'),
+  'assistant-many': require('./v1/assistant-many'),
+  'assistant-one': require('./v1/assistant-one'),
+
+  // user
+  'user-passport': require('./v1/user-passport'),
+
+  // thing
+  'thing-get': require('./v1/thing-get'),
+
   // bot activation
   'bot-sign-in': require('./v1/bot-sign-in'),
   'bot-sign-out': require('./v1/bot-sign-out'),

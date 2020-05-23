@@ -1,23 +1,23 @@
-const { pool } = require('../../../db/sql');
-const storyQueries = require('../../../db/selectors/story');
-const annotationTemplate = require('../../views/annotations');
-
+const e = require('express');
+const apiRequest = require('../../../lib/api').private;
+/**
+ * @param {e.Request} request - request
+ * @param {e.Response} response - response
+ */
 module.exports = async (request, response) => {
   try {
-    const { name } = request.params;
     // todo Поддержать редирект (307) вида: /thing/.../яблок => /thing/.../яблоко
     // ...
-    const things = await pool.connect(async (connection) => {
-      const result = await connection.many(storyQueries.selectThing(name));
-      return result;
+    const values = await apiRequest({
+      jsonrpc: '2.0',
+      id: 'xxxxx',
+      method: 'thing-get',
+      params: {
+        ...request.params,
+      },
     });
-    response
-      .contentType('application/ld+json')
-      .status(200)
-      .send(annotationTemplate(things));
+    response.contentType('application/ld+json').send(values);
   } catch (error) {
-    response.status(400).json({
-      error: error.message,
-    });
+    response.status(400).json({ error: error.message });
   }
 };
