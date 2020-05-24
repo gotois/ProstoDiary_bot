@@ -1,13 +1,10 @@
 const jose = require('jose');
 const e = require('express');
-const { Ed25519KeyPair } = require('crypto-ld');
 const package_ = require('../../../../package.json');
 const logger = require('../../../lib/log');
-const apiRequest = require('../../../lib/api').public;
+const apiRequestPublic = require('../../../lib/api').public;
+const apiRequestPrivate = require('../../../lib/api').private;
 const ldSignature = require('../../../services/linked-data-signature.service');
-const { pool } = require('../../../db/sql');
-const signatureQueries = require('../../../db/selectors/signature');
-const marketplaceQueries = require('../../../db/selectors/marketplace');
 /**
  * @description express.js wrapper for jayson server
  * @param {e.Request} request - request
@@ -25,31 +22,21 @@ module.exports = async (request, response) => {
     const [_basic, id_token] = request.headers.authorization.split(' ');
     const decoded = jose.JWT.decode(id_token);
     const passport = request.session.passport[decoded.sub];
-    // сделать через API
-    const { fingerprint, marketplace } = await pool.connect(
-      async (connection) => {
-        const result = await connection.one(
-          signatureQueries.selectByVerification(request.headers.verification),
-        );
-        const marketplace = await connection.one(
-          marketplaceQueries.selectByClientId(decoded.aud),
-        );
-        return {
-          fingerprint: result.fingerprint,
-          marketplace: marketplace,
-        };
+    const { publicKeyNode, marketplace } = await apiRequestPrivate({
+      jsonrpc: '2.0',
+      id: 'xxxxx',
+      method: 'authorization',
+      params: {
+        verification: request.headers.verification,
+        clientId: decoded.aud,
       },
-    );
-    // public key
-    // @see https://github.com/digitalbazaar/minimal-cipher
-    const publicKeyNode = Ed25519KeyPair.fromFingerprint({ fingerprint });
-    publicKeyNode.id = request.headers.verification;
+    });
     await ldSignature.verifyDocument(
       request.body.params,
       publicKeyNode,
       `https://gotointeractive.com/marketplace/${decoded.aud.split('@')[0]}`,
     );
-    const result = await apiRequest(request.body, passport, marketplace);
+    const result = await apiRequestPublic(request.body, passport, marketplace);
     response.contentType('application/ld+json').status(200).send(result);
   } catch (error) {
     response.status(400).json({ error: error.message });

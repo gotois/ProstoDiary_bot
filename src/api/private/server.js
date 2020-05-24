@@ -4,6 +4,12 @@ const jayson = require('jayson/promise');
 module.exports = jayson.server({
   'ping': require('./v1/ping'),
 
+  // authorization
+  'authorization': require('./v1/authorization'),
+
+  // story
+  'story-create': require('./v1/story-create'),
+
   // assistants
   'assistant-creates': require('./v1/assistant-creates'),
   'assistant-many': require('./v1/assistant-many'),
