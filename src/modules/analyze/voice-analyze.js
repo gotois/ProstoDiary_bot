@@ -1,7 +1,7 @@
 const mm = require('music-metadata');
-const dialogService = require('../../../services/dialog.service');
-const logger = require('../../../lib/log');
-const speech = require('../../../lib/speech');
+const dialogService = require('../../services/dialog.service');
+const logger = require('../../lib/log');
+const speech = require('../../lib/speech');
 /**
  * @param {string} mimeType - mime type
  * @returns {string}

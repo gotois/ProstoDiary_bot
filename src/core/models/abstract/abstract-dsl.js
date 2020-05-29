@@ -1,8 +1,8 @@
 const parser = require('fast-xml-parser');
 const Abstract = require('.');
-const ofxAnalyze = require('../analyze/ofx-analyze');
-const healthAnalyze = require('../analyze/health-analyze');
-const clinicalAnalyze = require('../analyze/clinical-analyze');
+const ofxAnalyze = require('../../../modules/analyze/ofx-analyze');
+const healthAnalyze = require('../../../modules/analyze/health-analyze');
+const clinicalAnalyze = require('../../../modules/analyze/clinical-analyze');
 const jsonldAction = require('../action/base');
 
 // преобразование html, xml в json

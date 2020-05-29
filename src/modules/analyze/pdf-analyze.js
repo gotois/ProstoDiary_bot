@@ -1,5 +1,5 @@
-const visionService = require('../../../lib/vision');
-const googleStorage = require('../../../lib/google-storage');
+const visionService = require('../../lib/vision');
+const googleStorage = require('../../lib/google-storage');
 
 // загружаем бинарник в cloud, производим расчеты, получаем сгенерированный json, разбиваем его на объекты
 module.exports = async (abstract) => {

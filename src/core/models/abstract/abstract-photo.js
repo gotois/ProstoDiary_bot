@@ -1,5 +1,5 @@
 const Abstract = require('.');
-const photoAnalyze = require('../analyze/photo-analyze');
+const photoAnalyze = require('../../../modules/analyze/photo-analyze');
 const jsonldAction = require('../action/base');
 
 class AbstractPhoto extends Abstract {

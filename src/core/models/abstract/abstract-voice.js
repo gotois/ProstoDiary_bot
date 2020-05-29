@@ -1,5 +1,5 @@
 const Abstract = require('.');
-const voiceAnalyze = require('../analyze/voice-analyze');
+const voiceAnalyze = require('../../../modules/analyze/voice-analyze');
 const jsonldAction = require('../action/base');
 
 class AbstractVoice extends Abstract {

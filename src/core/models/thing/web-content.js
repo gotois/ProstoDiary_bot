@@ -1,6 +1,7 @@
 const ogParser = require('../../../lib/og-parser');
 const logger = require('../../../lib/log');
 
+// todo перенести в analyze
 module.exports = async ({ url, namespace, creator, publisher }) => {
   logger.info('webpage preparing');
   const { title, name, encodingFormat } = await ogParser(url);

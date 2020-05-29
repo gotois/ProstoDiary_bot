@@ -1,8 +1,8 @@
 const validator = require('validator');
-const logger = require('../../../lib/log');
-const languageService = require('../../../services/nlp.service'); // в моделях не должно быть сервисов
-const DynamicAction = require('../action/dynamic-action');
-const WebContent = require('../thing/web-content');
+const logger = require('../../lib/log');
+const languageService = require('../../services/nlp.service'); // в моделях не должно быть сервисов
+const DynamicAction = require('../../core/models/action/dynamic-action');
+const WebContent = require('../../core/models/thing/web-content');
 
 /**
  * @param {string} text - sentence text

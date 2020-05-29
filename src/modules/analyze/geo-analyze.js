@@ -1,4 +1,4 @@
-const { getGeoCode } = require('../../../services/location.service');
+const { getGeoCode } = require('../../services/location.service');
 
 module.exports = async (abstract) => {
   const [geocode] = await getGeoCode(abstract.latlng);

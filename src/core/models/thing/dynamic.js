@@ -1,7 +1,7 @@
 const schemaOrg = require('../../../lib/schema');
 /**
  * @description На основе набора свойств пытаюсь насытить schema.org
- * @todo покрыть тестами
+ * @todo покрыть тестами и перенести в analyze
  * example:
  * myForm({
  * "availability": "http://schema.org/InStock",

@@ -1,5 +1,5 @@
 const FileType = require('file-type');
-const visionService = require('../../../lib/vision');
+const visionService = require('../../lib/vision');
 
 module.exports = async (abstract) => {
   const { mime } = await FileType.fromBuffer(abstract.imageBuffer);

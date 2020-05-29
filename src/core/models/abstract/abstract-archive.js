@@ -1,5 +1,5 @@
 const Abstract = require('.');
-const archiveAnalyze = require('../analyze/archive-analyze');
+const archiveAnalyze = require('../../../modules/analyze/archive-analyze');
 const jsonldAction = require('../action/base');
 
 // zip, gzip, rar,  ..
