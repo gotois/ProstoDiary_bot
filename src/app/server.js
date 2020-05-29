@@ -96,7 +96,7 @@ const passportRoutes = require('./routes/passport');
       borderStyle: 'double',
     };
     const result = boxen(
-      `${package_.name} ${package_.version}
+      `${package_.name} ${package_.version}\n
  Time: ${diffServerTime}ms
  ${listenMessage}`,
       boxenOptions,

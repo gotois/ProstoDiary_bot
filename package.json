@@ -144,6 +144,7 @@
     "uuid": "7.0.3",
     "validator": "13.0.0",
     "winston": "3.2.1",
+    "winston-daily-rotate-file": "4.4.2",
     "yauzl": "2.10.0"
   },
   "devDependencies": {
