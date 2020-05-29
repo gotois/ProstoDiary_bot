@@ -1,10 +1,12 @@
+const { performance } = require('perf_hooks');
+const startServerTime = performance.now();
 const express = require('express');
 const Sentry = require('@sentry/node');
 const helmet = require('helmet');
+const boxen = require('boxen');
 // const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
 const package_ = require('../../package.json');
 const provider = require('../lib/oidc');
-const logger = require('../lib/log');
 const { IS_PRODUCTION, SENTRY, SERVER } = require('../environment');
 const session = require('./middlewares/session');
 const grant = require('./middlewares/grant');
@@ -22,8 +24,6 @@ const documentationRoutes = require('./routes/documentation');
 const passportRoutes = require('./routes/passport');
 
 (async function main() {
-  // eslint-disable-next-line no-console
-  console.time('start-server');
   Sentry.init({
     dsn: SENTRY.DSN,
     debug: IS_PRODUCTION,
@@ -81,14 +81,28 @@ const passportRoutes = require('./routes/passport');
 
   let listenMessage;
   if (IS_PRODUCTION) {
-    listenMessage = `Production server ${package_.version} started on ${SERVER.HOST}:${SERVER.PORT}`;
+    listenMessage = `Production server ${package_.version} started on: ${SERVER.HOST}:${SERVER.PORT}`;
   } else {
-    listenMessage = `Dev server started on ${SERVER.HOST}`;
+    listenMessage = `Dev server started on: ${SERVER.HOST}`;
   }
   app.listen(SERVER.PORT, () => {
-    logger.info(listenMessage);
+    const endServerTime = performance.now();
+    const diffServerTime = (endServerTime - startServerTime).toFixed(2);
+    const boxenOptions = {
+      padding: 1,
+      margin: 1,
+      align: 'left',
+      float: 'left',
+      borderStyle: 'double',
+    };
+    const result = boxen(
+      `${package_.name} ${package_.version}
+ Time: ${diffServerTime}ms
+ ${listenMessage}`,
+      boxenOptions,
+    );
     // eslint-disable-next-line no-console
-    console.timeEnd('start-server');
+    console.log(result);
   });
 
   // запускать инстанс vzor для каждого активного пользователя
