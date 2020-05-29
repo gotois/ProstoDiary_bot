@@ -22,6 +22,8 @@ const documentationRoutes = require('./routes/documentation');
 const passportRoutes = require('./routes/passport');
 
 (async function main() {
+  // eslint-disable-next-line no-console
+  console.time('start-server');
   Sentry.init({
     dsn: SENTRY.DSN,
     debug: IS_PRODUCTION,
@@ -84,7 +86,9 @@ const passportRoutes = require('./routes/passport');
     listenMessage = `Dev server started on ${SERVER.HOST}`;
   }
   app.listen(SERVER.PORT, () => {
-    logger.log('info', listenMessage);
+    logger.info(listenMessage);
+    // eslint-disable-next-line no-console
+    console.timeEnd('start-server');
   });
 
   // запускать инстанс vzor для каждого активного пользователя
