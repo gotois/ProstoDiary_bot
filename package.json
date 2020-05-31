@@ -9,6 +9,10 @@
     "src/*",
     "scripts/*"
   ],
+  "directories": {
+    "src": "src",
+    "docs": "docs"
+  },
   "private": false,
   "bin": "./scripts/index",
   "files": [
