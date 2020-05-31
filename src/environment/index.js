@@ -57,7 +57,9 @@ const {
 
   SECURE_KEY,
   REDIS_URL,
+
   JENA_URL,
+  JENA_DATABASE_NAME,
 
   MEMCACHIER_SERVERS,
   MEMCACHIER_USERNAME,
@@ -76,7 +78,7 @@ const ENV = {
   JENA: {
     URL: JENA_URL,
     DATABASE: {
-      NAME: 'mytest', // todo исправить и занести в .env
+      NAME: JENA_DATABASE_NAME,
     },
   },
   NGROK: {
