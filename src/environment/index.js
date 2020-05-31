@@ -9,6 +9,7 @@ const {
 
   NGROK,
   NGROK_URL,
+
   PGHOST,
   PGDATABASE,
   PGUSER,
@@ -91,6 +92,20 @@ const ENV = {
     user: PGUSER,
     port: PGPORT,
     password: PGPASSWORD,
+    /**
+     * @see path отличается одним символом @
+     * @returns {string}
+     */
+    get POSTGRES_CONNECTION_STRING() {
+      const { user, password, host, port, name } = ENV.DATABASE;
+      if (ENV.IS_PRODUCTION) {
+        return `postgres://${user}:${password}.${host}:${port}/${name}`;
+      } else if (ENV.IS_CI) {
+        return `postgres://${user}@${host}:${port}/${name}`;
+      } else {
+        return `postgres://${user}:${password}@${host}:${port}/${name}`;
+      }
+    },
   },
   CORALOGIX: {
     CORALOGIX_WINSTON_PRIVATE_KEY,
@@ -111,7 +126,9 @@ const ENV = {
     YA_DICTIONARY,
   },
   TELEGRAM: {
-    TOKEN: TELEGRAM_TOKEN,
+    get TOKEN() {
+      return TELEGRAM_TOKEN;
+    },
     get API_URL() {
       if (ENV.IS_AVA_OR_CI) {
         const { HOST, PORT } = ENV.SERVER;
@@ -224,21 +241,6 @@ const ENV = {
     },
   },
   /**
-   * @see path отличается одним символом @
-   * @returns {string}
-   */
-  get POSTGRES_CONNECTION_STRING() {
-    const { user, password, host, port, name } = ENV.DATABASE;
-    // todo предусмотреть demo режим
-    if (ENV.IS_PRODUCTION) {
-      return `postgres://${user}:${password}.${host}:${port}/${name}`;
-    } else if (ENV.IS_CI) {
-      return `postgres://${user}@${host}:${port}/${name}`;
-    } else {
-      return `postgres://${user}:${password}@${host}:${port}/${name}`;
-    }
-  },
-  /**
    * Heroku production
    *
    * @returns {boolean}
@@ -277,5 +279,27 @@ const ENV = {
     return String(NODE_ENV).toLowerCase() === 'cron';
   },
 };
+
+const importantVariables = new Set([
+  'REDIS',
+  'DATABASE',
+  'TELEGRAM',
+  'SERVER',
+  'MARKETPLACE',
+  'GOOGLE',
+  'DIALOGFLOW',
+]);
+
+Object.entries(ENV).forEach((value) => {
+  const [name, key] = value;
+
+  if (importantVariables.has(name)) {
+    for (const item of Object.keys(key)) {
+      if (!key[item]) {
+        throw new Error(`You should provide following: ${name}.${item}`);
+      }
+    }
+  }
+});
 
 module.exports = ENV;

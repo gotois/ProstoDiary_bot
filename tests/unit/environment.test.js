@@ -7,8 +7,12 @@ module.exports = (t) => {
   t.is(typeof environment.SENDGRID, 'object');
   t.is(typeof environment.OPEN_WEATHER, 'object');
   t.is(typeof environment.GOOGLE, 'object');
-  t.true(environment.POSTGRES_CONNECTION_STRING.startsWith('postgres://'));
-  t.false(environment.POSTGRES_CONNECTION_STRING.includes('undefined'));
+  t.true(
+    environment.DATABASE.POSTGRES_CONNECTION_STRING.startsWith('postgres://'),
+  );
+  t.false(
+    environment.DATABASE.POSTGRES_CONNECTION_STRING.includes('undefined'),
+  );
   // fixme: GOOGLE.CREDENTIALS в CI отдает не object
   if (typeof environment.GOOGLE.CREDENTIALS !== 'object') {
     t.log('WARN! unknown google credentials');

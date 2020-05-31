@@ -8,10 +8,10 @@ const {
 const {
   createQueryLoggingInterceptor,
 } = require('slonik-interceptor-query-logging');
-const { POSTGRES_CONNECTION_STRING } = require('../environment');
+const { DATABASE } = require('../environment');
 
 const interceptors = [createQueryLoggingInterceptor()];
-const pool = createPool(POSTGRES_CONNECTION_STRING, {
+const pool = createPool(DATABASE.POSTGRES_CONNECTION_STRING, {
   interceptors,
 });
 
