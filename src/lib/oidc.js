@@ -5,7 +5,6 @@ const { pool, NotFoundError } = require('../db/sql');
 const RedisAdapter = require('../db/adapters/oidc-transport');
 const marketplaceQueries = require('../db/selectors/marketplace');
 const Account = require('../app/models/account');
-const logger = require('./log');
 /**
  * @returns {Promise<Provider>}
  */
@@ -27,7 +26,8 @@ module.exports = async () => {
       marketplaces = await connection.many(marketplaceQueries.selectAll());
     } catch (error) {
       if (error instanceof NotFoundError) {
-        logger.warn('Assistants not found');
+        // todo generate Error
+        // logger.warn('Assistants not found');
         return [];
       }
       throw error;

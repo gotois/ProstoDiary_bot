@@ -1,24 +1,3 @@
-class Device {
-  /**
-   * fake device_id
-   *
-   * @type {string}
-   * @returns {string}
-   */
-  get DEVICE_ID() {
-    return 'curl';
-  }
-  /**
-   * face device_os
-   *
-   * @type {string}
-   * @returns {string}
-   */
-  get DEVICE_OS() {
-    return 'linux';
-  }
-}
-
 class FakerText {
   /**
    * @todo заменять перед запросами конфиденциальную информацию фейками, не теряя контекста
@@ -32,6 +11,12 @@ class FakerText {
 }
 
 class FakerPassport {
+  /**
+   * fake passport
+   *
+   * @type {string}
+   * @returns {string}
+   */
   static get passport() {
     return {
       activated: true,
@@ -45,7 +30,6 @@ class FakerPassport {
 }
 
 module.exports = {
-  Device,
   FakerText,
   FakerPassport,
 };

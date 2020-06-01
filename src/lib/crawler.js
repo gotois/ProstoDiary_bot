@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 // const cheerio = require('cheerio');
-const { isJSONLD } = require('../../../lib/jsonld');
+const { isJSONLD } = require('./jsonld');
 /**
  * @description получаю ссылку, по ней нахожу JSON-LD и превращаю в RDF
  * @param {string} url - domain

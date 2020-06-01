@@ -2,7 +2,7 @@ const logger = require('../../../lib/log');
 const { pool } = require('../../../db/sql');
 const passportQueries = require('../../../db/selectors/passport');
 // eslint-disable-next-line
-const twoFactorAuthService = require('../../../services/2fa.service');
+const twoFactorAuthService = require('../../../lib/2fa');
 
 module.exports = async function ({ session }) {
   try {

@@ -1,6 +1,5 @@
 const winston = require('winston');
 const StoryTransport = require('../db/adapters/story-transport');
-const logger = require('../lib/log');
 const { post } = require('../services/request.service');
 
 const storyTransport = new StoryTransport();
@@ -20,7 +19,7 @@ const isSilent = (mainEntity) => {
 storyTransport.on('pre-logged', async (authorizeAction, auth) => {
   // зависимости от silent свойства либо уведомляем либо нет
   if (isSilent(authorizeAction.mainEntity)) {
-    logger.info('skip notify pre-logged');
+    // logger.info('skip notify pre-logged');
     return;
   }
   await post(
@@ -40,7 +39,7 @@ storyTransport.on('pre-logged', async (authorizeAction, auth) => {
 storyTransport.on('logged', async (acceptAction, auth) => {
   // зависимости от silent свойства либо уведомляем либо нет
   if (isSilent(acceptAction.mainEntity)) {
-    logger.info('skip notify logged');
+    // logger.info('skip notify logged');
     return;
   }
   await post(
@@ -63,7 +62,7 @@ const storyLogger = winston.createLogger({
 // уведомляем вебхукой что данные не сохранены
 storyLogger.on('error', async (rejectAction, auth) => {
   if (isSilent(rejectAction.mainEntity)) {
-    logger.info('skip notify logged');
+    // logger.info('skip notify logged');
     return;
   }
   await post(

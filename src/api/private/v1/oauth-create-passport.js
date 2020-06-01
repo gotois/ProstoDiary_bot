@@ -6,7 +6,7 @@ const facebookGraphAPI = require('../../../lib/facebook');
 const package_ = require('../../../../package.json');
 const { mail } = require('../../../lib/sendgrid');
 const pddService = require('../../../services/pdd.service');
-const twoFactorAuthService = require('../../../services/2fa.service');
+const twoFactorAuthService = require('../../../lib/2fa');
 const { IS_PRODUCTION } = require('../../../environment');
 const oauthFinishTemplate = require('../../../app/views/oauth/finish');
 /**

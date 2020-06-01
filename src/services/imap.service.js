@@ -1,7 +1,6 @@
 const Imap = require('imap');
 const { simpleParser } = require('mailparser');
 const crypt = require('./crypt.service');
-const logger = require('../lib/log');
 // const tfa = require('./2fa.service');
 
 class Vzor extends Imap {
@@ -82,7 +81,7 @@ class Vzor extends Imap {
    * @returns {Promise<Set<object>>}
    */
   async search(search) {
-    logger.info('imap search');
+    // logger.info('imap search');
     await this.connect();
     try {
       const result = await new Promise((resolve, reject) => {
@@ -185,7 +184,7 @@ class Vzor extends Imap {
   }
 
   fetch() {
-    logger.info('imap-fetch');
+    // logger.info('imap-fetch');
     return this.search(['ALL']);
   }
 }

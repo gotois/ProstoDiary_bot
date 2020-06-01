@@ -1,5 +1,4 @@
 const winston = require('winston');
-const logger = require('../lib/log');
 const CommandTransport = require('../db/adapters/command-transport');
 const { post } = require('../services/request.service');
 /**
@@ -17,7 +16,7 @@ const commandTransport = new CommandTransport();
 commandTransport.on('pre-logged', async (authorizeAction, auth) => {
   // зависимости от silent свойства либо уведомляем либо нет
   if (isSilent(authorizeAction.mainEntity)) {
-    logger.info('skip notify pre-logged');
+    // logger.info('skip notify pre-logged');
     return;
   }
   await post(
@@ -37,7 +36,7 @@ commandTransport.on('pre-logged', async (authorizeAction, auth) => {
 commandTransport.on('logged', async (acceptAction, auth) => {
   // зависимости от silent свойства либо уведомляем либо нет
   if (isSilent(acceptAction.mainEntity)) {
-    logger.info('skip notify logged');
+    // logger.info('skip notify logged');
     return;
   }
   await post(
@@ -60,7 +59,7 @@ const storyLogger = winston.createLogger({
 // уведомляем вебхукой что данные не сохранены
 storyLogger.on('error', async (rejectAction, auth) => {
   if (isSilent(rejectAction.mainEntity)) {
-    logger.info('skip notify logged');
+    // logger.info('skip notify logged');
     return;
   }
   const headers = {

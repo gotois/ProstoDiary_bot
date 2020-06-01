@@ -2,9 +2,6 @@ const Eyo = require('eyo-kernel');
 const speller = require('../lib/speller');
 // const dialogService = require('./dialog.service');
 const { detectLang, isRUS, isENG } = require('./nlp.service');
-const logger = require('../lib/log');
-const crypt = require('./crypt.service');
-// const { FakerText } = require('./faker.service');
 /**
  * @param {string} string - string
  * @param {number} start - start
@@ -139,18 +136,6 @@ const previousInput = (input) => {
   return `${input.replace(/\n/g, ' ').slice(0, 6)}…`;
 };
 /**
- * @param {Array} rows - array rows
- * @returns {Array}
- */
-const decodeRows = (rows = []) => {
-  return rows.map(({ date, text }) => {
-    return {
-      date,
-      text: crypt.decode(text),
-    };
-  });
-};
-/**
  * @todo перенести в core
  * @description Автоматическое исправление опечаток
  * @param {string} text - text
@@ -167,13 +152,13 @@ const correctionText = async (text) => {
     // english rules ...
   } else {
     // пока только поддерживаем EN, RU
-    logger.warn('Unsupported language');
+    throw new Error('Unsupported language');
   }
   try {
     const yandexSpellLanguageCode = language.slice(0, 2);
     text = await spellText(text, yandexSpellLanguageCode);
   } catch (error) {
-    logger.error(error);
+    // logger.error(error);
   }
 
   // Исправление кастомных типов
@@ -189,7 +174,6 @@ module.exports = {
   formatWord,
   isRegexString,
   previousInput,
-  decodeRows,
   correctionText,
   replaceBetween,
 };
