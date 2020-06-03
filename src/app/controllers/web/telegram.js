@@ -247,7 +247,7 @@ module.exports = class TelegramController {
     const tgObjectResponse = TelegramController.convertJsonLdToTelegramObject(
       request.body,
     );
-    logger.info(tgObjectResponse);
+    logger.info(JSON.stringify(tgObjectResponse));
   }
   static notifyError(request, response) {
     response.status(202).send();

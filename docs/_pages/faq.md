@@ -23,14 +23,9 @@ select token from assistant
 ```
 
 ### Хочу делать API запросы через cURL 
-Пример API запроса без параметров (Authorization Token):
+Пример API запроса:
 ```bash
-curl -X POST -H "Authorization: Bearer YOUR_JWT_TOKEN" -H "Content-Type: application/json" -H "Accept: application/schema+json" --data '{"jsonrpc":"2.0","method":"ping","params":{},"id":1}' http://127.0.0.1:9000/api/ping
-```
-
-Пример API запроса с параметрами (Authorization Token):
-```bash
-curl -X POST -H "Authorization: Bearer YOUR_JWT_TOKEN" -H "Content-Type: application/json" -H "Accept: application/schema+json" --data '{"jsonrpc":"2.0","method":"help","params":'{"jsonrpc":"2.0","method":"ping","params":{"@context":{"schema":"http://schema.org/","agent":"schema:agent","name":"schema:name"},"@type":"AllocateAction","agent":{"@type":"Person","name":"prosto-diary"},"name":"Ping", ... }}}},"id":1}'' http://127.0.0.1:9000/api
+curl -X POST -H "Verification: $MARKETPLACE_SIGN" -H "Authorization: Bearer $JWT_TOKEN" -H "Content-Type: application/json" -H "Accept: application/schema+json" --data '{"jsonrpc":"2.0","method":"ping","params": $ACTION_JSONLD,"id":1}' http://127.0.0.1:9000/api
 ```
 
 ### Хочу получать JSON данные своего сообщения:
