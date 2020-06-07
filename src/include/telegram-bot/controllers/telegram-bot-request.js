@@ -134,7 +134,7 @@ class TelegramBotRequest {
         keyPare,
         verificationMethod,
       );
-      await rpc({
+      const result = await rpc({
         body: {
           jsonrpc: '2.0',
           id: uuidv1(),
@@ -144,11 +144,11 @@ class TelegramBotRequest {
         jwt: assistant.token,
         verification: verificationMethod
       });
+      // hack специальный вызов для тестирования E2E. Без явного ответа sendMessage возникает ошибка SubError
+      if (IS_AVA) {
+        return this.bot.sendMessage(this.message.chat.id, result.purpose.abstract);
+      }
     });
-    // hack специальный вызов для тестирования E2E. Без явного ответа sendMessage возникает ошибка SubError
-    if (IS_AVA) {
-      return this.bot.sendMessage(this.message.chat.id, jsonldMessage.purpose.abstract);
-    }
   }
 }
 

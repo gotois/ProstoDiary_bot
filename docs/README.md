@@ -41,7 +41,7 @@ scripts/pre-install
 ### Unit
 #### Checking Unit tests
 ```bash
-npm run unit
+npm run test:unit
 ```
 
 ### E2E
@@ -49,12 +49,12 @@ npm run unit
 
 Example:
 ```bash
-npm run e2e:fast -- --match='/start'
+npm run test:e2e:fast -- --match='/start'
 ```
 
 Example match titles starting with API:
 ```bash
-npm run e2e -- --match='API:*'
+npm run test:e2e -- --match='API:*'
 ```
 
 Run

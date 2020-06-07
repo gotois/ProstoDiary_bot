@@ -1,35 +1,36 @@
-class FakerText {
-  /**
-   * @todo заменять перед запросами конфиденциальную информацию фейками, не теряя контекста
-   * @param {string} text - text string
-   * @returns {string}
-   */
-  static text(text) {
-    // todo: изменять значения строки таким образом, чтобы dialogflow отображал нужный интент, но на сервера приходили неверные данные
-    return text;
-  }
-}
-
 class FakerPassport {
+  /**
+   * fake assistant
+   *
+   * @returns {object}
+   */
+  static get assistants() {
+    return {
+      private_key:
+        // eslint-disable-next-line max-len
+        'MsWMTGEWHMkuLKSYS1LtoWNsDbuEf9yBCCJmTsauVDqiipt6BuMcYukGfqQnLn8dwp8TLyGSMiDJ9ex7uUsooww',
+      public_key: 'FyKBU7QGaF6hXb26tNKVm1YoJT2QBDoTbXUTCFx2xzVY',
+      id: '-1',
+      token: '-1',
+      clientId: 'ava@gotointeractive.com',
+      name: 'ava',
+    };
+  }
   /**
    * fake passport
    *
-   * @type {string}
-   * @returns {string}
+   * @returns {object}
    */
   static get passport() {
     return {
       activated: true,
       user: 'ava-test',
       passportId: '-1',
-      assistant: 'e2e@gotointeractive.com',
       email: 'e2e@gotointeractive.com',
-      jwt: 'YOUR_VALID_JWT',
     };
   }
 }
 
 module.exports = {
-  FakerText,
   FakerPassport,
 };

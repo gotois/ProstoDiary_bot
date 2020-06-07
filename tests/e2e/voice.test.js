@@ -15,6 +15,7 @@ module.exports = async (t) => {
     duration: 1,
     uid: uuidv1(),
   });
+  // todo поддержать новый формат реквеста
   const response = await request(t.context.app)
     .post('/api')
     .send({

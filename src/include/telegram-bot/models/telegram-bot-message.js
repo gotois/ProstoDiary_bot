@@ -52,6 +52,7 @@ class TelegramBotMessage {
     // hack для запуска e2e тестов
     if (IS_AVA) {
       message.passports = [FakerPassport.passport];
+      message.assistants = [FakerPassport.assistants];
     }
     if (!Array.isArray(message.passports)) {
       throw new TypeError('gotois passport error');

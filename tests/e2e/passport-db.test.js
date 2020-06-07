@@ -1,6 +1,7 @@
 // eslint-disable-next-line
 const { pool, sql } = require('../../src/db/sql');
 
+// todo deprecated
 // todo перенести в passport assistants
 // TODO: используя https://github.com/marak/Faker.js/
 module.exports = async (t) => {

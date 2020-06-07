@@ -5,8 +5,8 @@
     "pre-push": [
       "npm run lint",
       "npm run lint:dependency",
-      "npm run unit",
-      "npm run e2e:fast"
+      "npm run test:unit",
+      "npm run test:e2e:fast"
     ],
     "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
     "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true"
