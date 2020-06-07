@@ -285,12 +285,14 @@ const ENV = {
 const importantVariables = new Set([
   'REDIS',
   'DATABASE',
-  'TELEGRAM',
   'SERVER',
-  'MARKETPLACE',
   'GOOGLE',
   'DIALOGFLOW',
 ]);
+if (!ENV.IS_CI) {
+  importantVariables.add('MARKETPLACE');
+  importantVariables.add('TELEGRAM');
+}
 
 Object.entries(ENV).forEach((value) => {
   const [name, key] = value;
