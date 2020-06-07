@@ -68,6 +68,16 @@ const {
   ASSISTANTS,
 } = process.env;
 
+const returnsEnvironmentObject = (environmentString) => {
+  if (!environmentString) {
+    throw new Error(`Env error: ${environmentString} is not initialized`);
+  }
+  if (validator.isJSON(environmentString)) {
+    return JSON.parse(environmentString);
+  }
+  return environmentString;
+};
+
 const ENV = {
   MEMCACHIER: {
     MEMCACHIER_SERVERS,
@@ -209,29 +219,15 @@ const ENV = {
       bucketName: 'prostodiary.appspot.com',
     },
     get CREDENTIALS() {
-      if (!GOOGLE_APPLICATION_CREDENTIALS) {
-        throw new Error(
-          'Env error: GOOGLE_APPLICATION_CREDENTIALS is not initialized',
-        );
-      }
-      if (validator.isJSON(GOOGLE_APPLICATION_CREDENTIALS)) {
-        return JSON.parse(GOOGLE_APPLICATION_CREDENTIALS);
-      }
-      return GOOGLE_APPLICATION_CREDENTIALS;
+      return returnsEnvironmentObject(GOOGLE_APPLICATION_CREDENTIALS);
     },
   },
   DIALOGFLOW: {
     get DIALOGFLOW_CREDENTIALS_SEARCH() {
-      return JSON.parse(DIALOGFLOW_CREDENTIALS_SEARCH);
+      return returnsEnvironmentObject(DIALOGFLOW_CREDENTIALS_SEARCH);
     },
     get CREDENTIALS() {
-      if (!DIALOGFLOW_CREDENTIALS) {
-        throw new Error('Env error: DIALOGFLOW_CREDENTIALS is not initialized');
-      }
-      if (validator.isJSON(DIALOGFLOW_CREDENTIALS)) {
-        return JSON.parse(DIALOGFLOW_CREDENTIALS);
-      }
-      return DIALOGFLOW_CREDENTIALS;
+      return returnsEnvironmentObject(DIALOGFLOW_CREDENTIALS);
     },
   },
   FOURSQUARE: {
