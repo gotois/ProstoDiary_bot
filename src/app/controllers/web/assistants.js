@@ -10,8 +10,6 @@ module.exports = class Marketplace {
    * @param {e.Response} response - response
    */
   static async refresh(request, response) {
-    // await queue.add('createAssistant', { response });
-
     try {
       const values = await apiRequest({
         jsonrpc: '2.0',
@@ -29,8 +27,6 @@ module.exports = class Marketplace {
    * @param {e.Response} response - response
    */
   static async one(request, response) {
-    // await queue.add('getAssistant', { response, params: request.params });
-
     try {
       const client = await apiRequest({
         jsonrpc: '2.0',

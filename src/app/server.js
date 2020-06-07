@@ -105,7 +105,5 @@ const passportRoutes = require('./routes/passport');
     console.log(result);
   });
 
-  // запускать инстанс vzor для каждого активного пользователя
-  // но лучше перенести в ассистента, где он будет выполнять скрипт раз в день и выявлять неактивных пользователей
-  // await require('./functions/check-users');
+  await require('../jobs')();
 })();

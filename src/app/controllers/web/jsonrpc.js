@@ -1,30 +1,11 @@
 const jose = require('jose');
 const e = require('express');
-const { QueueEvents, Queue, Worker } = require('bullmq');
 const package_ = require('../../../../package.json');
-const client = require('../../../db/redis');
 const logger = require('../../../lib/log');
 const apiRequestPublic = require('../../../lib/api').public;
 const apiRequestPrivate = require('../../../lib/api').private;
 const ldSignature = require('../../../services/linked-data-signature.service');
-
-const connection = client.duplicate();
-connection.options.keyPrefix = ''; // remove oidc prefix
-const queue = new Queue('API', { connection });
-const worker = new Worker('API', execution, { connection });
-worker.on('failed', (job, error) => {
-  logger.error(error);
-});
-const queueEvents = new QueueEvents('API');
-queueEvents.on('waiting', (job) => {
-  logger.info(`job ${job.jobId} waiting`);
-});
-queueEvents.on('completed', (job) => {
-  logger.info(`job ${job.jobId} completed`);
-});
-queueEvents.on('failed', (job) => {
-  logger.error(`Job ${job.jobId} failed. Reason: ${job.failedReason}`);
-});
+const bullService = require('../../../services/bull.service');
 /**
  * @param {object} job - bullmq job
  * @returns {Promise<object|TypeError>}
@@ -48,9 +29,9 @@ async function execution(job) {
     publicKeyNode,
     `https://gotointeractive.com/marketplace/${clientId.split('@')[0]}`,
   );
-  const result = await apiRequestPublic(body, passport, marketplace);
-  return result;
+  return apiRequestPublic(body, passport, marketplace);
 }
+const { queue, queueEvents } = bullService('API', execution);
 /**
  * @description express.js wrapper for jayson server
  * @param {e.Request} request - request

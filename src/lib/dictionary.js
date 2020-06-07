@@ -10,10 +10,10 @@ const DICTIONARY_HOST = 'dictionary.yandex.net';
  *
  * @param {object} obj - object
  * @param {string} obj.text - Текст для проверки
- * @returns {object}
+ * @returns {Promise<object>}
  */
-async function dictionary({ text, lang = 'en-ru' }) {
-  const result = await get(
+function dictionary({ text, lang = 'en-ru' }) {
+  return get(
     `https://${DICTIONARY_HOST}/api/v1/dicservice.json/lookup`,
     {
       key: YANDEX.YA_DICTIONARY,
@@ -23,7 +23,6 @@ async function dictionary({ text, lang = 'en-ru' }) {
     null,
     'utf8',
   );
-  return result;
 }
 
 async function getSynonyms(name) {

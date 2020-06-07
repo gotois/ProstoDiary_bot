@@ -5,7 +5,7 @@ const { JENA } = require('../environment');
  * @param {string} query - sparql string
  * @returns {any}
  */
-module.exports.query = async function (query) {
+const query = async function (query) {
   const JENA_SERVER = JENA.URL + '/' + JENA.DATABASE.NAME + '/query';
   const body = 'query=' + encodeURIComponent(query);
   const headers = {
@@ -18,13 +18,12 @@ module.exports.query = async function (query) {
   });
   return result.json();
 };
-
 /**
  * @description выгрузка документа на Jena server
  * @param {Buffer} jsonld - json-ld
  * @returns {Promise}
  */
-module.exports.upload = async (jsonld) => {
+const upload = async (jsonld) => {
   const form = new FormData();
   form.append('files', jsonld, 'id.jsonld');
   const url = `${JENA.URL}/${JENA.DATABASE.NAME}/data`;
@@ -41,4 +40,9 @@ module.exports.upload = async (jsonld) => {
     return Promise.reject(fetching.statusText);
   }
   return Promise.resolve(fetching);
+};
+
+module.exports = {
+  query,
+  upload,
 };

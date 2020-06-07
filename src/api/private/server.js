@@ -21,6 +21,11 @@ module.exports = jayson.server({
   'oauth-create-passport': require('./v1/oauth-create-passport'),
   'oauth-update': require('./v1/oauth-update'),
 
+  // ld jena
+  'ld-query': require('./v1/ld-query'),
+  'ld-sniff': require('./v1/ld-sniff'),
+  'ld-upload': require('./v1/ld-upload'),
+
   // user
   'user-passport': require('./v1/user-passport'),
   'user-get-phone': require('./v1/user-get-phone'),

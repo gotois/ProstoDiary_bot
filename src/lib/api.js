@@ -1,7 +1,10 @@
 const jsonRpcServerPublic = require('../api/public/server');
 const jsonRpcServerPrivate = require('../api/private/server');
 const RejectAction = require('../core/models/action/reject');
-
+/**
+ * @param {object} rpcValues - json rpc method
+ * @returns {Promise<any>} - document or object
+ */
 module.exports.private = (rpcValues) => {
   return new Promise((resolve, reject) => {
     jsonRpcServerPrivate.call(rpcValues, {}, (error = {}, result) => {

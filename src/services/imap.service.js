@@ -84,7 +84,7 @@ class Vzor extends Imap {
     // logger.info('imap search');
     await this.connect();
     try {
-      const result = await new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         this.openBox('INBOX', true, () => {
           super.search(search, async (error, results) => {
             if (error) {
@@ -107,7 +107,6 @@ class Vzor extends Imap {
           });
         });
       });
-      return result;
       // eslint-disable-next-line no-useless-catch
     } catch (error) {
       throw error;
