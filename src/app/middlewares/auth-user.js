@@ -11,12 +11,21 @@ const logger = require('../../lib/log');
 const checker = async (login, password, callback) => {
   try {
     const botId = await pool.connect(async (connection) => {
-      const result = await connection.maybeOne(
-        passportQueries.checkByEmailAndMasterPassword(login, password),
-      );
-      return result;
+      // проверка на пользователя/бот
+      if (login.endsWith('@gotointeractive.com')) {
+        // это бот
+        const result = await connection.maybeOne(
+          passportQueries.checkByBotEmailAndBotEmailPassword(login, password),
+        );
+        return result;
+      } else {
+        // это пользователь
+        const result = await connection.maybeOne(
+          passportQueries.checkByEmailAndMasterPassword(login, password),
+        );
+        return result;
+      }
     });
-    // todo проверять rbac'ом
     callback(Boolean(botId));
   } catch (error) {
     callback(false);

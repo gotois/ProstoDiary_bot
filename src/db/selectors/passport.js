@@ -12,6 +12,13 @@ module.exports = {
         SELECT * FROM client.roles WHERE email = ${email}
     `;
   },
+  checkByBotEmailAndBotEmailPassword(login, password) {
+    return sql`SELECT 1 FROM client.bot AS bot
+WHERE bot.email = ${login}
+AND
+bot.email_password = ${password}
+`;
+  },
   /**
    * @param {string} login - user email or telegram id
    * @param {string} password - bot master password
@@ -90,6 +97,13 @@ FROM
     client.bot
 WHERE
     id = ${id}
+`;
+  },
+  selectAllBot() {
+    return sql`SELECT
+    *
+FROM
+    client.bot
 `;
   },
   selectByPassport(passportId) {
