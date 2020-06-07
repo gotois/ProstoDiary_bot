@@ -1,4 +1,4 @@
-const { SERVER } = require('../../../environment');
+const { SERVER } = require('../../../../environment');
 /**
  * @returns {string}
  */

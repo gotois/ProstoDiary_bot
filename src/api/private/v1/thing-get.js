@@ -1,6 +1,6 @@
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
-const annotationTemplate = require('../../../app/views/annotations');
+const annotationTemplate = require('../../../app/public/views/annotations');
 /**
  * @returns {Promise<any>}
  */

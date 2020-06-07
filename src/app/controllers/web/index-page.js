@@ -1,5 +1,5 @@
 const e = require('express');
-const template = require('../../views');
+const template = require('../../public/views');
 /**
  * @param {e.Request} request - request
  * @param {e.Response} response - response

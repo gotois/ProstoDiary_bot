@@ -1,5 +1,5 @@
-const { SERVER } = require('../../../environment');
-const package_ = require('../../../../package.json');
+const { SERVER } = require('../../../../environment');
+const package_ = require('../../../../../package.json');
 
 module.exports = ({ secret, email }) => {
   return `

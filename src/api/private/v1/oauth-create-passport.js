@@ -8,7 +8,7 @@ const { mail } = require('../../../lib/sendgrid');
 const pddService = require('../../../services/pdd.service');
 const twoFactorAuthService = require('../../../lib/2fa');
 const { IS_PRODUCTION } = require('../../../environment');
-const oauthFinishTemplate = require('../../../app/views/oauth/finish');
+const oauthFinishTemplate = require('../../../app/public/views/oauth/finish');
 /**
  * @param {object} oauth - oauth providers
  */

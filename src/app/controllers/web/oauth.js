@@ -1,9 +1,9 @@
 const validator = require('validator');
 const e = require('express');
 const logger = require('../../../lib/log');
-const regStartTmpl = require('../../views/registration/registration-start');
-const regOauthTmpl = require('../../views/registration/registration-oauth');
-const regSuccessTmpl = require('../../views/registration/registration-success');
+const startTmpl = require('../../public/views/registration/registration-start');
+const oauthTmpl = require('../../public/views/registration/registration-oauth');
+const sucTmpl = require('../../public/views/registration/registration-success');
 const apiRequest = require('../../../lib/api').private;
 
 // подтверждение авторизации oauth. Сначала переходить сначала по ссылке вида https://cd0b2563.eu.ngrok.io/connect/yandex
@@ -60,7 +60,7 @@ module.exports = class OAUTH {
         request.session.passportId = client.id;
         logger.info(message);
         response.status(200).send(
-          regSuccessTmpl({
+          sucTmpl({
             message,
           }),
         );
@@ -80,7 +80,7 @@ module.exports = class OAUTH {
         request.session.passportId = passport.id;
         logger.info(message);
         response.status(200).send(
-          regSuccessTmpl({
+          sucTmpl({
             message,
           }),
         );
@@ -96,7 +96,7 @@ module.exports = class OAUTH {
   static registrationStart(request, response) {
     logger.info('web:registrationStart');
     try {
-      response.status(200).send(regStartTmpl());
+      response.status(200).send(startTmpl());
     } catch (error) {
       response.status(400).json({ error: error.message });
     }
@@ -118,7 +118,7 @@ module.exports = class OAUTH {
         throw new Error(`${request.body.phone} Not a phone`);
       }
       request.session.phone = phone;
-      response.status(200).send(regOauthTmpl());
+      response.status(200).send(oauthTmpl());
     } catch (error) {
       response.status(400).json({ error: error.message });
     }

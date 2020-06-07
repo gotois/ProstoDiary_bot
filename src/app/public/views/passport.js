@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { SERVER } = require('../../environment');
+const { SERVER } = require('../../../environment');
 /**
  * @param {object} passport - passport
  * @returns {object} - jsonld

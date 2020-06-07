@@ -1,4 +1,4 @@
-const { SERVER } = require('../../environment');
+const { SERVER } = require('../../../environment');
 
 // используется формат https://www.w3.org/TR/annotation-protocol/
 module.exports = (things) => {

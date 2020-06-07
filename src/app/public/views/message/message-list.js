@@ -1,4 +1,4 @@
-const { SERVER } = require('../../../environment');
+const { SERVER } = require('../../../../environment');
 /**
  * @param {Array<object>} storyTable - stories
  * @returns {object} - jsonld

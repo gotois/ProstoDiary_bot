@@ -1,7 +1,7 @@
 const { pool } = require('../../../db/sql');
 const passportQueries = require('../../../db/selectors/passport');
 const mc = require('../../../lib/memcache');
-const template = require('../../../app/views/passport');
+const template = require('../../../app/public/views/passport');
 
 module.exports = async function ({ user }) {
   try {

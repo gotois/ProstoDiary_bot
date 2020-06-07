@@ -1,7 +1,7 @@
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
 const passportQueries = require('../../../db/selectors/passport');
-const templateList = require('../../../app/views/message/message-list');
+const templateList = require('../../../app/public/views/message/message-list');
 
 module.exports = async function ({ from, to, bot, user }) {
   try {

@@ -2,7 +2,7 @@ const mc = require('../../../lib/memcache');
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
 const passportQueries = require('../../../db/selectors/passport');
-const templateList = require('../../../app/views/message/message-list');
+const templateList = require('../../../app/public/views/message/message-list');
 const { filter } = require('../../../services/rbac.service');
 
 module.exports = async function ({ limit = '10', user }) {

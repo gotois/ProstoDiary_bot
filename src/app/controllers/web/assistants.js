@@ -1,5 +1,5 @@
 const e = require('express');
-const template = require('../../views/assistants');
+const template = require('../../public/views/assistants');
 const { MARKETPLACE } = require('../../../environment');
 const apiRequest = require('../../../lib/api').private;
 

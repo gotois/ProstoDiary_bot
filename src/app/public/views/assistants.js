@@ -1,5 +1,5 @@
 const qs = require('qs');
-const { SERVER } = require('../../environment');
+const { SERVER } = require('../../../environment');
 /**
  * @returns {object} - jsonld
  */

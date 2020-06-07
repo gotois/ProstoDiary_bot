@@ -2,7 +2,7 @@ const mc = require('../../../lib/memcache');
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
 const passportQueries = require('../../../db/selectors/passport');
-const templateMessage = require('../../../app/views/message/message');
+const templateMessage = require('../../../app/public/views/message/message');
 const { filter } = require('../../../services/rbac.service');
 
 // todo поддержать ревизии сообщения
