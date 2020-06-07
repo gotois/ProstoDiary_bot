@@ -282,14 +282,10 @@ const ENV = {
   },
 };
 
-const importantVariables = new Set([
-  'DATABASE',
-  'SERVER',
-  'GOOGLE',
-  'DIALOGFLOW',
-]);
+const importantVariables = new Set(['SERVER', 'GOOGLE', 'DIALOGFLOW']);
 if (!ENV.IS_CI) {
   importantVariables.add('REDIS');
+  importantVariables.add('DATABASE');
   importantVariables.add('MARKETPLACE');
   importantVariables.add('TELEGRAM');
 }
