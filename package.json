@@ -20,7 +20,7 @@
     "scripts"
   ],
   "scripts": {
-    "postinstall": "./scripts/post-install",
+    "postinstall": "scripts/post-install.sh",
     "commit": "git-cz",
     "pretest": "npm run lint -- --quiet && npm run lint:dependency",
     "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js --serial",
