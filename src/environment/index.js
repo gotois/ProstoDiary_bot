@@ -166,8 +166,8 @@ const ENV = {
         return PORT;
       } else {
         // eslint-disable-next-line no-console
-        console.warn('Unknown Server Port');
-        return PORT;
+        console.warn('Unknown Server Port. Setting 9000');
+        return '9000';
       }
     },
     get HEROKUAPP() {
