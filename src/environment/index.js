@@ -150,17 +150,25 @@ const ENV = {
     },
   },
   SERVER: {
+    /**
+     * @returns {string|Error}
+     */
     get PORT() {
-      if (PORT) {
-        if (validator.isPort(PORT)) {
-          // eslint-disable-next-line no-console
-          console.warn(`ENV PORT: ${PORT} maybe wrong`);
+      if (ENV.IS_AVA_OR_CI) {
+        if (!validator.isPort(PORT)) {
+          throw new Error('Unknown Server Port');
         }
         return PORT;
       } else if (!ENV.IS_PRODUCTION) {
-        return 9000;
+        if (!validator.isPort(PORT)) {
+          throw new Error('Unknown Server Port');
+        }
+        return PORT;
+      } else {
+        // eslint-disable-next-line no-console
+        console.warn('Unknown Server Port');
+        return PORT;
       }
-      throw new Error('Unknown Port');
     },
     get HEROKUAPP() {
       return `https://${herokuAPP.name}.herokuapp.com`;
