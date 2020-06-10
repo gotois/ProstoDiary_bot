@@ -151,7 +151,11 @@ const ENV = {
   },
   SERVER: {
     get PORT() {
-      if (PORT && validator.isPort(PORT)) {
+      if (PORT) {
+        if (validator.isPort(PORT)) {
+          // eslint-disable-next-line no-console
+          console.warn(`ENV PORT: ${PORT} maybe wrong`);
+        }
         return PORT;
       } else if (!ENV.IS_PRODUCTION) {
         return 9000;

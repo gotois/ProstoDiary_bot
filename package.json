@@ -32,7 +32,6 @@
     "start:new-assistant": "./scripts/add-assistant",
     "depcruise": "depcruise --include-only ^src --output-type dot src | dot -T svg > dependencygraph.svg",
     "heroku-prebuild": "",
-    "build": "",
     "heroku-postbuild": "./scripts/sendgrid-update-webhook",
     "debug": "cross-env NODE_ENV=production node --inspect ./scripts/index",
     "clean": "rm -rf .nyc_output && rm -rf logs/ && ava reset-cache tests/e2e/index.js --serial",
