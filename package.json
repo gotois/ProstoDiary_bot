@@ -20,7 +20,7 @@
     "scripts"
   ],
   "scripts": {
-    "postinstall": "ncu ; npm run clean",
+    "postinstall": "./scripts/post-install",
     "commit": "git-cz",
     "pretest": "npm run lint -- --quiet && npm run lint:dependency",
     "test": "nyc --reporter=text ava tests/unit/index.js tests/e2e/index.js --serial",
