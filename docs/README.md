@@ -41,7 +41,7 @@ scripts/pre-install
 ### Unit
 #### Checking Unit tests
 ```bash
-npm run test:unit
+npm run test:unit [-- --watch]
 ```
 
 ### E2E

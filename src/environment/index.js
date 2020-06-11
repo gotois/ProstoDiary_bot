@@ -138,9 +138,15 @@ const ENV = {
     YA_DICTIONARY,
   },
   TELEGRAM: {
+    /**
+     * @returns {string}
+     */
     get TOKEN() {
       return TELEGRAM_TOKEN;
     },
+    /**
+     * @returns {string}
+     */
     get API_URL() {
       if (ENV.IS_AVA_OR_CI) {
         const { HOST, PORT } = ENV.SERVER;
@@ -154,25 +160,25 @@ const ENV = {
      * @returns {string|Error}
      */
     get PORT() {
-      if (ENV.IS_AVA_OR_CI) {
+      if (ENV.IS_AVA_OR_CI || !ENV.IS_PRODUCTION) {
         if (!validator.isPort(PORT)) {
           throw new Error('Unknown Server Port');
         }
         return PORT;
-      } else if (!ENV.IS_PRODUCTION) {
-        if (!validator.isPort(PORT)) {
-          throw new Error('Unknown Server Port');
-        }
-        return PORT;
-      } else {
-        // eslint-disable-next-line no-console
-        console.warn('Unknown Server Port. Setting 9000');
-        return '9000';
       }
+      // eslint-disable-next-line no-console
+      console.warn('Unknown Server Port. Setting 9000');
+      return '9000';
     },
+    /**
+     * @returns {string}
+     */
     get HEROKUAPP() {
       return `https://${herokuAPP.name}.herokuapp.com`;
     },
+    /**
+     * @returns {string|Error}
+     */
     get HOST() {
       if (!TELEGRAM_TOKEN) {
         throw new Error('TELEGRAM_TOKEN not found');
@@ -183,7 +189,7 @@ const ENV = {
       } else if (HOST) {
         return HOST;
       }
-      return 'localhost';
+      return 'localhost'; // todo поменять на http://127.0.0.1
     },
   },
   NALOGRU: {
@@ -193,12 +199,18 @@ const ENV = {
     NALOGRU_KP_PASSWORD,
   },
   SENDGRID: {
+    /**
+     * @returns {string|Error}
+     */
     get API_KEY() {
       if (!SENDGRID_API_KEY) {
         throw new Error('SENDGRID_API_KEY is not initialized');
       }
       return SENDGRID_API_KEY;
     },
+    /**
+     * @returns {string|Error}
+     */
     get API_KEY_DEV() {
       if (!SENDGRID_API_KEY_DEV) {
         throw new Error('SENDGRID_API_KEY_DEV is not initialized');
@@ -251,8 +263,7 @@ const ENV = {
     },
   },
   /**
-   * Heroku production
-   *
+   * @description Heroku production
    * @returns {boolean}
    */
   get IS_PRODUCTION() {
