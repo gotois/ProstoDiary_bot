@@ -13,6 +13,10 @@ const uploadFile = async (file, filename) => {
   await storage.bucket(GOOGLE.CLOUD.bucketName).file(filename).save(file);
   return filename;
 };
+/**
+ * @param {string} filename - file name
+ * @returns {Promise<any>}
+ */
 const getFile = async (filename) => {
   const [result] = await storage
     .bucket(GOOGLE.CLOUD.bucketName)

@@ -1,5 +1,5 @@
 const cheerio = require('cheerio');
-const { get } = require('../services/request.service');
+const { get } = require('./request');
 /**
  * @param {string} url - page url
  * @returns {Promise<object>}

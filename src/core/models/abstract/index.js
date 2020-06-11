@@ -1,7 +1,7 @@
 const FileType = require('file-type');
 const format = require('date-fns/format');
 const fromUnixTime = require('date-fns/fromUnixTime');
-const { unpack } = require('../../../services/archive.service');
+const { unpack } = require('../../../lib/archiver');
 const jsonldAction = require('../action/base');
 
 class Abstract {

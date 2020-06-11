@@ -1,4 +1,4 @@
-const { get } = require('../services/request.service');
+const { get } = require('./request');
 const { GOOGLE } = require('../environment');
 
 const GKG_HOST = 'kgsearch.googleapis.com';

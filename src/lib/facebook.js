@@ -1,4 +1,4 @@
-const { get } = require('../services/request.service');
+const { get } = require('./request');
 /**
  * @see https://developers.facebook.com/docs/graph-api/using-graph-api/?locale=ru_RU
  * @param {object} response - grant response

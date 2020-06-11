@@ -1,6 +1,6 @@
 const sgMail = require('@sendgrid/mail');
 const { SENDGRID, IS_PRODUCTION } = require('../environment');
-const { patch } = require('../services/request.service');
+const { patch } = require('./request');
 
 if (IS_PRODUCTION) {
   sgMail.setApiKey(SENDGRID.API_KEY);

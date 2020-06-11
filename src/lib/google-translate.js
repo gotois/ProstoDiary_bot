@@ -4,8 +4,7 @@ const client = new Translate({
   credentials: GOOGLE.CREDENTIALS,
 });
 /**
- * Translates some text into targetLang
- *
+ * @description Translates some text into targetLang
  * @param {string} text - The text to translate
  * @param {string} targetLang - The target language
  * @returns {Promise<string>}

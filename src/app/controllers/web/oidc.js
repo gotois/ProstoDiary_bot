@@ -1,7 +1,7 @@
 const jose = require('jose');
 const e = require('express');
 const logger = require('../../../lib/log');
-const { post } = require('../../../services/request.service');
+const { post } = require('../../../lib/request');
 const { SERVER } = require('../../../environment');
 const apiRequest = require('../../../lib/api').private;
 

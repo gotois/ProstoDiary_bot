@@ -1,6 +1,6 @@
 module.exports = async (t) => {
   t.timeout(1500);
-  const { unpack, pack } = require('../../src/services/archive.service');
+  const { unpack, pack } = require('../../src/lib/archiver');
   const testPack = await pack([
     {
       buffer: Buffer.from('test', 'utf8'),

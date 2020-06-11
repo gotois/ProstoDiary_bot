@@ -1,6 +1,6 @@
 const winston = require('winston');
 const CommandTransport = require('../db/adapters/command-transport');
-const { post } = require('../services/request.service');
+const { post } = require('../lib/request');
 /**
  * @param {Array<object>} mainEntity - main entity
  * @returns {boolean}

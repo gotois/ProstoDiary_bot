@@ -1,5 +1,5 @@
 const weather = require('../lib/weather');
-const { get } = require('./request.service');
+const { get } = require('../lib/request');
 const { GOOGLE } = require('../environment');
 /**
  * @constant

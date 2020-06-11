@@ -1,6 +1,6 @@
 const logger = require('../../../lib/log');
 const passportQueries = require('../../../db/selectors/passport');
-const { pack } = require('../../../services/archive.service');
+const { pack } = require('../../../lib/archiver');
 const twoFactorAuthService = require('../../../lib/2fa');
 const commandLogger = require('../../../services/command-logger.service');
 const { convertIn2DigitFormat } = require('../../../services/date.service');

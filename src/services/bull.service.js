@@ -4,7 +4,12 @@ const logger = require('../lib/log');
 
 const connection = client.duplicate();
 connection.options.keyPrefix = ''; // remove oidc prefix
-
+/**
+ * @param {string} name - queue name
+ * @param {Function} workerFunction - worker callback
+ * @param {boolean} [repeat] - cron or repeater
+ * @returns {object}
+ */
 module.exports = (name, workerFunction, repeat = false) => {
   let scheduler;
   if (repeat) {

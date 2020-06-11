@@ -4,7 +4,7 @@ const { Ed25519KeyPair } = require('crypto-ld');
 const bot = require('../bot');
 const logger = require('../../../lib/log');
 const { IS_AVA_OR_CI, IS_AVA } = require('../../../environment');
-const { rpc, get } = require('../../../services/request.service');
+const { rpc, get } = require('../../../lib/request');
 const linkedDataSignature = require('../../../services/linked-data-signature.service');
 
 class TelegramBotRequest {

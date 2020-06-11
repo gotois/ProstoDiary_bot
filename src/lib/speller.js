@@ -1,4 +1,4 @@
-const { post } = require('../services/request.service');
+const { post } = require('./request');
 /**
  * @constant
  * @type {string}

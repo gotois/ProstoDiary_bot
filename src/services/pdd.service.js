@@ -1,6 +1,6 @@
 const validator = require('validator');
 const cryptoRandomString = require('crypto-random-string');
-const { post, get } = require('./request.service');
+const { post, get } = require('../lib/request');
 const { YANDEX } = require('../environment');
 /**
  * @constant

@@ -1,5 +1,5 @@
 const Abstract = require('../../core/models/abstract');
-const { unpack } = require('../../services/archive.service');
+const { unpack } = require('../../lib/archiver');
 
 module.exports = async (abstract) => {
   const zipMap = await unpack(abstract.buffer);

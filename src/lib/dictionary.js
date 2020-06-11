@@ -1,4 +1,4 @@
-const { get } = require('../services/request.service');
+const { get } = require('./request');
 const { YANDEX } = require('../environment');
 /**
  * @constant

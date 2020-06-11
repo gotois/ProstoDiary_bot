@@ -1,6 +1,6 @@
 const winston = require('winston');
 const StoryTransport = require('../db/adapters/story-transport');
-const { post } = require('../services/request.service');
+const { post } = require('../lib/request');
 
 const storyTransport = new StoryTransport();
 /**
