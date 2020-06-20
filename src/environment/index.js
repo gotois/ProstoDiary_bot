@@ -67,7 +67,10 @@ const {
 
   ASSISTANTS,
 } = process.env;
-
+/**
+ * @param {object|JSON} environmentString - env
+ * @returns {Error|object}
+ */
 const returnsEnvironmentObject = (environmentString) => {
   if (!environmentString) {
     throw new Error(`Env error: ${environmentString} is not initialized`);
@@ -292,12 +295,6 @@ const ENV = {
    */
   get IS_AVA_OR_CI() {
     return ENV.IS_CI || ENV.IS_AVA;
-  },
-  /**
-   * @returns {boolean}
-   */
-  get IS_CRON() {
-    return String(NODE_ENV).toLowerCase() === 'cron';
   },
 };
 

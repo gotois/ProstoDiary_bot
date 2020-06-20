@@ -1,5 +1,6 @@
 os:
   - linux
+
 language: node_js
 sudo: false
 
@@ -55,4 +56,4 @@ script:
   - npm test
 
 after_success:
-  - npm run report-coverage
+  - npm run report:coverage

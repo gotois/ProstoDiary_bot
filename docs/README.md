@@ -88,7 +88,7 @@ npm run lint -- --fix --quite
 
 #### Show dependencies graph
 ```bash
-npm run depcruise
+npm run report:dependency
 ```
 
 #### Validate dependencies 
@@ -106,7 +106,7 @@ bundle install
 
 #### Run
 ```bash
-npm run docs:serve
+npm run dev:docs
 ```
 
 Run Telegram Bot

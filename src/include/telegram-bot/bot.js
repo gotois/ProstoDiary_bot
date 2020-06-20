@@ -2,14 +2,13 @@ const TelegramBot = require('node-telegram-bot-api');
 const logger = require('../../lib/log');
 const {
   IS_PRODUCTION,
-  IS_CRON,
   IS_AVA_OR_CI,
   TELEGRAM,
   SERVER,
   NGROK,
 } = require('../../environment');
 let telegramBot;
-if (IS_AVA_OR_CI || IS_CRON) {
+if (IS_AVA_OR_CI) {
   telegramBot = new TelegramBot(TELEGRAM.TOKEN, {
     polling: true,
     baseApiUrl: TELEGRAM.API_URL,
