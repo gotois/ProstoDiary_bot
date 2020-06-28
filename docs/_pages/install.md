@@ -6,6 +6,7 @@ permalink: /install/
 
 Heroku addons
 ---
+
 * Coralogix logging addon 
 * Heroku Postgres 
 * Heroku Redis 
@@ -17,12 +18,14 @@ Heroku addons
 
 Server Environments
 ---
+
 * Create ```.env``` file in root project for dev test
-> You can find your project ID in your Dialogflow agent settings https://dialogflow.com/docs/agents#settings
+
+> You can find your project ID in your Dialogflow agent settings <https://dialogflow.com/docs/agents#settings>
 
 * Create ```keys``` directory in root. Create google-natural-lang.json (example from Google API)
 
-```
+```text
 NODE_ENV={ production|TRAVIS_CI|test }
 TELEGRAM_TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
 
@@ -54,7 +57,7 @@ FOURSQUARE_CLIEND_ID={ string }
 FOURSQUARE_CLIENT_SECRET={ string }
 FOURSQUARE_PUSH_SECRET={ string }
 FOURSQUARE_REDIRECT_URI=http://localhost
-FOURSQUARE_ACCESS_TOKEN={ string } # Чтобы получить token перейдите по ссылке и подтвердите привязку приложения. (В хэше открытого попапа будет  access token)
+FOURSQUARE_ACCESS_TOKEN={ string }
 
 SENTRY_DSN={ URL }
 
@@ -81,20 +84,25 @@ MEMCACHIER_PASSWORD={ }
 * Upload data/dialogflow/entities/food.csv
 </details>
 
-Посмотреть список параметров oidc:
+Посмотреть список параметров oidc
 ---
-http://localhost:9000/oidc/.well-known/openid-configuration
+
+<http://localhost:9000/oidc/.well-known/openid-configuration>
 
 Привязка ассистента
 ---
+
 Выполните `npm run start:new-assistant` и следуйте инструкциям
 
 Примеры
 ---
+
 ## Telegram assistant
-- https://e309e9db.ngrok.io/oidc/auth?client_id=tg&response_type=code&scope=openid%20email%20email%20profile
 
-3) Введите email/password вашего бота в OpenID Connect
+1) <https://e309e9db.ngrok.io/oidc/auth?client_id=tg&response_type=code&scope=openid%20email%20email%20profile>
 
-4) Вы перейдете на http://0.0.0.0:9000/oidcallback?code=EOB2dYP9V6ZO7H1fFVFVS81LAfLPTzXVFeiZDNXJQZ2
-- Ассистент получает jwt
+2) Введите email/password вашего бота в OpenID Connect
+
+3) Вы перейдете на <http://0.0.0.0:9000/oidcallback?code=EOB2dYP9V6ZO7H1fFVFVS81LAfLPTzXVFeiZDNXJQZ2>
+
+4) Ассистенту присылается jwt

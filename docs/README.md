@@ -1,4 +1,5 @@
 # ProstoDiary
+
 [![Build Status](https://travis-ci.org/gotois/ProstoDiary_bot.svg?branch=master)](https://travis-ci.org/gotois/ProstoDiary_bot)
 [![dependencies Status](https://david-dm.org/gotois/ProstoDiary_bot/status.svg)](https://david-dm.org/gotois/ProstoDiary_bot)
 [![devDependencies Status](https://david-dm.org/gotois/ProstoDiary_bot/dev-status.svg)](https://david-dm.org/gotois/ProstoDiary_bot?type=dev)
@@ -16,11 +17,14 @@
 [![Issuehunt](https://img.shields.io/badge/issuehunt.io-blueviolet.svg?link=https://issuehunt.io/r/gotois/ProstoDiary_bot&style=flat&label=jobs)](https://issuehunt.io/r/gotois/ProstoDiary_bot)
 
 ## About
+
 Virtual trackers: text diary, email listener, food analyze, health watcher, sleep analyze
 
 Install
 ---
+
 > Dev only
+
 ```bash
 brew install graphviz
 ```
@@ -39,79 +43,98 @@ scripts/pre-install
 ## Tests
 
 ### Unit
+
 #### Checking Unit tests
+
 ```bash
 npm run test:unit [-- --watch]
 ```
 
 ### E2E
+
 #### Match files
 
 Example:
+
 ```bash
 npm run test:e2e:fast -- --match='/start'
 ```
 
 Example match titles starting with API:
+
 ```bash
 npm run test:e2e -- --match='API:*'
 ```
 
 Run
 ---
+
 ### Development
+
 ```bash
 npm run dev
 ```
 
 ### Production Telegram Bot
+
 ```bash
 npm start
 ```
 
 ### Create new assistant
+
 1) `npm run start:new-assistant`
 2) Open server page `/marketplace/refresh`
 3) Reload server
 
 Tools
 ---
-#### Package upgrade
+
+### Package upgrade
+
 ```bash
 ncu -u
 ```
 
 #### Fix lint
+
 ```bash
 npm run lint -- --fix --quite
 ```
 
 #### Show dependencies graph
+
 ```bash
 npm run report:dependency
 ```
 
 #### Validate dependencies 
+
 ```bash
 npm run lint:dependency
 ```
 
 #### docs only Dev
-#### Install
+
+Install
+
 ```bash
 sudo gem install bundler jekyll
 cd docs
 bundle install
 ```
 
-#### Run
+Run
+
 ```bash
 npm run dev:docs
 ```
 
 Run Telegram Bot
 ---
+
 Возможности управления системой используя текст
+
 1) `something text` - Запись. Используется по-умолчанию
 2) `? something search` - Поиск
 3) `! something execute` - Выполнение поручения
