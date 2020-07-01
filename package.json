@@ -156,7 +156,7 @@
   "devDependencies": {
     "@commitlint/cli": "8.3.5",
     "@roarr/cli": "3.2.0",
-    "@sentry/cli": "1.52.1",
+    "@sentry/cli": "1.55.0",
     "@types/express": "4.17.6",
     "ava": "3.6.0",
     "codecov": "4.0.0-0",
