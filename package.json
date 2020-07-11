@@ -98,7 +98,7 @@
     "@sendgrid/mail": "7.0.0",
     "@sentry/node": "5.15.4",
     "accesscontrol": "2.2.1",
-    "archiver": "3.1.1",
+    "archiver": "4.0.2",
     "body-parser": "1.19.0",
     "boxen": "4.2.0",
     "bullmq": "1.8.13",
