@@ -1,9 +1,6 @@
-const format = require('date-fns/format');
-const fromUnixTime = require('date-fns/fromUnixTime');
 const { pool } = require('../db/sql');
 const passportQueries = require('../db/selectors/passport');
 const bullService = require('../services/bull.service');
-const imapService = require('../services/imap.service');
 const apiRequest = require('../lib/api').private;
 const { SERVER } = require('../environment');
 /**
@@ -11,33 +8,6 @@ const { SERVER } = require('../environment');
  */
 const checkUsers = () => {
   require('../include/telegram-bot/job/check-users');
-};
-// eslint-disable-next-line no-unused-vars
-const checkMails = (botTable) => {
-  // fixme неверно считать через jwt активацию, узнать что бот неактивирован можно только постфактум
-  if (!botTable.activated) {
-    throw new Error('bot not activated');
-  }
-  // eslint-disable-next-line no-unused-vars
-  const imap = imapService(
-    {
-      host: 'imap.yandex.ru',
-      port: 993,
-      user: botTable.email,
-      password: botTable.password,
-    },
-    botTable.secret_key,
-  );
-  // находим письма за сегодняшний день
-  // считываем их содержимое и записываем в БД
-  // eslint-disable-next-line no-unused-vars
-  const today = format(
-    fromUnixTime(Math.round(new Date().getTime() / 1000)),
-    'MMM dd, yyyy',
-  );
-  // const emails = await imap.search(['ALL', ['SINCE', today]]);
-  // todo сохранять необработанные письма в Story
-  // ...
 };
 
 const crawLatestMessages = async (options) => {
@@ -86,9 +56,9 @@ const crawLatestMessages = async (options) => {
 };
 
 // список всех CRON задач
+// todo вынести функционал в ассистенты, а здесь только посылать вебхуки
 module.exports = async () => {
   const checkUserMQ = bullService('CHECK USERS', checkUsers, true);
-  // const mailUserMQ = bullService('CHECK MAILS', checkMails, true); // todo добавить проверку писем
   const crawLatestMessagesMQ = bullService(
     'CRAW LATEST MESSAGES',
     crawLatestMessages,
