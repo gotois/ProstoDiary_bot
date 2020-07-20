@@ -44,8 +44,8 @@
     "lint:markdown": "markdownlint 'docs/**/*.md' --ignore 'docs/_site' --ignore 'docs/index.md'",
     "report:dependency": "mkdir -p reports && depcruise --include-only ^src --output-type dot src | dot -T svg > reports/dependencygraph.svg",
     "report:coverage": "mkdir -p reports && nyc report --reporter=text-lcov > reports/coverage.lcov && codecov",
-    "prepare": "npm run snyk-protect && scripts/prepare.sh",
-    "snyk-protect": "snyk protect"
+    "prepare": "npm run snyk-protect",
+    "snyk-protect": "scripts/prepare.sh"
   },
   "engineStrict": true,
   "engines": {
