@@ -44,7 +44,7 @@
     "lint:markdown": "markdownlint 'docs/**/*.md' --ignore 'docs/_site' --ignore 'docs/index.md'",
     "report:dependency": "mkdir -p reports && depcruise --include-only ^src --output-type dot src | dot -T svg > reports/dependencygraph.svg",
     "report:coverage": "mkdir -p reports && nyc report --reporter=text-lcov > reports/coverage.lcov && codecov",
-    "prepare": "scripts/prepare.sh",
+    "prepare": "npm run snyk-protect && scripts/prepare.sh",
     "snyk-protect": "snyk protect"
   },
   "engineStrict": true,
@@ -146,7 +146,7 @@
     "schema.org": "3.1.1",
     "slonik": "22.4.11",
     "slonik-interceptor-query-logging": "1.3.8",
-    "snyk": "^1.336.0",
+    "snyk": "^1.362.1",
     "speakeasy": "2.0.0",
     "uuid": "7.0.3",
     "validator": "13.0.0",
