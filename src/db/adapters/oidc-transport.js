@@ -65,7 +65,7 @@ class RedisAdapter {
       : await client.get(this.key(id));
 
     if (isEmpty(data)) {
-      return undefined;
+      return;
     }
 
     if (typeof data === 'string') {

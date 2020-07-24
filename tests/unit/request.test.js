@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-null */
 module.exports = (t) => {
   const requestService = require('../../src/lib/request');
   t.is(requestService.toQueryString({ x: 1, y: '2', z: '3' }), '?x=1&y=2&z=3');

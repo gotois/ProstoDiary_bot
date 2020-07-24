@@ -39,7 +39,9 @@ const getMessageFromBody = (body) => {
   };
 };
 /**
- * @param {object} body - telegram request body
+ * @param {object} root - telegram request body
+ * @param {any} root.chatId - chat id
+ * @param {any} root.userId - user_id
  * @returns {Promise<object|Error>}
  */
 async function makeRequestBody({ chatId, userId }) {
@@ -175,7 +177,7 @@ module.exports = class TelegramController {
   }
   /**
    * @param {jsonldAction} document - jsonld
-   * @returns {{attachments: [], chatId: *, subject: (string|string), messageId: *, html: *, parseMode: (string), url: *}}
+   * @returns {object}
    */
   static convertJsonLdToTelegramObject(document) {
     const telegramMessageId = document.mainEntity.find((entity) => {
@@ -317,7 +319,7 @@ module.exports = class TelegramController {
         });
       }
       response.sendStatus(200);
-    } catch (error) {
+    } catch {
       response.sendStatus(400);
     }
   }

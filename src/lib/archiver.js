@@ -72,6 +72,7 @@ const readZipFiles = (zip) => {
  */
 const unpack = (
   buffer,
+  // eslint-disable-next-line
   options = {
     lazyEntries: true,
     decodeStrings: true,

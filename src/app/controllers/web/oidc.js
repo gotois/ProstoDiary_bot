@@ -94,14 +94,15 @@ class OIDC {
    * @see https://github.com/panva/node-oidc-provider/blob/master/example/routes/express.js
    * @param {e.Request} request - request
    * @param {e.Response} response - response
+   * @returns {any}
    */
   async interactionUID(request, response) {
     logger.info('interactionUID');
     try {
       const details = await this.oidc.interactionDetails(request, response);
       const { uid, prompt, params, session } = details;
+      // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
       const client = await this.oidc.Client.find(params.client_id);
-
       switch (prompt.name) {
         case 'select_account': {
           if (!session) {
@@ -170,7 +171,7 @@ class OIDC {
           break;
         }
         default: {
-          return undefined;
+          return;
         }
       }
     } catch (error) {

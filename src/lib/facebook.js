@@ -1,7 +1,8 @@
 const { get } = require('./request');
 /**
  * @see https://developers.facebook.com/docs/graph-api/using-graph-api/?locale=ru_RU
- * @param {object} response - grant response
+ * @param {object} root - grant response
+ * @param {string} root.access_token - grant response
  * @returns {Promise<string|Error>}
  */
 module.exports = async ({ access_token }) => {

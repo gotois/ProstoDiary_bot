@@ -18,7 +18,7 @@ const checker = async (login, password, callback) => {
     });
     // todo проверять rbac'ом
     callback(Boolean(market));
-  } catch (error) {
+  } catch {
     callback(false);
   }
 };

@@ -157,7 +157,7 @@ const correctionText = async (text) => {
   try {
     const yandexSpellLanguageCode = language.slice(0, 2);
     text = await spellText(text, yandexSpellLanguageCode);
-  } catch (error) {
+  } catch /* (error) */ {
     // logger.error(error);
   }
 

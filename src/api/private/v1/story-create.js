@@ -2,6 +2,9 @@ const { pool } = require('../../../db/sql');
 const package_ = require('../../../../package.json');
 const storyQueries = require('../../../db/selectors/story');
 /**
+ * @param {object} root - root
+ * @param {object} root.document - document
+ * @param {object} root.passport - passport
  * @returns {Promise<any>}
  */
 module.exports = async function ({ document, passport }) {

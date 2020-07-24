@@ -117,9 +117,10 @@ const get = (url, qs = {}, headers = {}, encoding = null) => {
 const post = (
   url,
   form,
+  // eslint-disable-next-line unicorn/no-object-as-default-parameter
   headers = { 'content-type': 'application/json; charset=UTF-8' },
-  encoding = undefined,
-  auth = undefined,
+  encoding,
+  auth,
 ) => {
   return new Promise((resolve, reject) => {
     const parameters = {
@@ -158,6 +159,7 @@ const post = (
 const patch = (
   url,
   form,
+  // eslint-disable-next-line unicorn/no-object-as-default-parameter
   headers = { 'content-type': 'application/json; charset=UTF-8' },
 ) => {
   return new Promise((resolve, reject) => {

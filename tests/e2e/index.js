@@ -1,3 +1,5 @@
+/* eslint-disable unicorn/no-null */
+/* eslint-disable unicorn/no-useless-undefined */
 const {
   test,
   skipTestForFastOrTravis,

@@ -27,7 +27,7 @@ const checker = async (login, password, callback) => {
       }
     });
     callback(Boolean(botId));
-  } catch (error) {
+  } catch {
     callback(false);
   }
 };

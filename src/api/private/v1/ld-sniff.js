@@ -1,5 +1,8 @@
 const crawler = require('../../../lib/crawler');
 /**
+ * @param {object} root - object
+ * @param {string} root.url - url
+ * @param {string} [root.auth] - auth
  * @returns {Promise<string|Error>}
  */
 module.exports = async function ({ url, auth }) {

@@ -1,6 +1,8 @@
 const qs = require('qs');
 const { SERVER } = require('../../../environment');
 /**
+ * @param {object} root - root
+ * @param {Array} root.clients - clients
  * @returns {object} - jsonld
  */
 module.exports = ({ clients }) => {

@@ -9,6 +9,7 @@ const WebContent = require('../../core/models/thing/web-content');
  * @param {string} namespace - namespace
  * @param {any} creator - creator
  * @param {any} publisher - publisher
+ * @returns {any}
  */
 const detectBySentense = async (text, namespace, creator, publisher) => {
   logger.info('detectBySentense');

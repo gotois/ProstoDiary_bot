@@ -33,7 +33,9 @@ const getTextFromStories = (stories) => {
 };
 /**
  * @param {object} document - parameters
- * @param {object} passport - passport gotoisCredentions
+ * @param {object} root - root
+ * @param {object} root.marketplace - marketplace
+ * @param {object} root.passport - passport gotoisCredentions
  * @returns {Promise<*>}
  */
 module.exports = async function (document, { marketplace, passport }) {

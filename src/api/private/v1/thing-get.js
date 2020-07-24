@@ -2,6 +2,8 @@ const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
 const annotationTemplate = require('../../../app/public/views/annotations');
 /**
+ * @param {object} root - oauth providers
+ * @param {string} root.name - name
  * @returns {Promise<any>}
  */
 module.exports = async function ({ name }) {

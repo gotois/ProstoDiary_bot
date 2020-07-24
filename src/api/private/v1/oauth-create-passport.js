@@ -10,7 +10,12 @@ const twoFactorAuthService = require('../../../lib/2fa');
 const { IS_PRODUCTION } = require('../../../environment');
 const oauthFinishTemplate = require('../../../app/public/views/oauth/finish');
 /**
- * @param {object} oauth - oauth providers
+ * @param {object} root - oauth providers
+ * @param {object} root.yandex - yandex
+ * @param {object} root.facebook - facebook
+ * @param {object} root.telegram - telegram
+ * @param {any} root.phone - phone
+ * @returns {Promise<any>}
  */
 module.exports = async function ({
   yandex = {},

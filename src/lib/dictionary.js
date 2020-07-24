@@ -10,6 +10,7 @@ const DICTIONARY_HOST = 'dictionary.yandex.net';
  *
  * @param {object} obj - object
  * @param {string} obj.text - Текст для проверки
+ * @param {string} [obj.lang] - Язык проверки
  * @returns {Promise<object>}
  */
 function dictionary({ text, lang = 'en-ru' }) {
@@ -20,7 +21,7 @@ function dictionary({ text, lang = 'en-ru' }) {
       lang,
       text: encodeURIComponent(text),
     },
-    null,
+    undefined,
     'utf8',
   );
 }

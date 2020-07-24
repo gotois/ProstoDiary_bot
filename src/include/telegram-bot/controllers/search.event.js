@@ -96,14 +96,13 @@ class Search extends TelegramBotRequest {
             {
               // 'content-type': 'image/png' // todo использовать plain text или markdown для таблиц
             },
-            null,
           );
           // todo показать текстом с пагинацией
           // todo задать вопрос насчет сортировки asc/desc
           // ...
           await this.bot.sendMessage(
             this.message.chat.id,
-            JSON.stringify(text, null, 2),
+            JSON.stringify(text, undefined, 2),
             {
               disable_web_page_preview: true,
               parse_mode: 'Markdown',
@@ -176,9 +175,7 @@ class Search extends TelegramBotRequest {
       return;
     }
     let replyMarkup;
-    if (generatorResult.done) {
-      replyMarkup = null;
-    } else {
+    if (!generatorResult.done) {
       replyMarkup = {
         inline_keyboard: [
           [{ text: 'NEXT', callback_data: Search.enum.NEXT_PAGE }],

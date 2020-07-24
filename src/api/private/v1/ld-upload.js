@@ -1,5 +1,7 @@
 const jena = require('../../../lib/jena');
 /**
+ * @param {object} root - root
+ * @param {object} root.document - document
  * @returns {Promise<string|Error>}
  */
 module.exports = async function ({ document }) {
@@ -8,7 +10,7 @@ module.exports = async function ({ document }) {
     if (document['@context'] == 'https://schema.org') {
       document['@context'] = 'https://schema.org/docs/jsonldcontext.json';
     }
-    const string = JSON.stringify(document, null, 2);
+    const string = JSON.stringify(document, undefined, 2);
     const bufferObject = Buffer.from(string);
     await jena.upload(bufferObject);
     return Promise.resolve('true');

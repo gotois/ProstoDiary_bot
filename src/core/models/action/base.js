@@ -1,9 +1,9 @@
 /**
  * @description API request
  * @typedef {object} jsonldAction
- * @property {string} @id - jsonld context
- * @property {object} @context - jsonld context
- * @property {object} @type - jsonld type
+ * @property {string} '@id' - jsonld context
+ * @property {object} '@context' - jsonld context
+ * @property {object} '@type' - jsonld type
  * @property {string} name - name
  * @property {object} object - object
  * @property {object} agent - agent
