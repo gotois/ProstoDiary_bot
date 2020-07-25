@@ -18,8 +18,6 @@ async function notifyEmail(requestObject) {
     attachments,
     categories = ['notify'],
     date = Math.round(new Date().getTime() / 1000),
-    telegram_message_id = null,
-    chat_id = null,
   } = requestObject;
   if (typeof subject !== 'string') {
     throw new TypeError('Subject is not a string');
@@ -38,8 +36,6 @@ async function notifyEmail(requestObject) {
         customArgs: {
           timestamp: date,
           experimental: IS_AVA_OR_CI,
-          chat_id: chat_id,
-          telegram_message_id: telegram_message_id,
         },
       },
     ],

@@ -1,10 +1,8 @@
 const express = require('express');
 // const csrf = require('csurf');
-const jsonParser = require('body-parser').json();
 const robotsParser = require('../controllers/web/robots');
 const sitemapParser = require('../controllers/web/sitemap');
 const setNoCache = require('../middlewares/no-cache');
-const mailAPI = require('../middlewares/mail');
 const OidcController = require('../controllers/web/oidc');
 const OauthController = require('../controllers/web/oauth');
 const indexController = require('../controllers/web/index-page');
@@ -25,10 +23,6 @@ module.exports = (oidcProvider) => {
   router.get('/sitemap.txt', sitemapParser);
 
   router.get('/', indexController);
-
-  // todo перенести в /assistants
-  // вебхуки нотификаций о почте, включая ассистентов
-  router.post('/mail', jsonParser, mailAPI);
 
   // oidc
   router.get('/oidcallback', oidc.oidcallback.bind(oidc));

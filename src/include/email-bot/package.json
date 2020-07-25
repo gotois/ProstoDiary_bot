@@ -1,0 +1,11 @@
+{
+  "name": "haraka_local",
+  "description": "Email Assistant",
+  "version": "0.0.1",
+  "dependencies": {
+    "mailparser": "2.7.7",
+    "nodemailer": "6.4.10"
+  },
+  "repository": "",
+  "license": "SEE LICENSE IN LICENSE"
+}

@@ -127,6 +127,10 @@ abstract
 encodingFormat
 > MIME Content
 
+## Ошибка `UnhandledPromiseRejectionWarning: Error: No supported authentication method(s) available. Unable to login.`
+
+Удостоверьтесь, система Yandex PDD имеет такой email, и что вы завершили регистрацию в системе PDD самостоятельно приняв их пользовательское соглашение 
+
 ## При Oauth Yandex ошибка 400 Required parameter 'client_id' missing
 
 Проверьте правильность Environments

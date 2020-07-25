@@ -163,7 +163,7 @@ const ENV = {
      * @returns {string|Error}
      */
     get PORT() {
-      if (ENV.IS_AVA_OR_CI || !ENV.IS_PRODUCTION) {
+      if (ENV.IS_AVA_OR_CI /* || !ENV.IS_PRODUCTION */) {
         if (!validator.isPort(PORT)) {
           throw new Error('Unknown Server Port');
         }
