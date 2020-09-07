@@ -130,7 +130,7 @@
     "jimp": "0.16.1",
     "jose": "1.28.0",
     "jsonld": "3.1.1",
-    "jsonld-signatures": "5.0.1",
+    "jsonld-signatures": "5.1.0",
     "jsqr": "1.2.0",
     "mailparser": "2.7.7",
     "memjs": "1.2.2",
