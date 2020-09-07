@@ -135,7 +135,7 @@
     "mailparser": "2.8.1",
     "memjs": "1.2.2",
     "music-metadata": "6.4.0",
-    "node-fetch": "2.6.0",
+    "node-fetch": "2.6.1",
     "node-telegram-bot-api": "0.40.0",
     "oidc-provider": "6.23.5",
     "openapi-jsonrpc-jsdoc": "1.0.3",
