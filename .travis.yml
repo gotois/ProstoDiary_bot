@@ -45,6 +45,11 @@ branches:
   only:
     - master
 
+before_install:
+  - curl -L https://github.com/github/codeql-action/releases/latest/download/codeql-runner-linux --output codeql-runner
+  - chmod +x codeql-runner
+  - ./codeql-runner init --languages javascript --config-file .github/codeql/codeql-config.yml --repository gotois/ProstoDiary_bot --github-url https://github.com --github-auth $GITHUB_TOKEN
+
 install:
   - npm ci
 
@@ -57,3 +62,4 @@ script:
 
 after_success:
   - npm run report:coverage
+  - ./codeql-runner analyze --repository gotois/ProstoDiary_bot --github-url https://github.com --github-auth $GITHUB_TOKEN

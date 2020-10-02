@@ -5,6 +5,7 @@ const { post } = require('../../../lib/request');
 const { SERVER } = require('../../../environment');
 const apiRequest = require('../../../lib/api').private;
 
+// todo перенести это в https://gotointeractive.com/oidc
 class OIDC {
   constructor(provider) {
     this.oidc = provider;

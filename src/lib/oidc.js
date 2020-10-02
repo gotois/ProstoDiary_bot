@@ -48,6 +48,7 @@ module.exports = async () => {
   const interactions = policy();
 
   const configuration = {
+    // todo при переходе использовать другой адаптер - https://github.com/panva/node-oidc-provider/blob/master/example/adapters/firestore.js
     adapter: RedisAdapter,
     clients: CLIENTS,
     jwks,

@@ -1,0 +1,11 @@
+name: "ProstoDiary CodeQL config"
+
+queries:
+  - uses: security-and-quality
+
+paths-ignore:
+  - node_modules
+  - '**/*.test.js'
+
+paths:
+  - src
