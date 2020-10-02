@@ -40,7 +40,7 @@
     "clean:logs": "rm -rf logs/",
     "clean:test-cache": "ava reset-cache tests/e2e/index.js --serial",
     "lint": "eslint scripts/* src/**/**/**/*.js src/**/**/*.js src/**/*.js tests/**/*.js",
-    "lint:dependency": "depcruise --validate .dependency-cruiser.js src tests",
+    "lint:dependency": "depcruise -x \"node_modules\" --validate .dependency-cruiser.js src tests",
     "lint:markdown": "markdownlint 'docs/**/*.md' --ignore 'docs/_site' --ignore 'docs/index.md'",
     "report:dependency": "mkdir -p reports && depcruise --include-only ^src --output-type dot src | dot -T svg > reports/dependencygraph.svg",
     "report:coverage": "mkdir -p reports && nyc report --reporter=text-lcov > reports/coverage.lcov && codecov",

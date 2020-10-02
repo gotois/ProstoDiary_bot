@@ -32,7 +32,7 @@ module.exports = class DocumentationController {
       data.paths['/'] = {
         get: {
           responses: {
-            '200': {
+            200: {
               description: 'OK',
               content: {
                 'text/plain': {
@@ -54,7 +54,7 @@ module.exports = class DocumentationController {
       data.paths['/oauth/*'] = {
         get: {
           responses: {
-            '200': {
+            200: {
               description: 'OK',
             },
           },
