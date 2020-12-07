@@ -164,7 +164,7 @@
     "ava": "3.13.0",
     "codecov": "4.0.0-0",
     "commitizen": "4.2.2",
-    "cross-env": "7.0.2",
+    "cross-env": "7.0.3",
     "cz-conventional-changelog": "3.3.0",
     "dependency-cruiser": "8.2.0",
     "eslint": "7.14.0",
