@@ -6,10 +6,8 @@ const helmet = require('helmet');
 const boxen = require('boxen');
 // const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
 const package_ = require('../../package.json');
-const provider = require('../lib/oidc');
 const { IS_PRODUCTION, SENTRY, SERVER } = require('../environment');
 const session = require('./middlewares/session');
-const grant = require('./middlewares/grant');
 const winstonLog = require('./middlewares/logger');
 const mainRoutes = require('./routes/main');
 const botRoutes = require('./routes/bot');
@@ -28,18 +26,16 @@ const passportRoutes = require('./routes/passport');
     dsn: SENTRY.DSN,
     debug: IS_PRODUCTION,
   });
-  const oidcProvider = await provider();
   const app = express();
   app.set('trust proxy', true);
   // The request handler must be the first middleware on the app
   app.use(Sentry.Handlers.requestHandler());
   app.use(helmet());
   app.use(session);
-  app.use(grant);
   app.use(winstonLog);
   // The error handler must be before any other error middleware and after all controllers
   app.use(Sentry.Handlers.errorHandler());
-  app.use('/', mainRoutes(oidcProvider));
+  app.use('/', mainRoutes());
   app.use('/ping', pingRoutes);
   app.use('/thing', thingRoutes);
   app.use('/telegram', telegramRoutes);
@@ -50,7 +46,6 @@ const passportRoutes = require('./routes/passport');
   app.use('/user', userRoutes);
   app.use('/message', messageRoutes);
   app.use('/marketplace', marketplaceRoutes);
-  app.use('/oidc/', oidcProvider.callback);
 
   // Express error handler
   app.use(require('./middlewares/error-handler'));

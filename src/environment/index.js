@@ -221,6 +221,8 @@ const ENV = {
       return SENDGRID_API_KEY_DEV;
     },
   },
+
+  // todo это больше не используется здесь. перенсти в gotois
   MARKETPLACE: {
     get ASSISTANTS() {
       if (ASSISTANTS) {
@@ -235,6 +237,7 @@ const ENV = {
       throw new Error('Unknown ASSISTANTS env');
     },
   },
+
   OPEN_WEATHER: {
     OPEN_WEATHER_KEY,
   },

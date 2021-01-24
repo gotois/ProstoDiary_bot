@@ -83,26 +83,3 @@ MEMCACHIER_PASSWORD={ }
 * Create <Food> in Entities
 * Upload data/dialogflow/entities/food.csv
 </details>
-
-Посмотреть список параметров oidc
----
-
-<http://localhost:9000/oidc/.well-known/openid-configuration>
-
-Привязка ассистента
----
-
-Выполните `npm run start:new-assistant` и следуйте инструкциям
-
-Примеры
----
-
-## Telegram assistant
-
-1) <https://e309e9db.ngrok.io/oidc/auth?client_id=tg&response_type=code&scope=openid%20email%20email%20profile>
-
-2) Введите email/password вашего бота в OpenID Connect
-
-3) Вы перейдете на <http://0.0.0.0:9000/oidcallback?code=EOB2dYP9V6ZO7H1fFVFVS81LAfLPTzXVFeiZDNXJQZ2>
-
-4) Ассистенту присылается jwt

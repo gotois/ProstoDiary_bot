@@ -3,7 +3,7 @@ const client = require('../db/redis');
 const logger = require('../lib/log');
 
 const connection = client.duplicate();
-connection.options.keyPrefix = ''; // remove oidc prefix
+connection.options.keyPrefix = ''; // remove other prefix
 /**
  * @param {string} name - queue name
  * @param {Function} workerFunction - worker callback

@@ -30,7 +30,6 @@ psql -U $PGUSER -d $PGDATABASE -a -f SQL/stories/views/history.sql;
 
 # marketplace
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/marketplace/schemas/schema.sql;
-psql -U $PGUSER -d $PGDATABASE -a -f SQL/marketplace/tables/clients.sql;
 psql -U $PGUSER -d $PGDATABASE -a -f SQL/marketplace/tables/signature.sql;
 
 # 3rd assistants

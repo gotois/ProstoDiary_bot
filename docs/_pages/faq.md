@@ -167,6 +167,5 @@ DROP TABLE IF EXISTS story.message CASCADE;
 DROP TABLE IF EXISTS client.passport CASCADE;
 DROP TABLE IF EXISTS client.bot CASCADE;
 
-DROP TABLE IF EXISTS marketplace.client;
 DROP TABLE IF EXISTS marketplace.signature;
 ``` 

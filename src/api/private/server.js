@@ -11,7 +11,6 @@ module.exports = jayson.server({
   'story-create': require('./v1/story-create'),
 
   // assistants
-  'assistant-creates': require('./v1/assistant-creates'),
   'assistant-many': require('./v1/assistant-many'),
   'assistant-one': require('./v1/assistant-one'),
   'assistant-one-by-email': require('./v1/assistant-one-by-email'),
@@ -37,9 +36,6 @@ module.exports = jayson.server({
   'bot-sign-in': require('./v1/bot-sign-in'),
   'bot-sign-out': require('./v1/bot-sign-out'),
   'bot-get-passport': require('./v1/bot-get-passport'),
-
-  // marketplace
-  'marketplace-one': require('./v1/marketplace-one'),
 
   // get messages
   'get-date-message': require('./v1/get-date-message'),

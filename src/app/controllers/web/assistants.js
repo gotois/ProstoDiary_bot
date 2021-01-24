@@ -1,27 +1,8 @@
 const e = require('express');
 const template = require('../../public/views/assistants');
-const { MARKETPLACE } = require('../../../environment');
 const apiRequest = require('../../../lib/api').private;
 
 module.exports = class Marketplace {
-  /**
-   * @description Обновление таблицы ассистентов из env.
-   * @param {e.Request} request - request
-   * @param {e.Response} response - response
-   */
-  static async refresh(request, response) {
-    try {
-      const values = await apiRequest({
-        jsonrpc: '2.0',
-        id: 'xxxxx',
-        method: 'assistant-creates',
-        params: MARKETPLACE.ASSISTANTS,
-      });
-      response.status(200).json(values);
-    } catch (error) {
-      response.status(400).json({ error: error.message });
-    }
-  }
   /**
    * @param {e.Request} request - request
    * @param {e.Response} response - response

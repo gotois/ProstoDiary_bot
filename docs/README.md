@@ -81,12 +81,6 @@ npm run dev
 npm start
 ```
 
-### Create new assistant
-
-1) `npm run start:new-assistant`
-2) Open server page `/marketplace/refresh`
-3) Reload server
-
 Tools
 ---
 
