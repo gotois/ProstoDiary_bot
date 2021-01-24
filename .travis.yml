@@ -40,16 +40,10 @@ cache:
   directories:
     - ~/.cache
     - .git/lfs
-    - codeql-runner
 
 branches:
   only:
     - master
-
-before_install:
-  - curl -L https://github.com/github/codeql-action/releases/latest/download/codeql-runner-linux --output codeql-runner-exe
-  - chmod +x codeql-runner-exe
-  - ./codeql-runner-exe init --languages javascript --config-file .github/codeql/codeql-config.yml --repository gotois/ProstoDiary_bot --github-url https://github.com --github-auth $GITHUB_TOKEN
 
 install:
   - npm ci
@@ -63,4 +57,3 @@ script:
 
 after_success:
   - npm run report:coverage
-  - ./codeql-runner-exe analyze --repository gotois/ProstoDiary_bot --commit $TRAVIS_COMMIT --ref refs/heads/master --github-url https://github.com --github-auth $GITHUB_TOKEN
