@@ -102,7 +102,7 @@
     "body-parser": "1.19.0",
     "boxen": "4.2.0",
     "bullmq": "1.14.0",
-    "cheerio": "1.0.0-rc.3",
+    "cheerio": "1.0.0-rc.5",
     "connect-pg-simple": "6.2.1",
     "coralogix-logger-winston": "1.0.11",
     "crypto-ld": "3.9.0",
