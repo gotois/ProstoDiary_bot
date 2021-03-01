@@ -187,7 +187,7 @@
     "nyc": "15.1.0",
     "prettier": "2.2.1",
     "supertest": "4.0.2",
-    "telegram-test-api": "2.4.4"
+    "telegram-test-api": "2.4.5"
   },
   "snyk": true
 }
