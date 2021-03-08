@@ -126,7 +126,7 @@
     "imap": "0.8.19",
     "ioredis": "4.19.2",
     "ipld": "0.28.0",
-    "ipld-in-memory": "6.0.0",
+    "ipld-in-memory": "7.0.0",
     "jayson": "3.3.4",
     "jimp": "0.16.1",
     "jose": "1.28.0",
