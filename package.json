@@ -124,7 +124,7 @@
     "helmet": "3.23.3",
     "http-auth": "4.1.4",
     "imap": "0.8.19",
-    "ioredis": "4.19.2",
+    "ioredis": "4.24.3",
     "ipld": "0.28.0",
     "ipld-in-memory": "6.0.0",
     "jayson": "3.3.4",
