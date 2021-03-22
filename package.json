@@ -122,7 +122,7 @@
     "franc": "5.0.0",
     "grant-express": "5.4.8",
     "helmet": "3.23.3",
-    "http-auth": "4.1.2",
+    "http-auth": "4.1.4",
     "imap": "0.8.19",
     "ioredis": "4.19.2",
     "ipld": "0.28.0",
