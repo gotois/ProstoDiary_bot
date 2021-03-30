@@ -138,7 +138,7 @@
     "music-metadata": "6.4.0",
     "node-fetch": "2.6.1",
     "node-telegram-bot-api": "0.51.0",
-    "oidc-provider": "6.29.7",
+    "oidc-provider": "6.31.1",
     "openapi-jsonrpc-jsdoc": "1.0.3",
     "openpgp": "4.10.8",
     "openweather-apis": "4.3.1",
