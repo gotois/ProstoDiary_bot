@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "dependencies": {
     "mailparser": "2.8.1",
-    "nodemailer": "6.4.16"
+    "nodemailer": "6.5.0"
   },
   "repository": "",
   "license": "SEE LICENSE IN LICENSE"
