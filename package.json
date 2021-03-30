@@ -140,7 +140,7 @@
     "node-telegram-bot-api": "0.51.0",
     "oidc-provider": "6.31.1",
     "openapi-jsonrpc-jsdoc": "1.0.3",
-    "openpgp": "4.10.8",
+    "openpgp": "4.10.10",
     "openweather-apis": "4.3.1",
     "qrcode": "1.4.4",
     "qs": "6.9.4",
