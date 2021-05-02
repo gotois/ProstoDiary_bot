@@ -150,7 +150,7 @@
     "snyk": "^1.362.1",
     "speakeasy": "2.0.0",
     "uuid": "7.0.3",
-    "validator": "13.5.2",
+    "validator": "13.6.0",
     "winston": "3.3.3",
     "winston-daily-rotate-file": "4.5.2",
     "yauzl": "2.10.0"
