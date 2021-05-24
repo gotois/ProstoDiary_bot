@@ -127,7 +127,7 @@
     "ioredis": "4.27.3",
     "ipld": "0.30.0",
     "ipld-in-memory": "6.0.0",
-    "jayson": "3.6.2",
+    "jayson": "3.6.3",
     "jimp": "0.16.1",
     "jose": "1.28.1",
     "jsonld": "3.3.2",
