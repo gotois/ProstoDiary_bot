@@ -92,7 +92,7 @@
     "@google-cloud/language": "4.2.4",
     "@google-cloud/speech": "4.5.2",
     "@google-cloud/storage": "5.8.5",
-    "@google-cloud/translate": "6.2.1",
+    "@google-cloud/translate": "6.2.2",
     "@google-cloud/vision": "2.3.2",
     "@sendgrid/mail": "7.4.4",
     "@sentry/node": "5.30.0",
