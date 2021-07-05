@@ -89,7 +89,7 @@
     }
   },
   "dependencies": {
-    "@google-cloud/language": "4.2.5",
+    "@google-cloud/language": "4.2.6",
     "@google-cloud/speech": "4.5.2",
     "@google-cloud/storage": "5.8.5",
     "@google-cloud/translate": "6.2.3",
