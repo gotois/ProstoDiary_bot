@@ -33,10 +33,9 @@ class Search extends TelegramBotRequest {
     logger.info('dialogResultInner', dialogResultInner);
     let category;
     // пример: 'health', 'graph'
-    const [
-      intentName,
-      actionName,
-    ] = dialogResultInner.action.toLowerCase().split('.');
+    const [intentName, actionName] = dialogResultInner.action
+      .toLowerCase()
+      .split('.');
 
     if (intentName) {
       category = intentName;
