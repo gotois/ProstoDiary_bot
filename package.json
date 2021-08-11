@@ -48,14 +48,15 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": "14.x",
-    "npm": "6.x"
+    "node": "16.x",
+    "npm": "7.x"
   },
   "os": [
     "!win32"
   ],
   "cpu": [
-    "x64"
+    "x64",
+    "arm64"
   ],
   "repository": {
     "type": "git",
