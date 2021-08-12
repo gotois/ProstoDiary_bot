@@ -157,7 +157,7 @@
     "yauzl": "2.10.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "8.3.5",
+    "@commitlint/cli": "13.1.0",
     "@roarr/cli": "3.9.0",
     "@sentry/cli": "1.67.2",
     "@types/express": "4.17.13",
