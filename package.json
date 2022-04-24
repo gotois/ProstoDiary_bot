@@ -105,7 +105,7 @@
     "bullmq": "1.37.1",
     "cheerio": "1.0.0-rc.10",
     "connect-pg-simple": "6.2.1",
-    "coralogix-logger-winston": "1.0.11",
+    "coralogix-logger-winston": "1.0.12",
     "crypto-ld": "3.9.0",
     "crypto-random-string": "3.3.1",
     "csurf": "1.11.0",
