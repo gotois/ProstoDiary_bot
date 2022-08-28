@@ -134,5 +134,9 @@ Run Telegram Bot
 3) `! something execute` - Выполнение поручения
 4) `/command` - API command
 
+## Mission Roadmap
+
+Создание виртуального ангела-хранителя, цель которого стать единством всех наших познавательных актов.
+
 ---
 With ❤️
