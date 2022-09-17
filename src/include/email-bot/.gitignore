@@ -1,8 +1,0 @@
-config/dkim
-config/auth_flat_file.ini
-config/host_list
-config/internalcmd_key
-config/me
-config/smtp_forward.ini
-
-environment.json
