@@ -109,7 +109,7 @@
     "crypto-ld": "3.9.0",
     "crypto-random-string": "3.3.1",
     "csurf": "1.11.0",
-    "date-fns": "2.22.1",
+    "date-fns": "2.29.3",
     "dialogflow": "4.0.3",
     "dotenv": "8.6.0",
     "express": "4.17.1",
