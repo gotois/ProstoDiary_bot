@@ -86,4 +86,4 @@ MEMCACHIER_PASSWORD={ }
 
 # Настройте SOLID сервер
 
-Например, Inrupt
+Получите вход по WebID, например, в Inrupt - https://signup.pod.inrupt.com/
