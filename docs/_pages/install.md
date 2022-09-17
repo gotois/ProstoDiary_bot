@@ -83,3 +83,7 @@ MEMCACHIER_PASSWORD={ }
 * Create <Food> in Entities
 * Upload data/dialogflow/entities/food.csv
 </details>
+
+# Настройте SOLID сервер
+
+Например, Inrupt
