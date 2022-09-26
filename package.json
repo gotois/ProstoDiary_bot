@@ -128,7 +128,7 @@
     "ipld": "0.30.2",
     "ipld-in-memory": "6.0.0",
     "jayson": "3.6.4",
-    "jimp": "0.16.1",
+    "jimp": "0.16.2",
     "jose": "1.28.2",
     "jsonld": "3.3.2",
     "jsonld-signatures": "5.2.0",
