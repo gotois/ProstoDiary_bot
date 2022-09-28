@@ -39,7 +39,3 @@ patch:
   SNYK-JS-LODASH-567746:
     - bullmq > lodash:
         patched: '2020-06-07T09:13:42.013Z'
-    - Haraka > haraka-plugin-asn > async > lodash:
-        patched: '2020-07-20T07:18:47.336Z'
-    - Haraka > haraka-plugin-auth-ldap > async > lodash:
-        patched: '2020-07-20T07:18:47.336Z'

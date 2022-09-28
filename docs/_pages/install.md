@@ -84,6 +84,6 @@ MEMCACHIER_PASSWORD={ }
 * Upload data/dialogflow/entities/food.csv
 </details>
 
-# Настройте SOLID сервер
+## Настройте SOLID сервер
 
 Получите вход по WebID, например, в Inrupt - https://signup.pod.inrupt.com/
