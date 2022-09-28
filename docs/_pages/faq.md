@@ -77,8 +77,10 @@ curl --basic -u "user_email:master_password" -H "Accept: application/json" http:
 > URL заблокирован: Не удалось выполнить переадресацию, поскольку конечный URI не внесен в 
 > «белый» список в разделе приложения «Клиентские настройки OAuth
 
-1. Зайти в консоль Facebook в раздел <https://developers.facebook.com/apps/:YOURAPP/fb-login/settings/>
-2. Поставить в поле Действительные URI перенаправления для OAuth значение `https://e692b549.eu.ngrok.io/connect/facebook/callback`
+1. Зайти в консоль Facebook в раздел 
+<https://developers.facebook.com/apps/:YOURAPP/fb-login/settings/>
+2. Поставить в поле Действительные URI перенаправления для OAuth значение 
+`https://e692b549.eu.ngrok.io/connect/facebook/callback`
 
 ## Забыл команды Telegram
 
@@ -127,9 +129,11 @@ abstract
 encodingFormat
 > MIME Content
 
-## Ошибка `UnhandledPromiseRejectionWarning: Error: No supported authentication method(s) available. Unable to login.`
+## Ошибка 
+`UnhandledPromiseRejectionWarning: Error: No supported authentication method(s) available. Unable to login.`
 
-Удостоверьтесь, система Yandex PDD имеет такой email, и что вы завершили регистрацию в системе PDD самостоятельно приняв их пользовательское соглашение 
+Удостоверьтесь, система Yandex PDD имеет такой email, 
+и что вы завершили регистрацию в системе PDD самостоятельно приняв их пользовательское соглашение 
 
 ## При Oauth Yandex ошибка 400 Required parameter 'client_id' missing
 
@@ -146,7 +150,8 @@ encodingFormat
 ## Хочу напрямую из БД узнать какой текст записался в историю
 
 ```sql
-select encode(content, 'escape') as text_content from story where id = 'b8ea5534-7a39-4846-a559-fb480f57bc14'
+select encode(content, 'escape') as text_content from story 
+  where id = 'b8ea5534-7a39-4846-a559-fb480f57bc14'
 ```
 
 ### Очистить БД
