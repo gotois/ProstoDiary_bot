@@ -123,6 +123,7 @@
     "grant-express": "5.4.8",
     "helmet": "4.6.0",
     "http-auth": "4.1.9",
+    "http-errors": "2.0.0",
     "ioredis": "4.27.7",
     "jayson": "3.6.4",
     "jimp": "0.16.2",

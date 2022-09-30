@@ -4,6 +4,10 @@ title: Installer
 permalink: /install/
 ---
 
+Local addons
+---
+* Redis - https://redis.io/docs/stack/get-started/install/
+
 Heroku addons
 ---
 

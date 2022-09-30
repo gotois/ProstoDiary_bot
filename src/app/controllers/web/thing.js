@@ -1,10 +1,12 @@
 const e = require('express');
+const createError = require('http-errors');
 const apiRequest = require('../../../lib/api').private;
 /**
  * @param {e.Request} request - request
  * @param {e.Response} response - response
+ * @param {e.NextFunction} next - next
  */
-module.exports = async (request, response) => {
+module.exports = async (request, response, next) => {
   try {
     // todo Поддержать редирект (307) вида: /thing/.../яблок => /thing/.../яблоко
     // ...
@@ -18,6 +20,6 @@ module.exports = async (request, response) => {
     });
     response.contentType('application/ld+json').send(values);
   } catch (error) {
-    response.status(400).json({ error: error.message });
+    next(createError(400, error.message));
   }
 };

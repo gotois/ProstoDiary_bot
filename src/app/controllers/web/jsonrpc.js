@@ -1,5 +1,6 @@
 const jose = require('jose');
 const e = require('express');
+const createError = require('http-errors');
 const package_ = require('../../../../package.json');
 const logger = require('../../../lib/log');
 const apiRequestPublic = require('../../../lib/api').public;
@@ -36,8 +37,9 @@ const { queue, queueEvents } = bullService('API', execution);
  * @description express.js wrapper for jayson server
  * @param {e.Request} request - request
  * @param {e.Response} response - response
+ * @param {e.NextFunction} next - next
  */
-module.exports = async (request, response) => {
+module.exports = async (request, response, next) => {
   logger.info(`JSONRPC_API: ${request.body.method}`);
   try {
     response.header('X-Bot', [package_.name]);
@@ -53,6 +55,6 @@ module.exports = async (request, response) => {
     const message = await job.waitUntilFinished(queueEvents, 60000);
     response.contentType('application/ld+json').status(200).send(message);
   } catch (error) {
-    response.status(error.statusCode || 400).json({ error: error.message });
+    next(createError(error.statusCode || 400, error.message));
   }
 };
