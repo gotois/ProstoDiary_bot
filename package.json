@@ -129,7 +129,7 @@
     "jimp": "0.16.2",
     "jose": "1.28.2",
     "jsonld": "4.0.1",
-    "jsonld-signatures": "8.0.0",
+    "jsonld-signatures": "8.0.2",
     "jsqr": "1.4.0",
     "memjs": "1.3.0",
     "music-metadata": "7.4.1",
