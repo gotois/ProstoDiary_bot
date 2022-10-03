@@ -157,7 +157,7 @@
     "@roarr/cli": "3.9.0",
     "@sentry/cli": "1.74.5",
     "@types/express": "4.17.13",
-    "ava": "4.0.0",
+    "ava": "4.3.3",
     "codecov": "4.0.0-0",
     "commitizen": "4.2.5",
     "cross-env": "7.0.3",
