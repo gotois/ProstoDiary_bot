@@ -105,7 +105,7 @@
     "cheerio": "1.0.0-rc.12",
     "connect-pg-simple": "6.2.1",
     "coralogix-logger-winston": "1.0.12",
-    "crypto-ld": "4.0.0",
+    "crypto-ld": "4.0.3",
     "crypto-random-string": "3.3.1",
     "csurf": "1.11.0",
     "date-fns": "2.29.3",
