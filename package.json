@@ -124,7 +124,7 @@
     "helmet": "4.6.0",
     "http-auth": "4.2.0",
     "http-errors": "2.0.0",
-    "ioredis": "4.27.7",
+    "ioredis": "4.28.5",
     "jayson": "3.6.4",
     "jimp": "0.16.2",
     "jose": "1.28.2",
