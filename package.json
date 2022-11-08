@@ -1,7 +1,7 @@
 {
   "name": "prosto-diary",
   "version": "0.0.0-development",
-  "description": "ProstoDiary: your personal all-in-one virtual assistant",
+  "description": "Global virtual assistant: your personal all-in-one virtual assistant",
   "publisher": "goto Interactive Software",
   "homepage": "https://prosto-diary.gotointeractive.com",
   "main": "src/app/server.js",
@@ -109,9 +109,7 @@
     "express-openapi-validator": "3.17.2",
     "express-session": "1.17.3",
     "express-winston": "4.2.0",
-    "eyo-kernel": "2.5.6",
     "fast-xml-parser": "3.21.1",
-    "file-type": "16.5.4",
     "form-data": "3.0.1",
     "franc": "6.0.0",
     "grant-express": "5.4.8",

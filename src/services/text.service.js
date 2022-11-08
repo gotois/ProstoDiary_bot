@@ -1,7 +1,5 @@
-const Eyo = require('eyo-kernel');
 const speller = require('../lib/speller');
 // const dialogService = require('./dialog.service');
-const { detectLang, isRUS, isENG } = require('./nlp.service');
 /**
  * @param {string} string - string
  * @param {number} start - start
@@ -135,38 +133,6 @@ const convertStringToRegexp = (input) => {
 const previousInput = (input) => {
   return `${input.replace(/\n/g, ' ').slice(0, 6)}…`;
 };
-/**
- * @todo перенести в core
- * @description Автоматическое исправление опечаток
- * @param {string} text - text
- * @returns {Promise<string>}
- */
-const correctionText = async (text) => {
-  const language = detectLang(text).language;
-  // ёфикация текста
-  if (isRUS(language)) {
-    const safeEyo = new Eyo();
-    safeEyo.dictionary.loadSafeSync();
-    text = safeEyo.restore(text);
-  } else if (isENG(language)) {
-    // english rules ...
-  } else {
-    // пока только поддерживаем EN, RU
-    throw new Error('Unsupported language');
-  }
-  try {
-    const yandexSpellLanguageCode = language.slice(0, 2);
-    text = await spellText(text, yandexSpellLanguageCode);
-  } catch /* (error) */ {
-    // logger.error(error);
-  }
-
-  // Исправление кастомных типов
-  // (Например, "к" = "тысяча", преобразование кастомных типов "37C" = "37 Number Celsius")
-  // 	.9 -> 0.9
-  // ...
-  return text;
-};
 
 module.exports = {
   spellText,
@@ -174,6 +140,5 @@ module.exports = {
   formatWord,
   isRegexString,
   previousInput,
-  correctionText,
   replaceBetween,
 };

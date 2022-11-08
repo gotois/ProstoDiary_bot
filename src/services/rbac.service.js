@@ -1,6 +1,6 @@
 const ac = require('../app/middlewares/rbac');
 /**
- * Фильтруем выдачу в зависимост от доступа RBAC
+ * Фильтруем выдачу в зависимости от доступа RBAC
  *
  * @param {object} data - jsonld
  * @param {boolean} isOwner - isOwner
