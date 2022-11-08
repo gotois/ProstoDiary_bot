@@ -1,6 +1,6 @@
-const backupAction = require('../../../core/functions/backup');
 const TelegramBotRequest = require('./telegram-bot-request');
 const TelegramMessage = require('../models/telegram-bot-message');
+const {AbstractCommand} = require('vzor'); // fixme
 
 class Backup extends TelegramBotRequest {
   constructor(message) {
@@ -14,9 +14,29 @@ class Backup extends TelegramBotRequest {
    * @returns {Promise<void>}
    */
   async authReplyMessage({ text }) {
-    const jsonldRequest = await backupAction({
-      token: text,
-      date: this.message.date,
+    const backupAction = new AbstractCommand(
+      {
+        startTime: this.message.date,
+        subjectOf: [
+          {
+            '@type': 'CreativeWork',
+            'name': 'token',
+            'abstract': text,
+            'encodingFormat': 'text/plain',
+            // еще может потребоваться поле dateCreated - которое будет детектировать когда этот токен пришел чтобы его лучше детектить
+          },
+          {
+            '@type': 'CreativeWork',
+            'name': 'sorting',
+            'abstract': 'Ascending',
+            'encodingFormat': 'text/plain',
+          },
+        ],
+      },
+    );
+    await backupAction.prepare();
+
+    const jsonldRequest = await backupAction.context({
       creator: this.creator,
       publisher: this.publisher,
       telegram: this.chatData,

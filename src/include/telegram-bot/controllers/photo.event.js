@@ -1,6 +1,6 @@
 const TelegramBotRequest = require('./telegram-bot-request');
 const TelegramMessage = require('../models/telegram-bot-message');
-const photoAction = require('../../../core/functions/photo');
+const {AbstractImage} = require('vzor');
 
 class Photo extends TelegramBotRequest {
   constructor(message) {
@@ -17,6 +17,11 @@ class Photo extends TelegramBotRequest {
       return;
     }
     const imageBuffer = await this.getTelegramFile(mediumPhoto.file_id);
+
+    const photoAction = AbstractImage({
+
+    });
+
     const jsonldRequest = await photoAction({
       imageBuffer,
       caption: this.message.caption,

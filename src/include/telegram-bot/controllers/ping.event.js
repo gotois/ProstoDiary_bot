@@ -1,6 +1,6 @@
-const pingAction = require('../../../core/functions/ping');
 const TelegramBotRequest = require('./telegram-bot-request');
 const TelegramMessage = require('../models/telegram-bot-message');
+const {AbstractAction} = require('vzor');// fixme
 
 class Ping extends TelegramBotRequest {
   constructor(message) {
@@ -9,6 +9,11 @@ class Ping extends TelegramBotRequest {
   }
   async beginDialog(silent) {
     await super.beginDialog(silent);
+
+    const pingAction = new AbstractAction({
+      command: 'Ping',
+    });
+
     const jsonldRequest = await pingAction({
       telegram: this.chatData,
       creator: this.creator,
@@ -19,6 +24,8 @@ class Ping extends TelegramBotRequest {
   }
 }
 /**
+ * Проверка ping
+ *
  * @param {TelegramMessage} message - message
  * @param {boolean} silent - silent
  * @returns {Promise<undefined>}

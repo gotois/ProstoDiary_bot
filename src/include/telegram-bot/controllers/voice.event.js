@@ -1,6 +1,6 @@
 const TelegramBotRequest = require('./telegram-bot-request');
 const TelegramMessage = require('../models/telegram-bot-message');
-const voiceAction = require('../../../core/functions/voice');
+const {AbstractVoice} = require('vzor');// fixme
 
 class Voice extends TelegramBotRequest {
   constructor(message) {
@@ -10,6 +10,9 @@ class Voice extends TelegramBotRequest {
   async beginDialog(silent) {
     await super.beginDialog(silent);
     const fileBuffer = await this.getTelegramFile(this.message.voice.file_id);
+
+    const voiceAction = new AbstractVoice(fileBuffer);
+
     const jsonldRequest = await voiceAction({
       buffer: fileBuffer,
       date: this.message.date,

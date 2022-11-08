@@ -1,6 +1,8 @@
-const destroyAction = require('../../../core/functions/destroy');
+// todo дать возможность очищать не все, а только определенные истории
+
 const TelegramBotRequest = require('./telegram-bot-request');
 const TelegramMessage = require('../models/telegram-bot-message');
+const {AbstractCommand} = require('vzor'); // fixme
 
 class DatabaseClear extends TelegramBotRequest {
   constructor(message) {
@@ -30,6 +32,11 @@ class DatabaseClear extends TelegramBotRequest {
           );
           return;
         }
+
+        const destroyAction = new AbstractCommand({
+          command: 'Destroy',
+        });
+
         const jsonldAction = await destroyAction({
           creator: this.creator,
           publisher: this.publisher,
@@ -41,7 +48,7 @@ class DatabaseClear extends TelegramBotRequest {
   }
 }
 /**
- * @description Очистить базу данных с подтверждением
+ * @description Очистить базу данных с подтверждением - Удаление всей истории пользователя целиком
  * @param {TelegramMessage} message - message
  * @param {boolean} silent - silent dialog
  * @returns {Promise<undefined>}

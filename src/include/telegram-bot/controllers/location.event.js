@@ -1,6 +1,6 @@
 const TelegramBotRequest = require('./telegram-bot-request');
-const locationAction = require('../../../core/functions/location');
 const TelegramMessage = require('../models/telegram-bot-message');
+const {AbstractGeo} = require('vzor');
 
 class Location extends TelegramBotRequest {
   constructor(message) {
@@ -10,6 +10,11 @@ class Location extends TelegramBotRequest {
   async beginDialog(silent) {
     await super.beginDialog(silent);
     const { latitude, longitude } = this.message.location;
+
+    const locationAction = new AbstractGeo({
+      latitude, longitude
+    });
+
     const jsonldRequest = await locationAction({
       latitude,
       longitude,

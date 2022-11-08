@@ -1,6 +1,6 @@
 const TelegramBotRequest = require('./telegram-bot-request');
-const documentAction = require('../../../core/functions/document');
 const TelegramMessage = require('../models/telegram-bot-message');
+const {AbstractDocument} = require('vzor'); // fixme
 
 class Document extends TelegramBotRequest {
   constructor(message) {
@@ -12,6 +12,12 @@ class Document extends TelegramBotRequest {
     const fileBuffer = await this.getTelegramFile(
       this.message.document.file_id,
     );
+
+    // обработка документов
+    const documentAction = new AbstractDocument(fileBuffer)
+
+
+
     const jsonldRequest = await documentAction({
       buffer: fileBuffer,
       caption: this.message.caption,

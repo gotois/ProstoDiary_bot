@@ -1,5 +1,3 @@
-const editAction = require('../../../core/functions/edit');
-const deleteAction = require('../../../core/functions/remove');
 const TelegramBotRequest = require('./telegram-bot-request');
 const TelegramMessage = require('../models/telegram-bot-message');
 
@@ -20,6 +18,10 @@ class EditMessageText extends TelegramBotRequest {
       );
       return;
     }
+
+    // fixme
+    const { text, date, telegram_message_id, telegram_user_id } = requestObject;
+
     // fixme
     // if (!isExist) {
     // TODO: если записи нет - тогда спрашиваем пользователя, создавать ли новую запись?
@@ -33,6 +35,25 @@ class EditMessageText extends TelegramBotRequest {
         return this.message.text.toLowerCase() === del.toLowerCase();
       })
     ) {
+      const deleteAction = {
+        '@context': 'http://schema.org',
+        '@type': 'AllocateAction',
+        'agent': {
+          '@type': 'Person',
+          'name': package_.name,
+          'url': package_.homepage,
+        },
+        'name': 'RemoveMessage',
+        'subjectOf': [
+          {
+            '@type': 'CreativeWork',
+            'name': 'id',
+            'abstract': id,
+            'encodingFormat': 'text/plain',
+          },
+        ],
+      };
+
       const jsonldRequest = await deleteAction({
         telegram: this.chatData,
         creator: this.creator,
@@ -41,6 +62,33 @@ class EditMessageText extends TelegramBotRequest {
       });
       await this.rpc(jsonldRequest);
     } else {
+      const editAction = {
+        '@context': 'http://schema.org',
+        '@type': 'AllocateAction',
+        'agent': {
+          '@type': 'Person',
+          'name': package_.name,
+          'url': package_.homepage,
+        },
+        'name': 'EditMessage',
+        'subjectOf': [
+          {
+            '@type': 'CreativeWork',
+            'name': telegram_message_id,
+            'dateModified': date,
+            'abstract': text,
+            'encodingFormat': 'text/plain',
+            'creator': {
+              '@type': 'Person',
+              'knows': {
+                '@type': 'Person',
+                'name': telegram_user_id,
+              },
+            },
+          },
+        ],
+      };
+
       // TODO: https://github.com/gotois/ProstoDiary_bot/issues/34
       const result = await editAction({
         telegram: this.chatData,
@@ -53,7 +101,7 @@ class EditMessageText extends TelegramBotRequest {
   }
 }
 /**
- * @description Обновление текста в БД
+ * @description Обновление текста в БД или Удаление записи
  * @param {TelegramMessage} message - msg
  * @param {boolean} silent - silent dialog
  * @returns {Promise<undefined>}

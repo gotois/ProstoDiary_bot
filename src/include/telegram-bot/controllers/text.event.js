@@ -1,6 +1,6 @@
 const TelegramBotRequest = require('./telegram-bot-request');
 const TelegramMessage = require('../models/telegram-bot-message');
-const textAction = require('../../../core/functions/text');
+const {AbstractText} = require('vzor');
 const logger = require('../../../lib/log');
 
 class Text extends TelegramBotRequest {
@@ -13,6 +13,11 @@ class Text extends TelegramBotRequest {
     logger.info(this.message);
     try {
       await this.bot.sendChatAction(this.message.chat.id, 'typing');
+
+      const textAction = new AbstractText(this.message.text);
+
+
+
       const jsonldRequest = await textAction({
         text: this.message.text,
         hashtags: this.hashtags,
