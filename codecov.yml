@@ -22,7 +22,7 @@ ignore:
   - "**/*.md"
   - "**/*.yml"
   - "tests/"
-  - "ava.config.js"
+  - "ava.config.mjs"
 
 parsers:
   javascript:
