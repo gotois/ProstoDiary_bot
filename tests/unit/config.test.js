@@ -11,7 +11,6 @@ module.exports = (t) => {
   t.true(validator.isJSON(prettierrcJSON));
   require('../../.commitlintrc.json');
   require('../../.lintstagedrc.json');
-  require('../../app.json');
   require('../../package.json');
   require('../../nodemon.json');
   t.pass();

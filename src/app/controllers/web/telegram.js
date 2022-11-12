@@ -1,7 +1,6 @@
 const jose = require('jose');
 const e = require('express');
 const bot = require('../../../include/telegram-bot/bot');
-const jsonldAction = require('../../../core/models/action/base');
 const { pool } = require('../../../db/sql');
 const assistantChatQueries = require('../../../db/selectors/chat');
 const assistantBoQueries = require('../../../db/selectors/assistant');
