@@ -1,6 +1,6 @@
 const TelegramBotRequest = require('./telegram-bot-request');
 const TelegramMessage = require('../models/telegram-bot-message');
-const {AbstractGeo} = require('vzor');
+const Abstract = require('vzor');
 
 class Location extends TelegramBotRequest {
   constructor(message) {
@@ -11,11 +11,48 @@ class Location extends TelegramBotRequest {
     await super.beginDialog(silent);
     const { latitude, longitude } = this.message.location;
 
-    const locationAction = new AbstractGeo({
-      latitude, longitude
+
+    // fixme заполнять исходящий json-ld данными
+     this.objectMainEntity = [];
+        this.objectMainEntity.push({
+            '@type': 'PropertyValue',
+            'name': 'silent',
+            'value': data.silent || false,
+        });
+        if (data.telegram) {
+            if (data.telegram.messageId) {
+                this.objectMainEntity.push({
+                    '@type': 'PropertyValue',
+                    'name': 'TelegramMessageId',
+                    'value': data.telegram.messageId,
+                });
+            }
+            if (data.telegram.chatId) {
+                this.objectMainEntity.push({
+                    '@type': 'PropertyValue',
+                    'name': 'TelegramChatId',
+                    'value': data.telegram.chatId,
+                });
+
+                // телеграм чат
+                this.namespace = `https://t.me/chat#${data.telegram.chatId}`;
+            }
+        } else {
+            // сообщение пришло из почты
+            // this.namespace будет устанавливаться из Message-Id письма
+        }
+        
+
+    const action = new Abstract({
+      location: {
+        latitude,
+        longitude,
+      },
     });
 
-    const jsonldRequest = await locationAction({
+
+
+    const jsonldRequest = await action({
       latitude,
       longitude,
       date: this.message.date,

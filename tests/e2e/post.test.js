@@ -3,7 +3,7 @@ const request = require('supertest');
 module.exports = async (t) => {
   t.timeout(15000);
 
-  const textAction = require('../../src/core/functions/text');
+  // const textAction = require('../../src/core/functions/text');
   const result = await textAction({
     text: 'поел салат с сыром',
     creator: 'ci@gotointeractive.com',

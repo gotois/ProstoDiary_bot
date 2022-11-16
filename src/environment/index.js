@@ -1,11 +1,11 @@
 const fs = require('fs');
 const dotenv = require('dotenv');
 const validator = require('validator');
-const herokuAPP = require('../../app.json');
 
 const {
   NODE_ENV,
   HOST,
+  PORT,
 
   NGROK,
   NGROK_URL,
@@ -19,33 +19,14 @@ const {
   CORALOGIX_WINSTON_PRIVATE_KEY,
   CORALOGIX_WINSTON_APPLICATION_NAME,
 
-  GOOGLE_APPLICATION_CREDENTIALS,
-  GOOGLE_MAPS_GEOCODING_API,
-  GOOGLE_KNOWLEDGE_GRAPH,
-
   TELEGRAM_TOKEN,
 
   SENTRY_DSN,
 
-  PORT,
-
-  DIALOGFLOW_CREDENTIALS,
-  DIALOGFLOW_CREDENTIALS_SEARCH,
-
-  NALOGRU_EMAIL,
-  NALOGRU_NAME,
-  NALOGRU_PHONE,
-  NALOGRU_KP_PASSWORD,
-
   SENDGRID_API_KEY,
   SENDGRID_API_KEY_DEV,
 
-  OPEN_WEATHER_KEY,
-
   YA_DICTIONARY,
-
-  FOURSQUARE_CLIEND_ID,
-  FOURSQUARE_CLIENT_SECRET,
 
   YA_PDD_TOKEN,
   YA_OAUTH_ID,
@@ -174,12 +155,6 @@ const ENV = {
       return '9000';
     },
     /**
-     * @returns {string}
-     */
-    get HEROKUAPP() {
-      return `https://${herokuAPP.name}.herokuapp.com`;
-    },
-    /**
      * @returns {string|Error}
      */
     get HOST() {
@@ -188,18 +163,12 @@ const ENV = {
       } else if (ENV.NGROK.URL) {
         return ENV.NGROK.URL;
       } else if (ENV.IS_PRODUCTION) {
-        return ENV.SERVER.HEROKUAPP;
+        return HOST;
       } else if (HOST) {
         return HOST;
       }
       return 'localhost'; // todo поменять на http://127.0.0.1
     },
-  },
-  NALOGRU: {
-    NALOGRU_EMAIL,
-    NALOGRU_NAME,
-    NALOGRU_PHONE,
-    NALOGRU_KP_PASSWORD,
   },
   SENDGRID: {
     /**
@@ -238,36 +207,6 @@ const ENV = {
     },
   },
 
-  OPEN_WEATHER: {
-    OPEN_WEATHER_KEY,
-  },
-  GOOGLE: {
-    GOOGLE_MAPS_GEOCODING_API,
-    GOOGLE_KNOWLEDGE_GRAPH,
-    CLOUD: {
-      // Bucket where the file resides
-      bucketName: 'prostodiary.appspot.com',
-    },
-    get CREDENTIALS() {
-      return returnsEnvironmentObject(GOOGLE_APPLICATION_CREDENTIALS);
-    },
-  },
-  DIALOGFLOW: {
-    get DIALOGFLOW_CREDENTIALS_SEARCH() {
-      return returnsEnvironmentObject(DIALOGFLOW_CREDENTIALS_SEARCH);
-    },
-    get CREDENTIALS() {
-      return returnsEnvironmentObject(DIALOGFLOW_CREDENTIALS);
-    },
-  },
-  FOURSQUARE: {
-    get CLIEND_ID() {
-      return FOURSQUARE_CLIEND_ID;
-    },
-    get CLIENT_SECRET() {
-      return FOURSQUARE_CLIENT_SECRET;
-    },
-  },
   /**
    * @description Heroku production
    * @returns {boolean}
@@ -301,7 +240,7 @@ const ENV = {
   },
 };
 
-const importantVariables = new Set(['SERVER', 'GOOGLE', 'DIALOGFLOW']);
+const importantVariables = new Set(['SERVER', 'GOOGLE']);
 if (!ENV.IS_CI) {
   importantVariables.add('REDIS');
   importantVariables.add('DATABASE');

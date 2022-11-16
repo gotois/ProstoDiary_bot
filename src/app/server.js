@@ -4,28 +4,37 @@ const express = require('express');
 const Sentry = require('@sentry/node');
 const helmet = require('helmet');
 const boxen = require('boxen');
-// const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
+// todo проверить функционал
+// eslint-disable-next-line no-unused-vars
+const OpenApiValidator = require('express-openapi-validator').OpenApiValidator;
 const package_ = require('../../package.json');
-const { IS_PRODUCTION, SENTRY, SERVER } = require('../environment');
+// const { IS_PRODUCTION, SENTRY, SERVER } = require('../environment');
 const session = require('./middlewares/session');
 const winstonLog = require('./middlewares/logger');
+// routes
 const mainRoutes = require('./routes/main');
-const botRoutes = require('./routes/bot');
-const userRoutes = require('./routes/user');
-const apiRoutes = require('./routes/api');
-const marketplaceRoutes = require('./routes/marketplace');
-const telegramRoutes = require('./routes/telegram');
-const messageRoutes = require('./routes/message');
-const pingRoutes = require('./routes/ping');
-const thingRoutes = require('./routes/thing');
-const documentationRoutes = require('./routes/documentation');
-const passportRoutes = require('./routes/passport');
+
+
+
+// const botRoutes = require('./routes/bot'); // todo перенести в telegram-bot
+
+
+
+// const userRoutes = require('./routes/user');
+// const apiRoutes = require('./routes/api');
+// const marketplaceRoutes = require('./routes/marketplace');
+// const telegramRoutes = require('./routes/telegram');
+// const messageRoutes = require('./routes/message');
+// const pingRoutes = require('./routes/ping');
+// const thingRoutes = require('./routes/thing');
+// const documentationRoutes = require('./routes/documentation');
+// const passportRoutes = require('./routes/passport');
 
 (async function main() {
-  Sentry.init({
-    dsn: SENTRY.DSN,
-    debug: IS_PRODUCTION,
-  });
+  // Sentry.init({
+  //   dsn: SENTRY.DSN,
+  //   debug: IS_PRODUCTION,
+  // });
   const app = express();
   app.set('trust proxy', true);
   // The request handler must be the first middleware on the app
@@ -35,20 +44,20 @@ const passportRoutes = require('./routes/passport');
   app.use(winstonLog);
   // The error handler must be before any other error middleware and after all controllers
   app.use(Sentry.Handlers.errorHandler());
-  app.use('/', mainRoutes());
-  app.use('/ping', pingRoutes);
-  app.use('/thing', thingRoutes);
-  app.use('/telegram', telegramRoutes);
-  app.use('/documentation', documentationRoutes);
-  app.use('/passport', passportRoutes);
-  app.use('/api', apiRoutes);
-  app.use('/bot', botRoutes);
-  app.use('/user', userRoutes);
-  app.use('/message', messageRoutes);
-  app.use('/marketplace', marketplaceRoutes);
+  // app.use('/', mainRoutes());
+  // app.use('/ping', pingRoutes);
+  // app.use('/thing', thingRoutes);
+  // app.use('/telegram', telegramRoutes);
+  // app.use('/documentation', documentationRoutes);
+  // app.use('/passport', passportRoutes);
+  // app.use('/api', apiRoutes);
+  // app.use('/bot', botRoutes);
+  // app.use('/user', userRoutes);
+  // app.use('/message', messageRoutes);
+  // app.use('/marketplace', marketplaceRoutes);
 
   // Express error handler
-  app.use(require('./middlewares/error-handler'));
+  // app.use(require('./middlewares/error-handler'));
 
   // fixme перестал работать, возможно новая версия поломала API
   // try {
@@ -75,11 +84,11 @@ const passportRoutes = require('./routes/passport');
   // }
 
   let listenMessage;
-  if (IS_PRODUCTION) {
-    listenMessage = `Production server ${package_.version} started on: ${SERVER.HOST}:${SERVER.PORT}`;
-  } else {
-    listenMessage = `Dev server started on: ${SERVER.HOST}`;
-  }
+  // if (IS_PRODUCTION) {
+  //   listenMessage = `Production server ${package_.version} started on: ${SERVER.HOST}:${SERVER.PORT}`;
+  // } else {
+  //   listenMessage = `Dev server started on: ${SERVER.HOST}`;
+  // }
   app.listen(SERVER.PORT, () => {
     const endServerTime = performance.now();
     const diffServerTime = (endServerTime - startServerTime).toFixed(2);
@@ -100,5 +109,5 @@ const passportRoutes = require('./routes/passport');
     console.log(result);
   });
 
-  await require('../jobs')();
+  // await require('../jobs')();
 })();

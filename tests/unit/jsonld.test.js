@@ -12,6 +12,11 @@ module.exports = (t) => {
       '@id': 'something',
     }),
   );
+
+  const schemaOrg = require('../../src/lib/schema');
+  const placeGet = schemaOrg.get('Place');
+  t.is(placeGet.label, 'Place');
+
   t.true(
     isJSONLD({
       '@context': 'http://schema.org',

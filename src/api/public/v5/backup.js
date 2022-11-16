@@ -1,11 +1,12 @@
+const { pack } = require('zip-pack-unpack');
 const logger = require('../../../lib/log');
 const passportQueries = require('../../../db/selectors/passport');
-const { pack } = require('../../../lib/archiver');
 const twoFactorAuthService = require('../../../lib/2fa');
 const commandLogger = require('../../../services/command-logger.service');
 const { convertIn2DigitFormat } = require('../../../services/date.service');
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
+
 const AssignAction = require('../../../core/models/action/assign');
 /**
  * @param {Array} stories - entries

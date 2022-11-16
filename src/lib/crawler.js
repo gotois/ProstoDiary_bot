@@ -1,6 +1,5 @@
 const fetch = require('node-fetch');
 const jsonld = require('jsonld');
-// const cheerio = require('cheerio');
 const { isJSONLD } = require('./jsonld');
 
 async function setUrls(document) {

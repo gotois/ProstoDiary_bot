@@ -1,11 +1,23 @@
 const Transport = require('winston-transport');
 const { SERVER } = require('../../environment');
+const logger = require('../../lib/log');
+const apiRequest = require('../../lib/api').private;
+
 const AcceptAction = require('../../core/models/action/accept');
 const RejectAction = require('../../core/models/action/reject');
 const AuthorizeAction = require('../../core/models/action/authorize');
-const logger = require('../../lib/log');
-const textService = require('../../services/text.service');
-const apiRequest = require('../../lib/api').private;
+
+/**
+ * 'Some' => 'Some…'
+ * '123456789' => '123456…'
+ *
+ * @description Message updated text
+ * @param {string} input - user input text
+ * @returns {string}
+ */
+const previousInput = (input) => {
+  return `${input.replace(/\n/g, ' ').slice(0, 6)}…`;
+};
 
 module.exports = class PsqlTransport extends Transport {
   constructor(options) {
@@ -34,7 +46,7 @@ module.exports = class PsqlTransport extends Transport {
           mainEntity: document.result.mainEntity,
           result: {
             encodingFormat: 'text/markdown',
-            abstract: `_${textService.previousInput(preContent)}_ 📝`,
+            abstract: `_${previousInput(preContent)}_ 📝`,
           },
         }),
         {
