@@ -1,5 +1,5 @@
 module.exports = (t) => {
-  const { isJSONLD } = require('../../src/lib/jsonld');
+  const { isJSONLD, schemaOrg } = require('../../src/lib/jsonld');
   t.false(isJSONLD({}));
   // eslint-disable-next-line unicorn/no-useless-undefined
   t.false(isJSONLD(undefined));
@@ -13,7 +13,6 @@ module.exports = (t) => {
     }),
   );
 
-  const schemaOrg = require('../../src/lib/schema');
   const placeGet = schemaOrg.get('Place');
   t.is(placeGet.label, 'Place');
 

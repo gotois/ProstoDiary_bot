@@ -99,16 +99,7 @@ test.after.always('guaranteed cleanup', async (t) => {
 });
 
 // API
-skipTestForFast('API: speller service', require('./speller-service.test'));
 skipTestForFast('API: request', require('./request.test'));
-skipTestForFast('API: Location', require('./location.test'));
-skipTestForFastOrTravis(
-  'API: dialogflow',
-  require('./dialogflow-service.test'),
-);
-skipTestForFastOrTravis('API: googleapis Geocode', require('./geocode.test'));
-skipTestForFastOrTravis('API: Google Vision', require('./vision.test'));
-skipTestForFastOrTravis('API: Translate', require('./translate.test'));
 
 // Telegram commands
 skipTestForFastOrTravis('/help', require('./help.test'));
@@ -119,13 +110,11 @@ skipTestForFastOrTravis(
   'Создать отдельного пользователя в БД',
   require('./passport-db.test'),
 );
+
 test.todo('/start');
 test.todo('/dbclear');
 test.todo('Проверка удаления своей записи');
-test.todo('/search'); // + Проверека построения графика
-
-// CORE
-skipTestForFastOrTravis('story', require('./story.test'));
+test.todo('/search'); // + Проверка построения графика
 
 test('dictionary', async (t) => {
   const { getSynonyms } = require('../../src/lib/dictionary');
@@ -134,22 +123,5 @@ test('dictionary', async (t) => {
 });
 
 skipTestForFastOrTravis('keys:jsonld', require('./keys.test'));
-
-skipTestForFastOrTravis('language service', async (t) => {
-  const languageService = require('../../src/services/nlp.service');
-
-  const analyzedEntities = await languageService.analyzeEntities(
-    'я поел салат',
-  );
-  const { entities, language } = analyzedEntities;
-  const { tokens } = await languageService.analyzeSyntax('я поел салат');
-
-  t.is(!!entities, true);
-  t.is(!!language, true);
-  t.is(!!tokens, true);
-
-  // todo или единый запрос. Пока только поддерживатеся английский
-  // const { categories, documentSentiment, } = await languageService.annotateText('I was play in Angry Birds ');
-});
 
 test('bot init', require('./telegram-bot.test'));

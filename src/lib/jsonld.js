@@ -65,4 +65,5 @@ module.exports = {
   fromRDF,
   canonize,
   isJSONLD,
+  schemaOrg,
 };
