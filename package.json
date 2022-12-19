@@ -139,7 +139,7 @@
     "@commitlint/cli": "13.2.1",
     "@roarr/cli": "3.9.0",
     "@sentry/cli": "1.74.6",
-    "@types/express": "4.17.14",
+    "@types/express": "4.17.15",
     "ava": "4.3.3",
     "codecov": "4.0.0-0",
     "commitizen": "4.2.6",
