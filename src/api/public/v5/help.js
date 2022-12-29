@@ -4,7 +4,7 @@ const { allCommands } = require('../../../include/telegram-bot/commands');
 const { IS_PRODUCTION } = require('../../../environment');
 const { getCheckSum } = require('../../../services/crypt.service');
 const commandLogger = require('../../../services/command-logger.service');
-const AssignAction = require('../../../core/models/action/assign');
+const AssignAction = require('../../../action/assign');
 /**
  * @returns {string}
  */

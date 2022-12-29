@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// fixme переименовать в server.sh или server.js
+// fixme переименовать в server.cjs
 
 require('dotenv').config();
 const nodemon = require('nodemon');

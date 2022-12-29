@@ -1,6 +1,6 @@
 const logger = require('../../../lib/log');
 const storyLogger = require('../../../services/story-logger.service');
-const AssignAction = require('../../../core/models/action/assign');
+const AssignAction = require('../../../action/assign');
 /**
  * @param {object} document - jsonld document
  * @param {object} object - credentions

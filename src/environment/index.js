@@ -80,7 +80,9 @@ const ENV = {
     URL: NGROK_URL,
   },
   REDIS: {
-    URL: REDIS_URL,
+    get URL() {
+      return REDIS_URL || 'http://localhost:6379';
+    },
   },
   DATABASE: {
     host: PGHOST,
@@ -94,6 +96,9 @@ const ENV = {
      */
     get POSTGRES_CONNECTION_STRING() {
       const { user, password, host, port, name } = ENV.DATABASE;
+      if (!user || !password || !host) {
+        throw new Error('PostgreSQL not found');
+      }
       if (ENV.IS_PRODUCTION) {
         return `postgres://${user}:${password}.${host}:${port}/${name}`;
       } else if (ENV.IS_CI) {

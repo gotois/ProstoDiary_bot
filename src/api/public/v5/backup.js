@@ -6,8 +6,7 @@ const commandLogger = require('../../../services/command-logger.service');
 const { convertIn2DigitFormat } = require('../../../services/date.service');
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
-
-const AssignAction = require('../../../core/models/action/assign');
+const AssignAction = require('../../../action/assign');
 /**
  * @param {Array} stories - entries
  * @returns {Buffer}

@@ -1,9 +1,9 @@
 const {
   createPool,
   sql,
-  NotFoundError,
-  DataIntegrityError,
-  UniqueIntegrityConstraintViolationError,
+  // NotFoundError,
+  // DataIntegrityError,
+  // UniqueIntegrityConstraintViolationError,
 } = require('slonik');
 const {
   createQueryLoggingInterceptor,
@@ -19,7 +19,7 @@ const pool = createPool(DATABASE.POSTGRES_CONNECTION_STRING, {
 module.exports = {
   pool,
   sql,
-  UniqueIntegrityConstraintViolationError,
-  DataIntegrityError,
-  NotFoundError,
+  // UniqueIntegrityConstraintViolationError,
+  // DataIntegrityError,
+  // NotFoundError,
 };

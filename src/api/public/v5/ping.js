@@ -1,6 +1,5 @@
 const commandLogger = require('../../../services/command-logger.service');
-
-const AssignAction = require('../../../core/models/action/assign');
+const AssignAction = require('../../../action/assign');
 /**
  * @param {object} document - parameters
  * @param {object} object - object
