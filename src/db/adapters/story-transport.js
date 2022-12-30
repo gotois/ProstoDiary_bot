@@ -2,10 +2,9 @@ const Transport = require('winston-transport');
 const { SERVER } = require('../../environment');
 const logger = require('../../lib/log');
 const apiRequest = require('../../lib/api').private;
-
-const AcceptAction = require('../../core/models/action/accept');
-const RejectAction = require('../../core/models/action/reject');
-const AuthorizeAction = require('../../core/models/action/authorize');
+const AcceptAction = require('../../action/accept');
+const RejectAction = require('../../action/reject');
+const AuthorizeAction = require('../../action/authorize');
 
 /**
  * 'Some' => 'Some…'

@@ -42,10 +42,6 @@ const {
   JENA_URL,
   JENA_DATABASE_NAME,
 
-  MEMCACHIER_SERVERS,
-  MEMCACHIER_USERNAME,
-  MEMCACHIER_PASSWORD,
-
   ASSISTANTS,
 } = process.env;
 /**
@@ -63,11 +59,6 @@ const returnsEnvironmentObject = (environmentString) => {
 };
 
 const ENV = {
-  MEMCACHIER: {
-    MEMCACHIER_SERVERS,
-    MEMCACHIER_USERNAME,
-    MEMCACHIER_PASSWORD,
-  },
   SECURE_KEY, // Heroku securekey
   JENA: {
     URL: JENA_URL,

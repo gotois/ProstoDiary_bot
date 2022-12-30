@@ -1,12 +1,12 @@
+const redis = require('../../../lib/redis');
 const { pool } = require('../../../db/sql');
 const passportQueries = require('../../../db/selectors/passport');
-const mc = require('../../../lib/memcache');
 const template = require('../../../app/public/views/passport');
 
 module.exports = async function ({ user }) {
   try {
     const key = 'passport:' + user;
-    const prime = await mc.get(key);
+    const prime = await redis.get(key);
     if (prime && prime.value) {
       const value = prime.value.toString();
       return Promise.resolve(JSON.parse(value));
@@ -46,7 +46,7 @@ module.exports = async function ({ user }) {
       return clientData;
     });
     const data = await template(clientData);
-    await mc.set(key, JSON.stringify(data), { expires: 500 });
+    await redis.set(key, JSON.stringify(data), { expires: 500 });
     return Promise.resolve(data);
   } catch (error) {
     return Promise.reject(this.error(400, error.message, error));

@@ -1,4 +1,4 @@
-const mc = require('../../../lib/memcache');
+const redis = require('../../../lib/redis');
 const { pool } = require('../../../db/sql');
 const storyQueries = require('../../../db/selectors/story');
 const passportQueries = require('../../../db/selectors/passport');
@@ -26,13 +26,13 @@ module.exports = async function ({ limit = '10', user }) {
       },
     );
     const key = 'latest:' + role + user + limit;
-    const prime = await mc.get(key);
+    const prime = await redis.get(key);
     if (prime && prime.value) {
       return Promise.resolve(JSON.parse(prime.value));
     }
     const temporary = templateList(storyTable);
     const values = filter(temporary, isOwner, role);
-    await mc.set(key, JSON.stringify(values), { expires: 500 });
+    await redis.set(key, JSON.stringify(values), { expires: 500 });
     return Promise.resolve(values);
   } catch (error) {
     return Promise.reject(this.error(400, error.message, error));
