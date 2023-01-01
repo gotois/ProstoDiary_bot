@@ -1,5 +1,6 @@
 const jose = require('jose');
 const { pool } = require('../../db/sql');
+const createError = require('http-errors');
 const passportQueries = require('../../db/selectors/passport');
 
 // Проверяем авторизацию запроса по token auth
@@ -27,6 +28,6 @@ module.exports = async (request, response, next) => {
     request.session.passport[passport.id] = passport;
     next();
   } catch (error) {
-    next(error);
+    next(createError(error.statusCode || 400, error.message));
   }
 };

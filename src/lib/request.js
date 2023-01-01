@@ -63,13 +63,13 @@ const rpc = ({ body, auth, jwt, verification }) => {
       }
       if (!body) {
         return reject({
-          message: 'Unknown empty body',
+          message: 'Unknown Server Error',
           statusCode: 500,
         });
       }
       if (response.statusCode >= 400) {
         return reject({
-          message: body.error,
+          message: body.error || body,
           statusCode: response.statusCode,
         });
       }

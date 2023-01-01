@@ -9,7 +9,6 @@ module.exports.private = (rpcValues) => {
   return new Promise((resolve, reject) => {
     jsonRpcServerPrivate.call(rpcValues, {}, (error = {}, result) => {
       if (error && error.error) {
-        // todo RejectAction должен формироваться до этого
         return reject(
           jsonRpcServerPublic.error(
             error.error.code,
