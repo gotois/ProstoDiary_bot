@@ -53,8 +53,6 @@ NALOGRU_KP_PASSWORD={ nalog.ru password  } #это вводится пользо
 SENDGRID_API_KEY={ api key }
 SENDGRID_API_KEY_DEV={ api key }
 
-OPEN_WEATHER_KEY={ api key }
-
 YA_DICTIONARY={ api key }
 
 FOURSQUARE_CLIEND_ID={ string }
