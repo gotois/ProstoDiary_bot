@@ -1,3 +1,4 @@
+// deprecated
 module.exports = (t) => {
   const { allCommands } = require('../../src/include/telegram-bot/commands');
   const {

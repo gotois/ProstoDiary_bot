@@ -2,16 +2,10 @@ const { v1: uuidv1 } = require('uuid');
 const crypto = require('crypto');
 const { Ed25519KeyPair } = require('crypto-ld');
 const logger = require('../../../lib/log');
-const { IS_AVA_OR_CI, IS_AVA } = require('../../../environment');
-const { get } = require('../../../lib/request');
 const linkedDataSignature = require('../../../services/linked-data-signature.service');
 
 class TelegramBotRequest {
   #message;
-  /**
-   * @type {string}
-   */
-  static TELEGRAM_HOST = 'api.telegram.org';
   /**
    * @param {TelegramMessage} message - message
    */
@@ -96,6 +90,7 @@ class TelegramBotRequest {
     logger.info('telegram: ' + instanceProto.constructor.name);
   }
   /**
+   * @deprecated
    * Бродкаст всех сообщений по паспортам ботов по API
    *
    * @param {jsonldAction} document - JSON-LD Request

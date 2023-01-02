@@ -7,6 +7,7 @@ const apiRequestPublic = require('../../../lib/api').public;
 const apiRequestPrivate = require('../../../lib/api').private;
 const ldSignature = require('../../../services/linked-data-signature.service');
 const bullService = require('../../../services/bull.service');
+const { queue, queueEvents } = bullService('API', execution);
 /**
  * @param {object} job - bullmq job
  * @returns {Promise<object|TypeError>}
@@ -32,7 +33,6 @@ async function execution(job) {
   );
   return apiRequestPublic(body, passport, marketplace);
 }
-const { queue, queueEvents } = bullService('API', execution);
 /**
  * @description express.js wrapper for jayson server
  * @param {e.Request} request - request

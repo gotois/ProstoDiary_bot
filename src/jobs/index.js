@@ -6,8 +6,25 @@ const { SERVER } = require('../environment');
 /**
  * выявлять неактивных пользователей telegram
  */
-const checkUsers = () => {
-  require('../include/telegram-bot/job/check-users');
+const checkUsers = async () => {
+   try {
+    // пингуем тем самым проверяем что пользователь активен
+    await bot.sendChatAction(passport.telegram_id, 'typing');
+  } catch (error) {
+    console.error(error.stack);
+    switch (error.response && error.response.statusCode) {
+      case 403: {
+        // fixme отправлять oidc на деактивацию
+        // await connection.query(
+        //   passportQueries.deactivateByPassportId(passport.id),
+        // );
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
 };
 
 const crawLatestMessages = async (options) => {
