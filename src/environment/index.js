@@ -71,9 +71,8 @@ const ENV = {
     URL: NGROK_URL,
   },
   REDIS: {
-    get URL() {
-      return REDIS_URL || 'http://localhost:6379';
-    },
+    port: 6379,
+    host: REDIS_URL || '127.0.0.1',
   },
   DATABASE: {
     host: PGHOST,
