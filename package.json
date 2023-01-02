@@ -121,6 +121,7 @@
     "openpgp": "4.10.10",
     "qrcode": "1.5.1",
     "qs": "6.11.0",
+    "request-json-rpc2": "github:qertis/request-json-rpc2",
     "schema.org": "3.1.1",
     "slonik": "22.7.1",
     "slonik-interceptor-query-logging": "1.3.9",

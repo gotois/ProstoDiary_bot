@@ -1,10 +1,9 @@
 const { v1: uuidv1 } = require('uuid');
 const crypto = require('crypto');
 const { Ed25519KeyPair } = require('crypto-ld');
-const bot = require('../bot');
 const logger = require('../../../lib/log');
 const { IS_AVA_OR_CI, IS_AVA } = require('../../../environment');
-const { rpc, get } = require('../../../lib/request');
+const { get } = require('../../../lib/request');
 const linkedDataSignature = require('../../../services/linked-data-signature.service');
 
 class TelegramBotRequest {
@@ -17,7 +16,6 @@ class TelegramBotRequest {
    * @param {TelegramMessage} message - message
    */
   constructor(message) {
-    this.bot = bot;
     this.#message = message;
     this.userHash = crypto.createHash('md5').update(String(message.from.id)).digest('hex');
   }
@@ -96,20 +94,6 @@ class TelegramBotRequest {
   async beginDialog(silent) {
     const instanceProto = Object.getPrototypeOf(this);
     logger.info('telegram: ' + instanceProto.constructor.name);
-    if (!silent && !IS_AVA_OR_CI) {
-      await this.bot.sendChatAction(this.message.chat.id, 'typing');
-    }
-  }
-  /**
-   * @param {string} fileId - file id
-   * @returns {Promise<Buffer>}
-   */
-  async getTelegramFile(fileId) {
-    const fileInfo = await this.bot.getFile(fileId);
-    const buffer = await get(
-      `https://${TelegramBotRequest.TELEGRAM_HOST}/file/bot${this.bot.token}/${fileInfo.file_path}`,
-    );
-    return buffer;
   }
   /**
    * Бродкаст всех сообщений по паспортам ботов по API
