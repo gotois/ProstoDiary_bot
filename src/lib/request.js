@@ -1,81 +1,10 @@
 const request = require('request');
-const package_ = require('../../package.json');
-const { SERVER, IS_AVA } = require('../environment');
-let supertest;
-if (IS_AVA) {
-  supertest = require('supertest');
-}
 /**
  * @param {Buffer|string} body - response body
  * @returns {string}
  */
 const formatMessage = (body) => {
   return Buffer.isBuffer(body) ? body.toString('utf8') : body;
-};
-/**
- * @description JSON-RPC2 API request
- * @param {string} obj - obj
- * @param {object} obj.body - body
- * @param {object} obj.auth - basic auth
- * @param {string} obj.verification - verification signatures Ed25519Signature2018
- * @returns {Promise<*>}
- */
-const rpc = ({ body, auth, jwt, verification }) => {
-  // logger.info('rpc');
-  const parameters = {
-    method: 'POST',
-    url: SERVER.HOST + '/api',
-    headers: {
-      'User-Agent': `${package_.name}/${package_.version}`,
-      'Content-Type': 'application/json; charset=utf-8',
-      'Accept': 'application/schema+json',
-    },
-    body,
-    json: true,
-  };
-  if (verification) {
-    parameters.headers['verification'] = verification;
-  }
-  if (jwt) {
-    parameters.headers['Authorization'] = 'Bearer ' + jwt;
-  }
-  if (auth) {
-    parameters.auth = auth;
-  }
-  // hack переопределяем для тестов моковый сервер
-  if (IS_AVA) {
-    return supertest(global.app)
-      .post('/api')
-      .send({
-        method: parameters.method,
-        url: 'http://' + parameters.url,
-        headers: parameters.headers,
-        body,
-      })
-      .then((response) => {
-        return response.body.result;
-      });
-  }
-  return new Promise((resolve, reject) => {
-    request(parameters, (error, response, body) => {
-      if (error) {
-        return reject(error);
-      }
-      if (!body) {
-        return reject({
-          message: 'Unknown Server Error',
-          statusCode: 500,
-        });
-      }
-      if (response.statusCode >= 400) {
-        return reject({
-          message: body.error || body,
-          statusCode: response.statusCode,
-        });
-      }
-      return resolve(body);
-    });
-  });
 };
 /**
  * @param {string} url - url
@@ -213,7 +142,6 @@ const toQueryString = (data) => {
 };
 
 module.exports = {
-  rpc,
   get,
   post,
   patch,
