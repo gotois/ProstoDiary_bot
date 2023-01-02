@@ -21,7 +21,7 @@
       "ignoreTemplateLiterals": true,
       "ignoreTrailingComments": true,
       "ignoreUrls": true,
-      "code": 80
+      "code": 120
     }],
     "new-parens": "error",
     "no-lonely-if": "error",
