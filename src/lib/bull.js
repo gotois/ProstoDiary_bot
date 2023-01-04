@@ -1,6 +1,6 @@
 const { QueueEvents, QueueScheduler, Queue, Worker } = require('bullmq');
 const client = require('../db/redis');
-const logger = require('../lib/log');
+// const logger = require('../lib/log');
 
 const connection = client.duplicate();
 connection.options.keyPrefix = ''; // remove other prefix
@@ -22,17 +22,17 @@ module.exports = (name, workerFunction, repeat = false) => {
     connection,
   });
   worker.on('failed', (job, error) => {
-    logger.error(error);
+    //logger.error(error);
   });
   const queueEvents = new QueueEvents(name);
   queueEvents.on('waiting', (job) => {
-    logger.info(`job ${job.jobId} waiting`);
+    //logger.info(`job ${job.jobId} waiting`);
   });
   queueEvents.on('completed', (job) => {
-    logger.info(`job ${job.jobId} completed`);
+    //logger.info(`job ${job.jobId} completed`);
   });
   queueEvents.on('failed', (job) => {
-    logger.error(`Job ${job.jobId} failed. Reason: ${job.failedReason}`);
+    //logger.error(`Job ${job.jobId} failed. Reason: ${job.failedReason}`);
   });
   return {
     queue,
