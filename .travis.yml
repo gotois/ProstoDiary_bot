@@ -48,10 +48,6 @@ branches:
 install:
   - npm ci
 
-before_script:
-  - bash scripts/sql.sh
-  - git lfs pull
-
 script:
   - npm test
 

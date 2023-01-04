@@ -80,43 +80,6 @@ const post = (
   });
 };
 /**
- * @param {string} url - url
- * @param {object} form - form
- * @param {object} headers - headers
- * @returns {Promise<*>}
- */
-const patch = (
-  url,
-  form,
-  // eslint-disable-next-line unicorn/no-object-as-default-parameter
-  headers = { 'content-type': 'application/json; charset=UTF-8' },
-) => {
-  return new Promise((resolve, reject) => {
-    request(
-      {
-        method: 'PATCH',
-        url,
-        headers,
-        form,
-        json: true,
-      },
-      (error, response, body) => {
-        if (error) {
-          return reject(error);
-        }
-        if (response.statusCode >= 400) {
-          return reject({
-            message: formatMessage(body),
-            statusCode: response.statusCode,
-          });
-        }
-        return resolve(body);
-      },
-    );
-  });
-};
-/**
- * @todo заменить на библиотеку qs
  * @description Serialization
  * @param {object} data - data
  * @returns {string}
@@ -144,6 +107,5 @@ const toQueryString = (data) => {
 module.exports = {
   get,
   post,
-  patch,
   toQueryString,
 };
