@@ -1,7 +1,7 @@
 {
   "default": true,
   "MD013": {
-    "line_length": 100
+    "line_length": 120
   },
   "heading-style": false,
   "ul-start-left": false,

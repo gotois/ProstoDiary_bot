@@ -7,13 +7,17 @@ module.exports = (token, domain, url) => telegramBotExpress({
     token: token,
     domain: domain,
     events: {
-      ['message']: (bot, message) => {
-
-      },
-      ['edited_message_text']: (bot, message) => {
-
+      ['edited_message_text']: async (bot, message) => {
+        if (message.text.startsWith('/')) {
+          await bot.sendMessage(
+            message.chat.id,
+            'Редактирование этой записи невозможно',
+          );
+        }
       },
       ['location']: (bot, message) => {
+        const activity = activitystreams(message);
+        console.log('activity', activity)
 
       },
       //  Очищение БД
@@ -23,6 +27,28 @@ module.exports = (token, domain, url) => telegramBotExpress({
       // Бот список вхождения? // использовать SPARQL запросы
       [/^бот|bot(\s)|\?$/]: (bot, message) => {
 
+      },
+      ['auth_by_contact']: async (bot, message) => {
+        const activity = activitystreams(message);
+        console.log('auth_by_contact', activity)
+
+        // Ассистент детектирует бота пользователя, запрашивает 2FA
+        // ...
+
+        await bot.deleteMessage(message.chat.id, message.message_id);
+        const me = await bot.getMe();
+        await bot.sendMessage(
+          message.chat.id,
+          `Приветствую ${message.chat.first_name}!\n` +
+          `Я твой персональный бот __${me.first_name}__.\n` +
+          'Узнай все мои возможности командой /help.',
+          {
+            reply_markup: {
+              remove_keyboard: true
+            },
+            parse_mode: 'Markdown',
+          }
+        );
       },
       // Start
       [/^\/start|начать$/]: (bot, message) => {
