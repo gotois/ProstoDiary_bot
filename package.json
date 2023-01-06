@@ -19,7 +19,6 @@
     "scripts"
   ],
   "scripts": {
-    "postinstall": "scripts/post-install.sh",
     "commit": "git-cz",
     "pretest": "run-s --silent \"lint -- --quiet\" lint:dependency",
     "test": "nyc --reporter=text run-s test:unit",
