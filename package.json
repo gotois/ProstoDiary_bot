@@ -105,7 +105,7 @@
     "eslint-config-prettier": "6.15.0",
     "eslint-plugin-ava": "10.5.0",
     "eslint-plugin-jsdoc": "30.7.13",
-    "eslint-plugin-json": "2.1.2",
+    "eslint-plugin-json": "3.1.0",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "3.4.1",
     "eslint-plugin-unicorn": "21.0.0",
