@@ -94,7 +94,7 @@
     "zip-pack-unpack": "0.0.3"
   },
   "devDependencies": {
-    "@commitlint/cli": "13.2.1",
+    "@commitlint/cli": "17.4.0",
     "@types/express": "4.17.15",
     "ava": "4.3.3",
     "codecov": "4.0.0-0",
