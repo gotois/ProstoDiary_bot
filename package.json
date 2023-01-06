@@ -58,11 +58,11 @@
     "prostodiary",
     "prosto diary",
     "virtual assistant",
-    "personal bot"
+    "personal telegram bot"
   ],
   "author": {
-    "name": "gotois",
-    "email": "no-reply@gotointeractive.com"
+    "name": "Denis Baskovsky",
+    "email": "baskovsky@ya.ru"
   },
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
@@ -87,17 +87,15 @@
     "express": "4.18.2",
     "jsonld-signatures": "8.0.2",
     "openpgp": "4.10.10",
-    "request-json-rpc2": "github:qertis/request-json-rpc2",
+    "request-json-rpc2": "1.0.0",
     "snyk": "1.1064.0",
     "telegram-bot-activitystreams": "github:qertis/telegram-bot-activitystreams",
     "telegram-bot-express": "github:qertis/telegram-bot-express",
-    "uuid": "7.0.3",
+    "uuid": "8.3.2",
     "zip-pack-unpack": "0.0.3"
   },
   "devDependencies": {
     "@commitlint/cli": "13.2.1",
-    "@roarr/cli": "3.9.0",
-    "@sentry/cli": "1.74.6",
     "@types/express": "4.17.15",
     "ava": "4.3.3",
     "codecov": "4.0.0-0",
@@ -114,7 +112,6 @@
     "eslint-plugin-sql": "1.2.1",
     "eslint-plugin-unicorn": "21.0.0",
     "husky": "3.1.0",
-    "inquirer": "8.2.5",
     "lint-staged": "11.2.6",
     "markdownlint-cli": "0.32.2",
     "npm-check-updates": "15.3.4",
