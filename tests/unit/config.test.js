@@ -12,6 +12,5 @@ module.exports = (t) => {
   require('../../.commitlintrc.json');
   require('../../.lintstagedrc.json');
   require('../../package.json');
-  require('../../nodemon.json');
   t.pass();
 };

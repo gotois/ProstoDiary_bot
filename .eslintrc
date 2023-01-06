@@ -194,20 +194,6 @@
           "hack"
         ]
       }
-    ],
-    "sql/format": [
-      2,
-      {
-        "ignoreExpressions": true,
-        "ignoreInline": false,
-        "ignoreTagless": false
-      }
-    ],
-    "sql/no-unsafe-query": [
-      2,
-      {
-        "allowLiteral": false
-      }
     ]
   },
   "settings": {
@@ -235,8 +221,7 @@
     "node",
     "prettier",
     "unicorn",
-    "json",
-    "sql"
+    "json"
   ],
   "extends": [
     "eslint:recommended",

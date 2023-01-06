@@ -4,22 +4,6 @@ title: Installer
 permalink: /install/
 ---
 
-Local addons
----
-* Run Redis - https://redis.io/docs/stack/get-started/install/
-* Download ngrok - https://dashboard.ngrok.com/get-started/setup 
-* Download Postgres - https://www.postgresql.org/download/
-
-
-Heroku addons
----
-
-* Coralogix logging addon 
-* Heroku Scheduler 
-* Secure Key 
-* SendGrid 
-* Sentry
-
 Server Environments
 ---
 

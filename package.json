@@ -22,15 +22,14 @@
     "postinstall": "scripts/post-install.sh",
     "commit": "git-cz",
     "pretest": "run-s --silent \"lint -- --quiet\" lint:dependency",
-    "test": "nyc --reporter=text run-s test:unit test:e2e",
+    "test": "nyc --reporter=text run-s test:unit",
     "test:unit": "ava tests/unit/index.js",
-    "test:e2e": "ava tests/e2e/index.js --serial",
     "dev:docs": "cd docs/ ; bundle exec jekyll serve",
-    "clean": "npm-run-all clean:report clean:logs clean:test-cache",
+    "clean": "npm-run-all clean:logs clean:test-cache",
     "clean:report": "rm -rf .nyc_output",
     "clean:logs": "rm -rf logs/",
     "clean:test-cache": "ava reset-cache tests/e2e/index.js --serial",
-    "lint": "eslint scripts/* src/**/*.cjs src/*.cjs tests/**/*.cjs",
+    "lint": "eslint scripts/* src/**/*.cjs src/*.cjs tests/**/*.js",
     "lint:dependency": "depcruise -x \"node_modules\" --validate .dependency-cruiser.js src tests",
     "lint:markdown": "markdownlint 'docs/**/*.md' --ignore 'docs/_site' --ignore 'docs/index.md'",
     "report:dependency": "mkdir -p reports && depcruise --include-only ^src --output-type dot src | dot -T svg > reports/dependencygraph.svg",
@@ -73,7 +72,7 @@
     {
       "email": "denis@baskovsky.ru",
       "name": "Denis Baskovsky",
-      "url": "http://denis.baskovsky.ru/"
+      "url": "https://baskovsky.ru/"
     }
   ],
   "config": {
@@ -115,6 +114,7 @@
     "markdownlint-cli": "0.32.2",
     "npm-check-updates": "15.3.4",
     "npm-run-all": "4.1.5",
+    "nyc": "15.1.0",
     "prettier": "2.8.1",
     "validator": "13.7.0"
   },
