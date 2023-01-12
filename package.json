@@ -1,7 +1,7 @@
 {
   "name": "prosto-diary",
   "version": "0.0.1",
-  "description": "Global virtual assistant: your personal all-in-one virtual assistant",
+  "description": "Global virtual assistant: your personal all-in-one virtual assistant: Telegram Bot edition",
   "publisher": "goto Interactive Software",
   "homepage": "https://prosto-diary.gotointeractive.com",
   "main": "src/index.cjs",
@@ -60,7 +60,8 @@
   ],
   "author": {
     "name": "Denis Baskovsky",
-    "email": "baskovsky@ya.ru"
+    "email": "baskovsky@ya.ru",
+    "url": "https://baskovsky.ru/"
   },
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
@@ -87,7 +88,7 @@
     "request-json-rpc2": "1.0.0",
     "snyk": "1.1082.0",
     "telegram-bot-activitystreams": "1.0.0",
-    "telegram-bot-api-express": "1.0.0",
+    "telegram-bot-api-express": "1.1.0",
     "uuid": "8.3.2",
     "zip-pack-unpack": "0.0.3"
   },

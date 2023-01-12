@@ -6,10 +6,10 @@ const { v1: uuidv1 } = require('uuid');
 // const linkedDataSignature = require('../../../services/linked-data-signature.service');
 // const crypt = require('../../services/crypt.service');
 
-module.exports = (token, domain, url) => {
+module.exports = ({token, domain, url}) => {
   return telegramBotExpress({
-    token: token,
-    domain: domain,
+    token,
+    domain,
     events: {
       ['edited_message_text']: async (bot, message) => {
         if (message.text.startsWith('/')) {
@@ -118,23 +118,22 @@ module.exports = (token, domain, url) => {
       // ['text']: (bot, message) => {
       // },
       // Выгрузка бэкапа - Скачивание файла БД на устройство
-      // [/^\/(backup|бэкап)$/]: async (bot, message) => {
-      //   const result = await requestJsonRpc2({
-      //     url: url,
-      //     body: {
-      //       id: uuidv1(),
-      //       method: 'backup',
-      //       params: activity,
-      //     },
-      //     // jwt: assistant.token,
-      //     // signature: verificationMethod
-      //     headers: {
-      //       Accept: 'application/ld+json',
-      //     },
-      //     // jwt: assistant.token, // todo использовать
-      //     // signature: verificationMethod // todo использовать
-      //   });
-      //
+      [/^\/(backup|бэкап)$/]: async (bot, message) => {
+        const result = await requestJsonRpc2({
+          url: url,
+          body: {
+            id: uuidv1(),
+            method: 'backup',
+          },
+          // jwt: assistant.token,
+          // signature: verificationMethod
+          headers: {
+            Accept: 'application/ld+json',
+          },
+          // jwt: assistant.token, // todo использовать
+          // signature: verificationMethod // todo использовать
+        });
+
       //   const authMessage = await this.bot.sendMessage(
       //     this.message.chat.id,
       //     'Введите ключ двухфакторной аутентификации',
@@ -165,11 +164,17 @@ module.exports = (token, domain, url) => {
       //       );
       //     }),
       //   );
-      // },
+      },
       // Помощь
-      // [/^\/help|man|помощь$/]: async (bot, message) => {
-      //   console.log(message);
-      // },
+      [/^\/help|man|помощь$/]: function (bot, message) {
+        const commands = Object.keys(this);
+        let commandsReadable = '';
+        commands.forEach(c => {
+          commandsReadable += c + '\n';
+        });
+
+        bot.sendMessage(message.chat.id, 'Используйте команды: (список команд): ' + commandsReadable);
+      },
       // ['photo']: async (bot, message) => {
       //   const activity = activitystreams(message);
       //   console.log('activity', activity)
@@ -220,12 +225,8 @@ module.exports = (token, domain, url) => {
 
         await bot.sendMessage(message.chat.id, result);
       },
-      // todo еще поддержать неизвестные команды - то есть те, когда вообще непонятно что было нажато
-      ['error']: (/*bot, msg*/) => {
-        throw new Error('Unknown command. Enter /help');
+      ['supergroup_chat_created']: (bot, msg) => {
       },
-      // ['supergroup_chat_created']: (bot, msg) => {
-      // },
       // ['channel_chat_created']: (bot, msg) => {
       // },
       // ['group_chat_created']: (bot, msg) => {
@@ -236,6 +237,9 @@ module.exports = (token, domain, url) => {
       // },
       // ['left_chat_member']: (bot, msg) => {
       // },
+    },
+    onError(bot, error) {
+      console.error(error);
     },
   });
 };
