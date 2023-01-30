@@ -86,7 +86,7 @@
     "jsonld-signatures": "11.0.0",
     "openpgp": "5.5.0",
     "request-json-rpc2": "1.0.0",
-    "snyk": "1.1087.0",
+    "snyk": "1.1091.0",
     "telegram-bot-activitystreams": "1.0.0",
     "telegram-bot-api-express": "1.1.0",
     "uuid": "8.3.2",
