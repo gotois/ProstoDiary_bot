@@ -106,7 +106,7 @@
     "eslint-plugin-json": "3.1.0",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "4.2.1",
-    "eslint-plugin-unicorn": "40.1.0",
+    "eslint-plugin-unicorn": "45.0.2",
     "husky": "3.1.0",
     "lint-staged": "11.2.6",
     "markdownlint-cli": "0.33.0",
