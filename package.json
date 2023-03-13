@@ -84,7 +84,7 @@
     "crypto-ld": "7.0.0",
     "express": "4.18.2",
     "jsonld-signatures": "11.1.0",
-    "openpgp": "5.5.0",
+    "openpgp": "5.7.0",
     "request-json-rpc2": "1.0.0",
     "snyk": "1.1117.0",
     "telegram-bot-activitystreams": "1.0.0",
