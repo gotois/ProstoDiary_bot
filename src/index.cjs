@@ -2,9 +2,19 @@ const activitystreams = require('telegram-bot-activitystreams');
 const requestJsonRpc2 = require('request-json-rpc2');
 const telegramBotExpress = require('telegram-bot-api-express');
 const { v1: uuidv1 } = require('uuid');
-// const { Ed25519KeyPair } = require('crypto-ld');
-// const linkedDataSignature = require('../../../services/linked-data-signature.service');
-// const crypt = require('../../services/crypt.service');
+
+
+/**
+ * 'Some' => 'Some…'
+ * '123456789' => '123456…'
+ *
+ * @description Message updated text
+ * @param {string} input - user input text
+ * @returns {string}
+ */
+const previousInput = (input) => {
+  return `${input.replace(/\n/g, ' ').slice(0, 6)}…`;
+};
 
 module.exports = ({token, domain, url}) => {
   return telegramBotExpress({
@@ -213,8 +223,6 @@ module.exports = ({token, domain, url}) => {
             method: 'ping',
             params: activity,
           },
-          // jwt: assistant.token,
-          // signature: verificationMethod
           headers: {
             Accept: 'application/ld+json',
           },
@@ -223,7 +231,7 @@ module.exports = ({token, domain, url}) => {
         });
         // end
 
-        await bot.sendMessage(message.chat.id, result);
+        await bot.sendMessage(message.chat.id, result.result);
       },
       ['supergroup_chat_created']: (bot, msg) => {
       },
