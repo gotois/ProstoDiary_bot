@@ -24,6 +24,22 @@ Install
 npm i
 ```
 
+## Simple server
+
+```js
+const prostoDiaryBot = require('prosto-diary');
+
+prostoDiaryBot({
+  telegram: {
+    token: process.env.TELEGRAM_TOKEN,
+  },
+  fediverse: {
+    url: process.env.FEDIVERSE_URL,
+    token: process.env.FEDIVERSE_TOKEN,
+  },
+});
+```
+
 ## Tests
 
 ### Unit

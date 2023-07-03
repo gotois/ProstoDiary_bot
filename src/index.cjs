@@ -2,6 +2,7 @@ const activitystreams = require('telegram-bot-activitystreams');
 const requestJsonRpc2 = require('request-json-rpc2');
 const telegramBotExpress = require('telegram-bot-api-express');
 const { v1: uuidv1 } = require('uuid');
+const { createRestAPIClient } = require('masto');
 
 /**
  * 'Some' => 'Some…'
@@ -15,9 +16,18 @@ const previousInput = (input) => {
   return `${input.replace(/\n/g, ' ').slice(0, 6)}…`;
 };
 
-module.exports = ({token, domain, url}) => telegramBotExpress({
-  token,
-  domain,
+module.exports = ({
+  telegram,
+  fediverse,
+}) => {
+  const masto = createRestAPIClient({
+    url: fediverse.url,
+    accessToken: fediverse.token,
+  });
+
+  return telegramBotExpress({
+    token: telegram.token,
+    domain: telegram.domain,
     events: {
 
       /* TEXT */
@@ -49,7 +59,7 @@ module.exports = ({token, domain, url}) => telegramBotExpress({
           const activity = activitystreams(message);
 
           const result = await requestJsonRpc2({
-            url: url,
+            url: telegram.url,
             body: {
               id: uuidv1(),
               method: 'dbclear',
@@ -281,3 +291,4 @@ module.exports = ({token, domain, url}) => telegramBotExpress({
       console.error(error);
     },
   });
+}
