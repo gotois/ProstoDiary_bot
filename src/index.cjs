@@ -3,7 +3,6 @@ const requestJsonRpc2 = require('request-json-rpc2');
 const telegramBotExpress = require('telegram-bot-api-express');
 const { v1: uuidv1 } = require('uuid');
 
-
 /**
  * 'Some' => 'Some…'
  * '123456789' => '123456…'
@@ -216,7 +215,7 @@ module.exports = ({token, domain, url}) => {
       [/^\/(ping|пинг)$/]: async (bot, message) => {
         bot.sendChatAction(message.chat.id, 'typing');
         const activity = activitystreams(message);
-        const result = await requestJsonRpc2({
+        const { result } = await requestJsonRpc2({
           url: url,
           body: {
             id: uuidv1(),
@@ -224,14 +223,15 @@ module.exports = ({token, domain, url}) => {
             params: activity,
           },
           headers: {
-            Accept: 'application/ld+json',
+            Accept: 'text/markdown',
           },
           // jwt: assistant.token, // todo использовать
           // signature: verificationMethod // todo использовать
         });
-        // end
 
-        await bot.sendMessage(message.chat.id, result.result);
+        await bot.sendMessage(message.chat.id, result, {
+          parse_mode: 'Markdown',
+        },);
       },
       ['supergroup_chat_created']: (bot, msg) => {
       },
