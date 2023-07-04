@@ -15,19 +15,24 @@ const previousInput = (input) => {
   return `${input.replace(/\n/g, ' ').slice(0, 6)}…`;
 };
 
-module.exports = ({token, domain, url}) => {
-  return telegramBotExpress({
-    token,
-    domain,
+module.exports = ({token, domain, url}) => telegramBotExpress({
+  token,
+  domain,
     events: {
+
+      /* TEXT */
+
       ['edited_message_text']: async (bot, message) => {
         if (message.text.startsWith('/')) {
           await bot.sendMessage(message.chat.id, 'Редактирование этой записи невозможно');
         }
       },
-      // ['location']: (bot, message) => {
-      //   const activity = activitystreams(message);
+
+      // ['text']: (bot, message) => {
       // },
+
+      /* TEXT COMMANDS */
+
       // todo: нужно проверять выгружен ли был бэкап, и если нет - предупреждать пользователя
       // Очистить базу данных с подтверждением - Удаление всей истории пользователя целиком
       [/^\/dbclear$/]: async (bot, message) => {
@@ -66,28 +71,8 @@ module.exports = ({token, domain, url}) => {
       // Бот список вхождения? // использовать SPARQL запросы
       // [/^бот|bot(\s)|\?$/]: (bot, message) => {
       // },
-      ['auth_by_contact']: async (bot, message) => {
-        // const activity = activitystreams(message);
 
-        // Ассистент детектирует бота пользователя, запрашивает 2FA
-        // ...
-
-        await bot.deleteMessage(message.chat.id, message.message_id);
-        const me = await bot.getMe();
-        await bot.sendMessage(
-          message.chat.id,
-          `Приветствую ${message.chat.first_name}!\n` +
-            `Я твой персональный бот __${me.first_name}__.\n` +
-            'Узнай все мои возможности командой /help.',
-          {
-            reply_markup: {
-              remove_keyboard: true,
-            },
-            parse_mode: 'Markdown',
-          },
-        );
-      },
-      // Start
+      // Начало работы
       [/^\/start|начать$/]: async (bot, message) => {
         // раскоментировать
         /* if (message.passports.length > 0) {
@@ -120,15 +105,42 @@ module.exports = ({token, domain, url}) => {
           },
         });
       },
-      //   [/^\/$/]: (bot, message) => {
-      //   },
-      // ['document']: (bot, message) => {
-      // },
-      // ['text']: (bot, message) => {
-      // },
+
+      // Проверка сети
+      [/^\/(ping|пинг)$/]: async (bot, message) => {
+        bot.sendChatAction(message.chat.id, 'typing');
+        const { result } = await requestJsonRpc2({
+          url: url,
+          body: {
+            id: uuidv1(),
+            method: 'hello',
+            params: activitystreams(message),
+          },
+          headers: {
+            Accept: 'text/markdown',
+          },
+          // jwt: assistant.token, // todo использовать
+          // signature: verificationMethod // todo использовать
+        });
+        await bot.sendMessage(message.chat.id, result, {
+          parse_mode: 'Markdown',
+        },);
+      },
+
+      // Помощь
+      [/^\/help|man|помощь$/]: function (bot, message) {
+        const commands = Object.keys(this);
+        let commandsReadable = '';
+        commands.forEach(c => {
+          commandsReadable += c + '\n';
+        });
+
+        bot.sendMessage(message.chat.id, 'Используйте команды: (список команд): ' + commandsReadable);
+      },
+
       // Выгрузка бэкапа - Скачивание файла БД на устройство
       [/^\/(backup|бэкап)$/]: async (bot, message) => {
-        const result = await requestJsonRpc2({
+        const { result } = await requestJsonRpc2({
           url: url,
           body: {
             id: uuidv1(),
@@ -174,16 +186,15 @@ module.exports = ({token, domain, url}) => {
       //     }),
       //   );
       },
-      // Помощь
-      [/^\/help|man|помощь$/]: function (bot, message) {
-        const commands = Object.keys(this);
-        let commandsReadable = '';
-        commands.forEach(c => {
-          commandsReadable += c + '\n';
-        });
 
-        bot.sendMessage(message.chat.id, 'Используйте команды: (список команд): ' + commandsReadable);
-      },
+      //   [/^\/$/]: (bot, message) => {
+      //   },
+
+      /* DATA */
+
+      // ['document']: (bot, message) => {
+      // },
+
       // ['photo']: async (bot, message) => {
       //   const activity = activitystreams(message);
       //   console.log('activity', activity)
@@ -207,47 +218,66 @@ module.exports = ({token, domain, url}) => {
       //       },
       //     );
       // },
-      // ['voice']:  (bot, message) => {
-      // },
-      // ['video']:  (bot, message) => {
-      // },
-      // Проверка сети
-      [/^\/(ping|пинг)$/]: async (bot, message) => {
-        bot.sendChatAction(message.chat.id, 'typing');
-        const activity = activitystreams(message);
-        const { result } = await requestJsonRpc2({
-          url: url,
-          body: {
-            id: uuidv1(),
-            method: 'ping',
-            params: activity,
-          },
-          headers: {
-            Accept: 'text/markdown',
-          },
-          // jwt: assistant.token, // todo использовать
-          // signature: verificationMethod // todo использовать
-        });
 
-        await bot.sendMessage(message.chat.id, result, {
-          parse_mode: 'Markdown',
-        },);
+      ['voice']:  (bot, message) => {
+        // ...
       },
+
+      ['video']:  (bot, message) => {
+        // ...
+      },
+
+      /* NATIVE COMMANDS */
+
+      ['auth_by_contact']: async (bot, message) => {
+        // const activity = activitystreams(message);
+
+        // Ассистент детектирует бота пользователя, запрашивает 2FA
+        // ...
+
+        await bot.deleteMessage(message.chat.id, message.message_id);
+        const me = await bot.getMe();
+        await bot.sendMessage(
+          message.chat.id,
+          `Приветствую ${message.chat.first_name}!\n` +
+            `Я твой персональный бот __${me.first_name}__.\n` +
+            'Узнай все мои возможности командой /help.',
+          {
+            reply_markup: {
+              remove_keyboard: true,
+            },
+            parse_mode: 'Markdown',
+          },
+        );
+      },
+
+      /* LOCATION */
+
+      ['location']: (bot, message) => {
+        // const activity = activitystreams(message);
+      },
+
+      /* GROUP COMMANDS */
+
       ['supergroup_chat_created']: (bot, msg) => {
       },
-      // ['channel_chat_created']: (bot, msg) => {
-      // },
-      // ['group_chat_created']: (bot, msg) => {
-      // },
-      // ['new_chat_members']: (bot, msg) => {
-      // },
-      // ['migrate_from_chat_id']: (bot, msg) => {
-      // },
-      // ['left_chat_member']: (bot, msg) => {
-      // },
+
+      ['channel_chat_created']: (bot, msg) => {
+      },
+
+      ['group_chat_created']: (bot, msg) => {
+      },
+
+      ['new_chat_members']: (bot, msg) => {
+      },
+
+      ['migrate_from_chat_id']: (bot, msg) => {
+      },
+
+      ['left_chat_member']: (bot, msg) => {
+      },
     },
     onError(bot, error) {
       console.error(error);
     },
   });
-};
