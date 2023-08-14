@@ -84,7 +84,7 @@
     "express": "4.18.2",
     "masto": "6.1.0",
     "request-json-rpc2": "1.0.0",
-    "snyk": "1.1193.0",
+    "snyk": "1.1200.0",
     "telegram-bot-activitystreams": "1.0.1",
     "telegram-bot-api-express": "1.1.1",
     "uuid": "8.3.2",
