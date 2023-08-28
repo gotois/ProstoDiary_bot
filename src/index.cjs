@@ -36,6 +36,8 @@ module.exports = ({
         if (message.text.startsWith('/')) {
           await bot.sendMessage(message.chat.id, 'Редактирование этой записи невозможно');
         }
+        // ...
+        await bot.sendMessage(message.chat.id, `Запись ${previousInput(message.text)} обновлена`);
       },
 
       // ['text']: (bot, message) => {
@@ -78,9 +80,6 @@ module.exports = ({
           await bot.sendMessage(message.chat.id, result);
         });
       },
-      // Бот список вхождения? // использовать SPARQL запросы
-      // [/^бот|bot(\s)|\?$/]: (bot, message) => {
-      // },
 
       // Начало работы
       [/^\/start|начать$/]: async (bot, message) => {
@@ -145,7 +144,7 @@ module.exports = ({
           commandsReadable += c + '\n';
         });
 
-        bot.sendMessage(message.chat.id, 'Используйте команды: (список команд): ' + commandsReadable);
+        bot.sendMessage(message.chat.id, 'Используйте команды: ' + commandsReadable);
       },
 
       // Выгрузка бэкапа - Скачивание файла БД на устройство
@@ -202,8 +201,9 @@ module.exports = ({
 
       /* DATA */
 
-      // ['document']: (bot, message) => {
-      // },
+      ['document']: (bot, message) => {
+        // ...
+      },
 
       // ['photo']: async (bot, message) => {
       //   const activity = activitystreams(message);
@@ -250,8 +250,8 @@ module.exports = ({
         await bot.sendMessage(
           message.chat.id,
           `Приветствую ${message.chat.first_name}!\n` +
-            `Я твой персональный бот __${me.first_name}__.\n` +
-            'Узнай все мои возможности командой /help.',
+          `Я твой персональный бот __${me.first_name}__.\n` +
+          'Узнай все мои возможности командой /help.',
           {
             reply_markup: {
               remove_keyboard: true,
