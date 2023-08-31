@@ -2,7 +2,7 @@
   "name": "prosto-diary",
   "version": "0.0.1",
   "description": "Global virtual assistant: your personal all-in-one virtual assistant: Telegram Bot edition",
-  "publisher": "goto Interactive Software",
+  "publisher": "goto Interactive Communications",
   "homepage": "https://prosto-diary.gotointeractive.com",
   "main": "src/index.cjs",
   "workspaces": [
@@ -23,6 +23,7 @@
     "pretest": "run-s --silent \"lint -- --quiet\" lint:dependency",
     "test": "nyc --reporter=text run-s test:unit",
     "test:unit": "ava tests/unit/index.js",
+    "dev": "node server.cjs",
     "dev:docs": "cd docs/ ; bundle exec jekyll serve",
     "clean": "npm-run-all clean:logs clean:test-cache",
     "clean:report": "rm -rf .nyc_output",
@@ -87,8 +88,7 @@
     "snyk": "1.1203.0",
     "telegram-bot-activitystreams": "1.0.2",
     "telegram-bot-api-express": "1.1.2",
-    "uuid": "8.3.2",
-    "zip-pack-unpack": "0.0.3"
+    "uuid": "8.3.2"
   },
   "devDependencies": {
     "@commitlint/cli": "14.1.0",
