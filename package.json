@@ -83,7 +83,7 @@
   },
   "dependencies": {
     "express": "4.18.2",
-    "masto": "6.2.0",
+    "masto": "6.3.0",
     "request-json-rpc2": "1.0.0",
     "snyk": "1.1220.0",
     "telegram-bot-activitystreams": "1.0.2",
