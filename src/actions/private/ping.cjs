@@ -18,7 +18,7 @@ module.exports = async (bot, message) => {
   //   // jwt: assistant.token, // todo использовать
   //   // signature: verificationMethod // todo использовать
   // });
-  // await bot.sendMessage(message.chat.id, result, {
-  //   parse_mode: 'Markdown',
-  // },);
+  await bot.sendMessage(message.chat.id, 'pong', {
+    parse_mode: 'Markdown',
+  });
 };

@@ -12,7 +12,7 @@
 
 ## About
 
-Virtual trackers: text diary, email listener, food analyze, health watcher, sleep analyze
+Telegram assistant: text diary, email listener, food analyze, health watcher, sleep analyze
 
 Install
 ---
@@ -20,23 +20,23 @@ Install
 > Dev only
 
 ```bash
-# git lfs clone git@github.com:gotois/ProstoDiary_bot.git # deprecated
 npm i
 ```
+
+### ENVIRONMENTS
+
+`TELEGRAM_TOKEN`
+
+`TELEGRAM_DOMAIN`
 
 ## Simple server
 
 ```js
-const prostoDiaryBot = require('prosto-diary');
+const bot = require('prosto-diary');
 
-prostoDiaryBot({
-  telegram: {
-    token: process.env.TELEGRAM_TOKEN,
-  },
-  fediverse: {
-    url: process.env.FEDIVERSE_URL,
-    token: process.env.FEDIVERSE_TOKEN,
-  },
+bot({
+  token: process.env.TELEGRAM_TOKEN,
+  domain: process.env.TELEGRAM_DOMAIN,
 });
 ```
 
@@ -103,4 +103,4 @@ Run Telegram Bot
 3) `! something execute` - Выполнение поручения
 
 ---
-With ❤️
+Make with [Manifest GIC DAO](https://gotointeractive.com/manifest).

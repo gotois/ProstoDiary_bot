@@ -6,9 +6,9 @@ module.exports = async (bot, message) => {
   await bot.sendMessage(
     message.chat.id,
     `Приветствую **${message.chat.first_name}**!\n` +
-    `Я куратор __${me.first_name}__.\n` +
-    "Добавь меня в дискуссию.\n" +
-    "Узнай подробности командой /help.",
+    `Я ваш ассистент __${me.first_name}__.\n` +
+    "Добавь меня в группу или общайся со мной напрямую.\n" +
+    "Узнай больше подробностей командой /help.",
     {
       reply_markup: {
         remove_keyboard: true,

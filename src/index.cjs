@@ -1,24 +1,29 @@
-const telegramBotExpress = require('telegram-bot-api-express');
+const bot = require('telegram-bot-api-express');
 
-const pingAction = require('./actions/private/ping');
-const dbclearAction = require('./actions/private/dbclear');
-const startAction = require('./actions/private/start');
-const helpAction = require('./actions/private/help');
-const backupAction = require('./actions/private/backup');
-const authByContactAction = require('./actions/private/auth-by-contact');
-const editedMessageTextAction = require('./actions/public/edited-message-text');
-const channelPostAction = require('./actions/public/channel-post');
-const textAction = require('./actions/public/text');
-const locationAction = require('./actions/public/location');
-const photoAction = require('./actions/public/photo');
-const groupChatCreatedAction = require('./actions/public/group-chat-created');
+const pingAction = require('./actions/private/ping.cjs');
+const dbclearAction = require('./actions/private/dbclear.cjs');
+const startAction = require('./actions/private/start.cjs');
+const helpAction = require('./actions/private/help.cjs');
+const backupAction = require('./actions/private/backup.cjs');
+const authByContactAction = require('./actions/private/auth-by-contact.cjs');
+const editedMessageTextAction = require('./actions/public/edited-message-text.cjs');
+const channelPostAction = require('./actions/public/channel-post.cjs');
+const textAction = require('./actions/public/text.cjs');
+const locationAction = require('./actions/public/location.cjs');
+const photoAction = require('./actions/public/photo.cjs');
+const mentionAction = require('./actions/public/mention.cjs');
+const documentAction = require('./actions/public/document.cjs');
+const voiceAction = require('./actions/public/voice.cjs');
+const videoAction = require('./actions/public/video.cjs');
+const groupChatCreatedAction = require('./actions/public/group-chat-created.cjs');
 
 module.exports = ({
-  telegram,
+  token = process.env.TELEGRAM_TOKEN,
+  domain = process.env.TELEGRAM_DOMAIN,
 }) => {
-  return telegramBotExpress({
-    token: telegram.token,
-    domain: telegram.domain,
+  return bot({
+    token: token,
+    domain: domain,
     privateEvents: {
 
       /* MY COMMANDS */
@@ -43,9 +48,7 @@ module.exports = ({
 
       ['edited_message_text']: editedMessageTextAction,
       ['channel_post']: channelPostAction,
-      ['mention']: () => {
-        console.log('mention')
-      },
+      ['mention']: mentionAction,
       ['text']: textAction,
 
       /* LOCATION */
@@ -54,19 +57,10 @@ module.exports = ({
 
       /* DATA */
 
-      ['document']: (bot, message) => {
-        // ...
-      },
-
+      ['document']: documentAction,
       ['photo']: photoAction,
-
-      ['voice']:  (bot, message) => {
-        // ...
-      },
-
-      ['video']:  (bot, message) => {
-        // ...
-      },
+      ['voice']: voiceAction,
+      ['video']: videoAction,
 
       /* GROUP COMMANDS */
 
