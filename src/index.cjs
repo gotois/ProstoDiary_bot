@@ -26,6 +26,8 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
   return bot({
     token: token,
     domain: domain,
+
+    // Персональные команды
     privateEvents: {
       /* MY COMMANDS */
 
@@ -38,7 +40,13 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       /* NATIVE COMMANDS */
 
       ['auth_by_contact']: authByContactAction,
+      ['sticker']: () => ({}),
+      ['animation']: () => ({}),
+      ['text']: textAction,
+      ['photo']: photoAction,
     },
+
+    // Групповые команды
     publicEvents: {
       ['bot_command']: () => {
         // ignore any commands

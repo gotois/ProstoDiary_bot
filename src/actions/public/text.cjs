@@ -1,8 +1,26 @@
+const requestJsonRpc2 = require('request-json-rpc2');
 const activitystreams = require('telegram-bot-activitystreams');
+const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
 
-module.exports = (bot, message) => {
-  console.log('message', message);
+module.exports = async (bot, message) => {
   const activity = activitystreams(message);
-  console.log('activity:', activity);
-  console.log(activity.object[0].content);
+  const response = await requestJsonRpc2({
+    url: GIC_RPC,
+    body: {
+      id: activity.origin.id,
+      method: 'ping',
+    },
+    auth: {
+      'user': GIC_USER,
+      'pass': GIC_PASSWORD,
+    },
+    headers: {
+      'Accept': 'application/schema+json',
+    },
+  });
+  if (response.error) {
+    await bot.sendMessage(activity.target.id, response.error.message);
+  } else {
+    await bot.sendMessage(activity.target.id, response.result);
+  }
 };
