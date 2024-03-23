@@ -16,16 +16,17 @@ const documentAction = require('./actions/public/document.cjs');
 const voiceAction = require('./actions/public/voice.cjs');
 const videoAction = require('./actions/public/video.cjs');
 const groupChatCreatedAction = require('./actions/public/group-chat-created.cjs');
+const chatMembers = require('./actions/public/new-chat-members.cjs');
+const migrateFromChatId = require('./actions/public/new-chat-members.cjs');
+const leftChatMember = require('./actions/public/new-chat-members.cjs');
+const channelChatCreated = require('./actions/public/new-chat-members.cjs');
+const supergroupChatCreated = require('./actions/public/new-chat-members.cjs');
 
-module.exports = ({
-  token = process.env.TELEGRAM_TOKEN,
-  domain = process.env.TELEGRAM_DOMAIN,
-}) => {
+module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TELEGRAM_DOMAIN }) => {
   return bot({
     token: token,
     domain: domain,
     privateEvents: {
-
       /* MY COMMANDS */
 
       [/^\/(ping|пинг)$/]: pingAction,
@@ -37,7 +38,6 @@ module.exports = ({
       /* NATIVE COMMANDS */
 
       ['auth_by_contact']: authByContactAction,
-
     },
     publicEvents: {
       ['bot_command']: () => {
@@ -64,32 +64,16 @@ module.exports = ({
 
       /* GROUP COMMANDS */
 
-      ['supergroup_chat_created']: (bot, message) => {
-        // ...
-      },
-
-      ['channel_chat_created']: (bot, message) => {
-        // ...
-      },
-
+      ['supergroup_chat_created']: supergroupChatCreated,
+      ['channel_chat_created']: channelChatCreated,
       ['group_chat_created']: groupChatCreatedAction,
-
-      ['new_chat_members']: (bot, message) => {
-        // ...
-        console.log('new_chat_members action')
-      },
-
-      ['migrate_from_chat_id']: (bot, message) => {
-        // ...
-      },
-
-      ['left_chat_member']: (bot, message) => {
-        // ...
-      },
+      ['new_chat_members']: chatMembers,
+      ['migrate_from_chat_id']: migrateFromChatId,
+      ['left_chat_member']: leftChatMember,
     },
 
     onError(bot, error) {
       console.error(error);
     },
   });
-}
+};

@@ -93,6 +93,17 @@ Run
 npm run dev:docs
 ```
 
+Docker Image
+---
+
+Создайти файл .env и пропишите: 
+
+`TELEGRAM_TOKEN=YOUR_TELEGRAM_TOKEN`
+
+```bash
+docker compose --env-file .env up --build
+```
+
 Run Telegram Bot
 ---
 

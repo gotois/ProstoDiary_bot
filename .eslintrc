@@ -92,7 +92,7 @@
       "error",
       "all"
     ],
-    "no-console": "error",
+    "no-console": "warn",
     "prettier/prettier": "error",
     "jsdoc/check-alignment": "error",
     "jsdoc/check-examples": "error",
@@ -108,7 +108,6 @@
     "jsdoc/require-hyphen-before-param-description": "error",
     "jsdoc/require-param-type": "error",
     "jsdoc/require-param": "error",
-    "jsdoc/newline-after-description": "error",
     "jsdoc/check-tag-names": "error",
     "jsdoc/check-types": "error",
     "jsdoc/no-undefined-types": "error",

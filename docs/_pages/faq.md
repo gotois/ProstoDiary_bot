@@ -129,7 +129,8 @@ abstract
 encodingFormat
 > MIME Content
 
-## Ошибка 
+## Ошибка
+
 `UnhandledPromiseRejectionWarning: Error: No supported authentication method(s) available. Unable to login.`
 
 Удостоверьтесь, система Yandex PDD имеет такой email, 

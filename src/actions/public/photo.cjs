@@ -1,8 +1,8 @@
 const activitystreams = require('telegram-bot-activitystreams');
 
-module.exports = async (bot, message) => {
+module.exports = (bot, message) => {
   const activity = activitystreams(message);
-  console.log("activity", activity);
+  console.log('activity', activity);
 
   // получение файла телеграма
   //   const res = await fetch(message.photo[0].file.url);

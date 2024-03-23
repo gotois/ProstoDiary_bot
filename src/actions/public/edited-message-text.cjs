@@ -11,8 +11,8 @@ const previousInput = (input) => {
 };
 
 module.exports = async (bot, message) => {
-  if (message.text.startsWith("/")) {
-    await bot.sendMessage(message.chat.id, "Редактирование этой записи невозможно");
+  if (message.text.startsWith('/')) {
+    await bot.sendMessage(message.chat.id, 'Редактирование этой записи невозможно');
   }
   // ...
   await bot.sendMessage(message.chat.id, `Запись ${previousInput(message.text)} обновлена`);

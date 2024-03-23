@@ -1,6 +1,6 @@
 const activitystreams = require('telegram-bot-activitystreams');
 
-module.exports = async (bot, message) => {
+module.exports = (bot, message) => {
   const activity = activitystreams(message);
-  console.log("mention, activity", activity);
+  console.log('mention, activity', activity);
 };

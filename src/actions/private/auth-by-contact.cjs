@@ -1,9 +1,14 @@
 const activitystreams = require('telegram-bot-activitystreams');
 
-// Ассистент детектирует пользователя
+/**
+ * @description Ассистент детектирует пользователя
+ * @param {any} bot - telegram bot
+ * @param {any} message - telegram message
+ * @returns {Promise<void>}
+ */
 module.exports = async (bot, message) => {
   const activity = activitystreams(message);
-  console.log("activity", activity);
+  console.log('activity', activity);
 
   // ...
 
