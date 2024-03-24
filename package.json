@@ -84,7 +84,7 @@
     }
   },
   "dependencies": {
-    "request-json-rpc2": "1.0.0",
+    "request-json-rpc2": "2.0.0",
     "snyk": "1.1243.0",
     "telegram-bot-activitystreams": "1.0.2",
     "telegram-bot-api-express": "1.1.3",
