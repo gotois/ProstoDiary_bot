@@ -9,6 +9,7 @@ module.exports = async (bot, message) => {
     body: {
       id: activity.origin.id,
       method: 'ping',
+      params: ['example'],
     },
     auth: {
       'user': GIC_USER,

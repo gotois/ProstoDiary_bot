@@ -29,6 +29,8 @@ npm i
 
 `TELEGRAM_DOMAIN`
 
+`GIC_RPC`
+
 ## Simple server
 
 ```js
@@ -96,9 +98,11 @@ npm run dev:docs
 Docker Image
 ---
 
-Создайти файл .env и пропишите: 
+Create a `.env` file and write:
 
 `TELEGRAM_TOKEN=YOUR_TELEGRAM_TOKEN`
+
+`GIC_RPC`
 
 ```bash
 docker compose --env-file .env up --build
