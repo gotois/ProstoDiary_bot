@@ -8,22 +8,24 @@ module.exports = async (bot, message) => {
     `Приветствую **${message.chat.first_name}**!\n` +
       `Я ваш ассистент __${me.first_name}__.\n` +
       'Добавь меня в группу или общайся со мной напрямую.\n' +
+      'Продолжая использование вы соглашаетесь с Лицензионным соглашением /licence.\n' +
       'Узнай больше подробностей командой /help.',
     {
       reply_markup: {
         remove_keyboard: true,
       },
-      parse_mode: 'Markdown',
+      parse_mode: 'markdown',
     },
   );
-  if (message.passports.length > 0) {
+  console.log(message)
+  if (message.passports?.length > 0) {
     const message = 'Повторная установка не требуется\n\n' + '/help - помощь';
     await bot.sendMessage(this.message.chat.id, message);
     return;
   }
 
   await bot.sendMessage(message.chat.id, 'Предоставьте свои контакты', {
-    parse_mode: 'Markdown',
+    parse_mode: 'markdown',
     disable_notification: true,
     reply_markup: {
       keyboard: [[{ text: 'Agree', request_contact: true }]],

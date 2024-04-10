@@ -4,6 +4,7 @@ const pingAction = require('./actions/private/ping.cjs');
 const dbclearAction = require('./actions/private/dbclear.cjs');
 const startAction = require('./actions/private/start.cjs');
 const helpAction = require('./actions/private/help.cjs');
+const offertaAction = require('./actions/private/offerta.cjs');
 const backupAction = require('./actions/private/backup.cjs');
 const authByContactAction = require('./actions/private/auth-by-contact.cjs');
 const editedMessageTextAction = require('./actions/public/edited-message-text.cjs');
@@ -35,6 +36,7 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       [/^\/dbclear$/]: dbclearAction,
       [/^\/start|начать$/]: startAction,
       [/^\/help|man|помощь$/]: helpAction,
+      [/^\/licence/]: offertaAction,
       [/^\/(backup|бэкап)$/]: backupAction,
 
       /* NATIVE COMMANDS */

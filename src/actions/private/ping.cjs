@@ -23,11 +23,11 @@ module.exports = async (bot, message) => {
   });
   if (response.error) {
     await bot.sendMessage(activity.target.id, response.error.message, {
-      parse_mode: 'Markdown',
+      parse_mode: 'markdown',
     });
   } else {
     await bot.sendMessage(activity.target.id, response.result, {
-      parse_mode: 'Markdown',
+      parse_mode: 'markdown',
     });
   }
 };

@@ -26,7 +26,7 @@ module.exports = async (bot, message) => {
   //     this.message.chat.id,
   //     'Введите ключ двухфакторной аутентификации',
   //     {
-  //       parse_mode: 'Markdown',
+  //       parse_mode: 'markdown',
   //       reply_markup: {
   //         force_reply: true,
   //       },
