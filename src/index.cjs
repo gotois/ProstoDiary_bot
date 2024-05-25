@@ -1,5 +1,4 @@
 const bot = require('telegram-bot-api-express');
-
 const pingAction = require('./actions/private/ping.cjs');
 const dbclearAction = require('./actions/private/dbclear.cjs');
 const startAction = require('./actions/private/start.cjs');

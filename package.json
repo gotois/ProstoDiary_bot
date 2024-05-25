@@ -25,7 +25,7 @@
     "pretest": "run-s --silent \"lint -- --quiet\" lint:dependency",
     "test": "nyc --reporter=text run-s test:unit",
     "test:unit": "ava tests/unit/index.js",
-    "dev": "node -r dotenv/config ./bin/server.cjs",
+    "dev": "node --watch -r dotenv/config ./bin/server.cjs",
     "dev:docs": "cd docs/ ; bundle exec jekyll serve",
     "clean": "npm-run-all clean:logs clean:test-cache",
     "clean:report": "rm -rf .nyc_output",
@@ -84,12 +84,12 @@
     }
   },
   "dependencies": {
+    "ical-browser": "0.0.10",
     "minimist": "1.2.8",
-    "request-json-rpc2": "2.1.0",
+    "request-json-rpc2": "2.1.2",
     "snyk": "1.1243.0",
     "telegram-bot-activitystreams": "1.0.2",
     "telegram-bot-api-express": "1.1.3",
-    "text-ld": "0.0.4",
     "uuid": "9.0.1"
   },
   "devDependencies": {
