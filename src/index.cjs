@@ -45,6 +45,7 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['animation']: () => ({}),
       ['text']: textAction,
       ['photo']: photoAction,
+      ['voice']: voiceAction,
     },
 
     // Групповые команды

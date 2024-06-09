@@ -6,7 +6,7 @@ const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
 
 module.exports = async (bot, message) => {
   const activity = activitystreams(message);
-  const id = uuidv1()
+  const id = uuidv1();
   const response = await requestJsonRpc2({
     url: GIC_RPC,
     body: {
