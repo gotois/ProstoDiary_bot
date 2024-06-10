@@ -1,4 +1,4 @@
-const requestJsonRpc2 = require('request-json-rpc2');
+const requestJsonRpc2 = require('request-json-rpc2').default;
 const activitystreams = require('telegram-bot-activitystreams');
 const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
 

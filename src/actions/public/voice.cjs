@@ -21,4 +21,5 @@ module.exports = async (bot, message) => {
       'Accept': 'application/schema+json',
     },
   });
+  await bot.sendMessage(activity.target.id, JSON.stringify(response, null, 2));
 };

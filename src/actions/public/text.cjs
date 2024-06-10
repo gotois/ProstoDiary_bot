@@ -1,4 +1,4 @@
-const requestJsonRpc2 = require('request-json-rpc2');
+const requestJsonRpc2 = require('request-json-rpc2').default;
 const activitystreams = require('telegram-bot-activitystreams');
 const createEvent = require('ical-browser').default;
 const { v1: uuidv1 } = require('uuid');

@@ -24,7 +24,7 @@ module.exports = async (bot, message) => {
     return;
   }
 
-  await bot.sendMessage(message.chat.id, 'Предоставьте свои контакты', {
+  const { message_id } = await bot.sendMessage(message.chat.id, 'Предоставьте свои контакты', {
     parse_mode: 'markdown',
     disable_notification: true,
     reply_markup: {
@@ -32,4 +32,7 @@ module.exports = async (bot, message) => {
       one_time_keyboard: true,
     },
   });
+  setTimeout(async () => {
+    await bot.deleteMessage(message.chat.id, message_id);
+  }, 10000);
 };
