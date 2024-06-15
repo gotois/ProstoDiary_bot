@@ -86,7 +86,7 @@
   "dependencies": {
     "ical-browser": "0.0.10",
     "minimist": "1.2.8",
-    "request-json-rpc2": "2.2.1",
+    "request-json-rpc2": "2.2.2",
     "snyk": "1.1243.0",
     "telegram-bot-activitystreams": "1.0.2",
     "telegram-bot-api-express": "1.1.3",
