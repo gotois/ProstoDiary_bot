@@ -1,6 +1,5 @@
 const requestJsonRpc2 = require('request-json-rpc2').default;
 const activitystreams = require('telegram-bot-activitystreams');
-const createEvent = require('ical-browser').default;
 const { v1: uuidv1 } = require('uuid');
 const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
 
@@ -19,17 +18,19 @@ module.exports = async (bot, message) => {
       'pass': GIC_PASSWORD,
     },
     headers: {
-      'Accept': 'application/schema+json',
+      'Accept': 'text/calendar',
     },
   });
-  await bot.sendMessage(activity.target.id, JSON.stringify(response.result, null, 2));
-  const fileEvent = createEvent({
-    id: id,
-    ...response.result,
+  const {result} = response;
+  await bot.sendMessage(activity.target.id, result, {
+    parse_mode: 'markdown',
+  });
+  const fileEvent = new File([new TextEncoder().encode(result)], 'calendar.ics', {
+    type: 'text/calendar',
   });
   const arrayBuffer = await fileEvent.arrayBuffer();
   await bot.sendDocument(activity.target.id, Buffer.from(arrayBuffer), {
-      caption: response.result.summary,
+      caption: 'summary',
     }, {
       filename: fileEvent.name,
       contentType: fileEvent.type,

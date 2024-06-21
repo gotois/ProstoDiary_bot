@@ -84,7 +84,6 @@
     }
   },
   "dependencies": {
-    "ical-browser": "0.0.10",
     "minimist": "1.2.8",
     "request-json-rpc2": "2.2.2",
     "snyk": "1.1243.0",
