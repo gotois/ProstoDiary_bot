@@ -1,7 +1,7 @@
 {
   "name": "prosto-diary",
   "version": "0.0.1",
-  "description": "Global virtual assistant: your personal all-in-one virtual assistant: Telegram Bot Edition",
+  "description": "Global Virtual assistant: your personal all-in-one secretary: Telegram Bot Edition",
   "publisher": "GIC DAO",
   "homepage": "https://prosto-diary.gotointeractive.com",
   "main": "src/index.cjs",

@@ -6,11 +6,11 @@ const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
 module.exports = async (bot, message) => {
   const activity = activitystreams(message);
   const id = uuidv1();
-  const response = await requestJsonRpc2({
+  const {result} = await requestJsonRpc2({
     url: GIC_RPC,
     body: {
       id: id,
-      method: 'generate-action',
+      method: 'generate-calendar',
       params: activity,
     },
     auth: {
@@ -21,7 +21,6 @@ module.exports = async (bot, message) => {
       'Accept': 'text/calendar',
     },
   });
-  const {result} = response;
   await bot.sendMessage(activity.target.id, result, {
     parse_mode: 'markdown',
   });
@@ -31,6 +30,8 @@ module.exports = async (bot, message) => {
   const arrayBuffer = await fileEvent.arrayBuffer();
   await bot.sendDocument(activity.target.id, Buffer.from(arrayBuffer), {
       caption: 'summary',
+      parse_mode: 'markdown',
+      disable_notification: true,
     }, {
       filename: fileEvent.name,
       contentType: fileEvent.type,
