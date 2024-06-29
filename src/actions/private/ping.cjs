@@ -14,11 +14,11 @@ module.exports = async (bot, message) => {
       params: [],
     },
     auth: {
-      'user': GIC_USER,
-      'pass': GIC_PASSWORD,
+      user: GIC_USER,
+      pass: GIC_PASSWORD,
     },
     headers: {
-      'Accept': 'text/markdown',
+      Accept: 'text/markdown',
     },
   });
   if (response.error) {

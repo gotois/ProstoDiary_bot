@@ -6,20 +6,41 @@ const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
 module.exports = async (bot, message) => {
   const activity = activitystreams(message);
   const id = uuidv1();
-  const response = await requestJsonRpc2({
+  await bot.sendChatAction(activity.target.id, 'record_audio');
+  const {result} = await requestJsonRpc2({
     url: GIC_RPC,
     body: {
       id: id,
-      method: 'generate-action',
+      method: 'generate-calendar',
       params: activity,
     },
     auth: {
-      'user': GIC_USER,
-      'pass': GIC_PASSWORD,
+      user: GIC_USER,
+      pass: GIC_PASSWORD,
     },
     headers: {
-      'Accept': 'application/schema+json',
+      'Accept': 'text/calendar',
     },
   });
-  await bot.sendMessage(activity.target.id, JSON.stringify(response, null, 2));
+  if (!result) {
+    return await bot.sendMessage(activity.target.id, 'Пожалуйста, уточните дату и время. Даты которые уже прошли не могут быть созданы.', {
+      parse_mode: 'markdown',
+    });
+  }
+  await bot.sendMessage(activity.target.id, 'Added', {
+    parse_mode: 'markdown',
+  });
+  const fileEvent = new File([new TextEncoder().encode(result)], 'calendar.ics', {
+    type: 'text/calendar',
+  });
+  const arrayBuffer = await fileEvent.arrayBuffer();
+  await bot.sendChatAction(activity.target.id, 'upload_document');
+  await bot.sendDocument(activity.target.id, Buffer.from(arrayBuffer), {
+      caption: result,
+      parse_mode: 'markdown',
+      disable_notification: true,
+    }, {
+      filename: fileEvent.name,
+      contentType: fileEvent.type,
+    });
 };

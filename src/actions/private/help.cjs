@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const packageLock_ = require('../../../package-lock.json');
-const package = require('../../../package.json');
+const pkg = require('../../../package.json');
 /**
  * @param {Buffer|string} buffer - file
  * @param {string} algorithm - algorithm
@@ -12,7 +12,7 @@ const getCheckSum = (buffer, algorithm = 'md5', encoding = 'hex') => {
 };
 
 // Помощь
-module.exports = (bot, message) => {
+module.exports = async (bot, message) => {
   const helpData = Object.entries({
     help: 'Помощь',
     ping: 'Ping',
@@ -29,8 +29,14 @@ module.exports = (bot, message) => {
       accumulator += result;
       return accumulator;
     }, '') +
-    '\nF.A.Q.: ' + package.homepage + '/faq/' +
-    '\nVer.: ' + packageLock_.version +
-    '\nCheck.: ' + getCheckSum(JSON.stringify(packageLock_));
-  bot.sendMessage(message.chat.id, 'Используйте команды:\n' + commandsReadable);
+    '\nF.A.Q.: ' + pkg.homepage + '/faq/' +
+    '\nVERSION: ' + packageLock_.version +
+    '\nCHECKSUM: ' + getCheckSum(JSON.stringify(packageLock_));
+
+  const str = `Используй команды:\n ${commandsReadable}`;
+  await bot.sendMessage(message.chat.id, str, {
+    disable_notification: true,
+    disable_web_page_preview: true,
+    parse_mode: 'markdown',
+  });
 };
