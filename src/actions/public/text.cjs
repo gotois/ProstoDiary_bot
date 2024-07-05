@@ -12,20 +12,32 @@ function formatCalendarMessage(ical) {
   const jcalData = ICAL.parse(ical);
   const comp = new ICAL.Component(jcalData);
   const vevent = comp.getFirstSubcomponent('vevent');
+
+  const eventName = vevent.getFirstPropertyValue('summary');
+  let output = '';
+  output += '**Создано новое событие:**\n';
+  if (eventName) {
+    output += eventName + '\n\n';
+  }
   const dtStart = vevent.getFirstPropertyValue('dtstart');
-  const date = `Завтра (${new Intl.DateTimeFormat('ru').format(new Date(dtStart.toString()))})`;
+  if (dtStart) {
+    // Завтра
+    const date = `(${new Intl.DateTimeFormat('ru').format(new Date(dtStart.toString()))})`;
+    output += `📅 **Дата:** ${date}\n`;
+  }
+  if (dtStart.hour !== 0 && dtStart.minute !== 0) {
+    output += `🕐 **Время:** ${dtStart.hour}:${dtStart.minute}\n`;
+  }
+  const location = vevent.getFirstPropertyValue('location');
+  if (location) {
+    output += `🏠 **Место:** ${location}\n`;
+  }
+  // fixme брать заметки из Event ToDo
+  output += `📌 Заметки: -\n`;
+  output += '\nВаше событие успешно создано!\n';
+  output += 'Вы получите напоминание за 10 минут до начала.';
 
-  return `
-  **Создано новое событие:**
-${vevent.getFirstPropertyValue('summary')}
-
-📅 **Дата:** ${date}
-🕐 **Время:** ${dtStart.hour}:${dtStart.minute}
-🏠 **Место:** ${vevent.getFirstPropertyValue('location')}
-📌Заметки: не забыть книгу.
-
-Ваше событие успешно создано!
-Вы получите напоминание за 10 минут до начала.`.trim();
+  return output.trim();
 }
 
 module.exports = async (bot, message) => {
@@ -66,11 +78,11 @@ module.exports = async (bot, message) => {
   const arrayBuffer = await fileEvent.arrayBuffer();
   await bot.sendChatAction(activity.target.id, 'upload_document');
   await bot.sendDocument(activity.target.id, Buffer.from(arrayBuffer), {
-      caption: result,
+      // caption: result,
       parse_mode: 'markdown',
       disable_notification: true,
     }, {
       filename: fileEvent.name,
-      contentType: fileEvent.type,
+      contentType: 'application/octet-stream',
     });
 };
