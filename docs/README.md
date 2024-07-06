@@ -21,6 +21,8 @@ Install
 
 ```bash
 npm i
+chmod +x scripts/prepare
+scripts/prepare
 ```
 
 ### ENVIRONMENTS
