@@ -1,4 +1,4 @@
-const bot = require('telegram-bot-api-express');
+const botController = require('telegram-bot-api-express');
 const pingAction = require('./actions/private/ping.cjs');
 const dbclearAction = require('./actions/private/dbclear.cjs');
 const startAction = require('./actions/private/start.cjs');
@@ -22,7 +22,7 @@ const channelChatCreated = require('./actions/public/new-chat-members.cjs');
 const supergroupChatCreated = require('./actions/public/new-chat-members.cjs');
 
 module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TELEGRAM_DOMAIN }) => {
-  return bot({
+  const { middleware, bot } = botController({
     token: token,
     domain: domain,
 
@@ -86,4 +86,22 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       console.error(error);
     },
   });
+  bot.on('callback_query', async (query) => {
+    if (query.data === 'send_calendar') {
+      await bot.sendChatAction(query.from.id, 'upload_document');
+      const fileEvent = new File([new TextEncoder().encode(query.message.text)], 'calendar.ics', {
+        type: 'text/calendar',
+      });
+      const arrayBuffer = await fileEvent.arrayBuffer();
+      await bot.sendDocument(query.from.id, Buffer.from(arrayBuffer), {
+        // caption: result,
+        parse_mode: 'markdown',
+        disable_notification: true,
+      }, {
+        filename: fileEvent.name,
+        contentType: 'application/octet-stream',
+      });
+    }
+  });
+  return middleware;
 };

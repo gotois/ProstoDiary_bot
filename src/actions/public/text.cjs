@@ -6,9 +6,10 @@ const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
 
 /**
  * @param {string} ical
+ * @param {string} [locale]
  * @returns {string}
  */
-function formatCalendarMessage(ical) {
+function formatCalendarMessage(ical, locale = 'ru') {
   const jcalData = ICAL.parse(ical);
   const comp = new ICAL.Component(jcalData);
   const vevent = comp.getFirstSubcomponent('vevent');
@@ -21,21 +22,33 @@ function formatCalendarMessage(ical) {
   }
   const dtStart = vevent.getFirstPropertyValue('dtstart');
   if (dtStart) {
+    const date = new Date(dtStart.toString());
     // Завтра
-    const date = `(${new Intl.DateTimeFormat('ru').format(new Date(dtStart.toString()))})`;
-    output += `📅 **Дата:** ${date}\n`;
-  }
-  if (dtStart.hour !== 0 && dtStart.minute !== 0) {
-    output += `🕐 **Время:** ${dtStart.hour}:${dtStart.minute}\n`;
+    const dateStr = `(${new Intl.DateTimeFormat(locale).format(date)})`;
+    output += `📅 **Дата:** ${dateStr}\n`;
+
+    if (date.getHours() !== 0) {
+      const timeStr = new Intl.DateTimeFormat(locale, {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false,
+      }).format(date);
+      output += `🕐 **Время:** ${timeStr}\n`;
+    }
   }
   const location = vevent.getFirstPropertyValue('location');
   if (location) {
     output += `🏠 **Место:** ${location}\n`;
   }
-  // fixme брать заметки из Event ToDo
-  output += `📌 Заметки: -\n`;
+  const eventDescription = vevent.getFirstPropertyValue('description');
+  if (eventDescription) {
+    output += `Описание: ${eventDescription}\n`;
+  } else {
+    // fixme брать заметки из Event ToDo
+    output += `📌 Заметки: -\n`;
+  }
   output += '\nВаше событие успешно создано!\n';
-  output += 'Вы получите напоминание за 10 минут до начала.';
+  // output += 'Вы получите напоминание за 10 минут до начала.';
 
   return output.trim();
 }
@@ -65,24 +78,17 @@ module.exports = async (bot, message) => {
   });
   console.log('result', result)
   if (!result) {
-    return await bot.sendMessage(activity.target.id, 'Пожалуйста, уточните дату и время. Даты которые уже прошли не могут быть созданы.', {
+    return await bot.sendMessage(activity.target.id, 'Ошибка. Пожалуйста, уточните дату и время. Даты которые уже прошли не могут быть созданы.', {
       parse_mode: 'markdown',
     });
   }
-  await bot.sendMessage(activity.target.id, formatCalendarMessage(result), {
+  await bot.sendMessage(activity.target.id, formatCalendarMessage(result, message.from.language_code), {
     parse_mode: 'markdown',
+    reply_markup: {
+      inline_keyboard: [[{
+        text: 'Скачать',
+        callback_data: 'send_calendar',
+      }]],
+    },
   });
-  const fileEvent = new File([new TextEncoder().encode(result)], 'calendar.ics', {
-    type: 'text/calendar',
-  });
-  const arrayBuffer = await fileEvent.arrayBuffer();
-  await bot.sendChatAction(activity.target.id, 'upload_document');
-  await bot.sendDocument(activity.target.id, Buffer.from(arrayBuffer), {
-      // caption: result,
-      parse_mode: 'markdown',
-      disable_notification: true,
-    }, {
-      filename: fileEvent.name,
-      contentType: 'application/octet-stream',
-    });
 };

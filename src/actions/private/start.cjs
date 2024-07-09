@@ -20,7 +20,7 @@ module.exports = async (bot, message) => {
     {
       disable_notification: true,
       reply_markup: {
-        remove_keyboard: true,
+        remove_keyboard: false,
         keyboard: [[{ text: 'Agree', request_contact: true }]],
         one_time_keyboard: true,
       },
