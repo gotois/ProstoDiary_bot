@@ -12,15 +12,15 @@ module.exports = async (bot, message) => {
 
   await bot.deleteMessage(activity.target.id, message.message_id);
 
-  const str = `
+  const string_ = `
 Отправь мне войс, текст или картинку и я добавлю это событие в твой календарь!
 
 Например:
 **"💈Напомни завтра о барбершопе в 9:00 на Бауманской"**
 **"📆В это воскресенье будет митап"**
 **"💧Мне важно пить 2 литра воды в день ежедневно"**
-`
-  await bot.sendMessage(activity.target.id, str, {
+`;
+  await bot.sendMessage(activity.target.id, string_, {
     parse_mode: 'markdown',
   });
 };

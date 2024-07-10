@@ -10,7 +10,7 @@ module.exports = async (bot, message) => {
   activity.origin.url = 'https://t.me/' + me.username;
   const id = uuidv1();
   await bot.sendChatAction(activity.target.id, 'record_audio');
-  const {result} = await requestJsonRpc2({
+  const { result } = await requestJsonRpc2({
     url: GIC_RPC,
     body: {
       id: id,
@@ -22,13 +22,17 @@ module.exports = async (bot, message) => {
       pass: GIC_PASSWORD,
     },
     headers: {
-      'Accept': 'text/calendar',
+      Accept: 'text/calendar',
     },
   });
   if (!result) {
-    return await bot.sendMessage(activity.target.id, 'Ошибка. Пожалуйста, уточните дату и время. Даты которые уже прошли не могут быть созданы.', {
-      parse_mode: 'markdown',
-    });
+    return await bot.sendMessage(
+      activity.target.id,
+      'Ошибка. Пожалуйста, уточните дату и время. Даты которые уже прошли не могут быть созданы.',
+      {
+        parse_mode: 'markdown',
+      },
+    );
   }
   await bot.sendMessage(activity.target.id, 'Added', {
     parse_mode: 'markdown',
@@ -38,12 +42,17 @@ module.exports = async (bot, message) => {
   });
   const arrayBuffer = await fileEvent.arrayBuffer();
   await bot.sendChatAction(activity.target.id, 'upload_document');
-  await bot.sendDocument(activity.target.id, Buffer.from(arrayBuffer), {
+  await bot.sendDocument(
+    activity.target.id,
+    Buffer.from(arrayBuffer),
+    {
       caption: result,
       parse_mode: 'markdown',
       disable_notification: true,
-    }, {
+    },
+    {
       filename: fileEvent.name,
       contentType: fileEvent.type,
-    });
+    },
+  );
 };

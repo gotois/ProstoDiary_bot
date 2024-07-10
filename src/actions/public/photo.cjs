@@ -2,12 +2,12 @@ const activitystreams = require('telegram-bot-activitystreams');
 
 // получение файла
 async function getPhoto(url) {
-    const res = await fetch(url);
-    if (res.status !== 200) {
-      throw await Promise.reject("Status was not 200");
-    }
-    const buffer = await res.arrayBuffer();
-    return Buffer.from(buffer)
+  const response = await fetch(url);
+  if (response.status !== 200) {
+    throw await Promise.reject('Status was not 200');
+  }
+  const buffer = await response.arrayBuffer();
+  return Buffer.from(buffer);
 }
 
 module.exports = async (bot, message) => {

@@ -40,8 +40,12 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       /* NATIVE COMMANDS */
 
       ['auth_by_contact']: authByContactAction,
-      ['sticker']: () => ({}),
-      ['animation']: () => ({}),
+      ['sticker']: () => {
+        return {};
+      },
+      ['animation']: () => {
+        return {};
+      },
       ['text']: textAction,
       ['photo']: photoAction,
       ['voice']: voiceAction,
@@ -89,18 +93,25 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
   bot.on('callback_query', async (query) => {
     if (query.data === 'send_calendar') {
       await bot.sendChatAction(query.from.id, 'upload_document');
-      const fileEvent = new File([new TextEncoder().encode(query.message.text)], 'calendar.ics', {
+      // fixme - нужно брать result из БД
+      const result = 'ICALENDAR FILE';
+      const fileEvent = new File([new TextEncoder().encode(result)], 'calendar.ics', {
         type: 'text/calendar',
       });
       const arrayBuffer = await fileEvent.arrayBuffer();
-      await bot.sendDocument(query.from.id, Buffer.from(arrayBuffer), {
-        // caption: result,
-        parse_mode: 'markdown',
-        disable_notification: true,
-      }, {
-        filename: fileEvent.name,
-        contentType: 'application/octet-stream',
-      });
+      await bot.sendDocument(
+        query.from.id,
+        Buffer.from(arrayBuffer),
+        {
+          // caption: result,
+          parse_mode: 'markdown',
+          disable_notification: true,
+        },
+        {
+          filename: fileEvent.name,
+          contentType: 'application/octet-stream',
+        },
+      );
     }
   });
   return middleware;
