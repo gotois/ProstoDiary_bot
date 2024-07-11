@@ -86,7 +86,7 @@
     "request-json-rpc2": "2.2.2",
     "snyk": "1.1243.0",
     "telegram-bot-activitystreams": "1.0.2",
-    "telegram-bot-api-express": "1.2.0",
+    "telegram-bot-api-express": "1.2.1",
     "uuid": "10.0.0"
   },
   "devDependencies": {

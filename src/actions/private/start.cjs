@@ -18,13 +18,20 @@ module.exports = async (bot, message) => {
     // 'Узнай больше подробностей командой /help.' +
     // 'Предоставь свои контакты чтобы продолжить пользоваться сервисом',
     {
+      parse_mode: 'markdown',
       disable_notification: true,
       reply_markup: {
-        remove_keyboard: false,
-        keyboard: [[{ text: 'Agree', request_contact: true }]],
-        one_time_keyboard: true,
+        remove_keyboard: true,
+        inline_keyboard: [
+          [
+            {
+              text: 'Принимаю лицензионное соглашение',
+              request_contact: true,
+              callback_data: 'auth_by_contact',
+            },
+          ],
+        ],
       },
-      parse_mode: 'markdown',
     },
   );
   if (message.passports?.length > 0) {

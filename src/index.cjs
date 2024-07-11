@@ -50,6 +50,28 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['photo']: photoAction,
       ['voice']: voiceAction,
       ['document']: documentAction,
+      ['send_calendar']: async (bot, message) => {
+        await bot.sendChatAction(message.chat.id, "upload_document");
+      //   // fixme - нужно брать result из БД
+        const result = "ICALENDAR FILE";
+        const fileEvent = new File([new TextEncoder().encode(result)], "calendar.ics", {
+          type: "text/calendar",
+        });
+        const arrayBuffer = await fileEvent.arrayBuffer();
+        await bot.sendDocument(
+          message.chat.id,
+          Buffer.from(arrayBuffer),
+          {
+            // caption: result,
+            parse_mode: "markdown",
+            disable_notification: true,
+          },
+          {
+            filename: fileEvent.name,
+            contentType: "application/octet-stream",
+          },
+        );
+      }
     },
 
     // Групповые команды
@@ -89,30 +111,6 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
     onError(bot, error) {
       console.error(error);
     },
-  });
-  bot.on('callback_query', async (query) => {
-    if (query.data === 'send_calendar') {
-      await bot.sendChatAction(query.from.id, 'upload_document');
-      // fixme - нужно брать result из БД
-      const result = 'ICALENDAR FILE';
-      const fileEvent = new File([new TextEncoder().encode(result)], 'calendar.ics', {
-        type: 'text/calendar',
-      });
-      const arrayBuffer = await fileEvent.arrayBuffer();
-      await bot.sendDocument(
-        query.from.id,
-        Buffer.from(arrayBuffer),
-        {
-          // caption: result,
-          parse_mode: 'markdown',
-          disable_notification: true,
-        },
-        {
-          filename: fileEvent.name,
-          contentType: 'application/octet-stream',
-        },
-      );
-    }
   });
   return middleware;
 };
