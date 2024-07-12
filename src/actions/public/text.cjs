@@ -8,11 +8,15 @@ const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
 
 module.exports = async (bot, message) => {
   message.from.language_code = 'ru'; // todo - пока поддерживаем только русский язык
+  const accept = 'text/calendar';
   const activity = activitystreams(message);
   const id = uuidv1();
-  await bot.sendChatAction(activity.target.id, 'typing');
+  if (accept.startsWith('text/')) {
+    await bot.sendChatAction(activity.target.id, 'typing');
+  } else if (accept.startsWith('audio/')) {
+    await bot.sendChatAction(activity.target.id, 'record_audio');
+  }
   const dialog = new Dialog(message);
-
   try {
     const [{ queryResult }] = await dialog.say(message.text, id);
     message.from.language_code = queryResult.languageCode;
@@ -60,7 +64,7 @@ module.exports = async (bot, message) => {
       pass: GIC_PASSWORD,
     },
     headers: {
-      Accept: 'text/calendar',
+      Accept: accept,
       'accept-language': message.from.language_code,
     },
   });

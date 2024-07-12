@@ -9,7 +9,7 @@ module.exports = async (bot, message) => {
   activity.origin.name = me.first_name;
   activity.origin.url = 'https://t.me/' + me.username;
   const id = uuidv1();
-  await bot.sendChatAction(activity.target.id, 'record_audio');
+
   const { result } = await requestJsonRpc2({
     url: GIC_RPC,
     body: {
@@ -34,25 +34,7 @@ module.exports = async (bot, message) => {
       },
     );
   }
-  await bot.sendMessage(activity.target.id, 'Added', {
+  await bot.sendMessage(activity.target.id, result, {
     parse_mode: 'markdown',
   });
-  const fileEvent = new File([new TextEncoder().encode(result)], 'calendar.ics', {
-    type: 'text/calendar',
-  });
-  const arrayBuffer = await fileEvent.arrayBuffer();
-  await bot.sendChatAction(activity.target.id, 'upload_document');
-  await bot.sendDocument(
-    activity.target.id,
-    Buffer.from(arrayBuffer),
-    {
-      caption: result,
-      parse_mode: 'markdown',
-      disable_notification: true,
-    },
-    {
-      filename: fileEvent.name,
-      contentType: fileEvent.type,
-    },
-  );
 };
