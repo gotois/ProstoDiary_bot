@@ -40,7 +40,9 @@ module.exports = async (bot, message) => {
       // todo - если это не финальный интерактив, то продолжать диалог
       //  ...
     }
-  } catch {}
+  } catch (error) {
+    console.error('DialogflowError: ', error);
+  }
 
   const me = await bot.getMe();
   activity.origin.name = me.first_name;

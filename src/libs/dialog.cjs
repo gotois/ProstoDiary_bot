@@ -14,7 +14,7 @@ class Dialog {
    * @class
    * @param {object} message - telegram bot message
    */
-  super(message) {
+  constructor(message) {
     this.message = message;
   }
   /**
@@ -24,7 +24,7 @@ class Dialog {
    * @returns {Promise<object[]>}
    */
   say(text, uid) {
-    if (text.length < DIALOGFLOW_LIMIT) {
+    if (text.length >= DIALOGFLOW_LIMIT) {
       console.warn('Dialog text limit');
       text = text.slice(0, DIALOGFLOW_LIMIT);
     }
