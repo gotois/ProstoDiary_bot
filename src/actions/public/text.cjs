@@ -2,7 +2,7 @@ const requestJsonRpc2 = require('request-json-rpc2').default;
 const activitystreams = require('telegram-bot-activitystreams');
 const { v1: uuidv1 } = require('uuid');
 const Dialog = require('../../libs/dialog.cjs');
-const {formatCalendarMessage} = require('../../libs/calendar-format.cjs');
+const { formatCalendarMessage } = require('../../libs/calendar-format.cjs');
 
 const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
 
@@ -11,19 +11,30 @@ module.exports = async (bot, message) => {
   const activity = activitystreams(message);
   const id = uuidv1();
   await bot.sendChatAction(activity.target.id, 'typing');
+  const dialog = new Dialog(message);
 
   try {
-    const dialog = new Dialog(message);
-    const [{ queryResult }] = await dialog.detectAction(message, id);
+    const [{ queryResult }] = await dialog.say(message.text, id);
     message.from.language_code = queryResult.languageCode;
-    if (queryResult.intent.displayName !== "OrganizeAction") {
-      return bot.sendMessage(
-        activity.target.id,
-        queryResult.fulfillmentText || "Попробуйте написать что-то другое",
-        {
-          parse_mode: "markdown",
-        },
-      );
+    switch (queryResult.intent.displayName) {
+      case 'OrganizeAction': {
+        break;
+      }
+      default: {
+        await bot.setMessageReaction(message.chat.id, message.message_id, {
+          reaction: JSON.stringify([{
+            type: "emoji",
+            emoji: "🤷‍♀",
+          }]),
+        });
+        return bot.sendMessage(
+          activity.target.id,
+          queryResult.fulfillmentText || "Попробуйте написать что-то другое",
+          {
+            parse_mode: "markdown",
+          },
+        );
+      }
     }
     if (!queryResult.intent.endInteraction) {
       // todo - если это не финальный интерактив, то продолжать диалог
@@ -53,6 +64,12 @@ module.exports = async (bot, message) => {
   });
   if (error) {
     console.error(error);
+    await bot.setMessageReaction(message.chat.id, message.message_id, {
+      reaction: JSON.stringify([{
+        type: "emoji",
+        emoji: "👾",
+      }]),
+    });
     return bot.sendMessage(
       activity.target.id,
       'Произошла ошибка: ' + error.message,
@@ -70,7 +87,12 @@ module.exports = async (bot, message) => {
       },
     );
   }
-  console.log('result', result);
+  await bot.setMessageReaction(message.chat.id, message.message_id, {
+    reaction: JSON.stringify([{
+      type: "emoji",
+      emoji: "✍",
+    }]),
+  });
   await bot.sendMessage(activity.target.id, formatCalendarMessage(result, message.from.language_code), {
     parse_mode: 'markdown',
     reply_markup: {

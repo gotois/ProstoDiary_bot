@@ -13,6 +13,8 @@ module.exports = async (bot, message) => {
   await bot.deleteMessage(activity.target.id, message.message_id);
 
   const string_ = `
+**Успешно зарегистрированы** ✅
+
 Отправь мне войс, текст или картинку и я добавлю это событие в твой календарь!
 
 Например:

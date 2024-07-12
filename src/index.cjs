@@ -20,9 +20,10 @@ const migrateFromChatId = require('./actions/public/new-chat-members.cjs');
 const leftChatMember = require('./actions/public/new-chat-members.cjs');
 const channelChatCreated = require('./actions/public/new-chat-members.cjs');
 const supergroupChatCreated = require('./actions/public/new-chat-members.cjs');
+const sendCalendar = require('./actions/public/send-calendar.cjs');
 
 module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TELEGRAM_DOMAIN }) => {
-  const { middleware, bot } = botController({
+  const { middleware } = botController({
     token: token,
     domain: domain,
 
@@ -39,7 +40,6 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
 
       /* NATIVE COMMANDS */
 
-      ['auth_by_contact']: authByContactAction,
       ['sticker']: () => {
         return {};
       },
@@ -50,28 +50,10 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['photo']: photoAction,
       ['voice']: voiceAction,
       ['document']: documentAction,
-      ['send_calendar']: async (bot, message) => {
-        await bot.sendChatAction(message.chat.id, "upload_document");
-      //   // fixme - нужно брать result из БД
-        const result = "ICALENDAR FILE";
-        const fileEvent = new File([new TextEncoder().encode(result)], "calendar.ics", {
-          type: "text/calendar",
-        });
-        const arrayBuffer = await fileEvent.arrayBuffer();
-        await bot.sendDocument(
-          message.chat.id,
-          Buffer.from(arrayBuffer),
-          {
-            // caption: result,
-            parse_mode: "markdown",
-            disable_notification: true,
-          },
-          {
-            filename: fileEvent.name,
-            contentType: "application/octet-stream",
-          },
-        );
-      }
+
+      /* CALLBACK */
+      ['auth_by_contact']: authByContactAction,
+      ['send_calendar']: sendCalendar,
     },
 
     // Групповые команды

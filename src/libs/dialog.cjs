@@ -10,26 +10,31 @@ const sessionClient = new dialogflow.SessionsClient({
 });
 
 class Dialog {
-  constructor(message) {
-    if (message.text.length < DIALOGFLOW_LIMIT) {
-      throw 'Dialog text limit';
-    }
+  /**
+   * @class
+   * @param {object} message - telegram bot message
+   */
+  super(message) {
     this.message = message;
   }
   /**
    * @description Детектируем actions. Получаем и разбираем Intent (если есть)
-   * @param {object} message - bot message
+   * @param {string} text - text
    * @param {string} uid - uuid
    * @returns {Promise<object[]>}
    */
-  async detectAction(message, uid) {
+  say(text, uid) {
+    if (text.length < DIALOGFLOW_LIMIT) {
+      console.warn('Dialog text limit');
+      text = text.slice(0, DIALOGFLOW_LIMIT);
+    }
     const session = sessionClient.projectAgentSessionPath(dfCredentials.project_id, uid);
     const request = {
       session,
       queryInput: {
         text: {
-          text: message.text,
-          languageCode: message.from.language_code,
+          text: text,
+          languageCode: this.message.from.language_code,
         },
       },
     };
