@@ -1,10 +1,10 @@
 const botController = require('telegram-bot-api-express');
-const pingAction = require('./actions/private/ping.cjs');
-const dbclearAction = require('./actions/private/dbclear.cjs');
-const startAction = require('./actions/private/start.cjs');
-const helpAction = require('./actions/private/help.cjs');
-const offertaAction = require('./actions/private/offerta.cjs');
-const registrationAction = require('./actions/private/registration.cjs');
+const pingAction = require('./actions/system/ping.cjs');
+const dbclearAction = require('./actions/system/dbclear.cjs');
+const helpAction = require('./actions/system/help.cjs');
+const offertaAction = require('./actions/system/offerta.cjs');
+const registrationAction = require('./actions/system/registration.cjs');
+const startAction = require('./actions/public/start.cjs');
 const editedMessageTextAction = require('./actions/public/edited-message-text.cjs');
 const channelPostAction = require('./actions/public/channel-post.cjs');
 const textAction = require('./actions/public/text.cjs');
@@ -20,15 +20,15 @@ const migrateFromChatId = require('./actions/public/new-chat-members.cjs');
 const leftChatMember = require('./actions/public/new-chat-members.cjs');
 const channelChatCreated = require('./actions/public/new-chat-members.cjs');
 const supergroupChatCreated = require('./actions/public/new-chat-members.cjs');
-const stickerAction = require('./actions/private/sticker.cjs');
-const animationAction = require('./actions/private/animation.cjs');
+const stickerAction = require('./actions/public/sticker.cjs');
+const animationAction = require('./actions/public/animation.cjs');
 const pollAction = require('./actions/public/poll.cjs');
 const audioAction = require('./actions/public/audio.cjs');
-const contactAction = require('./actions/private/contact.cjs');
+const contactAction = require('./actions/public/contact.cjs');
 const sendCalendar = require('./actions/public/send-calendar.cjs');
 
 module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TELEGRAM_DOMAIN }) => {
-  const { middleware } = botController({
+  return botController({
     token: token,
     domain: domain,
 
@@ -41,7 +41,6 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       [/^\/start|начать$/]: startAction,
       [/^\/help|man|помощь$/]: helpAction,
       [/^\/licence/]: offertaAction,
-      // [/^\/(backup|бэкап)$/]: backupAction,
 
       /* NATIVE COMMANDS */
 
@@ -99,5 +98,4 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       console.error(error);
     },
   });
-  return middleware;
 };
