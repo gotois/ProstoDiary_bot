@@ -2,6 +2,7 @@ const requestJsonRpc2 = require('request-json-rpc2').default;
 const activitystreams = require('telegram-bot-activitystreams');
 const { v1: uuidv1 } = require('uuid');
 const Dialog = require('../../libs/dialog.cjs');
+const { formatCalendarMessage } = require('../../libs/calendar-format.cjs');
 
 const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
 
@@ -98,7 +99,23 @@ module.exports = async (bot, message) => {
       },
     );
   }
-  await bot.sendMessage(activity.target.id, result, {
+  await bot.setMessageReaction(message.chat.id, message.message_id, {
+    reaction: JSON.stringify([{
+      type: "emoji",
+      emoji: "✍",
+    }]),
+  });
+  await bot.sendMessage(activity.target.id, formatCalendarMessage(result, message.from.language_code), {
     parse_mode: 'markdown',
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: 'Скачать',
+            callback_data: 'send_calendar',
+          },
+        ],
+      ],
+    },
   });
 };

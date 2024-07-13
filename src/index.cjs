@@ -20,6 +20,10 @@ const migrateFromChatId = require('./actions/public/new-chat-members.cjs');
 const leftChatMember = require('./actions/public/new-chat-members.cjs');
 const channelChatCreated = require('./actions/public/new-chat-members.cjs');
 const supergroupChatCreated = require('./actions/public/new-chat-members.cjs');
+const stickerAction = require('./actions/private/sticker.cjs');
+const animationAction = require('./actions/private/animation.cjs');
+const pollAction = require('./actions/public/poll.cjs');
+const audioAction = require('./actions/public/audio.cjs');
 const sendCalendar = require('./actions/public/send-calendar.cjs');
 
 module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TELEGRAM_DOMAIN }) => {
@@ -40,16 +44,15 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
 
       /* NATIVE COMMANDS */
 
-      ['sticker']: () => {
-        return {};
-      },
-      ['animation']: () => {
-        return {};
-      },
+      ['sticker']: stickerAction,
+      ['animation']: animationAction,
+      ['poll']: pollAction,
       ['text']: textAction,
       ['photo']: photoAction,
       ['voice']: voiceAction,
+      ['audio']: audioAction,
       ['document']: documentAction,
+      ['location']: locationAction,
 
       /* CALLBACK */
       ['auth_by_contact']: authByContactAction,
