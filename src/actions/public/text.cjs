@@ -1,8 +1,10 @@
+const ICAL = require('ical.js');
 const requestJsonRpc2 = require('request-json-rpc2').default;
 const activitystreams = require('telegram-bot-activitystreams');
 const { v1: uuidv1 } = require('uuid');
 const Dialog = require('../../libs/dialog.cjs');
 const { formatCalendarMessage } = require('../../libs/calendar-format.cjs');
+const { executeAtTime } = require('../../libs/execute-time.cjs');
 
 const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
 
@@ -99,7 +101,9 @@ module.exports = async (bot, message) => {
       emoji: "✍",
     }]),
   });
-  await bot.sendMessage(activity.target.id, formatCalendarMessage(result, message.from.language_code), {
+  const icalData = ICAL.parse(result);
+  const comp = new ICAL.Component(icalData);
+  await bot.sendMessage(activity.target.id, formatCalendarMessage(comp, message.from.language_code), {
     parse_mode: 'markdown',
     reply_markup: {
       inline_keyboard: [
@@ -111,5 +115,16 @@ module.exports = async (bot, message) => {
         ],
       ],
     },
+  });
+  const vevent = comp.getFirstSubcomponent('vevent');
+  const dtstart = vevent.getFirstPropertyValue('dtstart').toString().replace('Z', '');
+  executeAtTime(new Date(dtstart), async () => {
+    let str = "Внимание! У вас есть задача:\n";
+    str += vevent.getFirstPropertyValue('summary') + "\n";
+    str += vevent.getFirstPropertyValue('dtstart').toString() + "\n";
+
+    await bot.sendMessage(activity.target.id, str, {
+      parse_mode: "markdown",
+    });
   });
 };

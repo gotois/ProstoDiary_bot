@@ -1,15 +1,10 @@
-const ICAL = require('ical.js');
-
 /**
- * @param {string} ical - icalendar string
+ * @param {object} comp - ICAL Component
  * @param {string} [locale] - locale
  * @returns {string}
  */
-function formatCalendarMessage(ical, locale = 'ru') {
-  const jcalData = ICAL.parse(ical);
-  const comp = new ICAL.Component(jcalData);
+function formatCalendarMessage(comp, locale = 'ru') {
   const vevent = comp.getFirstSubcomponent('vevent');
-
   const eventName = vevent.getFirstPropertyValue('summary');
   let output = '';
   output += '**Создано новое событие:**\n';

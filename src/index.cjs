@@ -25,6 +25,7 @@ const animationAction = require('./actions/public/animation.cjs');
 const pollAction = require('./actions/public/poll.cjs');
 const audioAction = require('./actions/public/audio.cjs');
 const contactAction = require('./actions/public/contact.cjs');
+const inlineAction = require('./actions/public/inline.cjs');
 const sendCalendar = require('./actions/public/send-calendar.cjs');
 
 module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TELEGRAM_DOMAIN }) => {
@@ -58,6 +59,7 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       /* CALLBACK */
       ['auth_by_contact']: registrationAction,
       ['send_calendar']: sendCalendar,
+      ['inline_query']: inlineAction,
     },
 
     // Групповые команды
