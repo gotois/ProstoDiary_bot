@@ -95,7 +95,6 @@
     "no-console": "warn",
     "prettier/prettier": "error",
     "jsdoc/check-alignment": "error",
-    "jsdoc/check-examples": "error",
     "jsdoc/check-indentation": "error",
     "jsdoc/check-param-names": "error",
     "jsdoc/check-syntax": "error",

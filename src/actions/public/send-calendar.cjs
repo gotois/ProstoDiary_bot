@@ -22,6 +22,7 @@ module.exports = async (bot, message) => {
     },
     {
       filename: fileEvent.name,
+      // contentType: fileEvent.type,
       contentType: "application/octet-stream",
     },
   );

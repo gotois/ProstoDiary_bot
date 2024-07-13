@@ -16,9 +16,9 @@ module.exports = async (bot, message) => {
   } else if (accept.startsWith('audio/')) {
     await bot.sendChatAction(activity.target.id, 'record_audio');
   }
-  const dialog = new Dialog(message);
+  const dialog = new Dialog(message, id);
   try {
-    const [{ queryResult }] = await dialog.say(message.text, id);
+    const [{ queryResult }] = await dialog.text(message.text);
     message.from.language_code = queryResult.languageCode;
     switch (queryResult.intent.displayName) {
       case 'OrganizeAction': {

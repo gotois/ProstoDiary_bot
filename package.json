@@ -97,7 +97,7 @@
     "cz-conventional-changelog": "3.3.0",
     "dependency-cruiser": "15.3.0",
     "dotenv": "16.4.5",
-    "eslint": "7.32.0",
+    "eslint": "8.8.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-ava": "13.2.0",
     "eslint-plugin-jsdoc": "48.7.0",
