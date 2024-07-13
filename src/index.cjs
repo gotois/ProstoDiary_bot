@@ -4,7 +4,7 @@ const dbclearAction = require('./actions/private/dbclear.cjs');
 const startAction = require('./actions/private/start.cjs');
 const helpAction = require('./actions/private/help.cjs');
 const offertaAction = require('./actions/private/offerta.cjs');
-const authByContactAction = require('./actions/private/auth-by-contact.cjs');
+const registrationAction = require('./actions/private/registration.cjs');
 const editedMessageTextAction = require('./actions/public/edited-message-text.cjs');
 const channelPostAction = require('./actions/public/channel-post.cjs');
 const textAction = require('./actions/public/text.cjs');
@@ -24,6 +24,7 @@ const stickerAction = require('./actions/private/sticker.cjs');
 const animationAction = require('./actions/private/animation.cjs');
 const pollAction = require('./actions/public/poll.cjs');
 const audioAction = require('./actions/public/audio.cjs');
+const contactAction = require('./actions/private/contact.cjs');
 const sendCalendar = require('./actions/public/send-calendar.cjs');
 
 module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TELEGRAM_DOMAIN }) => {
@@ -53,9 +54,10 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['audio']: audioAction,
       ['document']: documentAction,
       ['location']: locationAction,
+      ['contact']: contactAction,
 
       /* CALLBACK */
-      ['auth_by_contact']: authByContactAction,
+      ['auth_by_contact']: registrationAction,
       ['send_calendar']: sendCalendar,
     },
 
