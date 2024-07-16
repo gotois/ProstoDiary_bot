@@ -28,18 +28,16 @@ module.exports = async (bot, message) => {
       }
       default: {
         await bot.setMessageReaction(message.chat.id, message.message_id, {
-          reaction: JSON.stringify([{
-            type: "emoji",
-            emoji: "🤷‍♀",
-          }]),
+          reaction: JSON.stringify([
+            {
+              type: 'emoji',
+              emoji: '🤷‍♀',
+            },
+          ]),
         });
-        return bot.sendMessage(
-          activity.target.id,
-          queryResult.fulfillmentText || "Попробуйте написать что-то другое",
-          {
-            parse_mode: "markdown",
-          },
-        );
+        return bot.sendMessage(activity.target.id, queryResult.fulfillmentText || 'Попробуйте написать что-то другое', {
+          parse_mode: 'markdown',
+        });
       }
     }
     if (!queryResult.intent.endInteraction) {
@@ -47,7 +45,7 @@ module.exports = async (bot, message) => {
       //  ...
     }
   } catch (error) {
-    console.error('DialogflowError: ', error);
+    console.error('DialogflowError:', error);
   }
 
   const me = await bot.getMe();
@@ -66,25 +64,23 @@ module.exports = async (bot, message) => {
       pass: GIC_PASSWORD,
     },
     headers: {
-      Accept: accept,
+      'Accept': accept,
       'accept-language': message.from.language_code,
     },
   });
   if (error) {
     console.error(error);
     await bot.setMessageReaction(message.chat.id, message.message_id, {
-      reaction: JSON.stringify([{
-        type: "emoji",
-        emoji: "👾",
-      }]),
+      reaction: JSON.stringify([
+        {
+          type: 'emoji',
+          emoji: '👾',
+        },
+      ]),
     });
-    return bot.sendMessage(
-      activity.target.id,
-      'Произошла ошибка: ' + error.message,
-      {
-        parse_mode: 'markdown',
-      },
-    );
+    return bot.sendMessage(activity.target.id, 'Произошла ошибка: ' + error.message, {
+      parse_mode: 'markdown',
+    });
   }
   if (!result) {
     return bot.sendMessage(
@@ -96,10 +92,12 @@ module.exports = async (bot, message) => {
     );
   }
   await bot.setMessageReaction(message.chat.id, message.message_id, {
-    reaction: JSON.stringify([{
-      type: "emoji",
-      emoji: "✍",
-    }]),
+    reaction: JSON.stringify([
+      {
+        type: 'emoji',
+        emoji: '✍',
+      },
+    ]),
   });
   const icalData = ICAL.parse(result);
   const comp = new ICAL.Component(icalData);
@@ -119,12 +117,12 @@ module.exports = async (bot, message) => {
   const vevent = comp.getFirstSubcomponent('vevent');
   const dtstart = vevent.getFirstPropertyValue('dtstart').toString().replace('Z', '');
   executeAtTime(new Date(dtstart), async () => {
-    let str = "Внимание! У вас есть задача:\n";
-    str += vevent.getFirstPropertyValue('summary') + "\n";
-    str += vevent.getFirstPropertyValue('dtstart').toString() + "\n";
+    let string_ = 'Внимание! У вас есть задача:\n';
+    string_ += vevent.getFirstPropertyValue('summary') + '\n';
+    string_ += vevent.getFirstPropertyValue('dtstart').toString() + '\n';
 
-    await bot.sendMessage(activity.target.id, str, {
-      parse_mode: "markdown",
+    await bot.sendMessage(activity.target.id, string_, {
+      parse_mode: 'markdown',
     });
   });
 };

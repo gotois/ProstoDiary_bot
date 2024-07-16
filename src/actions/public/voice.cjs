@@ -12,7 +12,7 @@ module.exports = async (bot, message) => {
   message.from.language_code = 'ru'; // todo - пока поддерживаем только русский язык
   const activity = activitystreams(message);
   const id = uuidv1();
-  const response = await fetch(message.voice.file.url)
+  const response = await fetch(message.voice.file.url);
   const arrayBuffer = await response.arrayBuffer();
   const dialog = new Dialog(message, id);
   try {
@@ -20,27 +20,27 @@ module.exports = async (bot, message) => {
     message.from.language_code = queryResult.languageCode;
     switch (queryResult.intent.displayName) {
       case 'OrganizeAction': {
-        activity.object = [{
-          type: 'Note',
-          content: queryResult.queryText,
-          mediaType: 'text/plain',
-        }]
+        activity.object = [
+          {
+            type: 'Note',
+            content: queryResult.queryText,
+            mediaType: 'text/plain',
+          },
+        ];
         break;
       }
       default: {
         await bot.setMessageReaction(message.chat.id, message.message_id, {
-          reaction: JSON.stringify([{
-            type: "emoji",
-            emoji: "🤷‍♀",
-          }]),
+          reaction: JSON.stringify([
+            {
+              type: 'emoji',
+              emoji: '🤷‍♀',
+            },
+          ]),
         });
-        return bot.sendMessage(
-          activity.target.id,
-          queryResult.fulfillmentText || "Попробуйте написать что-то другое",
-          {
-            parse_mode: "markdown",
-          },
-        );
+        return bot.sendMessage(activity.target.id, queryResult.fulfillmentText || 'Попробуйте написать что-то другое', {
+          parse_mode: 'markdown',
+        });
       }
     }
     if (!queryResult.intent.endInteraction) {
@@ -48,14 +48,10 @@ module.exports = async (bot, message) => {
       //  ...
     }
   } catch (error) {
-    console.error('DialogflowError: ', error);
-    return bot.sendMessage(
-      activity.target.id,
-      'Ошибка. Голос нераспознан',
-      {
-        parse_mode: 'markdown',
-      },
-    );
+    console.error('DialogflowError:', error);
+    return bot.sendMessage(activity.target.id, 'Ошибка. Голос нераспознан', {
+      parse_mode: 'markdown',
+    });
   }
   const me = await bot.getMe();
   activity.origin.name = me.first_name;
@@ -79,21 +75,19 @@ module.exports = async (bot, message) => {
   if (error) {
     console.error(error);
     await bot.setMessageReaction(message.chat.id, message.message_id, {
-      reaction: JSON.stringify([{
-        type: "emoji",
-        emoji: "👾",
-      }]),
+      reaction: JSON.stringify([
+        {
+          type: 'emoji',
+          emoji: '👾',
+        },
+      ]),
     });
-    return bot.sendMessage(
-      activity.target.id,
-      'Произошла ошибка: ' + error.message,
-      {
-        parse_mode: 'markdown',
-      },
-    );
+    return bot.sendMessage(activity.target.id, 'Произошла ошибка: ' + error.message, {
+      parse_mode: 'markdown',
+    });
   }
   if (!result) {
-    return await bot.sendMessage(
+    return bot.sendMessage(
       activity.target.id,
       'Ошибка. Пожалуйста, уточните дату и время. Даты которые уже прошли не могут быть созданы.',
       {
@@ -102,10 +96,12 @@ module.exports = async (bot, message) => {
     );
   }
   await bot.setMessageReaction(message.chat.id, message.message_id, {
-    reaction: JSON.stringify([{
-      type: "emoji",
-      emoji: "✍",
-    }]),
+    reaction: JSON.stringify([
+      {
+        type: 'emoji',
+        emoji: '✍',
+      },
+    ]),
   });
   const icalData = ICAL.parse(result);
   const comp = new ICAL.Component(icalData);
@@ -125,12 +121,30 @@ module.exports = async (bot, message) => {
   const vevent = comp.getFirstSubcomponent('vevent');
   const dtstart = vevent.getFirstPropertyValue('dtstart').toString().replace('Z', '');
   executeAtTime(new Date(dtstart), async () => {
-    let str = "Внимание! У вас есть задача:\n";
-    str += vevent.getFirstPropertyValue('summary') + "\n";
-    str += vevent.getFirstPropertyValue('dtstart').toString() + "\n";
+    let string_ = 'Внимание! У вас есть задача:\n';
+    string_ += vevent.getFirstPropertyValue('summary') + '\n';
+    string_ += vevent.getFirstPropertyValue('dtstart').toString() + '\n';
 
-    await bot.sendMessage(activity.target.id, str, {
-      parse_mode: "markdown",
+    await bot.sendMessage(activity.target.id, string_, {
+      parse_mode: 'markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Напомнить через 15 мин',
+              callback_data: 'notify_calendar--15',
+            },
+            {
+              text: 'Напомнить через 1 час',
+              callback_data: 'notify_calendar--60',
+            },
+            {
+              text: 'Напомнить завтра',
+              callback_data: 'notify_calendar--next-day',
+            },
+          ],
+        ],
+      },
     });
   });
 };

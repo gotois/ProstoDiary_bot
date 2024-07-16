@@ -31,7 +31,7 @@
     "clean:report": "rm -rf .nyc_output",
     "clean:logs": "rm -rf logs/",
     "clean:test-cache": "ava reset-cache tests/e2e/index.js --serial",
-    "lint": "eslint scripts/* src/**/*.cjs src/*.cjs tests/**/*.js",
+    "lint": "eslint scripts/* src/**/*.cjs src/**/**/*.cjs src/*.cjs tests/**/*.js",
     "lint:dependency": "depcruise -x \"node_modules\" --validate .dependency-cruiser.js src tests",
     "lint:markdown": "markdownlint 'docs/**/*.md' --ignore 'docs/_site' --ignore 'docs/index.md'",
     "report:dependency": "mkdir -p reports && depcruise --include-only ^src --output-type dot src | dot -T svg > reports/dependencygraph.svg",
@@ -85,7 +85,7 @@
     "minimist": "1.2.8",
     "request-json-rpc2": "2.2.2",
     "snyk": "1.1243.0",
-    "telegram-bot-activitystreams": "1.0.2",
+    "telegram-bot-activitystreams": "1.0.3",
     "telegram-bot-api-express": "1.2.2",
     "uuid": "10.0.0"
   },

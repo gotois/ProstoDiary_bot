@@ -14,11 +14,6 @@ module.exports = async (bot, message) => {
 
   // WIP - по возможности отправлять профиль пользователя при регистрации
   // const profilePhotos = await bot.getUserProfilePhotos(message.chat.id)
-  // if (profilePhotos.total_count > 0) {
-  //   const middlePhoto = profilePhotos.photos[0].find(photo => {
-  //     return photo.width === 320;
-  //   })
-  // }
 
   await bot.deleteMessage(activity.target.id, message.message_id);
 

@@ -55,11 +55,16 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['document']: documentAction,
       ['location']: locationAction,
       ['contact']: contactAction,
+      ['inline_query']: inlineAction,
 
       /* CALLBACK */
       ['auth_by_contact']: registrationAction,
       ['send_calendar']: sendCalendar,
-      ['inline_query']: inlineAction,
+
+      // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день
+      ['notify_calendar--15']: () => {},
+      ['notify_calendar--60']: () => {},
+      ['notify_calendar--next-day']: () => {},
     },
 
     // Групповые команды

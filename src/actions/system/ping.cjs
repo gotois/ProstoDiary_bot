@@ -23,6 +23,14 @@ module.exports = async (bot, message) => {
     },
   });
   if (response.error) {
+    await bot.setMessageReaction(message.chat.id, message.message_id, {
+      reaction: JSON.stringify([
+        {
+          type: 'emoji',
+          emoji: '👾',
+        },
+      ]),
+    });
     await bot.sendMessage(activity.target.id, response.error.message, {
       parse_mode: 'markdown',
     });
