@@ -1,7 +1,6 @@
 /* eslint-disable */
 const activitystreams = require('telegram-bot-activitystreams');
 // const requestJsonRpc2 = require('request-json-rpc2');
-const { v1: uuidv1 } = require('uuid');
 
 // todo: нужно проверять выгружен ли был бэкап, и если нет - предупреждать пользователя
 // Очистить базу данных с подтверждением - Удаление всей истории пользователя целиком

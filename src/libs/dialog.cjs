@@ -1,4 +1,6 @@
 const dialogflow = require('@google-cloud/dialogflow');
+const activitystreams = require('telegram-bot-activitystreams');
+const { v1: uuidv1 } = require('uuid');
 
 const { DIALOGFLOW_CREDENTIALS } = process.env;
 const DIALOGFLOW_LIMIT = 256;
@@ -13,11 +15,18 @@ class Dialog {
   /**
    * @class
    * @param {object} message - telegram bot message
-   * @param {string} uid - uuid
    */
-  constructor(message, uid) {
+  constructor(message) {
+    message.from.language_code = 'ru'; // todo - пока поддерживаем только русский язык
+    this._uid = uuidv1();
     this.message = message;
-    this.uid = uid;
+    this.activity = activitystreams(this.message);
+  }
+  /**
+   * @returns {string}
+   */
+  get uid() {
+    return this._uid;
   }
   /**
    * @returns {string}

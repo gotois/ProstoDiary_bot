@@ -1,3 +1,4 @@
+const { sendPrepareAction } = require('../../libs/tg-prepare-action.cjs');
 /**
  * @description Отправка файла ical пользователю
  * @param {any} bot - telegram bot
@@ -5,7 +6,8 @@
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  await bot.sendChatAction(message.chat.id, 'upload_document');
+  const accept = fileEvent.type;
+  bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
   //   // fixme - нужно брать result из БД
   const result = 'ICALENDAR FILE';
   const fileEvent = new File([new TextEncoder().encode(result)], 'calendar.ics', {

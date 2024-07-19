@@ -48,6 +48,7 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['sticker']: stickerAction,
       ['animation']: animationAction,
       ['poll']: pollAction,
+      ['mention']: mentionAction,
       ['text']: textAction,
       ['photo']: photoAction,
       ['voice']: voiceAction,
@@ -56,6 +57,8 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['location']: locationAction,
       ['contact']: contactAction,
       ['inline_query']: inlineAction,
+
+      ['reply_to_message']: () => {},
 
       /* CALLBACK */
       ['auth_by_contact']: registrationAction,

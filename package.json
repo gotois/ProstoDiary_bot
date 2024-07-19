@@ -83,7 +83,7 @@
     "@google-cloud/dialogflow": "6.7.0",
     "ical.js": "2.0.1",
     "minimist": "1.2.8",
-    "request-json-rpc2": "2.2.2",
+    "request-json-rpc2": "2.2.3",
     "snyk": "1.1243.0",
     "telegram-bot-activitystreams": "1.0.3",
     "telegram-bot-api-express": "1.2.2",

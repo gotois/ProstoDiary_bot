@@ -1,6 +1,6 @@
-const activitystreams = require('telegram-bot-activitystreams');
+const textAction = require('./text.cjs');
 
 module.exports = (bot, message) => {
-  const activity = activitystreams(message);
-  console.log('mention, activity', activity);
+  console.log('mention', message);
+  return textAction(bot, message);
 };

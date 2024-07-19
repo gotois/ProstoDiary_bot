@@ -1,12 +1,14 @@
 const requestJsonRpc2 = require('request-json-rpc2').default;
 const activitystreams = require('telegram-bot-activitystreams');
+const { sendPrepareAction } = require('../../libs/tg-prepare-action.cjs');
 
 const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
 
 // Проверка сети
 module.exports = async (bot, message) => {
-  bot.sendChatAction(message.chat.id, 'typing');
   const activity = activitystreams(message);
+  const accept = 'text/markdown';
+  bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
   const response = await requestJsonRpc2({
     url: GIC_RPC,
     body: {
@@ -19,7 +21,7 @@ module.exports = async (bot, message) => {
       pass: GIC_PASSWORD,
     },
     headers: {
-      Accept: 'text/markdown',
+      Accept: accept,
     },
   });
   if (response.error) {
