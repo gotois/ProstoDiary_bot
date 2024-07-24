@@ -1,5 +1,3 @@
-const activitystreams = require('telegram-bot-activitystreams');
-
 const Dialog = require('../../libs/dialog.cjs');
 const { sendPrepareAction } = require('../../libs/tg-prepare-action.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
@@ -20,13 +18,11 @@ function getHQImage(objectImages) {
 }
 
 module.exports = async (bot, message) => {
-  const activity = activitystreams(message);
   const accept = 'text/calendar';
-
   const dialog = new Dialog(message);
   bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
 
-  const { url, width, height, summary } = getHQImage(activity.object);
+  const { url, width, height, summary } = getHQImage(dialog.activity.object);
   if (!summary) {
     await bot.setMessageReaction(message.chat.id, message.message_id, {
       reaction: JSON.stringify([
@@ -36,7 +32,7 @@ module.exports = async (bot, message) => {
         },
       ]),
     });
-    return bot.sendMessage(activity.target.id, 'Укажите свои намерения в поле caption', {
+    return bot.sendMessage(dialog.activity.target.id, 'Укажите свои намерения в поле caption', {
       parse_mode: 'markdown',
     });
   }
@@ -68,7 +64,7 @@ module.exports = async (bot, message) => {
           },
         ]),
       });
-      return bot.sendMessage(activity.target.id, queryResult.fulfillmentText || 'Попробуйте написать что-то другое', {
+      return bot.sendMessage(dialog.activity.target.id, queryResult.fulfillmentText || 'Попробуйте написать что-то другое', {
         parse_mode: 'markdown',
       });
     }
