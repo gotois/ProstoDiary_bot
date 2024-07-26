@@ -47,9 +47,5 @@ module.exports = async (bot, message) => {
       parse_mode: 'markdown',
     });
   }
-  const me = await bot.getMe();
-  dialog.activity.origin.name = me.first_name;
-  dialog.activity.origin.url = 'https://t.me/' + me.username;
-
   await generateCalendar(bot, dialog);
 };

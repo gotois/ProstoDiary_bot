@@ -6,6 +6,10 @@ const { executeAtTime } = require('../libs/execute-time.cjs');
 const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
 
 module.exports.generateCalendar = async (bot, dialog) => {
+  const me = await bot.getMe();
+  dialog.activity.origin.name = me.first_name;
+  dialog.activity.origin.url = 'https://t.me/' + me.username;
+
   const { result, error } = await requestJsonRpc2({
     url: GIC_RPC,
     body: {
@@ -45,6 +49,16 @@ module.exports.generateCalendar = async (bot, dialog) => {
       },
     );
   }
+  const {data, type} = result;
+  if (type !== 'text/calendar') {
+    return bot.sendMessage(
+      dialog.activity.target.id,
+      data,
+      {
+        parse_mode: 'markdown',
+      },
+    );
+  }
   await bot.setMessageReaction(dialog.activity.target.id, dialog.message.message_id, {
     reaction: JSON.stringify([
       {
@@ -53,7 +67,7 @@ module.exports.generateCalendar = async (bot, dialog) => {
       },
     ]),
   });
-  const icalData = ICAL.parse(result);
+  const icalData = ICAL.parse(data);
   const comp = new ICAL.Component(icalData);
   await bot.sendMessage(dialog.activity.target.id, formatCalendarMessage(comp, dialog.message.from.language_code), {
     parse_mode: 'markdown',
@@ -71,11 +85,11 @@ module.exports.generateCalendar = async (bot, dialog) => {
   const vevent = comp.getFirstSubcomponent('vevent');
   const dtstart = vevent.getFirstPropertyValue('dtstart').toString().replace('Z', '');
   executeAtTime(new Date(dtstart), async () => {
-    let string_ = 'Внимание! У вас есть задача:\n';
-    string_ += vevent.getFirstPropertyValue('summary') + '\n';
-    string_ += vevent.getFirstPropertyValue('dtstart').toString() + '\n';
+    let task = 'Внимание! У вас есть задача:\n';
+    task += vevent.getFirstPropertyValue('summary') + '\n';
+    task += vevent.getFirstPropertyValue('dtstart').toString() + '\n';
 
-    await bot.sendMessage(dialog.activity.target.id, string_, {
+    await bot.sendMessage(dialog.activity.target.id, task, {
       parse_mode: 'markdown',
       reply_markup: {
         inline_keyboard: [
@@ -84,10 +98,14 @@ module.exports.generateCalendar = async (bot, dialog) => {
               text: 'Напомнить через 15 мин',
               callback_data: 'notify_calendar--15',
             },
+          ],
+          [
             {
               text: 'Напомнить через 1 час',
               callback_data: 'notify_calendar--60',
             },
+          ],
+          [
             {
               text: 'Напомнить завтра',
               callback_data: 'notify_calendar--next-day',

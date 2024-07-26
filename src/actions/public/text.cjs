@@ -39,10 +39,5 @@ module.exports = async (bot, message) => {
   } catch (error) {
     console.error('DialogflowError:', error);
   }
-
-  const me = await bot.getMe();
-  dialog.activity.origin.name = me.first_name;
-  dialog.activity.origin.url = 'https://t.me/' + me.username;
-
   await generateCalendar(bot, dialog);
 };
