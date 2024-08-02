@@ -16,10 +16,10 @@ const voiceAction = require('./actions/public/voice.cjs');
 const videoAction = require('./actions/public/video.cjs');
 const groupChatCreatedAction = require('./actions/public/group-chat-created.cjs');
 const chatMembers = require('./actions/public/new-chat-members.cjs');
-const migrateFromChatId = require('./actions/public/new-chat-members.cjs');
-const leftChatMember = require('./actions/public/new-chat-members.cjs');
-const channelChatCreated = require('./actions/public/new-chat-members.cjs');
-const supergroupChatCreated = require('./actions/public/new-chat-members.cjs');
+const migrateFromChat = require('./actions/public/migrate-from-chat.cjs');
+const leftChatMember = require('./actions/public/left-chat-members.cjs');
+const channelChatCreated = require('./actions/public/channel-chat-created.cjs');
+const supergroupChatCreated = require('./actions/public/supergroup-chat-created.cjs');
 const stickerAction = require('./actions/public/sticker.cjs');
 const animationAction = require('./actions/public/animation.cjs');
 const pollAction = require('./actions/public/poll.cjs');
@@ -100,7 +100,7 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['channel_chat_created']: channelChatCreated,
       ['group_chat_created']: groupChatCreatedAction,
       ['new_chat_members']: chatMembers,
-      ['migrate_from_chat_id']: migrateFromChatId,
+      ['migrate_from_chat_id']: migrateFromChat,
       ['left_chat_member']: leftChatMember,
     },
 

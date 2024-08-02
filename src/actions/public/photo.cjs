@@ -64,9 +64,13 @@ module.exports = async (bot, message) => {
           },
         ]),
       });
-      return bot.sendMessage(dialog.activity.target.id, queryResult.fulfillmentText || 'Попробуйте написать что-то другое', {
-        parse_mode: 'markdown',
-      });
+      return bot.sendMessage(
+        dialog.activity.target.id,
+        queryResult.fulfillmentText || 'Попробуйте написать что-то другое',
+        {
+          parse_mode: 'markdown',
+        },
+      );
     }
   }
 

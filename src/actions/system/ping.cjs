@@ -19,7 +19,7 @@ module.exports = async (bot, message) => {
     },
   });
   if (response.error) {
-    await bot.sendMessage(dialog.activity.target.id, response.error.message, {
+    return bot.sendMessage(dialog.activity.target.id, response.error.message, {
       parse_mode: 'markdown',
     });
   } else {

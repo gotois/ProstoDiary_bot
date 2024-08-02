@@ -49,15 +49,11 @@ module.exports.generateCalendar = async (bot, dialog) => {
       },
     );
   }
-  const {data, type} = result;
+  const { data, type } = result;
   if (type !== 'text/calendar') {
-    return bot.sendMessage(
-      dialog.activity.target.id,
-      data,
-      {
-        parse_mode: 'markdown',
-      },
-    );
+    return bot.sendMessage(dialog.activity.target.id, data, {
+      parse_mode: 'markdown',
+    });
   }
   await bot.setMessageReaction(dialog.activity.target.id, dialog.message.message_id, {
     reaction: JSON.stringify([

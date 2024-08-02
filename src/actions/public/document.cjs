@@ -6,7 +6,7 @@ module.exports = async (bot, message) => {
   const dialog = new Dialog(message);
 
   // todo: отправлять на сервер
-  await bot.sendMessage(dialog.activity.target.id, 'Document: ' + JSON.stringify(activity.object), {
+  await bot.sendMessage(dialog.activity.target.id, 'Document: ' + JSON.stringify(dialog.activity.object), {
     parse_mode: 'markdown',
   });
 };
