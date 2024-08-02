@@ -7,7 +7,8 @@ const registrationAction = require('./actions/system/registration.cjs');
 const startAction = require('./actions/public/start.cjs');
 const editedMessageTextAction = require('./actions/public/edited-message-text.cjs');
 const channelPostAction = require('./actions/public/channel-post.cjs');
-const textAction = require('./actions/public/text.cjs');
+const textAction = require('./actions/private/text.cjs');
+const groupTextAction = require('./actions/public/text.cjs');
 const locationAction = require('./actions/public/location.cjs');
 const photoAction = require('./actions/public/photo.cjs');
 const mentionAction = require('./actions/public/mention.cjs');
@@ -49,10 +50,12 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['animation']: animationAction,
       ['poll']: pollAction,
       ['mention']: mentionAction,
+      ['edited_message_text']: editedMessageTextAction,
       ['text']: textAction,
       ['photo']: photoAction,
       ['voice']: voiceAction,
       ['audio']: audioAction,
+      ['video']: videoAction,
       ['document']: documentAction,
       ['location']: locationAction,
       ['contact']: contactAction,
@@ -78,21 +81,9 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
 
       /* TEXT */
 
-      ['edited_message_text']: editedMessageTextAction,
       ['channel_post']: channelPostAction,
       ['mention']: mentionAction,
-      ['text']: textAction,
-
-      /* LOCATION */
-
-      ['location']: locationAction,
-
-      /* DATA */
-
-      ['document']: documentAction,
-      ['photo']: photoAction,
-      ['voice']: voiceAction,
-      ['video']: videoAction,
+      ['text']: groupTextAction,
 
       /* GROUP COMMANDS */
 
@@ -102,6 +93,10 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['new_chat_members']: chatMembers,
       ['migrate_from_chat_id']: migrateFromChat,
       ['left_chat_member']: leftChatMember,
+
+      /* CALLBACK */
+
+      ['approve_event']: () => {},
     },
 
     onError(bot, error) {

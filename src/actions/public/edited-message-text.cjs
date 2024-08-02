@@ -12,8 +12,12 @@ const previousInput = (input) => {
 
 module.exports = async (bot, message) => {
   if (message.text.startsWith('/')) {
-    await bot.sendMessage(message.chat.id, 'Редактирование этой записи невозможно');
+    await bot.sendMessage(message.chat.id, 'Редактирование этой записи невозможно', {
+      disable_notification: true,
+    });
   }
   // ...
-  await bot.sendMessage(message.chat.id, `Запись ${previousInput(message.text)} обновлена`);
+  await bot.sendMessage(message.chat.id, `Запись ${previousInput(message.text)} обновлена`, {
+    disable_notification: true,
+  });
 };
