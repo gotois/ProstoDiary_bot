@@ -83,7 +83,8 @@ module.exports.generateCalendar = async (bot, dialog) => {
   executeAtTime(new Date(dtstart), async () => {
     let task = 'Внимание! У вас есть задача:\n';
     task += vevent.getFirstPropertyValue('summary') + '\n';
-    task += vevent.getFirstPropertyValue('dtstart').toString() + '\n';
+    const dateString = new Intl.DateTimeFormat('ru').format(new Date(vevent.getFirstPropertyValue('dtstart').toString()));
+    task += dateString + '\n';
 
     await bot.sendMessage(dialog.activity.target.id, task, {
       parse_mode: 'markdown',

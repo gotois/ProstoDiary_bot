@@ -60,7 +60,6 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['location']: locationAction,
       ['contact']: contactAction,
       ['inline_query']: inlineAction,
-
       ['reply_to_message']: () => {},
 
       /* CALLBACK */
@@ -84,6 +83,7 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['channel_post']: channelPostAction,
       ['mention']: mentionAction,
       ['text']: groupTextAction,
+      ['reply_to_message']: () => {},
 
       /* GROUP COMMANDS */
 
