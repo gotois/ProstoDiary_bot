@@ -1,3 +1,5 @@
+const database = require('../../libs/database.cjs');
+
 function getWelcomeText() {
   return (
     '**Привет! 👋**\n\n' +
@@ -23,6 +25,13 @@ function getWelcomeText() {
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
+  const query = database.prepare(`SELECT * FROM users WHERE key == ${message.from.id}`);
+  const users = query.all();
+  console.log(users);
+  if (users.length > 0) {
+    return bot.sendMessage(message.chat.id, 'Повторная установка не требуется\n\n' + '/help - помощь');
+  }
+
   await bot.sendMessage(message.chat.id, getWelcomeText(), {
     parse_mode: 'markdown',
     disable_notification: true,
@@ -36,10 +45,6 @@ module.exports = async (bot, message) => {
       one_time_keyboard: true,
     },
   });
-  // if (message.passports?.length > 0) {
-  //   const message = 'Повторная установка не требуется\n\n' + '/help - помощь';
-  //   return bot.sendMessage(this.message.chat.id, message);
-  // }
 
   // setTimeout(async () => {
   //   await bot.deleteMessage(message.chat.id, message_id);
