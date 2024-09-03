@@ -17,6 +17,7 @@ function getWelcomeText() {
 
 /**
  * Начало работы
+ * @description request_contact может работать только в таком виде
  * @param {object} bot - telegram bot
  * @param {object} message - telegram message
  * @returns {Promise<void>}
@@ -27,15 +28,12 @@ module.exports = async (bot, message) => {
     disable_notification: true,
     reply_markup: {
       remove_keyboard: true,
-      inline_keyboard: [
-        [
-          {
-            text: 'Принимаю лицензионное соглашение',
-            request_contact: true,
-            callback_data: 'auth_by_contact',
-          },
-        ],
-      ],
+        resize_keyboard: false,
+        keyboard: [[{
+        text: 'Принимаю лицензионное соглашение',
+          request_contact: true
+      }]],
+      one_time_keyboard: true,
     },
   });
   // if (message.passports?.length > 0) {
