@@ -33,6 +33,8 @@ scripts/prepare
 
 `GIC_RPC`
 
+`GIC_AUTH`
+
 ## Simple server
 
 ```js

@@ -1,7 +1,10 @@
+const { getUsers } = require('../../libs/database.cjs');
 const Dialog = require('../../libs/dialog.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 
 module.exports = async (bot, message) => {
+  const [user] = getUsers(message.from.id);
+
   const response = await fetch(message.voice.file.url);
   const arrayBuffer = await response.arrayBuffer();
   const dialog = new Dialog(message);
@@ -47,5 +50,5 @@ module.exports = async (bot, message) => {
       parse_mode: 'markdown',
     });
   }
-  await generateCalendar(bot, dialog);
+  await generateCalendar(bot, dialog, user.jwt);
 };

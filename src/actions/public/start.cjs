@@ -1,4 +1,4 @@
-const database = require('../../libs/database.cjs');
+const { getUsers } = require('../../libs/database.cjs');
 
 function getWelcomeText() {
   return (
@@ -25,9 +25,7 @@ function getWelcomeText() {
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  const query = database.prepare(`SELECT * FROM users WHERE key == ${message.from.id}`);
-  const users = query.all();
-  console.log(users);
+  const users = getUsers(message.from.id);
   if (users.length > 0) {
     return bot.sendMessage(message.chat.id, 'Повторная установка не требуется\n\n' + '/help - помощь');
   }

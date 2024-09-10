@@ -1,13 +1,18 @@
 const Dialog = require('../../libs/dialog.cjs');
 const requestJsonRpc2 = require('request-json-rpc2').default;
 
-const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
+const { GIC_AUTH, GIC_USER, GIC_PASSWORD } = process.env;
 
-// Проверка сети
+/**
+ * Проверка сети
+ * @param {object} bot - telegram bot
+ * @param {object} message - telegram message
+ * @return {Promise<void>}
+ */
 module.exports = async (bot, message) => {
   const dialog = new Dialog(message);
   const response = await requestJsonRpc2({
-    url: GIC_RPC,
+    url: GIC_AUTH,
     body: {
       id: dialog.activity.origin.id,
       method: 'ping',

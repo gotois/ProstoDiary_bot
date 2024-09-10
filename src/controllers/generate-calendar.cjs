@@ -3,9 +3,9 @@ const requestJsonRpc2 = require('request-json-rpc2').default;
 const { formatCalendarMessage } = require('../libs/calendar-format.cjs');
 const { executeAtTime } = require('../libs/execute-time.cjs');
 
-const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
+const { GIC_RPC } = process.env;
 
-module.exports.generateCalendar = async (bot, dialog) => {
+module.exports.generateCalendar = async (bot, dialog, jwt) => {
   const me = await bot.getMe();
   dialog.activity.origin.name = me.first_name;
   dialog.activity.origin.url = 'https://t.me/' + me.username;
@@ -17,10 +17,7 @@ module.exports.generateCalendar = async (bot, dialog) => {
       method: 'generate-calendar',
       params: dialog.activity,
     },
-    auth: {
-      user: GIC_USER,
-      pass: GIC_PASSWORD,
-    },
+    jwt: jwt,
     headers: {
       'Accept': 'text/calendar',
       'accept-language': dialog.message.from.language_code,

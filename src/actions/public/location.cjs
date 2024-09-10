@@ -1,8 +1,10 @@
+const { getUsers } = require('../../libs/database.cjs');
 const Dialog = require('../../libs/dialog.cjs');
 const { sendPrepareAction } = require('../../libs/tg-prepare-action.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 
 module.exports = async (bot, message) => {
+  const [user] = getUsers(message.from.id);
   const accept = 'text/calendar';
   const dialog = new Dialog(message);
 
@@ -36,6 +38,6 @@ module.exports = async (bot, message) => {
       },
     ];
 
-    await generateCalendar(bot, dialog);
+    await generateCalendar(bot, dialog, user.jwt);
   });
 };

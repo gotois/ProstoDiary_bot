@@ -1,3 +1,4 @@
+const { getUsers } = require('../../libs/database.cjs');
 const Dialog = require('../../libs/dialog.cjs');
 const { sendPrepareAction } = require('../../libs/tg-prepare-action.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
@@ -20,6 +21,7 @@ async function privateDialog(dialog) {
 }
 
 module.exports = async (bot, message) => {
+  const [user] = getUsers(message.from.id);
   const dialog = new Dialog(message);
   const accept = 'text/calendar';
 
@@ -27,7 +29,7 @@ module.exports = async (bot, message) => {
 
   try {
     await privateDialog(dialog);
-    await generateCalendar(bot, dialog);
+    await generateCalendar(bot, dialog, user.jwt);
   } catch (error) {
     console.error('DialogflowError:', error);
     await bot.setMessageReaction(dialog.message.chat.id, dialog.message.message_id, {

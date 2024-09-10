@@ -1,9 +1,9 @@
 const requestJsonRpc2 = require('request-json-rpc2').default;
 const activitystreams = require('telegram-bot-activitystreams');
 const { v1: uuidv1 } = require('uuid');
-const database = require('../../libs/database.cjs');
+const { setJWT } = require('../../libs/database.cjs');
 
-const { GIC_RPC, GIC_USER, GIC_PASSWORD } = process.env;
+const { GIC_AUTH, GIC_USER, GIC_PASSWORD } = process.env;
 
 /**
  * @description Ассистент детектирует пользователя
@@ -18,10 +18,8 @@ module.exports = async (bot, message) => {
   // WIP - по возможности отправлять профиль пользователя при регистрации
   // const profilePhotos = await bot.getUserProfilePhotos(message.chat.id)
 
-  const insert = database.prepare('INSERT INTO users (key, value) VALUES (?, ?)');
-
   const { result, error } = await requestJsonRpc2({
-    url: GIC_RPC,
+    url: GIC_AUTH,
     body: {
       id: uuidv1(),
       method: 'registration',
@@ -41,8 +39,7 @@ module.exports = async (bot, message) => {
   }
   // todo здесь мы получаем JWT и его нужно сохранить для последующих запросов в RPC2
   console.log('result', result)
-
-  insert.run(Number(activity.actor.id), result);
+  setJWT(Number(activity.actor.id), result);
 
   const string_ = `
 **Успешно зарегистрированы** ✅

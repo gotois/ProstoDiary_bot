@@ -1,3 +1,4 @@
+const { getUsers } = require('../../libs/database.cjs');
 const Dialog = require('../../libs/dialog.cjs');
 const { sendPrepareAction } = require('../../libs/tg-prepare-action.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
@@ -18,6 +19,7 @@ function getHQImage(objectImages) {
 }
 
 module.exports = async (bot, message) => {
+  const [user] = getUsers(message.from.id);
   const accept = 'text/calendar';
   const dialog = new Dialog(message);
   bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
@@ -74,7 +76,7 @@ module.exports = async (bot, message) => {
     }
   }
 
-  await generateCalendar(bot, dialog);
+  await generateCalendar(bot, dialog, user.jwt);
 
   //   bot.sendPhoto(
   //       message.chat.id,
