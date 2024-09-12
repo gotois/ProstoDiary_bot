@@ -1,93 +1,37 @@
-const { getUsers } = require('../../libs/database.cjs');
 const Dialog = require('../../libs/dialog.cjs');
 const { sendPrepareAction } = require('../../libs/tg-prepare-action.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
+const { formatCalendarMessage } = require('../../libs/calendar-format.cjs');
 
-// todo - перенести в utils и использовать в том числе при registration.cjs
-function getHQImage(objectImages) {
-  let current;
-  if (objectImages.length > 0) {
-    let maxWidth = 0;
-    for (const photo of objectImages) {
-      if (maxWidth < photo.width) {
-        maxWidth = photo.width;
-        current = photo;
-      }
-    }
-  }
-  return current;
-}
-
-module.exports = async (bot, message) => {
-  const [user] = getUsers(message.from.id);
+module.exports = async (bot, message, user) => {
   const accept = 'text/calendar';
   const dialog = new Dialog();
-  await dialog.push(message);
   bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
 
-  const { url, width, height, summary } = getHQImage(dialog.activity.object);
-  if (!summary) {
-    await bot.setMessageReaction(message.chat.id, message.message_id, {
+  await dialog.push(message);
+  await bot.setMessageReaction(message.chat.id, message.message_id, {
       reaction: JSON.stringify([
         {
           type: 'emoji',
-          emoji: '🤔',
+          emoji: '✍',
         },
       ]),
     });
-    return bot.sendMessage(message.chat.id, 'Укажите свои намерения в поле caption', {
+  const comp = await generateCalendar({
+    activity: dialog.activity,
+    jwt: user.jwt,
+  });
+  await bot.sendMessage(message.chat.id, formatCalendarMessage(comp, dialog.language), {
       parse_mode: 'markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Скачать',
+              callback_data: 'send_calendar',
+            },
+          ],
+        ],
+      },
     });
-  }
-  const [{ queryResult }] = await dialog.text(summary);
-
-  switch (queryResult.intent.displayName) {
-    case 'OrganizeAction': {
-      dialog.activity.object = [
-        {
-          type: 'Note',
-          content: queryResult.queryText,
-          mediaType: 'text/plain',
-        },
-        {
-          type: 'Link',
-          href: url,
-          width: width,
-          height: height,
-        },
-      ];
-      break;
-    }
-    default: {
-      await bot.setMessageReaction(message.chat.id, message.message_id, {
-        reaction: JSON.stringify([
-          {
-            type: 'emoji',
-            emoji: '🤷‍♀',
-          },
-        ]),
-      });
-      return bot.sendMessage(
-        dialog.activity.target.id,
-        queryResult.fulfillmentText || 'Попробуйте написать что-то другое',
-        {
-          parse_mode: 'markdown',
-        },
-      );
-    }
-  }
-
-  await generateCalendar(bot, dialog, user.jwt);
-
-  //   bot.sendPhoto(
-  //       message.chat.id,
-  //       photo,
-  //       {
-  //         caption: 'kek',
-  //       },
-  //       {
-  //         filename: 'kek',
-  //         contentType: 'image/png',
-  //       },
-  //     );
 };

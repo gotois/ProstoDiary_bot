@@ -1,12 +1,14 @@
 const Dialog = require('../../libs/dialog.cjs');
 
-async function groupDialog(dialog, bot) {
-  const [{ queryResult }] = await dialog.text(dialog.message.text);
-  dialog.message.from.language_code = queryResult.languageCode;
+module.exports = async (bot, message) => {
+  const dialog = new Dialog();
+  await dialog.push(message);
+  const accept = 'text/calendar';
+
   switch (queryResult.intent.displayName) {
     case 'OrganizeAction': {
-      await bot.sendMessage(dialog.message.chat.id, queryResult.fulfillmentText, {
-        reply_to_message_id: dialog.message.message_id,
+      await bot.sendMessage(message.chat.id, queryResult.fulfillmentText, {
+        reply_to_message_id: message.message_id,
         disable_notification: false,
         disable_web_page_preview: true,
         reply_markup: {
@@ -27,12 +29,4 @@ async function groupDialog(dialog, bot) {
       break;
     }
   }
-}
-
-module.exports = async (bot, message) => {
-  const dialog = new Dialog();
-  await dialog.push(message);
-  const accept = 'text/calendar';
-
-  await groupDialog(dialog, bot);
 };

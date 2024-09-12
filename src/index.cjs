@@ -30,6 +30,23 @@ const inlineAction = require('./actions/public/inline.cjs');
 const sendCalendar = require('./actions/public/send-calendar.cjs');
 const textForwards = require('./actions/private/text-forwards.cjs');
 
+const { getUsers } = require('./libs/database.cjs');
+
+function checkAuth(callback) {
+  return async (bot, message) => {
+    let message_;
+    message_ = Array.isArray(message) ? message[0] : message;
+    const users = getUsers(message_.from.id);
+    if (users.length === 0) {
+      await bot.sendMessage(message_.chat.id, 'Пройдите авторизацию нажав /start', {
+        parse_mode: 'markdown',
+      });
+      return;
+    }
+    callback(bot, message, users[0]);
+  };
+}
+
 module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TELEGRAM_DOMAIN }) => {
   return botController({
     token: token,
@@ -40,27 +57,28 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       /* MY COMMANDS */
 
       [/^\/(ping|пинг)$/]: pingAction,
-      [/^\/dbclear$/]: dbclearAction,
+      [/^\/dbclear$/]: checkAuth(dbclearAction),
       [/^\/start|начать$/]: startAction,
       [/^\/help|man|помощь$/]: helpAction,
       [/^\/licence/]: offertaAction,
 
       /* NATIVE COMMANDS */
 
-      ['sticker']: stickerAction,
-      ['animation']: animationAction,
-      ['poll']: pollAction,
-      ['mention']: mentionAction,
-      ['edited_message_text']: editedMessageTextAction,
-      ['text']: textAction,
-      ['photo']: photoAction,
-      ['voice']: voiceAction,
-      ['audio']: audioAction,
-      ['video']: videoAction,
-      ['document']: documentAction,
-      ['location']: locationAction,
-      ['contact']: contactAction,
-      ['inline_query']: inlineAction,
+      ['sticker']: checkAuth(stickerAction),
+      ['animation']: checkAuth(animationAction),
+      ['poll']: checkAuth(pollAction),
+      ['mention']: checkAuth(mentionAction),
+      ['edited_message_text']: checkAuth(editedMessageTextAction),
+      ['text']: checkAuth(textAction),
+      ['photo']: checkAuth(photoAction),
+      ['voice']: checkAuth(voiceAction),
+      ['audio']: checkAuth(audioAction),
+      ['video']: checkAuth(videoAction),
+      ['document']: checkAuth(documentAction),
+      ['location']: checkAuth(locationAction),
+      ['contact']: checkAuth(contactAction),
+      ['inline_query']: checkAuth(inlineAction),
+      ['text_forwards']: checkAuth(textForwards),
       ['reply_to_message']: () => {},
 
       /* CALLBACK */
@@ -71,8 +89,6 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['notify_calendar--15']: () => {},
       ['notify_calendar--60']: () => {},
       ['notify_calendar--next-day']: () => {},
-
-      ['text_forwards']: textForwards,
     },
 
     // Групповые команды

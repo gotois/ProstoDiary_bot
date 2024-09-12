@@ -27,7 +27,10 @@ function getWelcomeText() {
 module.exports = async (bot, message) => {
   const users = getUsers(message.from.id);
   if (users.length > 0) {
-    return bot.sendMessage(message.chat.id, 'Повторная установка не требуется\n\n' + '/help - помощь');
+    return bot.sendMessage(
+      message.chat.id,
+      'Повторная установка не требуется\n\n' + '/help - помощь' + '\n' + '/licence - соглашение',
+    );
   }
 
   await bot.sendMessage(message.chat.id, getWelcomeText(), {
@@ -47,6 +50,18 @@ module.exports = async (bot, message) => {
       one_time_keyboard: true,
     },
   });
+  // todo - скидывать изображение для лучшего понимания пользователем
+  //   bot.sendPhoto(
+  //       message.chat.id,
+  //       photo,
+  //       {
+  //         caption: 'kek',
+  //       },
+  //       {
+  //         filename: 'kek',
+  //         contentType: 'image/png',
+  //       },
+  //     );
 
   // setTimeout(async () => {
   //   await bot.deleteMessage(message.chat.id, message_id);
