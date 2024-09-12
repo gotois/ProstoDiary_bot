@@ -3,7 +3,6 @@ const activitystreams = require('telegram-bot-activitystreams');
 const { v1: uuidv1 } = require('uuid');
 
 const { DIALOGFLOW_CREDENTIALS } = process.env;
-const DIALOGFLOW_LIMIT = 256;
 
 const dfCredentials = JSON.parse(DIALOGFLOW_CREDENTIALS);
 

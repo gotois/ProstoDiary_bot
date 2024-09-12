@@ -35,11 +35,15 @@ module.exports = async (bot, message) => {
     disable_notification: true,
     reply_markup: {
       remove_keyboard: true,
-        resize_keyboard: false,
-        keyboard: [[{
-        text: 'Принимаю лицензионное соглашение',
-          request_contact: true
-      }]],
+      resize_keyboard: false,
+      keyboard: [
+        [
+          {
+            text: 'Принимаю лицензионное соглашение',
+            request_contact: true,
+          },
+        ],
+      ],
       one_time_keyboard: true,
     },
   });

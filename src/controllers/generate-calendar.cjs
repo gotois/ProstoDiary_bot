@@ -1,7 +1,5 @@
 const ICAL = require('ical.js');
 const requestJsonRpc2 = require('request-json-rpc2').default;
-const { formatCalendarMessage } = require('../libs/calendar-format.cjs');
-const { executeAtTime } = require('../libs/execute-time.cjs');
 
 const { GIC_RPC } = process.env;
 

@@ -3,29 +3,12 @@ const Dialog = require('../../libs/dialog.cjs');
 const { sendPrepareAction } = require('../../libs/tg-prepare-action.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 
-async function privateDialog(dialog) {
-  const [{ queryResult }] = await dialog.text(dialog.message.text);
-  dialog.message.from.language_code = queryResult.languageCode;
-  switch (queryResult.intent.displayName) {
-    case 'OrganizeAction': {
-      break;
-    }
-    default: {
-      throw new Error(queryResult.fulfillmentText || 'Попробуйте написать что-то другое');
-    }
-  }
-  if (!queryResult.intent.endInteraction) {
-    // todo - если это не финальный интерактив, то продолжать диалог
-    //  ...
-  }
-}
-
 module.exports = async (bot, message) => {
   const [user] = getUsers(message.from.id);
-  const dialog = new Dialog(message);
+  const dialog = new Dialog();
   const accept = 'text/calendar';
 
-  bot.sendChatAction(dialog.message.chat.id, sendPrepareAction(accept));
+  bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
 
   try {
     await privateDialog(dialog);
