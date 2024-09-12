@@ -10,28 +10,28 @@ module.exports = async (bot, message, user) => {
 
   await dialog.push(message);
   await bot.setMessageReaction(message.chat.id, message.message_id, {
-      reaction: JSON.stringify([
-        {
-          type: 'emoji',
-          emoji: '✍',
-        },
-      ]),
-    });
+    reaction: JSON.stringify([
+      {
+        type: 'emoji',
+        emoji: '✍',
+      },
+    ]),
+  });
   const comp = await generateCalendar({
     activity: dialog.activity,
     jwt: user.jwt,
   });
   await bot.sendMessage(message.chat.id, formatCalendarMessage(comp, dialog.language), {
-      parse_mode: 'markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'Скачать',
-              callback_data: 'send_calendar',
-            },
-          ],
+    parse_mode: 'markdown',
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: 'Скачать',
+            callback_data: 'send_calendar',
+          },
         ],
-      },
-    });
+      ],
+    },
+  });
 };

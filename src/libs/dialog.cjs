@@ -45,7 +45,6 @@ class Dialog {
    */
   async push(message) {
     const activity = activitystreams(message);
-    this.activity.totalItems++;
     // this.language = message.from.language_code;
     this.language = 'ru'; // todo пока используем только русский
 
@@ -94,6 +93,7 @@ class Dialog {
     } else {
       throw new Error('Unknown type message');
     }
+    this.activity.totalItems++;
     this.activity.items.push(activity);
   }
   /**
