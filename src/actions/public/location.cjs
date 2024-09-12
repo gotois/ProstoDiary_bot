@@ -6,7 +6,8 @@ const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 module.exports = async (bot, message) => {
   const [user] = getUsers(message.from.id);
   const accept = 'text/calendar';
-  const dialog = new Dialog(message);
+  const dialog = new Dialog();
+  await dialog.push(message);
 
   bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
 

@@ -8,7 +8,7 @@ const activitystreams = require('telegram-bot-activitystreams');
 module.exports = async (bot, message) => {
   const activity = activitystreams(message);
   console.log('contact', activity);
-  await bot.sendMessage(activity.target.id, 'Contact: ' + JSON.stringify(activity.object), {
+  await bot.sendMessage(message.chat.id, 'Contact: ' + JSON.stringify(activity.object), {
     parse_mode: 'markdown',
   });
 };

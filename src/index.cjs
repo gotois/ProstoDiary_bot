@@ -28,6 +28,7 @@ const audioAction = require('./actions/public/audio.cjs');
 const contactAction = require('./actions/public/contact.cjs');
 const inlineAction = require('./actions/public/inline.cjs');
 const sendCalendar = require('./actions/public/send-calendar.cjs');
+const textForwards = require('./actions/private/text-forwards.cjs');
 
 module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TELEGRAM_DOMAIN }) => {
   return botController({
@@ -70,6 +71,8 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['notify_calendar--15']: () => {},
       ['notify_calendar--60']: () => {},
       ['notify_calendar--next-day']: () => {},
+
+      ['text_forwards']: textForwards,
     },
 
     // Групповые команды

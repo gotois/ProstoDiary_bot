@@ -32,7 +32,7 @@ module.exports = async (bot, message) => {
     await generateCalendar(bot, dialog, user.jwt);
   } catch (error) {
     console.error('DialogflowError:', error);
-    await bot.setMessageReaction(dialog.message.chat.id, dialog.message.message_id, {
+    await bot.setMessageReaction(message.chat.id, message.message_id, {
       reaction: JSON.stringify([
         {
           type: 'emoji',
@@ -40,7 +40,7 @@ module.exports = async (bot, message) => {
         },
       ]),
     });
-    return bot.sendMessage(dialog.activity.target.id, error.message, {
+    return bot.sendMessage(message.chat.id, error.message, {
       parse_mode: 'markdown',
       disable_web_page_preview: true,
     });

@@ -12,8 +12,15 @@ const sessionClient = new dialogflow.SessionsClient({
 });
 
 class Dialog {
+  static DIALOGFLOW_LIMIT = 256;
   /**
    * @class
+   */
+  constructor() {
+    this._uid = uuidv1();
+    this.messages = [];
+  }
+  /**
    * @param {object} message - telegram bot message
    */
   constructor(message) {
@@ -27,6 +34,16 @@ class Dialog {
    */
   get uid() {
     return this._uid;
+  }
+  set language(languageCode) {
+    this._language = languageCode;
+  }
+  /**
+   * @return {string}
+   */
+  get language() {
+    // return this._language;
+    return 'ru'; // todo пока используем только русский язык
   }
   /**
    * @returns {string}
@@ -46,7 +63,7 @@ class Dialog {
           audioEncoding: 'AUDIO_ENCODING_OGG_OPUS',
           // eslint-disable-next-line
           sampleRateHertz: 48000,
-          languageCode: this.message.from.language_code,
+          languageCode: this.language,
         },
       },
       inputAudio: fileAudio,
@@ -59,16 +76,16 @@ class Dialog {
    * @returns {Promise<object[]>}
    */
   text(text) {
-    if (text.length >= DIALOGFLOW_LIMIT) {
+    if (text.length >= Dialog.DIALOGFLOW_LIMIT) {
       console.warn('Dialog text limit');
-      text = text.slice(0, DIALOGFLOW_LIMIT);
+      text = text.slice(0, Dialog.DIALOGFLOW_LIMIT);
     }
     const request = {
       session: this.session,
       queryInput: {
         text: {
           text: text,
-          languageCode: this.message.from.language_code,
+          languageCode: this.language,
         },
       },
     };

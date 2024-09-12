@@ -30,16 +30,15 @@ module.exports = async (bot, message) => {
       pass: GIC_PASSWORD,
     },
   });
-  await bot.deleteMessage(activity.target.id, message.message_id);
+  await bot.deleteMessage(message.chat.id, message.message_id);
   if (error) {
     console.error(error);
-    return bot.sendMessage(activity.target.id, 'Произошла ошибка: ' + error.message, {
+    return bot.sendMessage(message.chat.id, 'Произошла ошибка: ' + error.message, {
       parse_mode: 'markdown',
     });
   }
-  // todo здесь мы получаем JWT и его нужно сохранить для последующих запросов в RPC2
   console.log('result', result)
-  setJWT(Number(activity.actor.id), result);
+  setJWT(Number(message.chat.id), result);
 
   const string_ = `
 **Успешно зарегистрированы** ✅
@@ -51,7 +50,7 @@ module.exports = async (bot, message) => {
 **"📆В это воскресенье будет митап"**
 **"💧Мне важно пить 2 литра воды в день ежедневно"**
 `;
-  await bot.sendMessage(activity.target.id, string_, {
+  await bot.sendMessage(message.chat.id, string_, {
     parse_mode: 'markdown',
   });
 };

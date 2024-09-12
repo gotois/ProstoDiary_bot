@@ -21,7 +21,8 @@ function getHQImage(objectImages) {
 module.exports = async (bot, message) => {
   const [user] = getUsers(message.from.id);
   const accept = 'text/calendar';
-  const dialog = new Dialog(message);
+  const dialog = new Dialog();
+  await dialog.push(message);
   bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
 
   const { url, width, height, summary } = getHQImage(dialog.activity.object);
@@ -34,7 +35,7 @@ module.exports = async (bot, message) => {
         },
       ]),
     });
-    return bot.sendMessage(dialog.activity.target.id, 'Укажите свои намерения в поле caption', {
+    return bot.sendMessage(message.chat.id, 'Укажите свои намерения в поле caption', {
       parse_mode: 'markdown',
     });
   }
