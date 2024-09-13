@@ -1,7 +1,9 @@
-const activitystreams = require('telegram-bot-activitystreams');
+const Dialog = require('../../libs/dialog.cjs');
 
 // eslint-disable-next-line
 module.exports = async (bot, message) => {
-  const activity = activitystreams(message);
-  console.log('video, activity', activity);
+  const dialog = new Dialog();
+  await dialog.push(message);
+
+  console.log('video, activity', dialog.activity);
 };

@@ -1,5 +1,5 @@
 const ICAL = require('ical.js');
-const { formatCalendarMessage } = require('../../src/libs/calendar-format.cjs');
+const { formatCalendarMessage } = require('../../src/controllers/generate-calendar.cjs');
 
 /**
  * @param {object} t - test

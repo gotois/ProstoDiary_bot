@@ -1,45 +1,73 @@
-const requestJsonRpc2 = require('request-json-rpc2').default;
 const Dialog = require('../../libs/dialog.cjs');
-const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
-const { formatCalendarMessage } = require('../../libs/calendar-format.cjs');
-
-const { GIC_RPC } = process.env;
+const { generateCalendar, formatCalendarMessage } = require('../../controllers/generate-calendar.cjs');
+const { saveCalendar } = require('../../libs/database.cjs');
+const { notify } = require('../../libs/execute-time.cjs');
 
 module.exports = async (bot, messages, user) => {
   console.log(`Обработка транзакции из ${messages.length} сообщений:`);
   const dialog = new Dialog();
-  for (const message of messages) {
-    await dialog.push(message);
-  }
-  const { result, error } = await requestJsonRpc2({
-    url: GIC_RPC,
-    body: {
-      id: dialog.uid,
-      method: 'generate-calendar',
-      params: dialog.activity,
-    },
-    jwt: user.jwt,
-    headers: {
-      'Accept': 'text/calendar',
-      'Accept-Language': dialog.language,
-    },
-  });
-  const comp = await generateCalendar({
-    activity: dialog.activity,
-    jwt: user.jwt,
-  });
   const message = messages[0];
-  await bot.sendMessage(message.chat.id, formatCalendarMessage(comp, dialog.language), {
-    parse_mode: 'markdown',
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: 'Скачать',
-            callback_data: 'send_calendar',
-          },
+  try {
+    for (const message of messages) {
+      await dialog.push(message);
+    }
+    const ical = await generateCalendar({
+      id: dialog.uid,
+      activity: dialog.activity,
+      jwt: user.jwt,
+    });
+    const calendarMessage = await bot.sendMessage(message.chat.id, formatCalendarMessage(ical, dialog.language), {
+      parse_mode: 'markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Скачать',
+              callback_data: 'send_calendar',
+            },
+          ],
         ],
-      ],
-    },
-  });
+      },
+    });
+    await saveCalendar(calendarMessage.message_id, user.key, ical);
+    const task = await notify(ical);
+    await bot.sendMessage(message.chat.id, task, {
+      parse_mode: 'markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Напомнить через 15 мин',
+              callback_data: 'notify_calendar--15',
+            },
+          ],
+          [
+            {
+              text: 'Напомнить через 1 час',
+              callback_data: 'notify_calendar--60',
+            },
+          ],
+          [
+            {
+              text: 'Напомнить завтра',
+              callback_data: 'notify_calendar--next-day',
+            },
+          ],
+        ],
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    await bot.setMessageReaction(message.chat.id, message.message_id, {
+      reaction: JSON.stringify([
+        {
+          type: 'emoji',
+          emoji: '👾',
+        },
+      ]),
+    });
+    return bot.sendMessage(message.chat.id, 'Произошла ошибка: ' + error.message, {
+      parse_mode: 'markdown',
+    });
+  }
 };

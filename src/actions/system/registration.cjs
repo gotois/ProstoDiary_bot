@@ -37,7 +37,6 @@ module.exports = async (bot, message) => {
       parse_mode: 'markdown',
     });
   }
-  console.log('result', result)
   setJWT(Number(message.chat.id), result);
 
   const string_ = `

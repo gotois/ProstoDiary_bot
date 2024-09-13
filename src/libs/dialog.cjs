@@ -10,20 +10,6 @@ const sessionClient = new dialogflow.SessionsClient({
   credentials: dfCredentials,
 });
 
-function getHQImage(objectImages) {
-  let current;
-  if (objectImages.length > 0) {
-    let maxWidth = 0;
-    for (const photo of objectImages) {
-      if (maxWidth < photo.width) {
-        maxWidth = photo.width;
-        current = photo;
-      }
-    }
-  }
-  return current;
-}
-
 class Dialog {
   static DIALOGFLOW_LIMIT = 256;
   /**
@@ -71,26 +57,36 @@ class Dialog {
       activity.type = 'Activity'; // todo - обучить DialogFlow возвращать Intents с содержанием из списка: https://www.w3.org/TR/activitystreams-vocabulary/#h-types
       this.language = queryResult.languageCode;
     } else if (message.photo) {
-      const { url, width, height, summary } = getHQImage(activity.object);
-      activity.type = 'Activity';
+    } else if (message.location) {
       activity.object = [
         {
-          type: 'Link',
-          href: url,
-          width: width,
-          height: height,
+          type: 'Point',
+          content: {
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [message.location.latitude, message.location.longitude],
+            },
+          },
+          mediaType: 'application/geo+json',
         },
       ];
-      if (summary) {
-        const [{ queryResult }] = await this.text(summary);
-        activity.type = 'Activity'; // todo - обучить DialogFlow возвращать Intents с содержанием из списка: https://www.w3.org/TR/activitystreams-vocabulary/#h-types
+      if (message.location.caption) {
+        const [{ queryResult }] = await this.text(message.location.caption);
+        this.language = queryResult.languageCode;
         activity.object.push({
           type: 'Note',
-          content: queryResult.queryText,
+          content: message.location.caption,
           mediaType: 'text/plain',
         });
       }
+    } else if (message.document) {
+      // const response = await fetch(message.document.file.url);
+      // const arrayBuffer = await response.arrayBuffer();
+    } else if (message.sticker) {
+    } else if (message.video_note) {
     } else {
+      console.warn(message);
       throw new Error('Unknown type message');
     }
     this.activity.totalItems++;

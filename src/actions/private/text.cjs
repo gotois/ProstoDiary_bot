@@ -1,19 +1,21 @@
 const Dialog = require('../../libs/dialog.cjs');
 const { sendPrepareAction } = require('../../libs/tg-prepare-action.cjs');
-const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
-const { formatCalendarMessage } = require('../../libs/calendar-format.cjs');
+const { generateCalendar, formatCalendarMessage } = require('../../controllers/generate-calendar.cjs');
+const { saveCalendar } = require('../../libs/database.cjs');
+const { notify } = require('../../libs/execute-time.cjs');
 
 module.exports = async (bot, message, user) => {
   const dialog = new Dialog();
   const accept = 'text/calendar';
-
   bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
 
   try {
     await dialog.push(message);
-    const comp = await generateCalendar({
+    const ical = await generateCalendar({
+      id: dialog.uid,
       activity: dialog.activity,
       jwt: user.jwt,
+      language: dialog.language,
     });
     await bot.setMessageReaction(message.chat.id, message.message_id, {
       reaction: JSON.stringify([
@@ -23,7 +25,7 @@ module.exports = async (bot, message, user) => {
         },
       ]),
     });
-    await bot.sendMessage(message.chat.id, formatCalendarMessage(comp, dialog.language), {
+    const calendarMessage = await bot.sendMessage(message.chat.id, formatCalendarMessage(ical, dialog.language), {
       parse_mode: 'markdown',
       reply_markup: {
         inline_keyboard: [
@@ -36,8 +38,35 @@ module.exports = async (bot, message, user) => {
         ],
       },
     });
+    await saveCalendar(calendarMessage.message_id, user.key, ical);
+    const task = await notify(ical);
+    await bot.sendMessage(message.chat.id, task, {
+      parse_mode: 'markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Напомнить через 15 мин',
+              callback_data: 'notify_calendar--15',
+            },
+          ],
+          [
+            {
+              text: 'Напомнить через 1 час',
+              callback_data: 'notify_calendar--60',
+            },
+          ],
+          [
+            {
+              text: 'Напомнить завтра',
+              callback_data: 'notify_calendar--next-day',
+            },
+          ],
+        ],
+      },
+    });
   } catch (error) {
-    console.error('DialogflowError:', error);
+    console.error(error);
     await bot.setMessageReaction(message.chat.id, message.message_id, {
       reaction: JSON.stringify([
         {
