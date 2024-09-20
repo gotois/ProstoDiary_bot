@@ -1,4 +1,4 @@
-FROM node:20 AS build
+FROM node:22.8 AS build
 
 MAINTAINER Denis Baskovsky <denis@baskovsky.ru>
 
@@ -16,4 +16,4 @@ RUN npm install --omit=dev
 
 USER node
 
-ENTRYPOINT [ "node", "bin/server.cjs" ]
+ENTRYPOINT [ "node", "--experimental-sqlite", "bin/server.cjs" ]
