@@ -115,6 +115,10 @@ docker compose --env-file .env up --build
 Run Telegram Bot
 ---
 
+```bash
+docker compose --env-file .env up -d
+```
+
 Возможности управления системой
 
 1) `something text` - Запись. Используется по-умолчанию
