@@ -20,8 +20,11 @@ function createCalendarsTable() {
 }
 
 const database = (() => {
-  // fixme - дополнительно делать запрос на создание таблицы если ее нет
-  return true ? new sqlite.DatabaseSync('database.sqlite') : new sqlite.DatabaseSync(':memory:');
+  if (process.env.NODE_ENV?.toLowerCase()?.startsWith('dev')) {
+    return new sqlite.DatabaseSync('database.sqlite');
+  } else {
+    return new sqlite.DatabaseSync(':memory:');
+  }
 })();
 try {
   createUsersTable();
