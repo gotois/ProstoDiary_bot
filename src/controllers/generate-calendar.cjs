@@ -55,7 +55,7 @@ module.exports.generateCalendar = async ({ id, activity, jwt, language }) => {
     },
     jwt: jwt,
     headers: {
-      Accept: 'text/calendar',
+      'Accept': 'text/calendar',
       'Accept-Language': language,
     },
   });

@@ -19,7 +19,10 @@ class Dialog {
     this._uid = uuidv1();
     this.messages = [];
     this.activity = {
-      '@context': ['https://www.w3.org/ns/activitystreams'],
+      '@context': ['https://www.w3.org/ns/activitystreams',
+      {
+        '@language': 'ru', // todo пока используем только русский
+      }],
       'summary': '',
       'type': 'Collection',
       'totalItems': 0,
@@ -31,15 +34,15 @@ class Dialog {
    */
   async push(message) {
     const activity = activitystreams(message);
-    // this.language = message.from.language_code;
-    this.language = 'ru'; // todo пока используем только русский
+    activity.type = 'Activity';
+    this.language = message.from.language_code;
 
     if (message.voice) {
       const response = await fetch(message.voice.file.url);
       const arrayBuffer = await response.arrayBuffer();
       const [{ queryResult }] = await this.voice(Buffer.from(arrayBuffer));
       this.language = queryResult.languageCode;
-      activity.type = 'Activity'; // todo - обучить DialogFlow возвращать Intents с содержанием из списка: https://www.w3.org/TR/activitystreams-vocabulary/#h-types
+      activity.summary = queryResult.intent.displayName;
       switch (queryResult.intent.displayName) {
         default: {
           activity.object = [
@@ -54,7 +57,7 @@ class Dialog {
       }
     } else if (message.text) {
       const [{ queryResult }] = await this.text(message.text);
-      activity.type = 'Activity'; // todo - обучить DialogFlow возвращать Intents с содержанием из списка: https://www.w3.org/TR/activitystreams-vocabulary/#h-types
+      activity.summary = queryResult.intent.displayName;
       this.language = queryResult.languageCode;
     } else if (message.photo) {
     } else if (message.location) {
@@ -74,6 +77,7 @@ class Dialog {
       if (message.location.caption) {
         const [{ queryResult }] = await this.text(message.location.caption);
         this.language = queryResult.languageCode;
+        activity.summary = queryResult.intent.displayName;
         activity.object.push({
           type: 'Note',
           content: message.location.caption,
@@ -91,6 +95,8 @@ class Dialog {
     }
     this.activity.totalItems++;
     this.activity.items.push(activity);
+
+    return activity;
   }
   /**
    * @returns {string}
@@ -99,10 +105,12 @@ class Dialog {
     return this._uid;
   }
   set language(languageCode) {
-    // todo - добавлять только если такого еще нет в списке
-    this.activity['@context'].push({
-      '@language': languageCode,
-    });
+    const hasLang = this.activity['@context'].some(c => (c && c['@language'] === languageCode))
+    if (!hasLang) {
+      this.activity['@context'].push({
+        '@language': languageCode,
+      });
+    }
   }
   /**
    * @returns {string}

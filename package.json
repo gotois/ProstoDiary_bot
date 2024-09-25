@@ -85,7 +85,7 @@
     "minimist": "1.2.8",
     "request-json-rpc2": "2.2.3",
     "snyk": "1.1243.0",
-    "telegram-bot-activitystreams": "1.0.5",
+    "telegram-bot-activitystreams": "1.0.6",
     "telegram-bot-api-express": "1.3.4",
     "uuid": "10.0.0"
   },

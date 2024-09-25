@@ -15,7 +15,7 @@ const getCheckSum = (buffer, algorithm = 'md5', encoding = 'hex') => {
 module.exports = async (bot, message) => {
   const helpData = Object.entries({
     help: 'Помощь',
-    ping: 'Ping',
+    ping: 'Проверка связи',
     // eslint-disable-next-line
   }).reduce((accumulator, [command, description]) => {
     accumulator['/' + command.toLowerCase()] = description;
@@ -29,15 +29,14 @@ module.exports = async (bot, message) => {
       accumulator += result;
       return accumulator;
     }, '') +
+    '\n' + package_.name + ': ' + packageLock_.version +
     '\nF.A.Q.: ' +
     package_.homepage +
     '/faq/' +
-    '\nVERSION: ' +
-    packageLock_.version +
     '\nCHECKSUM: ' +
     getCheckSum(JSON.stringify(packageLock_));
 
-  const string_ = `Используй команды:\n ${commandsReadable}`;
+  const string_ = `Используйте команды:\n ${commandsReadable}`;
   await bot.sendMessage(message.chat.id, string_, {
     disable_notification: true,
     disable_web_page_preview: true,
