@@ -23,7 +23,7 @@ module.exports = async (bot, message) => {
     Buffer.from(arrayBuffer),
     {
       caption: caption ?? null,
-      parse_mode: 'markdown',
+      parse_mode: 'MarkdownV2',
       disable_notification: true,
     },
     {

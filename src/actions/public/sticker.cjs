@@ -5,7 +5,7 @@ module.exports = async (bot, message) => {
   try {
     await dialog.push(message);
     await bot.sendMessage(message.chat.id, dialog.activity.items[0].object[0].content, {
-      parse_mode: 'markdown',
+      parse_mode: 'MarkdownV2',
     });
   } catch (error) {
     console.error(error);
@@ -18,7 +18,7 @@ module.exports = async (bot, message) => {
       ]),
     });
     return bot.sendMessage(message.chat.id, error.message, {
-      parse_mode: 'markdown',
+      parse_mode: 'MarkdownV2',
       disable_web_page_preview: true,
     });
   }

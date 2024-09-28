@@ -26,11 +26,11 @@ module.exports = async (bot, message) => {
   // eslint-disable-next-line unicorn/prefer-ternary
   if (response.error) {
     return bot.sendMessage(message.chat.id, response.error.message, {
-      parse_mode: 'markdown',
+      parse_mode: 'MarkdownV2',
     });
   } else {
     return bot.sendMessage(message.chat.id, response.result, {
-      parse_mode: 'markdown',
+      parse_mode: 'MarkdownV2',
     });
   }
 };

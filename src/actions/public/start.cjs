@@ -34,11 +34,11 @@ module.exports = async (bot, message) => {
   }
 
   await bot.sendMessage(message.chat.id, getWelcomeText(), {
-    parse_mode: 'markdown',
+    parse_mode: 'MarkdownV2',
     disable_notification: true,
     reply_markup: {
       remove_keyboard: true,
-      resize_keyboard: false,
+      resize_keyboard: true,
       keyboard: [
         [
           {
@@ -57,6 +57,7 @@ module.exports = async (bot, message) => {
   //       {
   //         caption: 'kek',
   //       },
+  //       parse_mode: 'HTML'
   //       {
   //         filename: 'kek',
   //         contentType: 'image/png',

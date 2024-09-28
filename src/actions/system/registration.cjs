@@ -34,7 +34,7 @@ module.exports = async (bot, message) => {
   if (error) {
     console.error(error);
     return bot.sendMessage(message.chat.id, 'Произошла ошибка: ' + error.message, {
-      parse_mode: 'markdown',
+      parse_mode: 'MarkdownV2',
     });
   }
   setJWT(Number(message.chat.id), result);
@@ -50,6 +50,6 @@ module.exports = async (bot, message) => {
 **"💧Мне важно пить 2 литра воды в день ежедневно"**
 `;
   await bot.sendMessage(message.chat.id, string_, {
-    parse_mode: 'markdown',
+    parse_mode: 'MarkdownV2',
   });
 };

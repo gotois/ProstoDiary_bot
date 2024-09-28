@@ -40,6 +40,6 @@ module.exports = async (bot, message) => {
   await bot.sendMessage(message.chat.id, string_, {
     disable_notification: true,
     disable_web_page_preview: true,
-    parse_mode: 'markdown',
+    parse_mode: 'MarkdownV2',
   });
 };

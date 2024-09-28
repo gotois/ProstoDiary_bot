@@ -9,6 +9,6 @@ module.exports = async (bot, message) => {
   const activity = activitystreams(message);
   console.log('contact', activity);
   await bot.sendMessage(message.chat.id, 'Contact: ' + JSON.stringify(activity.object), {
-    parse_mode: 'markdown',
+    parse_mode: 'MarkdownV2',
   });
 };

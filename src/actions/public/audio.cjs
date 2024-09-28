@@ -9,6 +9,6 @@ module.exports = async (bot, message) => {
   console.log('audio:', dialog.activity);
   // todo: отправлять на сервер
   await bot.sendMessage(message.chat.id, 'Audio', {
-    parse_mode: 'markdown',
+    parse_mode: 'MarkdownV2',
   });
 };

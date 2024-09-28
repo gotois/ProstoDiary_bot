@@ -3,7 +3,7 @@ module.exports = async (bot, message) => {
     message.chat.id,
     'Приветствую! Я ваш виртуальный секретарь.\n' + 'Проанализирую ваши активности и сформирую из них контракты.',
     {
-      parse_mode: 'Markdown',
+      parse_mode: 'MarkdownV2',
     },
   );
 };

@@ -17,7 +17,7 @@ module.exports = async (bot, messages, user) => {
       jwt: user.jwt,
     });
     const calendarMessage = await bot.sendMessage(message.chat.id, formatCalendarMessage(ical, dialog.language), {
-      parse_mode: 'markdown',
+      parse_mode: 'MarkdownV2',
       reply_markup: {
         inline_keyboard: [
           [
@@ -32,7 +32,7 @@ module.exports = async (bot, messages, user) => {
     await saveCalendar(calendarMessage.message_id, user.key, ical);
     const task = await notify(ical);
     await bot.sendMessage(message.chat.id, task, {
-      parse_mode: 'markdown',
+      parse_mode: 'MarkdownV2',
       reply_markup: {
         inline_keyboard: [
           [
@@ -67,7 +67,7 @@ module.exports = async (bot, messages, user) => {
       ]),
     });
     return bot.sendMessage(message.chat.id, 'Произошла ошибка: ' + error.message, {
-      parse_mode: 'markdown',
+      parse_mode: 'MarkdownV2',
     });
   }
 };

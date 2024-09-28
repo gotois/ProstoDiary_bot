@@ -37,7 +37,7 @@ function checkAuth(callback) {
     const users = getUsers(message_.from.id);
     if (users.length === 0) {
       await bot.sendMessage(message_.chat.id, 'Пройдите авторизацию нажав /start', {
-        parse_mode: 'markdown',
+        parse_mode: 'MarkdownV2',
       });
       return;
     }

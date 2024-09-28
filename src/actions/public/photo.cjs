@@ -25,7 +25,7 @@ module.exports = async (bot, message, user) => {
       jwt: user.jwt,
     });
     await bot.sendMessage(message.chat.id, formatCalendarMessage(ical, dialog.language), {
-      parse_mode: 'markdown',
+      parse_mode: 'MarkdownV2',
       reply_markup: {
         inline_keyboard: [
           [
@@ -48,7 +48,7 @@ module.exports = async (bot, message, user) => {
       ]),
     });
     return bot.sendMessage(message.chat.id, error.message, {
-      parse_mode: 'markdown',
+      parse_mode: 'MarkdownV2',
       disable_web_page_preview: true,
     });
   }

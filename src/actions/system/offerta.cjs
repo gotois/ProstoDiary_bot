@@ -12,6 +12,6 @@ const OFFER = `
 module.exports = async (bot, message) => {
   const activity = activitystreams(message);
   await bot.sendMessage(activity.target.id, OFFER, {
-    parse_mode: 'markdown',
+    parse_mode: 'MarkdownV2',
   });
 };
