@@ -39,7 +39,7 @@ module.exports.formatCalendarMessage = (ical, locale = 'ru') => {
   }
   const eventDescription = vevent.getFirstPropertyValue('description');
   output += eventDescription ? `${eventDescription}\n` : '📌 Заметки: -\n';
-  output += '\nВаше событие успешно создано!\n';
+  output += '\nВаше событие успешно создано\\!\n';
   // output += 'Вы получите напоминание за 10 минут до начала.';
 
   return output.trim();

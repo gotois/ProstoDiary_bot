@@ -25,7 +25,8 @@ module.exports = async (bot, message, user) => {
         },
       ]),
     });
-    const calendarMessage = await bot.sendMessage(message.chat.id, formatCalendarMessage(ical, dialog.language), {
+    const output = formatCalendarMessage(ical, dialog.language);
+    const calendarMessage = await bot.sendMessage(message.chat.id, output, {
       parse_mode: 'MarkdownV2',
       reply_markup: {
         inline_keyboard: [
@@ -46,17 +47,19 @@ module.exports = async (bot, message, user) => {
         inline_keyboard: [
           [
             {
-              text: 'Напомнить через 15 мин',
-              callback_data: 'notify_calendar--15',
+              text: 'Начать',
+              callback_data: 'notify_calendar--start-pomodoro',
             },
           ],
           [
             {
+              text: 'Напомнить через 15 мин',
+              callback_data: 'notify_calendar--15',
+            },
+            {
               text: 'Напомнить через 1 час',
               callback_data: 'notify_calendar--60',
             },
-          ],
-          [
             {
               text: 'Напомнить завтра',
               callback_data: 'notify_calendar--next-day',

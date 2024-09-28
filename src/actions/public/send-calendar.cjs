@@ -11,18 +11,19 @@ module.exports = async (bot, message) => {
   const [{ ical }] = await getCalendars(message.message_id, message.chat.id);
   const icalData = ICAL.parse(ical);
   const comp = new ICAL.Component(icalData);
-  const fileEvent = new File([new TextEncoder().encode(ical)], 'calendar.ics', {
+  const summary = comp.getFirstSubcomponent('vevent')?.getFirstPropertyValue('summary')?.toLowerCase();
+  const description = comp.getFirstSubcomponent('vevent')?.getFirstPropertyValue('description');
+  const fileEvent = new File([new TextEncoder().encode(ical)], summary + '.ics', {
     type: 'text/calendar',
   });
   const accept = fileEvent.type;
   bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
   const arrayBuffer = await fileEvent.arrayBuffer();
-  const caption = comp.getFirstSubcomponent('vevent')?.getFirstPropertyValue('summary');
   await bot.sendDocument(
     message.chat.id,
     Buffer.from(arrayBuffer),
     {
-      caption: caption ?? null,
+      caption: description ?? null,
       parse_mode: 'MarkdownV2',
       disable_notification: true,
     },

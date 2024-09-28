@@ -88,6 +88,22 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['notify_calendar--15']: () => {},
       ['notify_calendar--60']: () => {},
       ['notify_calendar--next-day']: () => {},
+      ['notify_calendar--start-pomodoro']: async (bot, message) => {
+        console.log('start pomodoro timer', message);
+        await bot.setMessageReaction(message.chat.id, message.message_id, {
+          reaction: JSON.stringify([
+            {
+              type: 'emoji',
+              emoji: '👀',
+            },
+          ]),
+        });
+        await bot.editMessageText("Start Pomodoro!",{
+          chat_id: message.chat.id,
+          message_id: message.message_id,
+          reply_markup: {},
+        });
+      }
     },
 
     // Групповые команды
