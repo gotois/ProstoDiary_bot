@@ -10,9 +10,9 @@ module.exports = async (bot, message, user) => {
 
   try {
     if (message.text.length < 5) {
-      throw new Error('Непонятно')
+      throw new Error('Непонятно');
     }
-    bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
+    await bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
     await dialog.push(message);
     const ical = await generateCalendar({
       id: dialog.uid,
@@ -32,6 +32,7 @@ module.exports = async (bot, message, user) => {
     const calendarMessage = await bot.sendMessage(message.chat.id, output, {
       reply_to_message_id: message.message_id,
       parse_mode: 'MarkdownV2',
+      protect_content: true,
       reply_markup: {
         inline_keyboard: [
           [
@@ -43,6 +44,11 @@ module.exports = async (bot, message, user) => {
         ],
       },
     });
+    try {
+      await bot.pinChatMessage(message.chat.id, calendarMessage.message_id);
+    } catch (error) {
+      console.error(error);
+    }
     await saveCalendar(calendarMessage.message_id, user.key, ical);
     const task = await notify(ical);
     await bot.sendMessage(message.chat.id, task, {
@@ -58,7 +64,7 @@ module.exports = async (bot, message, user) => {
           ],
           [
             {
-              text: 'Напомнить через 15 мин',
+              text: 'Напомнить позже',
               callback_data: 'notify_calendar--15',
             },
             {

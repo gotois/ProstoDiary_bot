@@ -6,6 +6,7 @@ const { GIC_RPC } = process.env;
 // Функция сериализует текст в стандарт MarkdownV2
 function serializeMarkdownV2(text) {
   text = text.replaceAll('.', '\\.');
+  text = text.replaceAll('-', '\\-');
   return text;
 }
 
@@ -44,7 +45,7 @@ module.exports.formatCalendarMessage = (ical, locale = 'ru') => {
     output += `🏠 **Место:** ${serializeMarkdownV2(location)}\n`;
   }
   const eventDescription = vevent.getFirstPropertyValue('description');
-  output += eventDescription ? `${serializeMarkdownV2(eventDescription)}\n` : '📌 Заметки: -\n';
+  output += eventDescription ? `📌 ${serializeMarkdownV2(eventDescription)}\n` : '📌 Заметки: \\-\n';
   output += '\nВаше событие успешно создано\\!\n';
   // output += 'Вы получите напоминание за 10 минут до начала.';
 

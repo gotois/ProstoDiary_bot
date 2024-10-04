@@ -85,7 +85,15 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['send_calendar']: sendCalendar,
 
       // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день
-      ['notify_calendar--15']: () => {},
+      ['notify_calendar--15']: async (bot, message) => {
+        const diceMessage = await bot.sendDice(message.chat.id, {
+          emoji: '🎰',
+        });
+        const { dice: { value } } = diceMessage;
+        await bot.sendMessage(message.chat.id, "Напомню через: " + value + 'мин.', {
+          message_id: message.message_id,
+        });
+      },
       ['notify_calendar--60']: () => {},
       ['notify_calendar--next-day']: () => {},
       ['notify_calendar--start-pomodoro']: async (bot, message) => {

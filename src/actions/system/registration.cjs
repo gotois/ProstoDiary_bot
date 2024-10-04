@@ -35,6 +35,7 @@ module.exports = async (bot, message) => {
     console.error(error);
     return bot.sendMessage(message.chat.id, 'Произошла ошибка: ' + error.message, {
       parse_mode: 'MarkdownV2',
+      message_effect_id: '5046589136895476101', // 💩
     });
   }
   setJWT(Number(message.chat.id), result);
@@ -51,5 +52,6 @@ module.exports = async (bot, message) => {
 `;
   await bot.sendMessage(message.chat.id, string_, {
     parse_mode: 'MarkdownV2',
+    message_effect_id: '5046509860389126442', // 🎉
   });
 };
