@@ -24,7 +24,6 @@ module.exports = async (bot, message) => {
     Buffer.from(arrayBuffer),
     {
       caption: description ?? null,
-      parse_mode: 'MarkdownV2',
       disable_notification: true,
     },
     {

@@ -106,11 +106,7 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
             },
           ]),
         });
-        await bot.editMessageText("Start Pomodoro!",{
-          chat_id: message.chat.id,
-          message_id: message.message_id,
-          reply_markup: {},
-        });
+        // todo - запустить таймер помодоро на 25 мин
       }
     },
 

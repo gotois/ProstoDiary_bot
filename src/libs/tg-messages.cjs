@@ -31,6 +31,23 @@ module.exports.sendCalendarMessage = async function (bot, message, output) {
 }
 
 module.exports.sendTaskMessage = async function (bot, calendarMessage, task) {
+  await bot.unpinChatMessage(calendarMessage.chat.id, {})
+  const editMessage = await bot.editMessageText(task, {
+    chat_id: calendarMessage.chat.id,
+    message_id: calendarMessage.message_id,
+    parse_mode: 'MarkdownV2',
+    protect_content: true,
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: 'Начать',
+            callback_data: 'notify_calendar--start-pomodoro',
+          },
+        ],
+      ],
+    },
+  });
   const taskMessage = await bot.sendMessage(calendarMessage.chat.id, task, {
     parse_mode: 'MarkdownV2',
     reply_to_message_id: calendarMessage.message_id,
@@ -59,6 +76,7 @@ module.exports.sendTaskMessage = async function (bot, calendarMessage, task) {
       ],
     },
   });
+  await bot.pinChatMessage(calendarMessage.chat.id, editMessage.message_id);
   return taskMessage;
 }
 
