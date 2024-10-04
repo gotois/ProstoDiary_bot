@@ -3,6 +3,12 @@ const requestJsonRpc2 = require('request-json-rpc2').default;
 
 const { GIC_RPC } = process.env;
 
+// Функция сериализует текст в стандарт MarkdownV2
+function serializeMarkdownV2(text) {
+  text = text.replaceAll('.', '\\.');
+  return text;
+}
+
 /**
  * @param {string} ical - ical string
  * @param {string} [locale] - locale
@@ -35,10 +41,10 @@ module.exports.formatCalendarMessage = (ical, locale = 'ru') => {
   }
   const location = vevent.getFirstPropertyValue('location');
   if (location) {
-    output += `🏠 **Место:** ${location}\n`;
+    output += `🏠 **Место:** ${serializeMarkdownV2(location)}\n`;
   }
   const eventDescription = vevent.getFirstPropertyValue('description');
-  output += eventDescription ? `${eventDescription}\n` : '📌 Заметки: -\n';
+  output += eventDescription ? `${serializeMarkdownV2(eventDescription)}\n` : '📌 Заметки: -\n';
   output += '\nВаше событие успешно создано\\!\n';
   // output += 'Вы получите напоминание за 10 минут до начала.';
 

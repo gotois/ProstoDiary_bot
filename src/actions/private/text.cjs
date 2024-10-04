@@ -7,9 +7,12 @@ const { notify } = require('../../libs/execute-time.cjs');
 module.exports = async (bot, message, user) => {
   const dialog = new Dialog();
   const accept = 'text/calendar';
-  bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
 
   try {
+    if (message.text.length < 5) {
+      throw new Error('Непонятно')
+    }
+    bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
     await dialog.push(message);
     const ical = await generateCalendar({
       id: dialog.uid,
@@ -27,6 +30,7 @@ module.exports = async (bot, message, user) => {
     });
     const output = formatCalendarMessage(ical, dialog.language);
     const calendarMessage = await bot.sendMessage(message.chat.id, output, {
+      reply_to_message_id: message.message_id,
       parse_mode: 'MarkdownV2',
       reply_markup: {
         inline_keyboard: [
@@ -43,6 +47,7 @@ module.exports = async (bot, message, user) => {
     const task = await notify(ical);
     await bot.sendMessage(message.chat.id, task, {
       parse_mode: 'MarkdownV2',
+      reply_to_message_id: calendarMessage.message_id,
       reply_markup: {
         inline_keyboard: [
           [
