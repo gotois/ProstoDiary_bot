@@ -1,6 +1,9 @@
 const Dialog = require('../../libs/dialog.cjs');
 const { sendPrepareAction } = require('../../libs/tg-prepare-action.cjs');
 const { generateCalendar, formatCalendarMessage } = require('../../controllers/generate-calendar.cjs');
+const { saveCalendar } = require('../../libs/database.cjs');
+const { notify } = require('../../libs/execute-time.cjs');
+const { sendCalendarMessage, sendTaskMessage, sendErrorMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, message, user) => {
   const accept = 'text/calendar';
@@ -24,32 +27,13 @@ module.exports = async (bot, message, user) => {
       activity: dialog.activity,
       jwt: user.jwt,
     });
-    await bot.sendMessage(message.chat.id, formatCalendarMessage(ical, dialog.language), {
-      parse_mode: 'MarkdownV2',
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'Скачать',
-              callback_data: 'send_calendar',
-            },
-          ],
-        ],
-      },
-    });
+    const output = formatCalendarMessage(ical, dialog.language);
+    const calendarMessage = await sendCalendarMessage(bot, message, output);
+    await saveCalendar(calendarMessage.message_id, user.key, ical);
+    const task = await notify(ical);
+    await sendTaskMessage(bot, calendarMessage, task);
   } catch (error) {
     console.error(error);
-    await bot.setMessageReaction(message.chat.id, message.message_id, {
-      reaction: JSON.stringify([
-        {
-          type: 'emoji',
-          emoji: '🤷‍♀',
-        },
-      ]),
-    });
-    return bot.sendMessage(message.chat.id, error.message, {
-      parse_mode: 'MarkdownV2',
-      disable_web_page_preview: true,
-    });
+    await sendErrorMessage(bot, message, error);
   }
 };

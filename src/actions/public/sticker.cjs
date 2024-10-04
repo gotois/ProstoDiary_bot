@@ -1,4 +1,5 @@
 const Dialog = require('../../libs/dialog.cjs');
+const { sendErrorMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, message) => {
   const dialog = new Dialog();
@@ -9,17 +10,6 @@ module.exports = async (bot, message) => {
     });
   } catch (error) {
     console.error(error);
-    await bot.setMessageReaction(message.chat.id, message.message_id, {
-      reaction: JSON.stringify([
-        {
-          type: 'emoji',
-          emoji: '🤷‍♀',
-        },
-      ]),
-    });
-    return bot.sendMessage(message.chat.id, error.message, {
-      parse_mode: 'MarkdownV2',
-      disable_web_page_preview: true,
-    });
+    await sendErrorMessage(bot, message, error);
   }
 };
