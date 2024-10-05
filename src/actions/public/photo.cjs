@@ -10,8 +10,11 @@ module.exports = async (bot, message, user) => {
     await sendPrepareCalendar(bot, message);
     await dialog.push(message);
     const me = await bot.getMe();
-    dialog.activity.origin.name = me.first_name;
-    dialog.activity.origin.url = 'https://t.me/' + me.username;
+    dialog.activity.origin = {
+      ...dialog.activity.origin,
+      name: me.first_name,
+      url: 'https://t.me/' + me.username,
+    };
     const ical = await generateCalendar({
       id: dialog.uid,
       activity: dialog.activity,

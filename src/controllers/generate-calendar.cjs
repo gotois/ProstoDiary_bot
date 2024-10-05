@@ -51,6 +51,8 @@ module.exports.formatCalendarMessage = (ical, locale = 'ru') => {
         output += '❤️';
         break;
       }
+      case 'отдых':
+      case 'развлечения':
       case 'отдых и развлечения': {
         output += '🎉';
         break;
