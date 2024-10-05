@@ -1,4 +1,40 @@
-module.exports.sendCalendarMessage = async function (bot, message, output) {
+const { sendPrepareAction } = require('./tg-prepare-action.cjs');
+
+const keyboardStart = (url) => {
+  const keyboard = {
+    text: 'Начать',
+    callback_data: 'notify_calendar--start-pomodoro',
+  }
+  if (url) {
+    keyboard.url = url;
+  }
+  return keyboard;
+}
+const keyboardLater = () => {
+  const keyboard = {
+    text: 'Позже',
+    callback_data: 'notify_calendar--15',
+  }
+  return keyboard;
+}
+const keyboardLater60 = () => {
+  const keyboard = {
+    text: 'Напомнить через 1 час',
+    callback_data: 'notify_calendar--60',
+  }
+  return keyboard;
+};
+const keyboardLaterTomorrow = () => {
+  const keyboard = {
+    text: 'Напомнить завтра',
+    callback_data: 'notify_calendar--next-day',
+  }
+  return keyboard;
+}
+
+module.exports.sendPrepareCalendar = async function (bot, message) {
+  const accept = 'text/calendar';
+  await bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
   await bot.setMessageReaction(message.chat.id, message.message_id, {
     reaction: JSON.stringify([
       {
@@ -7,6 +43,9 @@ module.exports.sendCalendarMessage = async function (bot, message, output) {
       },
     ]),
   });
+}
+
+module.exports.sendCalendarMessage = async function (bot, message, output) {
   const calendarMessage = await bot.sendMessage(message.chat.id, output, {
     reply_to_message_id: message.message_id,
     parse_mode: 'MarkdownV2',
@@ -30,7 +69,7 @@ module.exports.sendCalendarMessage = async function (bot, message, output) {
   return calendarMessage;
 }
 
-module.exports.sendTaskMessage = async function (bot, calendarMessage, task) {
+module.exports.sendTaskMessage = async function (bot, calendarMessage, task, url) {
   await bot.unpinChatMessage(calendarMessage.chat.id, {})
   const editMessage = await bot.editMessageText(task, {
     chat_id: calendarMessage.chat.id,
@@ -40,10 +79,7 @@ module.exports.sendTaskMessage = async function (bot, calendarMessage, task) {
     reply_markup: {
       inline_keyboard: [
         [
-          {
-            text: 'Начать',
-            callback_data: 'notify_calendar--start-pomodoro',
-          },
+          keyboardStart(url),
         ],
       ],
     },
@@ -54,24 +90,12 @@ module.exports.sendTaskMessage = async function (bot, calendarMessage, task) {
     reply_markup: {
       inline_keyboard: [
         [
-          {
-            text: 'Начать',
-            callback_data: 'notify_calendar--start-pomodoro',
-          },
+          keyboardStart(url),
         ],
         [
-          {
-            text: 'Позже',
-            callback_data: 'notify_calendar--15',
-          },
-          {
-            text: 'Напомнить через 1 час',
-            callback_data: 'notify_calendar--60',
-          },
-          {
-            text: 'Напомнить завтра',
-            callback_data: 'notify_calendar--next-day',
-          },
+          keyboardLater(),
+          keyboardLater60(),
+          keyboardLaterTomorrow(),
         ],
       ],
     },

@@ -23,16 +23,22 @@ module.exports.notify = (ical) => {
     const dtstart = vevent.getFirstPropertyValue('dtstart').toString().replace('Z', '');
 
     executeAtTime(new Date(dtstart), () => {
+      const out = {}
       let task = 'Внимание\\! У вас есть задача:\n';
       const summary = vevent.getFirstPropertyValue('summary');
       if (summary) {
         task += vevent.getFirstPropertyValue('summary') + '\n';
       }
+      out.text = task;
+      const url = vevent.getFirstPropertyValue('url');
+      if (URL.parse(url)) {
+        out.url = url;
+      }
       // const dateString = new Intl.DateTimeFormat('ru').format(
-      //   new Date(vevent.getFirstPropertyValue('dtstart').toString()),
+      //   new Date(dtstart),
       // );
       // task += dateString + '\n';
-      resolve(task);
+      resolve(out);
     });
   });
 };

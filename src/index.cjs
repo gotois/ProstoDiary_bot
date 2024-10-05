@@ -94,8 +94,16 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
           message_id: message.message_id,
         });
       },
-      ['notify_calendar--60']: () => {},
-      ['notify_calendar--next-day']: () => {},
+      ['notify_calendar--60']: async (bot, message) => {
+        await bot.sendMessage(message.chat.id, 'Напомню через: 60 мин.', {
+          message_id: message.message_id,
+        });
+      },
+      ['notify_calendar--next-day']: async (bot, message) => {
+        await bot.sendMessage(message.chat.id, 'Напомню завтра', {
+          message_id: message.message_id,
+        });
+      },
       ['notify_calendar--start-pomodoro']: async (bot, message) => {
         console.log('start pomodoro timer', message);
         await bot.setMessageReaction(message.chat.id, message.message_id, {
@@ -106,7 +114,24 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
             },
           ]),
         });
-        // todo - запустить таймер помодоро на 25 мин
+        // todo - запустить таймер помодоро на 25 мин - сфокусироваться на выполнении
+        // ...
+        const editMessage = await bot.editMessageText(message.text, {
+          chat_id: message.chat.id,
+          message_id: message.message_id,
+          // parse_mode: 'MarkdownV2',
+          protect_content: true,
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: 'Завершить',
+                  'url': 'https://t.me/gotois_bot/App'
+                },
+              ],
+            ],
+          },
+        });
       }
     },
 
