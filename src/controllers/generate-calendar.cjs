@@ -23,6 +23,47 @@ module.exports.formatCalendarMessage = (ical, locale = 'ru') => {
   let output = '';
   output += '**Создано новое событие:**\n';
   if (eventName) {
+    const category = vevent.getFirstPropertyValue('categories');
+    switch (category) {
+      case 'деньги': {
+        output += '💰';
+        break;
+      }
+      case 'друзья': {
+        output += '👫'
+        break;
+      }
+      case 'здоровье': {
+        output += '🏥';
+        break;
+      }
+      case 'карьера': {
+        output += '💼';
+        break;
+      }
+      case 'личностный рост': {
+        output += '📚';
+        break;
+      }
+      case 'любовь':
+      case 'отношения':
+      case 'любовь и отношения': {
+        output += '❤️';
+        break;
+      }
+      case 'отдых и развлечения': {
+        output += '🎉';
+        break;
+      }
+      case 'путешествия': {
+        output += '🌴';
+        break;
+      }
+      case 'условия жизни': {
+        output += '🏠';
+        break;
+      }
+    }
     output += eventName + '\n\n';
   }
   const dtStart = vevent.getFirstPropertyValue('dtstart').toString().replace('Z', '');
