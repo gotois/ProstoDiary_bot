@@ -45,7 +45,15 @@ module.exports.sendPrepareCalendar = async function (bot, message) {
   });
 }
 
-module.exports.sendCalendarMessage = async function (bot, message, output) {
+module.exports.sendCalendarMessage = async function (bot, message, output, googleCalendarUrl) {
+  const keyboardDownloadCalendar = {
+    text: 'Скачать',
+    callback_data: 'send_calendar',
+  }
+  const keyboardGoogleCalendar = {
+    text: 'В Google Calendar',
+    url: googleCalendarUrl,
+  }
   const calendarMessage = await bot.sendMessage(message.chat.id, output, {
     reply_to_message_id: message.message_id,
     parse_mode: 'MarkdownV2',
@@ -53,10 +61,8 @@ module.exports.sendCalendarMessage = async function (bot, message, output) {
     reply_markup: {
       inline_keyboard: [
         [
-          {
-            text: 'Скачать',
-            callback_data: 'send_calendar',
-          },
+          keyboardDownloadCalendar,
+          keyboardGoogleCalendar,
         ],
       ],
     },

@@ -10,6 +10,37 @@ function serializeMarkdownV2(text) {
   return text;
 }
 
+module.exports.formatGoogleCalendarUrl = function(ical) {
+  const icalData = ICAL.parse(ical);
+  const comp = new ICAL.Component(icalData);
+  const vevent = comp.getFirstSubcomponent('vevent');
+  const eventName = vevent.getFirstPropertyValue('summary');
+  const eventDescription = vevent.getFirstPropertyValue('description');
+  const dtStart = vevent.getFirstPropertyValue('dtstart').toString().replace('Z', '');
+  const dtEnd = vevent.getFirstPropertyValue('dtend').toString().replace('Z', '');
+
+  const link = new URL('https://calendar.google.com/calendar/render');
+  link.searchParams.append('action', 'TEMPLATE');
+  link.searchParams.append('text', eventName);
+  link.searchParams.append('details', eventDescription);
+  if (dtEnd) {
+    link.searchParams.append(
+      'dates',
+      dtStart + '/' + dtEnd,
+    )
+  } else {
+    link.searchParams.append(
+      'dates',
+      dtStart + '/' + dtStart,
+    )
+  }
+  const location = vevent.getFirstPropertyValue('location');
+  if (location) {
+    link.searchParams.append('location', location);
+  }
+  return link;
+}
+
 /**
  * @param {string} ical - ical string
  * @param {string} [locale] - locale
