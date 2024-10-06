@@ -97,7 +97,7 @@ module.exports.formatCalendarMessage = (ical, locale = 'ru') => {
         break;
       }
     }
-    output += eventName + '\n\n';
+    output += serializeMarkdownV2(eventName) + '\n\n';
   }
   const dtStart = vevent.getFirstPropertyValue('dtstart').toString().replace('Z', '');
   if (dtStart) {

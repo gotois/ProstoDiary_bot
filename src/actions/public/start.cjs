@@ -39,6 +39,7 @@ module.exports = async (bot, message) => {
     reply_markup: {
       remove_keyboard: true,
       resize_keyboard: true,
+      one_time_keyboard: true,
       keyboard: [
         [
           {
@@ -47,7 +48,6 @@ module.exports = async (bot, message) => {
           },
         ],
       ],
-      one_time_keyboard: true,
     },
   });
   // todo - скидывать изображение для лучшего понимания пользователем

@@ -41,15 +41,21 @@ module.exports.getUsers = (idUser) => {
   return users;
 };
 
+module.exports.setJWT = (userId, jwt) => {
+  const insert = database.prepare(`
+    INSERT INTO users (key, jwt) VALUES (?, ?)
+    ON CONFLICT(key)
+    DO
+      UPDATE SET jwt = ("${jwt}")
+      WHERE key = ("${userId}")
+  `);
+  insert.run(userId, jwt);
+};
+
 module.exports.getCalendars = (id, idUser) => {
   const query = database.prepare(`SELECT * FROM calendars WHERE id == ${id} AND idUser = ${idUser}`);
   const users = query.all();
   return users;
-};
-
-module.exports.setJWT = (userId, jwt) => {
-  const insert = database.prepare('INSERT INTO users (key, jwt) VALUES (?, ?)');
-  insert.run(userId, jwt);
 };
 
 module.exports.saveCalendar = (idMessage, idUser, ical) => {

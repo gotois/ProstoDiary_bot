@@ -7,10 +7,10 @@ const { sendPrepareCalendar, sendCalendarMessage, sendTaskMessage, sendErrorMess
 module.exports = async (bot, messages, user) => {
   console.log(`Обработка транзакции из ${messages.length} сообщений:`);
   const dialog = new Dialog();
-  const message = messages[0];
+  const [message] = messages;
   try {
-    await sendPrepareCalendar(bot, message);
     for (const message of messages) {
+      await sendPrepareCalendar(bot, message);
       await dialog.push(message);
     }
     const ical = await generateCalendar({
@@ -26,6 +26,11 @@ module.exports = async (bot, messages, user) => {
     await sendTaskMessage(bot, calendarMessage, text, url);
   } catch (error) {
     console.error(error);
-    await sendErrorMessage(bot, message, error);
+    await bot.sendMessage(message.chat.id, '👾', {
+      disable_web_page_preview: true,
+    });
+    await bot.sendMessage(message.chat.id, 'Произошла ошибка: ' + error.message, {
+      disable_web_page_preview: true,
+    });
   }
 };
