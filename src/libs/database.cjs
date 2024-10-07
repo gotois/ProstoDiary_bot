@@ -1,5 +1,13 @@
 const sqlite = require('node:sqlite');
 
+const database = (() => {
+  if (process.env.NODE_ENV?.toLowerCase()?.startsWith('dev')) {
+    return new sqlite.DatabaseSync('database.sqlite');
+  } else {
+    return new sqlite.DatabaseSync(':memory:');
+  }
+})();
+
 function createUsersTable() {
   database.exec(`
       CREATE TABLE if not exists users(
@@ -19,13 +27,6 @@ function createCalendarsTable() {
     `);
 }
 
-const database = (() => {
-  if (process.env.NODE_ENV?.toLowerCase()?.startsWith('dev')) {
-    return new sqlite.DatabaseSync('database.sqlite');
-  } else {
-    return new sqlite.DatabaseSync(':memory:');
-  }
-})();
 try {
   createUsersTable();
 } catch {}

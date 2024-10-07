@@ -4,10 +4,11 @@ const dbclearAction = require('./actions/system/dbclear.cjs');
 const helpAction = require('./actions/system/help.cjs');
 const offertaAction = require('./actions/system/offerta.cjs');
 const registrationAction = require('./actions/system/registration.cjs');
+const wantAction = require('./actions/system/want.cjs');
+const sendCalendar = require('./actions/system/send-calendar.cjs');
 const startAction = require('./actions/public/start.cjs');
 const editedMessageTextAction = require('./actions/public/edited-message-text.cjs');
 const channelPostAction = require('./actions/public/channel-post.cjs');
-const textAction = require('./actions/private/text.cjs');
 const groupTextAction = require('./actions/public/text.cjs');
 const locationAction = require('./actions/public/location.cjs');
 const photoAction = require('./actions/public/photo.cjs');
@@ -27,7 +28,7 @@ const pollAction = require('./actions/public/poll.cjs');
 const audioAction = require('./actions/public/audio.cjs');
 const contactAction = require('./actions/public/contact.cjs');
 const inlineAction = require('./actions/public/inline.cjs');
-const sendCalendar = require('./actions/public/send-calendar.cjs');
+const textAction = require('./actions/private/text.cjs');
 const textForwards = require('./actions/private/text-forwards.cjs');
 const { getUsers } = require('./libs/database.cjs');
 
@@ -59,6 +60,7 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       [/^\/start|начать$/]: startAction,
       [/^\/help|man|помощь$/]: helpAction,
       [/^\/licence/]: offertaAction,
+      [/^\/want/]: checkAuth(wantAction),
 
       /* NATIVE COMMANDS */
 
@@ -82,57 +84,13 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
 
       /* CALLBACK */
       ['auth_by_contact']: registrationAction,
-      ['send_calendar']: sendCalendar,
+      ['send_calendar']: checkAuth(sendCalendar),
 
       // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день
-      ['notify_calendar--15']: async (bot, message) => {
-        const diceMessage = await bot.sendDice(message.chat.id, {
-          emoji: '🎰',
-        });
-        const { dice: { value } } = diceMessage;
-        await bot.sendMessage(message.chat.id, "Напомню через: " + value + 'мин.', {
-          message_id: message.message_id,
-        });
-      },
-      ['notify_calendar--60']: async (bot, message) => {
-        await bot.sendMessage(message.chat.id, 'Напомню через: 60 мин.', {
-          message_id: message.message_id,
-        });
-      },
-      ['notify_calendar--next-day']: async (bot, message) => {
-        await bot.sendMessage(message.chat.id, 'Напомню завтра', {
-          message_id: message.message_id,
-        });
-      },
-      ['notify_calendar--start-pomodoro']: async (bot, message) => {
-        console.log('start pomodoro timer', message);
-        await bot.setMessageReaction(message.chat.id, message.message_id, {
-          reaction: JSON.stringify([
-            {
-              type: 'emoji',
-              emoji: '👀',
-            },
-          ]),
-        });
-        // todo - запустить таймер помодоро на 25 мин - сфокусироваться на выполнении
-        // ...
-        const editMessage = await bot.editMessageText(message.text, {
-          chat_id: message.chat.id,
-          message_id: message.message_id,
-          // parse_mode: 'MarkdownV2',
-          protect_content: true,
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: 'Завершить',
-                  'url': 'https://t.me/gotois_bot/App'
-                },
-              ],
-            ],
-          },
-        });
-      }
+      ['notify_calendar--15']: checkAuth(notifyDice),
+      ['notify_calendar--60']: checkAuth(notifyNextHour),
+      ['notify_calendar--next-day']: checkAuth(notifyNextDay),
+      ['notify_calendar--start-pomodoro']: checkAuth(focusPomodoro),
     },
 
     // Групповые команды
@@ -159,7 +117,9 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
 
       /* CALLBACK */
 
-      ['approve_event']: () => {},
+      ['approve_event']: () => {
+        console.log('WIP: approve_event');
+      },
     },
 
     onError(bot, error) {
