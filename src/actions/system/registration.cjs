@@ -26,10 +26,16 @@ function registrationSuccessMessage() {
  */
 module.exports = async (bot, message) => {
   const activity = activitystreams(message);
-  console.log('auth activity', activity);
-
-  // WIP - по возможности отправлять профиль пользователя при регистрации
-  // const profilePhotos = await bot.getUserProfilePhotos(message.chat.id)
+  const profilePhotos = await bot.getUserProfilePhotos(message.chat.id);
+  if (profilePhotos.photos.length > 0) {
+    const userPicture = await bot.getFileLink(profilePhotos.photos[0][0].file_id);
+    activity.actor.image = {
+      type: 'Link',
+      href: userPicture,
+      mediaType: 'image/jpeg',
+    };
+  }
+  activity.actor.to = `tel:+${message.contact.phone_number}`;
 
   const { result, error } = await requestJsonRpc2({
     url: GIC_AUTH,

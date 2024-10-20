@@ -30,6 +30,8 @@ const contactAction = require('./actions/public/contact.cjs');
 const inlineAction = require('./actions/public/inline.cjs');
 const textAction = require('./actions/private/text.cjs');
 const textForwards = require('./actions/private/text-forwards.cjs');
+const { notifyDice, notifyNextHour, notifyNextDay } = require('./actions/system/notifier.cjs');
+const focusPomodoro = require('./actions/system/focus-pomodoro.cjs');
 const { getUsers } = require('./libs/database.cjs');
 
 function checkAuth(callback) {
