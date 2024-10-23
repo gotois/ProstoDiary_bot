@@ -19,10 +19,12 @@ class Dialog {
     this._uid = uuidv1();
     this.messages = [];
     this.activity = {
-      '@context': ['https://www.w3.org/ns/activitystreams',
-      {
-        '@language': 'ru', // todo пока используем только русский
-      }],
+      '@context': [
+        'https://www.w3.org/ns/activitystreams',
+        {
+          '@language': 'ru', // todo пока используем только русский
+        },
+      ],
       'summary': '',
       'type': 'Collection',
       'totalItems': 0,
@@ -30,7 +32,7 @@ class Dialog {
     };
   }
   /**
-   * @param {object} message - telegram bot message
+   * @param {Object} message - telegram bot message
    */
   async push(message) {
     const activity = activitystreams(message);
@@ -60,6 +62,7 @@ class Dialog {
       activity.summary = queryResult.intent.displayName;
       this.language = queryResult.languageCode;
     } else if (message.photo) {
+      // ...
     } else if (message.location) {
       activity.object = [
         {
@@ -88,7 +91,9 @@ class Dialog {
       // const response = await fetch(message.document.file.url);
       // const arrayBuffer = await response.arrayBuffer();
     } else if (message.sticker) {
+      // ...
     } else if (message.video_note) {
+      // ...
     } else {
       console.warn(message);
       throw new Error('Unknown type message');

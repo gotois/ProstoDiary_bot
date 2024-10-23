@@ -23,7 +23,7 @@ module.exports.notify = (ical) => {
     const dtstart = vevent.getFirstPropertyValue('dtstart').toString().replace('Z', '');
 
     executeAtTime(new Date(dtstart), () => {
-      const out = {}
+      const out = {};
       let task = 'Внимание\\! У вас есть задача:\n';
       const summary = vevent.getFirstPropertyValue('summary');
       if (summary) {

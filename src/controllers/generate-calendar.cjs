@@ -1,16 +1,10 @@
 const ICAL = require('ical.js');
 const requestJsonRpc2 = require('request-json-rpc2').default;
+const { serializeMarkdownV2 } = require('../libs/md-serialize.cjs');
 
 const { GIC_RPC } = process.env;
 
-// Функция сериализует текст в стандарт MarkdownV2
-function serializeMarkdownV2(text) {
-  text = text.replaceAll('.', '\\.');
-  text = text.replaceAll('-', '\\-');
-  return text;
-}
-
-module.exports.formatGoogleCalendarUrl = function(ical) {
+module.exports.formatGoogleCalendarUrl = function (ical) {
   const icalData = ICAL.parse(ical);
   const comp = new ICAL.Component(icalData);
   const vevent = comp.getFirstSubcomponent('vevent');
@@ -24,22 +18,16 @@ module.exports.formatGoogleCalendarUrl = function(ical) {
   link.searchParams.append('text', eventName);
   link.searchParams.append('details', eventDescription);
   if (dtEnd) {
-    link.searchParams.append(
-      'dates',
-      dtStart + '/' + dtEnd,
-    )
+    link.searchParams.append('dates', dtStart + '/' + dtEnd);
   } else {
-    link.searchParams.append(
-      'dates',
-      dtStart + '/' + dtStart,
-    )
+    link.searchParams.append('dates', dtStart + '/' + dtStart);
   }
   const location = vevent.getFirstPropertyValue('location');
   if (location) {
     link.searchParams.append('location', location);
   }
   return link;
-}
+};
 
 /**
  * @param {string} ical - ical string
@@ -61,7 +49,7 @@ module.exports.formatCalendarMessage = (ical, locale = 'ru') => {
         break;
       }
       case 'друзья': {
-        output += '👫'
+        output += '👫';
         break;
       }
       case 'здоровье': {

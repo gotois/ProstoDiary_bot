@@ -1,6 +1,7 @@
 const sqlite = require('node:sqlite');
 
 const database = (() => {
+  // eslint-disable-next-line unicorn/prefer-ternary
   if (process.env.NODE_ENV?.toLowerCase()?.startsWith('dev')) {
     return new sqlite.DatabaseSync('database.sqlite');
   } else {
@@ -29,10 +30,14 @@ function createCalendarsTable() {
 
 try {
   createUsersTable();
-} catch {}
+} catch {
+  // ...
+}
 try {
   createCalendarsTable();
-} catch {}
+} catch {
+  // ...
+}
 
 module.exports = database;
 
