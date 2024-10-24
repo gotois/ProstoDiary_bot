@@ -25,7 +25,7 @@ function getWelcomeText() {
  */
 module.exports = async (bot, message) => {
   if (!process.env.NODE_ENV?.toLowerCase()?.startsWith('dev')) {
-    const users = getUsers(message.from.id);
+    const users = getUsers(message.chat.id);
     if (users.length > 0) {
       return bot.sendMessage(
         message.chat.id,
@@ -34,6 +34,17 @@ module.exports = async (bot, message) => {
     }
   }
 
+  const me = await bot.getMe();
+  const photos = await bot.getUserProfilePhotos(me.id);
+  const photo = photos.photos?.[0]?.[0]?.file_id;
+  const file = await bot.getFile(photo);
+  const fileBuffer = await bot.getFileStream(file.file_id);
+  await bot.sendPhoto(message.chat.id, fileBuffer, {
+    caption: 'Hello',
+    parse_mode: 'HTML',
+    filename: 'hello',
+    contentType: 'image/png',
+  });
   await bot.sendMessage(message.chat.id, getWelcomeText(), {
     parse_mode: 'MarkdownV2',
     disable_notification: true,
@@ -51,21 +62,4 @@ module.exports = async (bot, message) => {
       ],
     },
   });
-  // todo - скидывать изображение для лучшего понимания пользователем
-  //   bot.sendPhoto(
-  //       message.chat.id,
-  //       photo,
-  //       {
-  //         caption: 'kek',
-  //       },
-  //       parse_mode: 'HTML'
-  //       {
-  //         filename: 'kek',
-  //         contentType: 'image/png',
-  //       },
-  //     );
-
-  // setTimeout(async () => {
-  //   await bot.deleteMessage(message.chat.id, message_id);
-  // }, 10000);
 };

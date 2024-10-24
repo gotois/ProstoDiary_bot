@@ -37,7 +37,7 @@ const { getUsers } = require('./libs/database.cjs');
 function checkAuth(callback) {
   return async (bot, message) => {
     const message_ = Array.isArray(message) ? message[0] : message;
-    const users = getUsers(message_.from.id);
+    const users = getUsers(message_.chat.id);
     if (users.length === 0) {
       await bot.sendMessage(message_.chat.id, 'Пройдите авторизацию нажав /start', {
         parse_mode: 'MarkdownV2',

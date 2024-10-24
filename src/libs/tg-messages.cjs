@@ -101,7 +101,25 @@ module.exports.sendErrorMessage = async function (bot, message, error) {
       },
     ]),
   });
-  return bot.sendMessage(message.chat.id, 'Произошла ошибка: ' + error.message, {
-    disable_web_page_preview: true,
-  });
+  switch (error.message) {
+    case 'Unauthorized': {
+      return bot.sendMessage(message.chat.id, 'Требуется авторизация /start', {
+        disable_web_page_preview: true,
+      });
+    }
+    case 'Bad Request': {
+      return bot.sendMessage(
+        message.chat.id,
+        'Пожалуйста, уточните дату и время. Даты которые уже прошли не могут быть созданы.',
+        {
+          disable_web_page_preview: true,
+        },
+      );
+    }
+    default: {
+      return bot.sendMessage(message.chat.id, 'Произошла ошибка: ' + error.message, {
+        disable_web_page_preview: true,
+      });
+    }
+  }
 };

@@ -129,10 +129,7 @@ module.exports.generateCalendar = async ({ id, activity, jwt, language }) => {
     },
   });
   if (error) {
-    throw new Error(error.message);
-  }
-  if (!result) {
-    throw new Error('Пожалуйста, уточните дату и время. Даты которые уже прошли не могут быть созданы.');
+    throw error;
   }
   const { data, type } = result;
   if (type !== 'text/calendar') {

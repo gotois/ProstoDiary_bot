@@ -32,7 +32,10 @@ class Dialog {
     };
   }
   /**
-   * @param {Object} message - telegram bot message
+   * Обрабатывает входящее сообщение и добавляет его в активность.
+   *
+   * @param {object} message - Входящее сообщение.
+   * @returns {Promise<object>} - Возвращает объект активности.
    */
   async push(message) {
     const activity = activitystreams(message);
@@ -88,11 +91,12 @@ class Dialog {
         });
       }
     } else if (message.document) {
-      // const response = await fetch(message.document.file.url);
-      // const arrayBuffer = await response.arrayBuffer();
+      // ...
     } else if (message.sticker) {
       // ...
     } else if (message.video_note) {
+      // ...
+    } else if (message.audio) {
       // ...
     } else {
       console.warn(message);
@@ -110,7 +114,9 @@ class Dialog {
     return this._uid;
   }
   set language(languageCode) {
-    const hasLang = this.activity['@context'].some(c => (c && c['@language'] === languageCode))
+    const hasLang = this.activity['@context'].some((c) => {
+      return c && c['@language'] === languageCode;
+    });
     if (!hasLang) {
       this.activity['@context'].push({
         '@language': languageCode,
