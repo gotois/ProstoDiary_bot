@@ -46,10 +46,10 @@ class Dialog {
       const response = await fetch(message.voice.file.url);
       const arrayBuffer = await response.arrayBuffer();
       const [{ queryResult }] = await this.voice(Buffer.from(arrayBuffer));
-      this.language = queryResult.languageCode;
       activity.summary = queryResult.intent.displayName;
+      this.language = queryResult.languageCode;
       switch (queryResult.intent.displayName) {
-        default: {
+        case 'OrganizeAction': {
           activity.object = [
             {
               type: 'Note',
@@ -57,6 +57,9 @@ class Dialog {
               mediaType: 'text/plain',
             },
           ];
+          break;
+        }
+        default: {
           break;
         }
       }
