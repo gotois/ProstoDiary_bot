@@ -1,4 +1,5 @@
 const Dialog = require('../../libs/dialog.cjs');
+const { TEXT_CALENDAR } = require('../../libs/mime-types.cjs');
 
 module.exports = async (bot, message) => {
   const dialog = new Dialog();

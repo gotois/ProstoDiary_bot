@@ -1,4 +1,5 @@
 const { sendPrepareAction } = require('./tg-prepare-action.cjs');
+const { TEXT_CALENDAR } = require('../libs/mime-types.cjs');
 
 const keyboardStart = (url) => {
   const keyboard = {
@@ -33,8 +34,7 @@ const keyboardLaterTomorrow = () => {
 };
 
 module.exports.sendPrepareCalendar = async function (bot, message) {
-  const accept = 'text/calendar';
-  await bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
+  await bot.sendChatAction(message.chat.id, sendPrepareAction(TEXT_CALENDAR));
   await bot.setMessageReaction(message.chat.id, message.message_id, {
     reaction: JSON.stringify([
       {

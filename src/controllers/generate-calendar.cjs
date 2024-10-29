@@ -1,6 +1,7 @@
 const ICAL = require('ical.js');
 const requestJsonRpc2 = require('request-json-rpc2').default;
 const { serializeMarkdownV2 } = require('../libs/md-serialize.cjs');
+const { TEXT_CALENDAR } = require('../libs/mime-types.cjs');
 
 const { GIC_RPC } = process.env;
 
@@ -124,7 +125,7 @@ module.exports.generateCalendar = async ({ id, activity, jwt, language }) => {
     },
     jwt: jwt,
     headers: {
-      'Accept': 'text/calendar',
+      'Accept': TEXT_CALENDAR,
       'Accept-Language': language,
     },
   });
@@ -132,7 +133,7 @@ module.exports.generateCalendar = async ({ id, activity, jwt, language }) => {
     throw error;
   }
   const { data, type } = result;
-  if (type !== 'text/calendar') {
+  if (type !== TEXT_CALENDAR) {
     throw new Error(data);
   }
   return data;

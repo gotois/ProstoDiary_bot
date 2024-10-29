@@ -1,6 +1,8 @@
 const ICAL = require('ical.js');
 const { sendPrepareAction } = require('../../libs/tg-prepare-action.cjs');
 const { getCalendars } = require('../../libs/database.cjs');
+const { TEXT_CALENDAR } = require('../../libs/mime-types.cjs');
+
 /**
  * @description Отправка файла ical пользователю
  * @param {any} bot - telegram bot
@@ -14,7 +16,7 @@ module.exports = async (bot, message) => {
   const summary = comp.getFirstSubcomponent('vevent')?.getFirstPropertyValue('summary')?.toLowerCase();
   const description = comp.getFirstSubcomponent('vevent')?.getFirstPropertyValue('description');
   const fileEvent = new File([new TextEncoder().encode(ical)], summary + '.ics', {
-    type: 'text/calendar',
+    type: TEXT_CALENDAR,
   });
   const accept = fileEvent.type;
   bot.sendChatAction(message.chat.id, sendPrepareAction(accept));
