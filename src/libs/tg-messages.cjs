@@ -1,5 +1,6 @@
 const { sendPrepareAction } = require('./tg-prepare-action.cjs');
 const { TEXT_CALENDAR } = require('../libs/mime-types.cjs');
+const { serializeMarkdownV2 } = require('../libs/md-serialize.cjs');
 
 const keyboardStart = (url) => {
   const keyboard = {
@@ -71,7 +72,7 @@ module.exports.sendCalendarMessage = async function (bot, message, output, googl
 };
 
 module.exports.sendTaskMessage = async function (bot, calendarMessage, task, url) {
-  await bot.unpinChatMessage(calendarMessage.chat.id, {})
+  await bot.unpinChatMessage(calendarMessage.chat.id, {});
   const editMessage = await bot.editMessageText(task, {
     chat_id: calendarMessage.chat.id,
     message_id: calendarMessage.message_id,
@@ -81,7 +82,7 @@ module.exports.sendTaskMessage = async function (bot, calendarMessage, task, url
       inline_keyboard: [[keyboardStart(url)]],
     },
   });
-  const taskMessage = await bot.sendMessage(calendarMessage.chat.id, task, {
+  const taskMessage = await bot.sendMessage(calendarMessage.chat.id, serializeMarkdownV2(task), {
     parse_mode: 'MarkdownV2',
     reply_to_message_id: calendarMessage.message_id,
     reply_markup: {

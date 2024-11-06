@@ -49,13 +49,13 @@ module.exports.getUsers = (idUser) => {
 
 module.exports.setJWT = (userId, jwt) => {
   const insert = database.prepare(`
-    INSERT INTO users (key, jwt) VALUES (?, ?)
+    INSERT INTO users (key, jwt) VALUES (:key, :jwt)
     ON CONFLICT(key)
     DO
-      UPDATE SET jwt = ("${jwt}")
-      WHERE key = ("${userId}")
+      UPDATE SET jwt = :jwt
+      WHERE key = :key
   `);
-  insert.run(userId, jwt);
+  insert.run({ key: userId, jwt: jwt });
 };
 
 module.exports.getCalendars = (id, idUser) => {

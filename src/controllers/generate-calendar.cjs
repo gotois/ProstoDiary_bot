@@ -92,7 +92,7 @@ module.exports.formatCalendarMessage = (ical, locale = 'ru') => {
   if (dtStart) {
     const date = new Date(dtStart);
     const dateString = new Intl.DateTimeFormat(locale).format(date);
-    output += `📅 **Дата:** ${dateString}\n`;
+    output += `📅 **Дата:** ${serializeMarkdownV2(dateString)}\n`;
 
     if (date.getHours() !== 0) {
       const timeString = new Intl.DateTimeFormat(locale, {
@@ -100,7 +100,7 @@ module.exports.formatCalendarMessage = (ical, locale = 'ru') => {
         minute: 'numeric',
         hour12: false,
       }).format(date);
-      output += `🕐 **Время:** ${timeString}\n`;
+      output += `🕐 **Время:** ${serializeMarkdownV2(timeString)}\n`;
     }
   }
   const location = vevent.getFirstPropertyValue('location');
