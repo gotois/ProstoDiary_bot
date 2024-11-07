@@ -2,5 +2,6 @@
 module.exports.serializeMarkdownV2 = function (text) {
   text = text.replaceAll('.', '\\.');
   text = text.replaceAll('-', '\\-');
+  text = text.replaceAll('!', '\\!');
   return text;
 };

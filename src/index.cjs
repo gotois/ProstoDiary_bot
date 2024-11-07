@@ -85,7 +85,8 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['reply_to_message']: () => {},
 
       /* CALLBACK */
-      ['auth_by_contact']: registrationAction,
+      ['web_app_data']: registrationAction,
+      ['auth_by_contact']: () => {},
       ['send_calendar']: checkAuth(sendCalendar),
 
       // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день

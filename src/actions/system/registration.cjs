@@ -1,9 +1,4 @@
-const requestJsonRpc2 = require('request-json-rpc2').default;
-const activitystreams = require('telegram-bot-activitystreams');
-const { v1: uuidv1 } = require('uuid');
 const { setJWT } = require('../../libs/database.cjs');
-
-const { GIC_AUTH, GIC_USER, GIC_PASSWORD } = process.env;
 
 function registrationSuccessMessage() {
   return `
@@ -25,7 +20,7 @@ function registrationSuccessMessage() {
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  const activity = activitystreams(message);
+  /* todo - перенести в другие модули где требуется получить изображение пользователя
   const profilePhotos = await bot.getUserProfilePhotos(message.chat.id);
   if (profilePhotos.photos.length > 0) {
     const userPicture = await bot.getFileLink(profilePhotos.photos[0][0].file_id);
@@ -35,35 +30,24 @@ module.exports = async (bot, message) => {
       mediaType: 'image/jpeg',
     };
   }
-  activity.actor.to = `tel:+${message.contact.phone_number}`;
+  */
 
-  const { result, error } = await requestJsonRpc2({
-    url: GIC_AUTH,
-    body: {
-      id: uuidv1(),
-      method: 'registration',
-      params: activity,
-    },
-    auth: {
-      user: GIC_USER,
-      pass: GIC_PASSWORD,
-    },
-  });
-  await bot.deleteMessage(message.chat.id, message.message_id);
-  if (error) {
+  try {
+    await bot.deleteMessage(message.chat.id, message.message_id);
+    setJWT(Number(message.chat.id), message.web_app_data.data);
+
+    await bot.sendMessage(message.chat.id, registrationSuccessMessage(), {
+      parse_mode: 'MarkdownV2',
+      message_effect_id: '5046509860389126442', // 🎉
+      reply_markup: {
+        remove_keyboard: true,
+      },
+    });
+  } catch (error) {
     console.error(error);
     return bot.sendMessage(message.chat.id, 'Произошла ошибка: ' + error.message, {
       parse_mode: 'MarkdownV2',
       message_effect_id: '5046589136895476101', // 💩
     });
   }
-  setJWT(Number(message.chat.id), result);
-
-  await bot.sendMessage(message.chat.id, registrationSuccessMessage(), {
-    parse_mode: 'MarkdownV2',
-    message_effect_id: '5046509860389126442', // 🎉
-    reply_markup: {
-      remove_keyboard: true,
-    },
-  });
 };

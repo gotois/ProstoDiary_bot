@@ -55,8 +55,9 @@ module.exports = async (bot, message) => {
       keyboard: [
         [
           {
-            text: 'Принимаю лицензионное соглашение',
-            request_contact: true,
+            text: 'Зарегистрироваться',
+            // request_contact: true,
+            web_app: { url: 'https://archive.gotointeractive.com/?view=telegram' },
           },
         ],
       ],
