@@ -39,7 +39,7 @@ curl -X POST \
 -H "Authorization: Bearer $JWT_TOKEN" \ 
 -H "Content-Type: application/json" \ 
 -H "Accept: application/schema+json" \
---data '{"jsonrpc":"2.0","method":"ping","params": $ACTION_JSONLD,"id":1}' http://127.0.0.1:9000/api
+--data '{"jsonrpc":"2.0","method":"ping","params": $ACTION_JSONLD,"id":1}' http://127.0.0.1:5555/api
 ```
 
 ### Хочу получать JSON данные своего сообщения через iTerm

@@ -3,7 +3,7 @@ const requestJsonRpc2 = require('request-json-rpc2').default;
 const { serializeMarkdownV2 } = require('../libs/md-serialize.cjs');
 const { TEXT_CALENDAR } = require('../libs/mime-types.cjs');
 
-const { GIC_RPC } = process.env;
+const { SERVER_HOST } = process.env;
 
 module.exports.formatGoogleCalendarUrl = function (ical) {
   const icalData = ICAL.parse(ical);
@@ -117,7 +117,7 @@ module.exports.formatCalendarMessage = (ical, locale = 'ru') => {
 
 module.exports.generateCalendar = async ({ id, activity, jwt, language }) => {
   const { result, error } = await requestJsonRpc2({
-    url: GIC_RPC,
+    url: SERVER_HOST + '/rpc',
     body: {
       id: id,
       method: 'generate-calendar',

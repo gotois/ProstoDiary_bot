@@ -31,9 +31,9 @@ scripts/prepare
 
 `TELEGRAM_DOMAIN`
 
-`GIC_RPC`
+`SERVER_HOST`
 
-`GIC_AUTH`
+`TELEGRAM_MINI_APP`
 
 ## Simple server
 
@@ -106,7 +106,7 @@ Create a `.env` file and write:
 
 `TELEGRAM_TOKEN=YOUR_TELEGRAM_TOKEN`
 
-`GIC_RPC`
+`SERVER_HOST`
 
 ```bash
 docker compose --env-file .env up --build

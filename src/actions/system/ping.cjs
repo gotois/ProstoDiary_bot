@@ -1,8 +1,4 @@
-const { v1: uuidv1 } = require('uuid');
-const requestJsonRpc2 = require('request-json-rpc2').default;
-const activitystreams = require('telegram-bot-activitystreams');
-
-const { GIC_AUTH, GIC_USER, GIC_PASSWORD } = process.env;
+const { SERVER_HOST, SERVER_HOST_USERNAME, SERVER_HOST_PASSWORD } = process.env;
 
 /**
  * Проверка сети
@@ -11,25 +7,23 @@ const { GIC_AUTH, GIC_USER, GIC_PASSWORD } = process.env;
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  const response = await requestJsonRpc2({
-    url: GIC_AUTH,
-    body: {
-      id: uuidv1(),
-      method: 'ping',
-      params: activitystreams(message),
-    },
-    auth: {
-      user: GIC_USER,
-      pass: GIC_PASSWORD,
-    },
-  });
-  // eslint-disable-next-line unicorn/prefer-ternary
-  if (response.error) {
-    return bot.sendMessage(message.chat.id, response.error.message, {
+  try {
+    const response = await fetch(SERVER_HOST + '/ping', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + btoa(SERVER_HOST_USERNAME + ':' + SERVER_HOST_PASSWORD),
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Not ok');
+    }
+    const result = await response.text();
+    return bot.sendMessage(message.chat.id, result, {
       parse_mode: 'MarkdownV2',
     });
-  } else {
-    return bot.sendMessage(message.chat.id, response.result, {
+  } catch (error) {
+    return bot.sendMessage(message.chat.id, error.message, {
       parse_mode: 'MarkdownV2',
     });
   }

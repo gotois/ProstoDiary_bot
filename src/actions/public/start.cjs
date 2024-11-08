@@ -1,3 +1,4 @@
+const { TELEGRAM_MINI_APP } = process.env;
 const { getUsers } = require('../../libs/database.cjs');
 
 function getWelcomeText() {
@@ -55,9 +56,8 @@ module.exports = async (bot, message) => {
       keyboard: [
         [
           {
-            text: 'Зарегистрироваться',
-            // request_contact: true,
-            web_app: { url: 'https://archive.gotointeractive.com/?view=telegram' },
+            text: 'Авторизоваться',
+            web_app: { url: `${TELEGRAM_MINI_APP}/tutorial?lang=${message.from.language_code}` },
           },
         ],
       ],
