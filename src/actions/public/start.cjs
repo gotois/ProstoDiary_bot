@@ -25,7 +25,10 @@ function getWelcomeText() {
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  if (!process.env.NODE_ENV?.toLowerCase()?.startsWith('dev')) {
+  let webAppUrl = `${TELEGRAM_MINI_APP}/tutorial?lang=${message.from.language_code}`;
+  if (process.env.NODE_ENV?.toLowerCase()?.startsWith('dev')) {
+    webAppUrl += '&debug=1';
+  } else {
     const users = getUsers(message.chat.id);
     if (users.length > 0) {
       return bot.sendMessage(
@@ -57,7 +60,7 @@ module.exports = async (bot, message) => {
         [
           {
             text: 'Авторизоваться',
-            web_app: { url: `${TELEGRAM_MINI_APP}/tutorial?lang=${message.from.language_code}` },
+            web_app: { url: webAppUrl },
           },
         ],
       ],

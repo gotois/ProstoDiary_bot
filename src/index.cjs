@@ -85,7 +85,18 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
       ['reply_to_message']: () => {},
 
       /* CALLBACK */
-      ['web_app_data']: registrationAction,
+      ['web_app_data']: (bot, message) => {
+        const webAppData = JSON.parse(message.web_app_data);
+        switch (webAppData.type) {
+          case 'registration': {
+            return registrationAction(bot, message, webAppData.data);
+          }
+          default: {
+            console.warn('Unknown type:' + webAppData.type, webAppData);
+            break;
+          }
+        }
+      },
       ['auth_by_contact']: () => {},
       ['send_calendar']: checkAuth(sendCalendar),
 

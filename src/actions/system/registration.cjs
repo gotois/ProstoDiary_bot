@@ -17,9 +17,10 @@ function registrationSuccessMessage() {
  * @description Ассистент детектирует пользователя
  * @param {any} bot - telegram bot
  * @param {any} message - telegram message
+ * @param {string} jwt - Server JWT
  * @returns {Promise<void>}
  */
-module.exports = async (bot, message) => {
+module.exports = async (bot, message, jwt) => {
   /* todo - перенести в другие модули где требуется получить изображение пользователя
   const profilePhotos = await bot.getUserProfilePhotos(message.chat.id);
   if (profilePhotos.photos.length > 0) {
@@ -34,7 +35,7 @@ module.exports = async (bot, message) => {
 
   try {
     await bot.deleteMessage(message.chat.id, message.message_id);
-    setJWT(Number(message.chat.id), message.web_app_data.data);
+    setJWT(Number(message.chat.id), jwt);
 
     await bot.sendMessage(message.chat.id, registrationSuccessMessage(), {
       parse_mode: 'MarkdownV2',
