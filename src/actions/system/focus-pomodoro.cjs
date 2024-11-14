@@ -1,3 +1,5 @@
+const { TELEGRAM_MINI_APP_URL } = require('../../environments/index.cjs');
+
 module.exports = async (bot, message) => {
   console.log('start pomodoro timer', message);
   await bot.setMessageReaction(message.chat.id, message.message_id, {
@@ -20,10 +22,10 @@ module.exports = async (bot, message) => {
         [
           {
             text: 'Завершить',
-            'url': 'https://t.me/gotois_bot/App'
+            url: TELEGRAM_MINI_APP_URL,
           },
         ],
       ],
     },
   });
-}
+};

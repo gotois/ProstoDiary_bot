@@ -2,8 +2,7 @@ const ICAL = require('ical.js');
 const requestJsonRpc2 = require('request-json-rpc2').default;
 const { serializeMarkdownV2 } = require('../libs/md-serialize.cjs');
 const { TEXT_CALENDAR } = require('../libs/mime-types.cjs');
-
-const { SERVER_HOST } = process.env;
+const { SERVER_HOST } = require('../environments/index.cjs');
 
 module.exports.formatGoogleCalendarUrl = function (ical) {
   const icalData = ICAL.parse(ical);

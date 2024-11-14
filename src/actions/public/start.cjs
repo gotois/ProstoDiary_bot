@@ -1,4 +1,4 @@
-const { TELEGRAM_MINI_APP } = process.env;
+const { TELEGRAM_MINI_APP, IS_DEV } = require('../../environments/index.cjs');
 const { getUsers } = require('../../libs/database.cjs');
 
 function getWelcomeText() {
@@ -12,9 +12,16 @@ function getWelcomeText() {
     '🔄 Синхронизация с другими календарями\n\n' +
     '📊 Анализ вашего расписания\n\n' +
     'Продолжая использование вы соглашаетесь с Лицензионным соглашением /licence\\.\n'
-    // 'Узнай больше подробностей командой /help.' +
-    // 'Предоставь свои контакты чтобы продолжить пользоваться сервисом',
-  );
+  ).trim();
+}
+
+function getInstallAgainText() {
+  return (
+    '**Требуется повторная установка**\n\n' +
+    'Предоставь свои контакты заново, чтобы продолжить пользоваться сервисом\\.\n\n' +
+    'Узнай больше подробностей командой /help\\.\n' +
+    'Продолжая использование вы соглашаетесь с Лицензионным соглашением /licence\\.\n'
+  ).trim();
 }
 
 /**
@@ -26,44 +33,59 @@ function getWelcomeText() {
  */
 module.exports = async (bot, message) => {
   let webAppUrl = `${TELEGRAM_MINI_APP}/tutorial?lang=${message.from.language_code}`;
-  if (process.env.NODE_ENV?.toLowerCase()?.startsWith('dev')) {
+  // eslint-disable-next-line unicorn/consistent-destructuring
+  if (IS_DEV) {
     webAppUrl += '&debug=1';
-  } else {
-    const users = getUsers(message.chat.id);
-    if (users.length > 0) {
-      return bot.sendMessage(
-        message.chat.id,
-        'Повторная установка не требуется\n\n' + '/help - помощь' + '\n' + '/licence - соглашение',
-      );
-    }
   }
-
-  const me = await bot.getMe();
-  const photos = await bot.getUserProfilePhotos(me.id);
-  const photo = photos.photos?.[0]?.[0]?.file_id;
-  const file = await bot.getFile(photo);
-  const fileBuffer = await bot.getFileStream(file.file_id);
-  await bot.sendPhoto(message.chat.id, fileBuffer, {
-    caption: 'Hello',
-    parse_mode: 'HTML',
-    filename: 'hello',
-    contentType: 'image/png',
-  });
-  await bot.sendMessage(message.chat.id, getWelcomeText(), {
-    parse_mode: 'MarkdownV2',
-    disable_notification: true,
-    reply_markup: {
-      remove_keyboard: true,
-      resize_keyboard: true,
-      one_time_keyboard: true,
-      keyboard: [
-        [
-          {
-            text: 'Авторизоваться',
-            web_app: { url: webAppUrl },
-          },
+  const existUser = getUsers(message.chat.id)?.length > 0;
+  if (!existUser) {
+    await bot.sendMessage(message.chat.id, getInstallAgainText(), {
+      parse_mode: 'MarkdownV2',
+      disable_notification: true,
+      reply_markup: {
+        remove_keyboard: true,
+        resize_keyboard: true,
+        one_time_keyboard: true,
+        keyboard: [
+          [
+            {
+              text: 'Принимаю лицензионное соглашение',
+              request_contact: true,
+            },
+          ],
         ],
-      ],
-    },
-  });
+      },
+    });
+  } else {
+    /* uncomment in prod
+    const me = await bot.getMe();
+    const photos = await bot.getUserProfilePhotos(me.id);
+    const photo = photos.photos?.[0]?.[0]?.file_id;
+    const file = await bot.getFile(photo);
+    const fileBuffer = await bot.getFileStream(file.file_id);
+    await bot.sendPhoto(message.chat.id, fileBuffer, {
+      caption: 'Hello',
+      parse_mode: 'HTML',
+      filename: 'hello',
+      contentType: 'image/png',
+    });
+    */
+    bot.sendMessage(message.chat.id, getWelcomeText(), {
+      parse_mode: 'MarkdownV2',
+      disable_notification: true,
+      reply_markup: {
+        remove_keyboard: true,
+        resize_keyboard: true,
+        one_time_keyboard: true,
+        keyboard: [
+          [
+            {
+              text: 'Авторизоваться',
+              web_app: { url: webAppUrl },
+            },
+          ],
+        ],
+      },
+    });
+  }
 };

@@ -7,9 +7,9 @@ function registrationSuccessMessage() {
 Отправь мне войс, текст или картинку и я добавлю это событие в твой календарь\\!
 
 Например:
-**"💈Напомни завтра о барбершопе в 9:00 на Бауманской"**
-**"📆В это воскресенье будет митап"**
-**"💧Мне важно пить 2 литра воды в день ежедневно"**
+**💈Напомни завтра о барбершопе в 9:00 на Бауманской**
+**📆В это воскресенье будет митап**
+**💧Мне важно пить 2 литра воды в день ежедневно**
 `.trim();
 }
 
@@ -21,18 +21,6 @@ function registrationSuccessMessage() {
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message, jwt) => {
-  /* todo - перенести в другие модули где требуется получить изображение пользователя
-  const profilePhotos = await bot.getUserProfilePhotos(message.chat.id);
-  if (profilePhotos.photos.length > 0) {
-    const userPicture = await bot.getFileLink(profilePhotos.photos[0][0].file_id);
-    activity.actor.image = {
-      type: 'Link',
-      href: userPicture,
-      mediaType: 'image/jpeg',
-    };
-  }
-  */
-
   try {
     await bot.deleteMessage(message.chat.id, message.message_id);
     setJWT(Number(message.chat.id), jwt);

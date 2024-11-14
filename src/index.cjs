@@ -1,9 +1,11 @@
 const botController = require('telegram-bot-api-express');
+const { TELEGRAM_TOKEN, TELEGRAM_DOMAIN } = require('./environments/index.cjs');
 const pingAction = require('./actions/system/ping.cjs');
 const dbclearAction = require('./actions/system/dbclear.cjs');
 const helpAction = require('./actions/system/help.cjs');
 const offertaAction = require('./actions/system/offerta.cjs');
-const registrationAction = require('./actions/system/registration.cjs');
+const registrationByMiniAppAction = require('./actions/system/registration.cjs');
+const registrationByPhoneAction = require('./actions/system/registration-phone.cjs');
 const wantAction = require('./actions/system/want.cjs');
 const sendCalendar = require('./actions/system/send-calendar.cjs');
 const startAction = require('./actions/public/start.cjs');
@@ -48,7 +50,7 @@ function checkAuth(callback) {
   };
 }
 
-module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TELEGRAM_DOMAIN }) => {
+module.exports = ({ token = TELEGRAM_TOKEN, domain = TELEGRAM_DOMAIN }) => {
   return botController({
     token: token,
     domain: domain,
@@ -86,10 +88,10 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
 
       /* CALLBACK */
       ['web_app_data']: (bot, message) => {
-        const webAppData = JSON.parse(message.web_app_data);
+        const webAppData = JSON.parse(message.web_app_data.data);
         switch (webAppData.type) {
           case 'registration': {
-            return registrationAction(bot, message, webAppData.data);
+            return registrationByMiniAppAction(bot, message, webAppData.data);
           }
           default: {
             console.warn('Unknown type:' + webAppData.type, webAppData);
@@ -97,7 +99,7 @@ module.exports = ({ token = process.env.TELEGRAM_TOKEN, domain = process.env.TEL
           }
         }
       },
-      ['auth_by_contact']: () => {},
+      ['auth_by_contact']: registrationByPhoneAction,
       ['send_calendar']: checkAuth(sendCalendar),
 
       // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день

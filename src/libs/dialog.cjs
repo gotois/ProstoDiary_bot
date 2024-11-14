@@ -1,13 +1,10 @@
 const dialogflow = require('@google-cloud/dialogflow');
 const activitystreams = require('telegram-bot-activitystreams');
 const { v1: uuidv1 } = require('uuid');
-
-const { DIALOGFLOW_CREDENTIALS } = process.env;
-
-const dfCredentials = JSON.parse(DIALOGFLOW_CREDENTIALS);
+const { DIALOGFLOW_CREDENTIALS } = require('../environments/index.cjs');
 
 const sessionClient = new dialogflow.SessionsClient({
-  credentials: dfCredentials,
+  credentials: DIALOGFLOW_CREDENTIALS,
 });
 
 class Dialog {
@@ -130,6 +127,7 @@ class Dialog {
    * @returns {string}
    */
   get language() {
+    // eslint-disable-next-line unicorn/no-array-reduce
     return this.activity['@context'].reduce((accumulator, element) => {
       if (element['@language']) {
         return element['@language'];
@@ -140,7 +138,7 @@ class Dialog {
    * @returns {string}
    */
   get session() {
-    return sessionClient.projectAgentSessionPath(dfCredentials.project_id, this.uid);
+    return sessionClient.projectAgentSessionPath(DIALOGFLOW_CREDENTIALS.project_id, this.uid);
   }
   /**
    * @param {Buffer} fileAudio - audio

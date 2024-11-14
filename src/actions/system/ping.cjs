@@ -1,4 +1,4 @@
-const { SERVER_HOST, SERVER_HOST_USERNAME, SERVER_HOST_PASSWORD } = process.env;
+const { SERVER_HOST, SERVER_HOST_USERNAME, SERVER_HOST_PASSWORD } = require('../../environments/index.cjs');
 
 /**
  * Проверка сети

@@ -1,12 +1,9 @@
 const sqlite = require('node:sqlite');
+const { IS_DEV } = require('../environments/index.cjs');
 
 const database = (() => {
-  // eslint-disable-next-line unicorn/prefer-ternary
-  if (process.env.NODE_ENV?.toLowerCase()?.startsWith('dev')) {
-    return new sqlite.DatabaseSync('database.sqlite');
-  } else {
-    return new sqlite.DatabaseSync(':memory:');
-  }
+  const location = IS_DEV ? 'database.sqlite' : ':memory:';
+  return new sqlite.DatabaseSync(location);
 })();
 
 function createUsersTable() {
