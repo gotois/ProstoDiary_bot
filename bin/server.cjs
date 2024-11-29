@@ -1,6 +1,4 @@
 const express = require('express');
-const ngrok = require('../../landing-page/web/node_modules/ngrok/index.js');
-
 const argv = require('minimist')(process.argv.slice(2));
 const prostoDiaryBot = require('../src/index.cjs');
 
@@ -18,6 +16,8 @@ if (true) {
       }).middleware
     )
 } else {
+  // нужно для доступа через HTTPS
+  const ngrok = require('../../landing-page/web/node_modules/ngrok/index.js');
   ngrok.connect({
     proto: "http",
     addr: port,
@@ -32,4 +32,3 @@ if (true) {
     console.error(error);
   });
 }
-

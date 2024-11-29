@@ -1,5 +1,5 @@
 const { setJWT } = require('../../libs/database.cjs');
-const { SERVER_HOST, SERVER_HOST_USERNAME, SERVER_HOST_PASSWORD } = require('../../environments/index.cjs');
+const { SERVER_HOST } = require('../../environments/index.cjs');
 const { generateTelegramHash } = require('../../libs/tg-crypto.cjs');
 
 function registrationSuccessMessage() {
@@ -32,7 +32,7 @@ module.exports = async (bot, message) => {
     const profilePhotos = await bot.getUserProfilePhotos(message.chat.id);
     if (profilePhotos.photos.length > 0) {
       const userPicture = await bot.getFileLink(profilePhotos.photos[0][0].file_id);
-      body.picture = userPicture;
+      body.photo_url = userPicture;
     }
   } catch (error) {
     console.error(error);
@@ -42,7 +42,6 @@ module.exports = async (bot, message) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + btoa(SERVER_HOST_USERNAME + ':' + SERVER_HOST_PASSWORD),
       },
       body: JSON.stringify(body),
     });

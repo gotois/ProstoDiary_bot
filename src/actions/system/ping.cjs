@@ -1,4 +1,4 @@
-const { SERVER_HOST, SERVER_HOST_USERNAME, SERVER_HOST_PASSWORD } = require('../../environments/index.cjs');
+const { SERVER_HOST } = require('../../environments/index.cjs');
 
 /**
  * Проверка сети
@@ -12,7 +12,6 @@ module.exports = async (bot, message) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + btoa(SERVER_HOST_USERNAME + ':' + SERVER_HOST_PASSWORD),
       },
     });
     if (!response.ok) {

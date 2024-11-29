@@ -6,8 +6,7 @@ ENV TZ=Europe/Moscow
 
 WORKDIR /app
 
-COPY package.json ./
-COPY package-lock.json ./
+COPY package.json package-lock.json ./
 COPY bin/* ./bin/
 COPY scripts/* ./scripts/
 COPY src/ ./src/

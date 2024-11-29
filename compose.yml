@@ -5,13 +5,11 @@ services:
     build:
       context: .
       target: build
-    container_name: 'tg_bot'
+    container_name: 'secretary-tg'
     environment:
       - TELEGRAM_TOKEN=$TELEGRAM_TOKEN
       - TELEGRAM_DOMAIN=$TELEGRAM_DOMAIN
       - SERVER_HOST=http://web-dev:5555
-      - SERVER_HOST_USERNAME=$SERVER_HOST_USERNAME
-      - SERVER_HOST_PASSWORD=$SERVER_HOST_PASSWORD
       - DIALOGFLOW_CREDENTIALS=$DIALOGFLOW_CREDENTIALS
       - DIALOGFLOW_CREDENTIALS_SEARCH=$DIALOGFLOW_CREDENTIALS_SEARCH
       - DIALOGFLOW_PROJECT_ID=$DIALOGFLOW_PROJECT_ID

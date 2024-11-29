@@ -99,8 +99,7 @@ Run
 npm run dev:docs
 ```
 
-Docker Image
----
+## Docker Image
 
 Create a `.env` file and write:
 
@@ -112,11 +111,16 @@ Create a `.env` file and write:
 docker compose --env-file .env up --build
 ```
 
-Run Telegram Bot
----
+### Run Telegram Bot Dev
 
 ```bash
 docker compose --env-file .env up -d
+```
+
+### Run Telegram Bot Prod
+
+```bash
+docker compose --env-file .env -f compose.yml -f compose.prod.yml up --build
 ```
 
 Возможности управления системой
