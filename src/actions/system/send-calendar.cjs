@@ -25,7 +25,7 @@ module.exports = async (bot, message) => {
     message.chat.id,
     Buffer.from(arrayBuffer),
     {
-      caption: description ?? null,
+      caption: description ?? undefined,
       disable_notification: true,
     },
     {
