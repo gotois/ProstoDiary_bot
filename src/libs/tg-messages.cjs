@@ -48,14 +48,14 @@ module.exports.sendPrepareCalendar = async function (bot, message) {
 
 module.exports.sendCalendarMessage = async function (bot, message, output, googleCalendarUrl) {
   const keyboardDownloadCalendar = {
-    text: 'Скачать',
+    text: 'Скачать ICS',
     callback_data: 'send_calendar',
   };
   const keyboardGoogleCalendar = {
     text: 'В Google Calendar',
     url: googleCalendarUrl,
   };
-  const calendarMessage = await bot.sendMessage(message.chat.id, output, {
+  const calendarMessage = await bot.sendMessage(message.chat.id, serializeMarkdownV2(output), {
     reply_to_message_id: message.message_id,
     parse_mode: 'MarkdownV2',
     protect_content: true,
@@ -73,7 +73,8 @@ module.exports.sendCalendarMessage = async function (bot, message, output, googl
 
 module.exports.sendTaskMessage = async function (bot, calendarMessage, task, url) {
   await bot.unpinChatMessage(calendarMessage.chat.id, {});
-  const editMessage = await bot.editMessageText(task, {
+  const formatedTask = serializeMarkdownV2(task);
+  const editMessage = await bot.editMessageText(formatedTask, {
     chat_id: calendarMessage.chat.id,
     message_id: calendarMessage.message_id,
     parse_mode: 'MarkdownV2',
@@ -82,7 +83,7 @@ module.exports.sendTaskMessage = async function (bot, calendarMessage, task, url
       inline_keyboard: [[keyboardStart(url)]],
     },
   });
-  const taskMessage = await bot.sendMessage(calendarMessage.chat.id, serializeMarkdownV2(task), {
+  const taskMessage = await bot.sendMessage(calendarMessage.chat.id, formatedTask, {
     parse_mode: 'MarkdownV2',
     reply_to_message_id: calendarMessage.message_id,
     reply_markup: {

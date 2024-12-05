@@ -1,14 +1,7 @@
-const dialogflow = require('@google-cloud/dialogflow');
 const activitystreams = require('telegram-bot-activitystreams');
 const { v1: uuidv1 } = require('uuid');
-const { DIALOGFLOW_CREDENTIALS } = require('../environments/index.cjs');
-
-const sessionClient = new dialogflow.SessionsClient({
-  credentials: DIALOGFLOW_CREDENTIALS,
-});
 
 class Dialog {
-  static DIALOGFLOW_LIMIT = 256;
   /**
    * @class
    */
@@ -16,12 +9,7 @@ class Dialog {
     this._uid = uuidv1();
     this.messages = [];
     this.activity = {
-      '@context': [
-        'https://www.w3.org/ns/activitystreams',
-        {
-          '@language': 'ru', // todo пока используем только русский
-        },
-      ],
+      '@context': ['https://www.w3.org/ns/activitystreams'],
       'summary': '',
       'type': 'Collection',
       'totalItems': 0,
@@ -34,36 +22,15 @@ class Dialog {
    * @param {object} message - Входящее сообщение.
    * @returns {Promise<object>} - Возвращает объект активности.
    */
-  async push(message) {
+  push(message) {
     const activity = activitystreams(message);
     activity.type = 'Activity';
     this.language = message.from.language_code;
 
     if (message.voice) {
-      const response = await fetch(message.voice.file.url);
-      const arrayBuffer = await response.arrayBuffer();
-      const [{ queryResult }] = await this.voice(Buffer.from(arrayBuffer));
-      activity.summary = queryResult.intent.displayName;
-      this.language = queryResult.languageCode;
-      switch (queryResult.intent.displayName) {
-        case 'OrganizeAction': {
-          activity.object = [
-            {
-              type: 'Note',
-              content: queryResult.queryText,
-              mediaType: 'text/plain',
-            },
-          ];
-          break;
-        }
-        default: {
-          break;
-        }
-      }
+      // ...
     } else if (message.text) {
-      const [{ queryResult }] = await this.text(message.text);
-      activity.summary = queryResult.intent.displayName;
-      this.language = queryResult.languageCode;
+      // ...
     } else if (message.photo) {
       // ...
     } else if (message.location) {
@@ -81,9 +48,6 @@ class Dialog {
         },
       ];
       if (message.location.caption) {
-        const [{ queryResult }] = await this.text(message.location.caption);
-        this.language = queryResult.languageCode;
-        activity.summary = queryResult.intent.displayName;
         activity.object.push({
           type: 'Note',
           content: message.location.caption,
@@ -98,8 +62,10 @@ class Dialog {
       // ...
     } else if (message.audio) {
       // ...
+    } else if (message.contact) {
+      // ...
     } else {
-      console.warn(message);
+      console.error(message);
       throw new Error('Unknown type message');
     }
     this.activity.totalItems++;
@@ -133,52 +99,6 @@ class Dialog {
         return element['@language'];
       }
     });
-  }
-  /**
-   * @returns {string}
-   */
-  get session() {
-    return sessionClient.projectAgentSessionPath(DIALOGFLOW_CREDENTIALS.project_id, this.uid);
-  }
-  /**
-   * @param {Buffer} fileAudio - audio
-   * @returns {Promise<object[]>}
-   */
-  voice(fileAudio) {
-    const request = {
-      session: this.session,
-      queryInput: {
-        audioConfig: {
-          audioEncoding: 'AUDIO_ENCODING_OGG_OPUS',
-          // eslint-disable-next-line
-          sampleRateHertz: 48000,
-          languageCode: this.language,
-        },
-      },
-      inputAudio: fileAudio,
-    };
-    return sessionClient.detectIntent(request);
-  }
-  /**
-   * @description Детектируем actions. Получаем и разбираем Intent (если есть)
-   * @param {string} text - text
-   * @returns {Promise<object[]>}
-   */
-  text(text) {
-    if (text.length >= Dialog.DIALOGFLOW_LIMIT) {
-      console.warn('Dialog text limit');
-      text = text.slice(0, Dialog.DIALOGFLOW_LIMIT);
-    }
-    const request = {
-      session: this.session,
-      queryInput: {
-        text: {
-          text: text,
-          languageCode: this.language,
-        },
-      },
-    };
-    return sessionClient.detectIntent(request);
   }
 }
 

@@ -1,5 +1,4 @@
-const { NODE_ENV, DIALOGFLOW_CREDENTIALS, TELEGRAM_MINI_APP, SERVER_HOST, TELEGRAM_TOKEN, TELEGRAM_DOMAIN } =
-  process.env;
+const { NODE_ENV, TELEGRAM_MINI_APP, SERVER_HOST, TELEGRAM_TOKEN, TELEGRAM_DOMAIN } = process.env;
 
 module.exports = {
   get IS_DEV() {
@@ -10,7 +9,4 @@ module.exports = {
   TELEGRAM_DOMAIN: TELEGRAM_DOMAIN,
   TELEGRAM_MINI_APP_URL: 'https://t.me/gotois_bot/App',
   SERVER_HOST: SERVER_HOST,
-  get DIALOGFLOW_CREDENTIALS() {
-    return JSON.parse(DIALOGFLOW_CREDENTIALS);
-  },
 };

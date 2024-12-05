@@ -137,3 +137,23 @@ module.exports.generateCalendar = async ({ id, activity, jwt, language }) => {
   }
   return data;
 };
+
+module.exports.sentToSecretary = async function ({ id, activity, jwt, language }) {
+  const { result, error } = await requestJsonRpc2({
+    url: SERVER_HOST + '/rpc',
+    body: {
+      id: id,
+      method: 'chat',
+      params: activity,
+    },
+    jwt: jwt,
+    headers: {
+      'Accept': 'text/plain',
+      'Accept-Language': language,
+    },
+  });
+  if (error) {
+    throw error;
+  }
+  return result;
+};
