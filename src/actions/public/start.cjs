@@ -32,11 +32,6 @@ function getInstallAgainText() {
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  let webAppUrl = `${TELEGRAM_MINI_APP}/tutorial?lang=${message.from.language_code}`;
-  // eslint-disable-next-line unicorn/consistent-destructuring
-  if (IS_DEV) {
-    webAppUrl += '&debug=1';
-  }
   const existUser = getUsers(message.chat.id)?.length > 0;
   if (!existUser) {
     await bot.sendMessage(message.chat.id, getInstallAgainText(), {
@@ -57,6 +52,11 @@ module.exports = async (bot, message) => {
       },
     });
   } else {
+    let webAppUrl = `${TELEGRAM_MINI_APP}/tutorial?lang=${message.from.language_code}`;
+    // eslint-disable-next-line unicorn/consistent-destructuring
+    if (IS_DEV) {
+      webAppUrl += '&debug=1';
+    }
     /* uncomment in prod
     const me = await bot.getMe();
     const photos = await bot.getUserProfilePhotos(me.id);

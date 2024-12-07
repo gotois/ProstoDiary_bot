@@ -1,17 +1,6 @@
+const Dialog = require('../../libs/dialog.cjs');
 const { setJWT } = require('../../libs/database.cjs');
-
-function registrationSuccessMessage() {
-  return `
-**Успешно зарегистрированы** ✅
-
-Отправь мне войс, текст или картинку и я добавлю это событие в твой календарь\\!
-
-Например:
-**💈Напомни завтра о барбершопе в 9:00 на Бауманской**
-**📆В это воскресенье будет митап**
-**💧Мне важно пить 2 литра воды в день ежедневно**
-`.trim();
-}
+const { sentToSecretary } = require('../../controllers/generate-calendar.cjs');
 
 /**
  * @description Ассистент детектирует пользователя
@@ -25,7 +14,18 @@ module.exports = async (bot, message, jwt) => {
     await bot.deleteMessage(message.chat.id, message.message_id);
     setJWT(Number(message.chat.id), jwt);
 
-    await bot.sendMessage(message.chat.id, registrationSuccessMessage(), {
+    const dialog = new Dialog();
+    await dialog.push(message);
+    dialog.activity.summary = 'привет';
+    const { data, type } = await sentToSecretary({
+      id: dialog.uid,
+      activity: dialog.activity,
+      jwt: jwt,
+      language: dialog.language,
+    });
+    console.log('data', data);
+    console.log('type', type);
+    await bot.sendMessage(message.chat.id, data, {
       parse_mode: 'MarkdownV2',
       message_effect_id: '5046509860389126442', // 🎉
       reply_markup: {

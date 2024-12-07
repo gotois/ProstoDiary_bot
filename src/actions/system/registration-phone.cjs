@@ -1,11 +1,8 @@
 const { setJWT } = require('../../libs/database.cjs');
-const { SERVER_HOST } = require('../../environments/index.cjs');
+const Dialog = require('../../libs/dialog.cjs');
 const { generateTelegramHash } = require('../../libs/tg-crypto.cjs');
-
-function registrationSuccessMessage() {
-  return `
-**Успешно зарегистрированы** ✅`.trim();
-}
+const { sentToSecretary } = require('../../controllers/generate-calendar.cjs');
+const { SERVER_HOST } = require('../../environments/index.cjs');
 
 /**
  * @description Ассистент детектирует пользователя
@@ -48,10 +45,21 @@ module.exports = async (bot, message) => {
     if (!response.ok) {
       throw new Error('Произошла ошибка');
     }
-    const result = await response.text();
-    setJWT(Number(message.chat.id), result);
+    const jwt = await response.text();
+    setJWT(Number(message.chat.id), jwt);
+    const dialog = new Dialog();
+    await dialog.push(message);
+    dialog.activity.summary = 'привет';
+    const { data, type } = await sentToSecretary({
+      id: dialog.uid,
+      activity: dialog.activity,
+      jwt: jwt,
+      language: dialog.language,
+    });
+    console.log('type', type);
+
     await bot.deleteMessage(message.chat.id, message.message_id);
-    await bot.sendMessage(message.chat.id, registrationSuccessMessage(), {
+    await bot.sendMessage(message.chat.id, data, {
       parse_mode: 'MarkdownV2',
       message_effect_id: '5046509860389126442', // 🎉
       reply_markup: {

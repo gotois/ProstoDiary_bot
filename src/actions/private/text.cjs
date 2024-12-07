@@ -6,6 +6,7 @@ const {
   sentToSecretary,
 } = require('../../controllers/generate-calendar.cjs');
 const { saveCalendar } = require('../../libs/database.cjs');
+const { serializeMarkdownV2 } = require('../../libs/md-serialize.cjs');
 const { notify } = require('../../libs/execute-time.cjs');
 const {
   sendPrepareCalendar,
@@ -29,7 +30,7 @@ module.exports = async (bot, message, user) => {
     });
     switch (type) {
       case 'text/markdown': {
-        await bot.sendMessage(message.chat.id, data, {
+        await bot.sendMessage(message.chat.id, serializeMarkdownV2(data), {
           parse_mode: 'MarkdownV2',
           reply_to_message_id: message.message_id,
           protect_content: true,
