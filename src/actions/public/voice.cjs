@@ -7,17 +7,17 @@ const {
 const { saveCalendar } = require('../../libs/database.cjs');
 const { notify } = require('../../libs/execute-time.cjs');
 const {
-  sendPrepareCalendar,
+  sendPrepareMessage,
   sendCalendarMessage,
   sendTaskMessage,
   sendErrorMessage,
 } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, message, user) => {
-  const dialog = new Dialog();
   try {
-    await sendPrepareCalendar(bot, message);
-    await dialog.push(message);
+    const dialog = new Dialog();
+    dialog.push(message);
+    await sendPrepareMessage(bot, message);
     const ical = await generateCalendar({
       id: dialog.uid,
       activity: dialog.activity,

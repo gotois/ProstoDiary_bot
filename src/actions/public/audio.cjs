@@ -9,9 +9,9 @@ const { saveCalendar } = require('../../libs/database.cjs');
 const { notify } = require('../../libs/execute-time.cjs');
 
 module.exports = async (bot, message, user) => {
-  const dialog = new Dialog();
   try {
-    await dialog.push(message);
+    const dialog = new Dialog();
+    dialog.push(message);
     const ical = await generateCalendar({
       id: dialog.uid,
       activity: dialog.activity,

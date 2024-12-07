@@ -1,5 +1,4 @@
 const { sendPrepareAction } = require('./tg-prepare-action.cjs');
-const { TEXT_CALENDAR } = require('../libs/mime-types.cjs');
 const { serializeMarkdownV2 } = require('../libs/md-serialize.cjs');
 
 const keyboardStart = (url) => {
@@ -34,8 +33,8 @@ const keyboardLaterTomorrow = () => {
   return keyboard;
 };
 
-module.exports.sendPrepareCalendar = async function (bot, message) {
-  await bot.sendChatAction(message.chat.id, sendPrepareAction(TEXT_CALENDAR));
+module.exports.sendPrepareMessage = async function (bot, message, type) {
+  await bot.sendChatAction(message.chat.id, sendPrepareAction(type));
   await bot.setMessageReaction(message.chat.id, message.message_id, {
     reaction: JSON.stringify([
       {

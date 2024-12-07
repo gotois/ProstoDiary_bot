@@ -6,16 +6,16 @@ const {
 } = require('../../controllers/generate-calendar.cjs');
 const { saveCalendar } = require('../../libs/database.cjs');
 const { notify } = require('../../libs/execute-time.cjs');
-const { sendPrepareCalendar, sendCalendarMessage, sendTaskMessage } = require('../../libs/tg-messages.cjs');
+const { sendPrepareMessage, sendCalendarMessage, sendTaskMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, messages, user) => {
   console.log(`Обработка транзакции из ${messages.length} сообщений:`);
-  const dialog = new Dialog();
   const [message] = messages;
   try {
+    const dialog = new Dialog();
     for (const message of messages) {
-      await sendPrepareCalendar(bot, message);
-      await dialog.push(message);
+      await sendPrepareMessage(bot, message);
+      dialog.push(message);
     }
     const ical = await generateCalendar({
       id: dialog.uid,

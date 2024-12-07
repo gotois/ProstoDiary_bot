@@ -20,7 +20,7 @@ class Dialog {
    * Обрабатывает входящее сообщение и добавляет его в активность.
    *
    * @param {object} message - Входящее сообщение.
-   * @returns {Promise<object>} - Возвращает объект активности.
+   * @returns {object} - Возвращает объект активности.
    */
   push(message) {
     const activity = activitystreams(message);

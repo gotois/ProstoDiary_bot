@@ -48,7 +48,7 @@ module.exports = async (bot, message) => {
     const jwt = await response.text();
     setJWT(Number(message.chat.id), jwt);
     const dialog = new Dialog();
-    await dialog.push(message);
+    dialog.push(message);
     dialog.activity.summary = 'привет';
     const { data, type } = await sentToSecretary({
       id: dialog.uid,
