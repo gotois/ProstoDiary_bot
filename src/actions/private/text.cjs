@@ -8,6 +8,8 @@ const { saveCalendar } = require('../../libs/database.cjs');
 const { serializeMarkdownV2 } = require('../../libs/md-serialize.cjs');
 const { notify } = require('../../libs/execute-time.cjs');
 const {
+  TYPING,
+  sendPrepareAction,
   sendPrepareMessage,
   sendCalendarMessage,
   sendTaskMessage,
@@ -16,6 +18,7 @@ const {
 
 module.exports = async (bot, message, user) => {
   try {
+    await sendPrepareAction(bot, message, TYPING);
     const dialog = new Dialog();
     dialog.push(message);
     const { data, type } = await sentToSecretary({
@@ -24,7 +27,7 @@ module.exports = async (bot, message, user) => {
       jwt: user.jwt,
       language: dialog.language,
     });
-    await sendPrepareMessage(bot, message, type);
+    await sendPrepareMessage(bot, message);
     switch (type) {
       case 'text/markdown': {
         await bot.sendMessage(message.chat.id, serializeMarkdownV2(data), {

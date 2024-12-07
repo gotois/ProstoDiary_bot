@@ -35,7 +35,7 @@ module.exports = async (bot, message) => {
     console.error(error);
   }
   try {
-    const response = await fetch(SERVER_HOST + '/registration', {
+    const response = await fetch(SERVER_HOST + '/authorization', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
