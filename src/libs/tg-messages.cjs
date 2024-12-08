@@ -1,4 +1,3 @@
-const { sendPrepareAction } = require('./tg-prepare-action.cjs');
 const { serializeMarkdownV2 } = require('../libs/md-serialize.cjs');
 
 const keyboardStart = (url) => {

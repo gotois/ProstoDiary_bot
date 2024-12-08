@@ -1,5 +1,5 @@
 const ICAL = require('ical.js');
-const { sendPrepareAction } = require('../../libs/tg-prepare-action.cjs');
+const { sendPrepareAction } = require('../../libs/tg-messages.cjs');
 const { getCalendars } = require('../../libs/database.cjs');
 const { TEXT_CALENDAR } = require('../../libs/mime-types.cjs');
 

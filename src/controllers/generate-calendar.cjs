@@ -114,6 +114,9 @@ module.exports.formatCalendarMessage = (ical, locale = 'ru') => {
   return output.trim();
 };
 
+/*
+ * @deprecated - генерация календаря делается через вебхуку
+ */
 module.exports.generateCalendar = async ({ id, activity, jwt, language }) => {
   const { result, error } = await requestJsonRpc2({
     url: SERVER_HOST + '/rpc',
