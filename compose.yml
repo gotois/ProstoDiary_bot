@@ -6,11 +6,11 @@ services:
       context: .
       target: build
     container_name: 'secretary-tg'
+    platform: linux/arm64
     environment:
       - TELEGRAM_TOKEN=$TELEGRAM_TOKEN
       - TELEGRAM_DOMAIN=$TELEGRAM_DOMAIN
       - SERVER_HOST=http://web-dev:5555
-      - DIALOGFLOW_CREDENTIALS=$DIALOGFLOW_CREDENTIALS
     networks:
       - global_lan
 

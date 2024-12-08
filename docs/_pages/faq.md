@@ -21,14 +21,6 @@ permalink: /faq/
 В Event Notification Mail Settings надо указать путь вида `https://7d4a7fb7.eu.ngrok.io/mail`. 
 Настроить <https://app.sendgrid.com/settings/mail_settings>
 
-### Где получить свой Authorization Token
-
-Хранится в БД `assistant`
-
-```sql
-select token from assistant
-```
-
 ### Хочу делать API запросы через cURL 
 
 Пример API запроса:
@@ -50,14 +42,6 @@ curl -X POST \
 curl --basic -u "user_email:master_password" -H "Accept: application/json" http://0.0.0.0:9000/message/73050f7c-2781-4f1a-b9f7-992f1d65f22e
 ```
 
-### CI падает с неизвестной ошибкой
-
-* Проверить логи CI
-* На TravisCI нельзя указывать пробелы в env
-
-> "END PRIVATE KEY" для `DIALOGFLOW_CREDENTIALS` и `GOOGLE_APPLICATION_CREDENTIALS` надо 
-> заменить такие пробелы на `\ `
-
 ### Не получается выполнить билд
 
 Попробуй сначала `npm rebuild`
@@ -67,12 +51,12 @@ curl --basic -u "user_email:master_password" -H "Accept: application/json" http:
 Чтобы получить token перейдите по ссылке и подтвердите привязку приложения. 
 (В хэше открытого попапа будет access token)
 
-### Oauth падает с непонятной ошибкой
+### OAuth падает с непонятной ошибкой
 
 Сначала выполни npm run dev, затем зайди в админку провайдера Oauth и 
 поменяй callback урл на ngrok вида <https://xxx.ngrok.io/connect/yandex/callback>
 
-### Oath Facebook паадет с ошибкой
+### OAuth Facebook паадет с ошибкой
 
 > URL заблокирован: Не удалось выполнить переадресацию, поскольку конечный URI не внесен в 
 > «белый» список в разделе приложения «Клиентские настройки OAuth
@@ -87,12 +71,6 @@ curl --basic -u "user_email:master_password" -H "Accept: application/json" http:
 `
 /help
 `
-
-### Как добавить новый интент в SQL
-
-```sqlite-psql
-ALTER TYPE intent ADD VALUE 'intent_name';
-```
 
 ### Не приходят уведомления к боту через группу
 
@@ -136,7 +114,7 @@ encodingFormat
 Удостоверьтесь, система Yandex PDD имеет такой email, 
 и что вы завершили регистрацию в системе PDD самостоятельно приняв их пользовательское соглашение 
 
-## При Oauth Yandex ошибка 400 Required parameter 'client_id' missing
+## При OAuth Yandex ошибка 400 Required parameter 'client_id' missing
 
 Проверьте правильность Environments
 
