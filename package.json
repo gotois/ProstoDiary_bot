@@ -80,7 +80,7 @@
     }
   },
   "dependencies": {
-    "express": "4.21.1",
+    "express": "4.21.2",
     "ical.js": "2.1.0",
     "minimist": "1.2.8",
     "request-json-rpc2": "2.2.3",
