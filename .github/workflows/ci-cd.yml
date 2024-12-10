@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: docker-hub-deployment
 
 on:
   push:
