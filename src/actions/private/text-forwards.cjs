@@ -6,8 +6,7 @@ const {
 } = require('../../controllers/generate-calendar.cjs');
 const { serializeMarkdownV2 } = require('../../libs/md-serialize.cjs');
 const { saveCalendar } = require('../../libs/database.cjs');
-const { notify } = require('../../libs/execute-time.cjs');
-const { sendPrepareMessage, sendCalendarMessage, sendTaskMessage } = require('../../libs/tg-messages.cjs');
+const { sendPrepareMessage, sendCalendarMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, messages, user) => {
   console.log(`Обработка транзакции из ${messages.length} сообщений:`);
@@ -46,8 +45,6 @@ module.exports = async (bot, messages, user) => {
         const googleCalendarUrl = formatGoogleCalendarUrl(data);
         const calendarMessage = await sendCalendarMessage(bot, message, output, googleCalendarUrl.href);
         await saveCalendar(calendarMessage.message_id, user.key, data);
-        const { text, url } = await notify(data);
-        await sendTaskMessage(bot, calendarMessage, text, url);
         break;
       }
       default: {

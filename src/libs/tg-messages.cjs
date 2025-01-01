@@ -77,17 +77,26 @@ module.exports.sendCalendarMessage = async function (bot, message, output, googl
 };
 
 module.exports.sendTaskMessage = async function (bot, calendarMessage, task, url) {
-  await bot.unpinChatMessage(calendarMessage.chat.id, {});
+  try {
+    await bot.unpinChatMessage(calendarMessage.chat.id, {});
+  } catch {
+    // pass
+  }
   const formatedTask = serializeMarkdownV2(task);
-  const editMessage = await bot.editMessageText(formatedTask, {
-    chat_id: calendarMessage.chat.id,
-    message_id: calendarMessage.message_id,
-    parse_mode: 'MarkdownV2',
-    protect_content: true,
-    reply_markup: {
-      inline_keyboard: [[keyboardStart(url)]],
-    },
-  });
+  try {
+    const editMessage = await bot.editMessageText(formatedTask, {
+      chat_id: calendarMessage.chat.id,
+      message_id: calendarMessage.message_id,
+      parse_mode: 'MarkdownV2',
+      protect_content: true,
+      reply_markup: {
+        inline_keyboard: [[keyboardStart(url)]],
+      },
+    });
+    await bot.pinChatMessage(calendarMessage.chat.id, editMessage.message_id);
+  } catch (error) {
+    console.error(error);
+  }
   const taskMessage = await bot.sendMessage(calendarMessage.chat.id, formatedTask, {
     parse_mode: 'MarkdownV2',
     reply_to_message_id: calendarMessage.message_id,
@@ -95,7 +104,6 @@ module.exports.sendTaskMessage = async function (bot, calendarMessage, task, url
       inline_keyboard: [[keyboardStart(url)], [keyboardLater(), keyboardLater60(), keyboardLaterTomorrow()]],
     },
   });
-  await bot.pinChatMessage(calendarMessage.chat.id, editMessage.message_id);
   return taskMessage;
 };
 
