@@ -8,8 +8,10 @@ services:
     container_name: 'secretary-tg'
     platform: linux/arm64
     environment:
+      - TELEGRAM_MINI_APP=$TELEGRAM_MINI_APP
       - TELEGRAM_TOKEN=$TELEGRAM_TOKEN
       - TELEGRAM_DOMAIN=$TELEGRAM_DOMAIN
+      - TELEGRAM_GATEWAY=$TELEGRAM_GATEWAY
       - SERVER_HOST=http://web-dev:5555
     networks:
       - global_lan

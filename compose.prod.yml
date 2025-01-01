@@ -4,8 +4,10 @@ services:
   app:
     image: 'qertis/secretary-tg:latest'
     environment:
+      - TELEGRAM_MINI_APP=$TELEGRAM_MINI_APP
       - TELEGRAM_TOKEN=$TELEGRAM_TOKEN
       - TELEGRAM_DOMAIN=$TELEGRAM_DOMAIN
+      - TELEGRAM_GATEWAY=$TELEGRAM_GATEWAY
       - SERVER_HOST=http://web-prod:5555
     networks:
       - global_lan
