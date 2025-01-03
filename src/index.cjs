@@ -131,6 +131,13 @@ module.exports = ({ token = TELEGRAM_TOKEN, domain = TELEGRAM_DOMAIN }) => {
       ['migrate_from_chat_id']: migrateFromChat,
       ['left_chat_member']: leftChatMember,
 
+      ['video_chat_started']: () => {
+        console.log('video_chat_started');
+      },
+      ['video_chat_ended']: () => {
+        console.log('video_chat_ended');
+      },
+
       /* CALLBACK */
 
       ['approve_event']: () => {

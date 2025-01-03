@@ -122,7 +122,7 @@ module.exports.generateCalendar = async ({ id, activity, jwt, language }) => {
     url: SERVER_HOST + '/rpc',
     body: {
       id: id,
-      method: 'generate-calendar',
+      method: 'add-calendar',
       params: activity,
     },
     jwt: jwt,
