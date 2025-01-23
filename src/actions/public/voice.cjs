@@ -17,14 +17,15 @@ module.exports = async (bot, message, user) => {
     await sendPrepareAction(bot, message, RECORD_AUDIO);
     const dialog = new Dialog();
     dialog.push(message);
-    const { data, type } = await sentToSecretary({
+    const { credentialSubject } = await sentToSecretary({
       id: dialog.uid,
       activity: dialog.activity,
       jwt: user.jwt,
       language: dialog.language,
     });
     await sendPrepareMessage(bot, message);
-    switch (type) {
+    const data = credentialSubject.object.contentMap[dialog.language];
+    switch (credentialSubject.object.mediaType) {
       case 'text/markdown': {
         await bot.sendMessage(message.chat.id, data, {
           parse_mode: 'MarkdownV2',
@@ -47,7 +48,7 @@ module.exports = async (bot, message, user) => {
         break;
       }
       default: {
-        throw new Error('Unknown type ' + type);
+        throw new Error('Unknown type ' + credentialSubject.object.mediaType);
       }
     }
   } catch (error) {
