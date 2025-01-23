@@ -1,5 +1,3 @@
-const { serializeMarkdownV2 } = require('../libs/md-serialize.cjs');
-
 const keyboardStart = (url) => {
   const keyboard = {
     text: 'Начать',
@@ -60,7 +58,7 @@ module.exports.sendCalendarMessage = async function (bot, message, output, googl
     text: 'В Google Calendar',
     url: googleCalendarUrl,
   };
-  const calendarMessage = await bot.sendMessage(message.chat.id, serializeMarkdownV2(output), {
+  const calendarMessage = await bot.sendMessage(message.chat.id, output, {
     reply_to_message_id: message.message_id,
     parse_mode: 'MarkdownV2',
     protect_content: true,
@@ -82,9 +80,8 @@ module.exports.sendTaskMessage = async function (bot, calendarMessage, task, url
   } catch {
     // pass
   }
-  const formatedTask = serializeMarkdownV2(task);
   try {
-    const editMessage = await bot.editMessageText(formatedTask, {
+    const editMessage = await bot.editMessageText(task, {
       chat_id: calendarMessage.chat.id,
       message_id: calendarMessage.message_id,
       parse_mode: 'MarkdownV2',
@@ -97,7 +94,7 @@ module.exports.sendTaskMessage = async function (bot, calendarMessage, task, url
   } catch (error) {
     console.error(error);
   }
-  const taskMessage = await bot.sendMessage(calendarMessage.chat.id, formatedTask, {
+  const taskMessage = await bot.sendMessage(calendarMessage.chat.id, task, {
     parse_mode: 'MarkdownV2',
     reply_to_message_id: calendarMessage.message_id,
     reply_markup: {

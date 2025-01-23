@@ -107,6 +107,16 @@ module.exports = ({ token = TELEGRAM_TOKEN, domain = TELEGRAM_DOMAIN }) => {
       ['notify_calendar--60']: checkAuth(notifyNextHour),
       ['notify_calendar--next-day']: checkAuth(notifyNextDay),
       ['notify_calendar--start-pomodoro']: checkAuth(focusPomodoro),
+
+      ['business_message']: () => {
+        console.log('business_message');
+      },
+      ['edited_business_message']: () => {
+        console.log('edited_business_message');
+      },
+      ['deleted_business_messages']: () => {
+        console.log('deleted_business_messages');
+      },
     },
 
     // Групповые команды

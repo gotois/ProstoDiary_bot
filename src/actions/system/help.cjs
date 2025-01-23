@@ -1,7 +1,6 @@
 const crypto = require('crypto');
 const packageLock_ = require('../../../package-lock.json');
 const package_ = require('../../../package.json');
-const { serializeMarkdownV2 } = require('../../libs/md-serialize.cjs');
 /**
  * @param {Buffer|string} buffer - file
  * @param {string} algorithm - algorithm
@@ -39,10 +38,9 @@ module.exports = async (bot, message) => {
     '/faq/' +
     '\nCHECKSUM: ' +
     getCheckSum(JSON.stringify(packageLock_));
-  const string_ = serializeMarkdownV2(`Используйте команды:\n${commandsReadable}`);
+  const string_ = `Используйте команды:\n${commandsReadable}`;
   await bot.sendMessage(message.chat.id, string_, {
     disable_notification: true,
     disable_web_page_preview: true,
-    parse_mode: 'MarkdownV2',
   });
 };

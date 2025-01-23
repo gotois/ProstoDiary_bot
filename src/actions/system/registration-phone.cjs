@@ -47,19 +47,8 @@ module.exports = async (bot, message) => {
     }
     const jwt = await response.text();
     setJWT(Number(message.chat.id), jwt);
-    const dialog = new Dialog();
-    dialog.push(message);
-    dialog.activity.summary = 'привет';
-    const { data, type } = await sentToSecretary({
-      id: dialog.uid,
-      activity: dialog.activity,
-      jwt: jwt,
-      language: dialog.language,
-    });
-    console.log('type', type);
-
     await bot.deleteMessage(message.chat.id, message.message_id);
-    await bot.sendMessage(message.chat.id, data, {
+    await bot.sendMessage(message.chat.id, 'Авторизованы', {
       parse_mode: 'MarkdownV2',
       message_effect_id: '5046509860389126442', // 🎉
       reply_markup: {
