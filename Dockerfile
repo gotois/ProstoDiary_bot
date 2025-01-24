@@ -15,4 +15,4 @@ RUN npm install --omit=dev
 
 USER node
 
-ENTRYPOINT [ "node", "--experimental-sqlite", "--watch", "bin/server.cjs" ]
+ENTRYPOINT [ "node", "--experimental-sqlite", "--watch", "src/index.cjs" ]

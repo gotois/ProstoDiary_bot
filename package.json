@@ -9,7 +9,7 @@
     "src/*",
     "scripts/*"
   ],
-  "bin": "node ./bin/server.cjs --token=$TELEGRAM_TOKEN",
+  "bin": "node ./src/index.cjs --token=$TELEGRAM_TOKEN",
   "directories": {
     "src": "src",
     "docs": "docs"
