@@ -4,16 +4,17 @@ const prostoDiaryBot = require('../src/index.cjs');
 
 const app = express();
 const port = 3000;
+let prostoDiary = null;
 
-if (process.env.NODE_ENV !== 'DEV') {
-  app.listen(port, () => {
-    console.log('Telegram Dev server is listening');
+app.listen(port, () => {
+  console.log('Telegram Server is listening 🚀');
+});
+
+if (!process.env.NODE_ENV.toUpperCase().startsWith('DEV')) {
+  prostoDiary = prostoDiaryBot({
+    ...argv,
   });
-  app.use(
-    prostoDiaryBot({
-      ...argv,
-    }).middleware,
-  );
+  app.use(prostoDiary.middleware);
 } else {
   const ngrok = require('ngrok');
   ngrok
@@ -23,12 +24,11 @@ if (process.env.NODE_ENV !== 'DEV') {
     })
     .then((url) => {
       console.log(url);
-      app.use(
-        prostoDiaryBot({
-          ...argv,
-          domain: url,
-        }).middleware,
-      );
+      prostoDiary = prostoDiaryBot({
+        ...argv,
+        domain: url,
+      });
+      app.use(prostoDiary.middleware);
     })
     .catch((error) => {
       console.error(error);
