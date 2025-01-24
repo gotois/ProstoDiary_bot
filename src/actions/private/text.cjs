@@ -1,8 +1,6 @@
 const Dialog = require('../../libs/dialog.cjs');
-const {
-  formatGoogleCalendarUrl,
-  sentToSecretary,
-} = require('../../controllers/generate-calendar.cjs');
+const { TELEGRAM_MINI_APP, IS_DEV } = require('../../environments/index.cjs');
+const { formatGoogleCalendarUrl, sentToSecretary } = require('../../controllers/generate-calendar.cjs');
 const { saveCalendar } = require('../../libs/database.cjs');
 const {
   TYPING,
@@ -25,12 +23,32 @@ module.exports = async (bot, message, user) => {
     });
     const data = credentialSubject.object.contentMap[dialog.language];
     await sendPrepareMessage(bot, message);
+
+    let webAppUrl = `${TELEGRAM_MINI_APP}/?lang=${message.from.language_code}`;
+    // eslint-disable-next-line unicorn/consistent-destructuring
+    if (IS_DEV) {
+      webAppUrl += '&debug=1';
+    }
     switch (credentialSubject.object.mediaType) {
       case 'text/markdown': {
         await bot.sendMessage(message.chat.id, data, {
           parse_mode: 'MarkdownV2',
           reply_to_message_id: message.message_id,
           protect_content: true,
+          disable_notification: true,
+          reply_markup: {
+            remove_keyboard: true,
+            resize_keyboard: true,
+            one_time_keyboard: true,
+            keyboard: [
+              [
+                {
+                  text: 'Добавить',
+                  web_app: { url: webAppUrl },
+                },
+              ],
+            ],
+          },
         });
         break;
       }

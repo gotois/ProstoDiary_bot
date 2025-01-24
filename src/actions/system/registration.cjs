@@ -1,9 +1,7 @@
-const Dialog = require('../../libs/dialog.cjs');
 const { setJWT } = require('../../libs/database.cjs');
-const { sentToSecretary } = require('../../controllers/generate-calendar.cjs');
 
 /**
- * @description Ассистент детектирует пользователя
+ * @description Регистрация через TMA
  * @param {any} bot - telegram bot
  * @param {any} message - telegram message
  * @param {string} jwt - Server JWT
@@ -13,19 +11,7 @@ module.exports = async (bot, message, jwt) => {
   try {
     await bot.deleteMessage(message.chat.id, message.message_id);
     setJWT(Number(message.chat.id), jwt);
-
-    const dialog = new Dialog();
-    dialog.push(message);
-    dialog.activity.summary = 'привет';
-    const { data, type } = await sentToSecretary({
-      id: dialog.uid,
-      activity: dialog.activity,
-      jwt: jwt,
-      language: dialog.language,
-    });
-    console.log('data', data);
-    console.log('type', type);
-    await bot.sendMessage(message.chat.id, data, {
+    await bot.sendMessage(message.chat.id, 'Вы авторизованы', {
       parse_mode: 'MarkdownV2',
       message_effect_id: '5046509860389126442', // 🎉
       reply_markup: {

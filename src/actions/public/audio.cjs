@@ -1,8 +1,5 @@
 const Dialog = require('../../libs/dialog.cjs');
-const {
-  sentToSecretary,
-  formatGoogleCalendarUrl,
-} = require('../../controllers/generate-calendar.cjs');
+const { sentToSecretary, formatGoogleCalendarUrl } = require('../../controllers/generate-calendar.cjs');
 const { sendCalendarMessage, sendPrepareMessage, sendErrorMessage } = require('../../libs/tg-messages.cjs');
 const { saveCalendar } = require('../../libs/database.cjs');
 

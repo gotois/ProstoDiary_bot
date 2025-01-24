@@ -1,4 +1,3 @@
-const { TELEGRAM_MINI_APP, IS_DEV } = require('../../environments/index.cjs');
 const { getUsers } = require('../../libs/database.cjs');
 
 function getWelcomeText() {
@@ -25,54 +24,29 @@ function getInstallAgainText() {
 }
 
 /**
- * Начало работы
- * @description request_contact может работать только в таком виде
+ * @description Начало работы
  * @param {object} bot - telegram bot
  * @param {object} message - telegram message
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
   const existUser = getUsers(message.chat.id)?.length > 0;
-  if (!existUser) {
-    await bot.sendMessage(message.chat.id, getInstallAgainText(), {
-      parse_mode: 'MarkdownV2',
-      disable_notification: true,
-      reply_markup: {
-        remove_keyboard: true,
-        resize_keyboard: true,
-        one_time_keyboard: true,
-        keyboard: [
-          [
-            {
-              text: 'Принимаю лицензионное соглашение',
-              request_contact: true,
-            },
-          ],
+  await bot.sendMessage(message.chat.id, existUser ? getInstallAgainText() : getWelcomeText(), {
+    parse_mode: 'MarkdownV2',
+    disable_notification: true,
+    reply_markup: {
+      remove_keyboard: true,
+      resize_keyboard: true,
+      one_time_keyboard: true,
+      keyboard: [
+        [
+          // request_contact может работать только в таком виде
+          {
+            text: 'Принимаю лицензионное соглашение',
+            request_contact: true,
+          },
         ],
-      },
-    });
-  } else {
-    let webAppUrl = `${TELEGRAM_MINI_APP}/tutorial?lang=${message.from.language_code}`;
-    // eslint-disable-next-line unicorn/consistent-destructuring
-    if (IS_DEV) {
-      webAppUrl += '&debug=1';
-    }
-    bot.sendMessage(message.chat.id, getWelcomeText(), {
-      parse_mode: 'MarkdownV2',
-      disable_notification: true,
-      reply_markup: {
-        remove_keyboard: true,
-        resize_keyboard: true,
-        one_time_keyboard: true,
-        keyboard: [
-          [
-            {
-              text: 'Авторизоваться',
-              web_app: { url: webAppUrl },
-            },
-          ],
-        ],
-      },
-    });
-  }
+      ],
+    },
+  });
 };
