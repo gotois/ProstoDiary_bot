@@ -3,9 +3,9 @@
  *
  * @returns {Object}
  */
-export default () => {
+module.exports.default = function () {
   // специально скрываем результаты логов от посторонних глаз
-  const verbose = !process.env.NODE_ENV.toUpperCase().startsWith('DEV');
+  const verbose = !String(process.env.NODE_ENV).toUpperCase().startsWith('DEV');
   const avaMainConfig = {
     'ignoredByWatcher': [
       'src/**/*'
@@ -18,7 +18,7 @@ export default () => {
     },
   };
 
-   return {
+  return {
     ...avaMainConfig,
     verbose,
     cache: false,

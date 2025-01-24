@@ -36,21 +36,7 @@ const textAction = require('./actions/private/text.cjs');
 const textForwards = require('./actions/private/text-forwards.cjs');
 const { notifyDice, notifyNextHour, notifyNextDay } = require('./actions/system/notifier.cjs');
 const focusPomodoro = require('./actions/system/focus-pomodoro.cjs');
-const { getUsers } = require('./libs/database.cjs');
-
-function checkAuth(callback) {
-  return async (bot, message) => {
-    const message_ = Array.isArray(message) ? message[0] : message;
-    const users = getUsers(message_.chat.id);
-    if (users.length === 0) {
-      await bot.sendMessage(message_.chat.id, 'Пройдите авторизацию нажав /start', {
-        parse_mode: 'MarkdownV2',
-      });
-      return;
-    }
-    callback(bot, message, users[0]);
-  };
-}
+const checkAuth = require('./middleware/check-auth.cjs');
 
 const app = express();
 const port = argv.port || 3000;
@@ -181,5 +167,7 @@ app.post('/subscribe', express.json(), async (request, response) => {
     chat: {
       id: request.header('TG_CHAT_ID'),
     },
-  });
-};
+  };
+  await sendTaskMessage(telegramBotController.bot, calendarMessage, request.body.data, request.body.url);
+  response.sendStatus(200);
+});

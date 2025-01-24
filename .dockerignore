@@ -43,7 +43,7 @@
 **/.renovaterc
 **/.snyk
 **/.travis.yml
-**/ava.config.mjs
+**/ava.config.cjs
 **/codecov.yml
 LICENSE
 README.md
