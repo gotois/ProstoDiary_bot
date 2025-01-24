@@ -5,7 +5,7 @@
  */
 export default () => {
   // специально скрываем результаты логов от посторонних глаз
-  const verbose = process.env.NODE_ENV !== 'DEV';
+  const verbose = !process.env.NODE_ENV.toUpperCase().startsWith('DEV');
   const avaMainConfig = {
     'ignoredByWatcher': [
       'src/**/*'

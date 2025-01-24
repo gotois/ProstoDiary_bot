@@ -1,3 +1,5 @@
+const express = require('express');
+const argv = require('minimist')(process.argv.slice(2));
 const botController = require('telegram-bot-api-express');
 const { TELEGRAM_TOKEN, TELEGRAM_DOMAIN } = require('./environments/index.cjs');
 const pingAction = require('./actions/system/ping.cjs');
@@ -50,113 +52,134 @@ function checkAuth(callback) {
   };
 }
 
-module.exports = ({ token = TELEGRAM_TOKEN, domain = TELEGRAM_DOMAIN }) => {
-  return botController({
-    token: token,
-    domain: domain,
+const app = express();
+const port = argv.port || 3000;
 
-    // Персональные команды
-    privateEvents: {
-      /* MY COMMANDS */
+const telegramBotController = botController({
+  token: TELEGRAM_TOKEN,
+  domain: TELEGRAM_DOMAIN,
 
-      [/^\/(ping|пинг)$/]: pingAction,
-      [/^\/dbclear$/]: checkAuth(dbclearAction),
-      [/^\/start|начать$/]: startAction,
-      [/^\/help|man|помощь$/]: helpAction,
-      [/^\/licence/]: offertaAction,
-      [/^\/want/]: checkAuth(wantAction),
+  // Персональные команды
+  privateEvents: {
+    /* MY COMMANDS */
 
-      /* NATIVE COMMANDS */
+    [/^\/(ping|пинг)$/]: pingAction,
+    [/^\/dbclear$/]: checkAuth(dbclearAction),
+    [/^\/start|начать$/]: startAction,
+    [/^\/help|man|помощь$/]: helpAction,
+    [/^\/licence/]: offertaAction,
+    [/^\/want/]: checkAuth(wantAction),
 
-      ['sticker']: checkAuth(stickerAction),
-      ['animation']: checkAuth(animationAction),
-      ['poll']: checkAuth(pollAction),
-      ['mention']: checkAuth(mentionAction),
-      ['edited_message_text']: checkAuth(editedMessageTextAction),
-      ['text']: checkAuth(textAction),
-      ['photo']: checkAuth(photoAction),
-      ['voice']: checkAuth(voiceAction),
-      ['audio']: checkAuth(audioAction),
-      ['video']: checkAuth(videoAction),
-      ['video_note']: checkAuth(videoAction),
-      ['document']: checkAuth(documentAction),
-      ['location']: checkAuth(locationAction),
-      ['contact']: checkAuth(contactAction),
-      ['inline_query']: checkAuth(inlineAction),
-      ['message_forwards']: checkAuth(textForwards),
-      ['reply_to_message']: () => {},
+    /* NATIVE COMMANDS */
 
-      /* CALLBACK */
-      ['web_app_data']: (bot, message) => {
-        const webAppData = JSON.parse(message.web_app_data.data);
-        switch (webAppData.type) {
-          case 'registration': {
-            return registrationByMiniAppAction(bot, message, webAppData.data);
-          }
-          default: {
-            console.warn('Unknown type:' + webAppData.type, webAppData);
-            break;
-          }
+    ['sticker']: checkAuth(stickerAction),
+    ['animation']: checkAuth(animationAction),
+    ['poll']: checkAuth(pollAction),
+    ['mention']: checkAuth(mentionAction),
+    ['edited_message_text']: checkAuth(editedMessageTextAction),
+    ['text']: checkAuth(textAction),
+    ['photo']: checkAuth(photoAction),
+    ['voice']: checkAuth(voiceAction),
+    ['audio']: checkAuth(audioAction),
+    ['video']: checkAuth(videoAction),
+    ['video_note']: checkAuth(videoAction),
+    ['document']: checkAuth(documentAction),
+    ['location']: checkAuth(locationAction),
+    ['contact']: checkAuth(contactAction),
+    ['inline_query']: checkAuth(inlineAction),
+    ['message_forwards']: checkAuth(textForwards),
+    ['reply_to_message']: () => {},
+
+    /* CALLBACK */
+    ['web_app_data']: (bot, message) => {
+      const webAppData = JSON.parse(message.web_app_data.data);
+      switch (webAppData.type) {
+        case 'registration': {
+          return registrationByMiniAppAction(bot, message, webAppData.data);
         }
-      },
-      ['auth_by_contact']: registrationByPhoneAction,
-      ['send_calendar']: checkAuth(sendCalendar),
+        default: {
+          console.warn('Unknown type:' + webAppData.type, webAppData);
+          break;
+        }
+      }
+    },
+    ['auth_by_contact']: registrationByPhoneAction,
+    ['send_calendar']: checkAuth(sendCalendar),
 
-      // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день
-      ['notify_calendar--15']: checkAuth(notifyDice),
-      ['notify_calendar--60']: checkAuth(notifyNextHour),
-      ['notify_calendar--next-day']: checkAuth(notifyNextDay),
-      ['notify_calendar--start-pomodoro']: checkAuth(focusPomodoro),
+    // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день
+    ['notify_calendar--15']: checkAuth(notifyDice),
+    ['notify_calendar--60']: checkAuth(notifyNextHour),
+    ['notify_calendar--next-day']: checkAuth(notifyNextDay),
+    ['notify_calendar--start-pomodoro']: checkAuth(focusPomodoro),
 
-      ['business_message']: () => {
-        console.log('business_message');
-      },
-      ['edited_business_message']: () => {
-        console.log('edited_business_message');
-      },
-      ['deleted_business_messages']: () => {
-        console.log('deleted_business_messages');
-      },
+    ['business_message']: () => {
+      console.log('business_message');
+    },
+    ['edited_business_message']: () => {
+      console.log('edited_business_message');
+    },
+    ['deleted_business_messages']: () => {
+      console.log('deleted_business_messages');
+    },
+  },
+
+  // Групповые команды
+  publicEvents: {
+    ['bot_command']: () => {
+      // ignore any commands
     },
 
-    // Групповые команды
-    publicEvents: {
-      ['bot_command']: () => {
-        // ignore any commands
-      },
+    /* TEXT */
 
-      /* TEXT */
+    ['channel_post']: channelPostAction,
+    ['mention']: mentionAction,
+    ['text']: groupTextAction,
+    ['reply_to_message']: () => {},
 
-      ['channel_post']: channelPostAction,
-      ['mention']: mentionAction,
-      ['text']: groupTextAction,
-      ['reply_to_message']: () => {},
+    /* GROUP COMMANDS */
 
-      /* GROUP COMMANDS */
+    ['supergroup_chat_created']: supergroupChatCreated,
+    ['channel_chat_created']: channelChatCreated,
+    ['group_chat_created']: groupChatCreatedAction,
+    ['new_chat_members']: chatMembers,
+    ['migrate_from_chat_id']: migrateFromChat,
+    ['left_chat_member']: leftChatMember,
 
-      ['supergroup_chat_created']: supergroupChatCreated,
-      ['channel_chat_created']: channelChatCreated,
-      ['group_chat_created']: groupChatCreatedAction,
-      ['new_chat_members']: chatMembers,
-      ['migrate_from_chat_id']: migrateFromChat,
-      ['left_chat_member']: leftChatMember,
-
-      ['video_chat_started']: () => {
-        console.log('video_chat_started');
-      },
-      ['video_chat_ended']: () => {
-        console.log('video_chat_ended');
-      },
-
-      /* CALLBACK */
-
-      ['approve_event']: () => {
-        console.log('WIP: approve_event');
-      },
+    ['video_chat_started']: () => {
+      console.log('video_chat_started');
+    },
+    ['video_chat_ended']: () => {
+      console.log('video_chat_ended');
     },
 
-    onError(bot, error) {
-      console.error(error);
+    /* CALLBACK */
+
+    ['approve_event']: () => {
+      console.log('WIP: approve_event');
+    },
+  },
+
+  onError(bot, error) {
+    console.error(error);
+  },
+});
+
+app.listen(port, () => {
+  console.log('Telegram Server is listening 🚀');
+});
+
+app.use(telegramBotController.middleware);
+
+// fixme Webhook обработчик получающий данные с ProxyHub и уведомляющий пользователя
+app.post('/subscribe', express.json(), async (request, response) => {
+  // todo - нужна верификация чтобы быть уверенным что отправил GIC Server
+  console.log(request.header('USER_ID'));
+
+  const { sendTaskMessage } = require('./libs/tg-messages.cjs');
+  const calendarMessage = {
+    message_id: request.header('TG_MESSAGE_ID'),
+    chat: {
+      id: request.header('TG_CHAT_ID'),
     },
   });
 };
