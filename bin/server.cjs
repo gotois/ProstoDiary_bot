@@ -16,13 +16,16 @@ if (!process.env.NODE_ENV.toUpperCase().startsWith('DEV')) {
   });
   app.use(prostoDiary.middleware);
 } else {
-  const ngrok = require('ngrok');
+  const ngrok = require('@ngrok/ngrok');
   ngrok
-    .connect({
-      proto: 'http',
+    .forward({
       addr: port,
+      proto: 'http',
+      authtoken_from_env: true,
     })
-    .then((url) => {
+    .then((listener) => {
+      const url = listener.url();
+      console.log(`Ingress established at: ${url}`);
       console.log(url);
       prostoDiary = prostoDiaryBot({
         ...argv,
