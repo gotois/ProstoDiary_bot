@@ -57,19 +57,6 @@ module.exports = async (bot, message) => {
     if (IS_DEV) {
       webAppUrl += '&debug=1';
     }
-    /* uncomment in prod
-    const me = await bot.getMe();
-    const photos = await bot.getUserProfilePhotos(me.id);
-    const photo = photos.photos?.[0]?.[0]?.file_id;
-    const file = await bot.getFile(photo);
-    const fileBuffer = await bot.getFileStream(file.file_id);
-    await bot.sendPhoto(message.chat.id, fileBuffer, {
-      caption: 'Hello',
-      parse_mode: 'HTML',
-      filename: 'hello',
-      contentType: 'image/png',
-    });
-    */
     bot.sendMessage(message.chat.id, getWelcomeText(), {
       parse_mode: 'MarkdownV2',
       disable_notification: true,
