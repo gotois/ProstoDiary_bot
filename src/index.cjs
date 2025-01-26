@@ -36,13 +36,14 @@ const textAction = require('./actions/private/text.cjs');
 const textForwards = require('./actions/private/text-forwards.cjs');
 const { notifyDice, notifyNextHour, notifyNextDay } = require('./actions/system/notifier.cjs');
 const focusPomodoro = require('./actions/system/focus-pomodoro.cjs');
+const generateCalendar = require('./actions/system/generate-calendar.cjs');
 const checkAuth = require('./middleware/check-auth.cjs');
 const errorHandler = require('./middleware/error-handler.cjs');
 
 const app = express();
 const port = argv.port || 3000;
 
-const telegramBotController = botController({
+const { bot, middleware } = botController({
   token: TELEGRAM_TOKEN,
   domain: TELEGRAM_DOMAIN,
 
@@ -92,6 +93,8 @@ const telegramBotController = botController({
     },
     ['auth_by_contact']: checkAuth(registrationByPhoneAction),
     ['send_calendar']: checkAuth(sendCalendar),
+
+    ['generate_calendar']: checkAuth(generateCalendar),
 
     // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день
     ['notify_calendar--15']: checkAuth(notifyDice),
@@ -155,20 +158,70 @@ app.listen(port, () => {
   console.log('Telegram Server is listening 🚀');
 });
 
-app.use(telegramBotController.middleware);
+app.use(middleware);
 
 // fixme Webhook обработчик получающий данные с ProxyHub и уведомляющий пользователя
+// Webhook обработчик получающий данные с ProxyHub и уведомляющий пользователя
 app.post('/subscribe', express.json(), async (request, response) => {
-  // todo - нужна верификация чтобы быть уверенным что отправил GIC Server
-  console.log(request.header('USER_ID'));
-
-  const { sendTaskMessage } = require('./libs/tg-messages.cjs');
-  const calendarMessage = {
-    message_id: request.header('TG_MESSAGE_ID'),
-    chat: {
-      id: request.header('TG_CHAT_ID'),
+  const reply_message_id = request.header('TG_REPLY_MESSAGE_ID');
+  const chat_id = request.header('TG_CHAT_ID');
+  try {
+    await bot.unpinChatMessage(chat_id, {});
+    const editMessage = await bot.editMessageText(request.body.text, {
+      chat_id: chat_id,
+      message_id: reply_message_id,
+      parse_mode: 'HTML',
+      protect_content: true,
+      reply_markup: {
+        inline_keyboard: [[keyboardStart(request.body.url)]],
+      },
+    });
+    await bot.pinChatMessage(chat_id, editMessage.message_id);
+  } catch {
+    // pass
+  }
+  await bot.sendMessage(chat_id, request.body.text, {
+    parse_mode: 'HTML',
+    reply_to_message_id: reply_message_id,
+    reply_markup: {
+      inline_keyboard: [
+        [keyboardStart(request.body.url)],
+        [keyboardLater(), keyboardLater60(), keyboardLaterTomorrow()],
+      ],
     },
-  };
-  await sendTaskMessage(telegramBotController.bot, calendarMessage, request.body.data, request.body.url);
+  });
   response.sendStatus(200);
 });
+
+const keyboardStart = (url) => {
+  const keyboard = {
+    text: 'Начать',
+    // fixme открытие TMA для запуска Pomodoro таймера
+    web_app: { url: 'https://archive.gotointeractive.com/pomodoro' },
+  };
+  if (url) {
+    keyboard.url = url;
+  }
+  return keyboard;
+};
+const keyboardLater = () => {
+  const keyboard = {
+    text: 'Позже',
+    callback_data: 'notify_calendar--15',
+  };
+  return keyboard;
+};
+const keyboardLater60 = () => {
+  const keyboard = {
+    text: 'Напомнить через 1 час',
+    callback_data: 'notify_calendar--60',
+  };
+  return keyboard;
+};
+const keyboardLaterTomorrow = () => {
+  const keyboard = {
+    text: 'Напомнить завтра',
+    callback_data: 'notify_calendar--next-day',
+  };
+  return keyboard;
+};

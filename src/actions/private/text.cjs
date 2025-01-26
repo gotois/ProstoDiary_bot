@@ -1,5 +1,4 @@
 const Dialog = require('../../libs/dialog.cjs');
-const { SERVER_APP, IS_DEV } = require('../../environments/index.cjs');
 const { formatGoogleCalendarUrl, sentToSecretary } = require('../../controllers/generate-calendar.cjs');
 const { saveCalendar } = require('../../libs/database.cjs');
 const { TYPING, sendPrepareAction, sendPrepareMessage, sendCalendarMessage } = require('../../libs/tg-messages.cjs');
@@ -16,12 +15,6 @@ module.exports = async (bot, message, user) => {
   });
   const data = credentialSubject.object.contentMap[dialog.language];
   await sendPrepareMessage(bot, message);
-
-  let webAppUrl = `${SERVER_APP}/?lang=${message.from.language_code}`;
-  // eslint-disable-next-line unicorn/consistent-destructuring
-  if (IS_DEV) {
-    webAppUrl += '&debug=1';
-  }
   switch (credentialSubject.object.mediaType) {
     case 'text/markdown': {
       await bot.sendMessage(message.chat.id, data, {
@@ -30,14 +23,11 @@ module.exports = async (bot, message, user) => {
         protect_content: true,
         disable_notification: true,
         reply_markup: {
-          remove_keyboard: true,
-          resize_keyboard: true,
-          one_time_keyboard: true,
-          keyboard: [
+          inline_keyboard: [
             [
               {
-                text: 'Добавить',
-                web_app: { url: webAppUrl },
+                text: 'Сгенерировать календарь',
+                callback_data: 'generate_calendar',
               },
             ],
           ],

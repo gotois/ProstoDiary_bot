@@ -1,7 +1,7 @@
 const requestJsonRpc2 = require('request-json-rpc2').default;
-const { TEXT_CALENDAR } = require('../libs/mime-types.cjs');
 const { SERVER_HOST } = require('../environments/index.cjs');
 
+// Добавление события в открываемой ссылке на Google Calendar
 module.exports.formatGoogleCalendarUrl = function ({ eventName, eventDescription, dtStart, dtEnd, location }) {
   const link = new URL('https://calendar.google.com/calendar/render');
   link.searchParams.append('action', 'TEMPLATE');
@@ -18,9 +18,6 @@ module.exports.formatGoogleCalendarUrl = function ({ eventName, eventDescription
   return link;
 };
 
-/*
- * @deprecated - генерация календаря делается через вебхуку
- */
 module.exports.generateCalendar = async ({ id, activity, jwt, language }) => {
   const { result, error } = await requestJsonRpc2({
     url: SERVER_HOST + '/rpc',
@@ -31,18 +28,14 @@ module.exports.generateCalendar = async ({ id, activity, jwt, language }) => {
     },
     jwt: jwt,
     headers: {
-      'Accept': TEXT_CALENDAR,
+      'Accept': 'text/markdown',
       'Accept-Language': language,
     },
   });
   if (error) {
     throw error;
   }
-  const { data, type } = result;
-  if (type !== TEXT_CALENDAR) {
-    throw new Error(data);
-  }
-  return data;
+  return result;
 };
 
 module.exports.sentToSecretary = async function ({ id, activity, jwt, language }) {
