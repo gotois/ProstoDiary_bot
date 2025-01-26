@@ -34,9 +34,11 @@ Create a `.env` file and write:
 
 `TELEGRAM_DOMAIN`
 
+`TELEGRAM_MINI_APP`
+
 `SERVER_HOST`
 
-`TELEGRAM_MINI_APP`
+`SERVER_APP`
 
 ## Simple server
 

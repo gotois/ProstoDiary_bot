@@ -1,11 +1,14 @@
-const { NODE_ENV, TELEGRAM_MINI_APP, SERVER_HOST, TELEGRAM_TOKEN, TELEGRAM_DOMAIN } = process.env;
+const { NODE_ENV, SERVER_APP, SERVER_HOST, TELEGRAM_TOKEN, TELEGRAM_DOMAIN, TELEGRAM_MINI_APP } = process.env;
 
 module.exports = {
   get IS_DEV() {
     return String(NODE_ENV)?.toLowerCase()?.startsWith('dev');
   },
-  get TELEGRAM_MINI_APP() {
-    return TELEGRAM_MINI_APP;
+  get SERVER_APP() {
+    return SERVER_APP;
+  },
+  get SERVER_HOST() {
+    return SERVER_HOST;
   },
   get TELEGRAM_TOKEN() {
     return TELEGRAM_TOKEN;
@@ -14,10 +17,6 @@ module.exports = {
     return TELEGRAM_DOMAIN;
   },
   get TELEGRAM_MINI_APP_URL() {
-    // todo вынести в env
-    return 'https://t.me/gotois_bot/App';
-  },
-  get SERVER_HOST() {
-    return SERVER_HOST;
+    return TELEGRAM_MINI_APP;
   },
 };

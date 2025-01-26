@@ -14,11 +14,13 @@ Server Environments
 * Create ```keys``` directory in root. Create google-natural-lang.json (example from Google API)
 
 ```text
-NODE_ENV={ production|TRAVIS_CI|test }
-TELEGRAM_TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
+NODE_ENV={ production|development }
+NGROK_AUTHTOKEN={ Your ngrok token }
 
-SENDGRID_API_KEY={ api key }
-SENDGRID_API_KEY_DEV={ api key }
+TELEGRAM_TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
+TELEGRAM_MINI_APP
+SERVER_APP={ Your server app name like https://archive.gotointeractive.com }
+SERVER_HOST={ Your server api like https://api.gotointeractive.com }
 
 <details>
 	<summary>Setup PostgreSQL 11.0</summary>

@@ -1,5 +1,5 @@
 const Dialog = require('../../libs/dialog.cjs');
-const { TELEGRAM_MINI_APP, IS_DEV } = require('../../environments/index.cjs');
+const { SERVER_APP, IS_DEV } = require('../../environments/index.cjs');
 const { formatGoogleCalendarUrl, sentToSecretary } = require('../../controllers/generate-calendar.cjs');
 const { saveCalendar } = require('../../libs/database.cjs');
 const { TYPING, sendPrepareAction, sendPrepareMessage, sendCalendarMessage } = require('../../libs/tg-messages.cjs');
@@ -17,7 +17,7 @@ module.exports = async (bot, message, user) => {
   const data = credentialSubject.object.contentMap[dialog.language];
   await sendPrepareMessage(bot, message);
 
-  let webAppUrl = `${TELEGRAM_MINI_APP}/?lang=${message.from.language_code}`;
+  let webAppUrl = `${SERVER_APP}/?lang=${message.from.language_code}`;
   // eslint-disable-next-line unicorn/consistent-destructuring
   if (IS_DEV) {
     webAppUrl += '&debug=1';

@@ -9,6 +9,7 @@ services:
       - TELEGRAM_DOMAIN=$TELEGRAM_DOMAIN
       - TELEGRAM_GATEWAY=$TELEGRAM_GATEWAY
       - SERVER_HOST=http://web-prod:5555
+      - SERVER_APP=https://archive.gotointeractive.com
     networks:
       - global_lan
 
