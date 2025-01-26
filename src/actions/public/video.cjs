@@ -1,6 +1,6 @@
 const Dialog = require('../../libs/dialog.cjs');
 
-module.exports = async (bot, message) => {
+module.exports = (bot, message) => {
   const dialog = new Dialog();
   dialog.push(message);
 

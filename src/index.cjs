@@ -37,6 +37,7 @@ const textForwards = require('./actions/private/text-forwards.cjs');
 const { notifyDice, notifyNextHour, notifyNextDay } = require('./actions/system/notifier.cjs');
 const focusPomodoro = require('./actions/system/focus-pomodoro.cjs');
 const checkAuth = require('./middleware/check-auth.cjs');
+const errorHandler = require('./middleware/error-handler.cjs');
 
 const app = express();
 const port = argv.port || 3000;
@@ -49,7 +50,7 @@ const telegramBotController = botController({
   privateEvents: {
     /* MY COMMANDS */
 
-    [/^\/(ping|пинг)$/]: pingAction,
+    [/^\/(ping|пинг)$/]: errorHandler(pingAction),
     [/^\/dbclear$/]: checkAuth(dbclearAction),
     [/^\/start|начать$/]: startAction,
     [/^\/help|man|помощь$/]: helpAction,

@@ -1,7 +1,7 @@
 const Dialog = require('../../libs/dialog.cjs');
 const { sentToSecretary, formatGoogleCalendarUrl } = require('../../controllers/generate-calendar.cjs');
 const { saveCalendar } = require('../../libs/database.cjs');
-const { sendPrepareMessage, sendCalendarMessage, sendErrorMessage } = require('../../libs/tg-messages.cjs');
+const { sendPrepareMessage, sendCalendarMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, message, user) => {
   await sendPrepareMessage(bot, message);
@@ -53,7 +53,6 @@ module.exports = async (bot, message, user) => {
       }
     } catch (error) {
       console.error(error);
-      await sendErrorMessage(bot, message, error);
     }
   });
 };
