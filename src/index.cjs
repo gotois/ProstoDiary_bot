@@ -52,9 +52,9 @@ const telegramBotController = botController({
 
     [/^\/(ping|пинг)$/]: errorHandler(pingAction),
     [/^\/dbclear$/]: checkAuth(dbclearAction),
-    [/^\/start|начать$/]: startAction,
-    [/^\/help|man|помощь$/]: helpAction,
-    [/^\/licence/]: offertaAction,
+    [/^\/start|начать$/]: errorHandler(startAction),
+    [/^\/help|man|помощь$/]: errorHandler(helpAction),
+    [/^\/licence/]: errorHandler(offertaAction),
     [/^\/want/]: checkAuth(wantAction),
 
     /* NATIVE COMMANDS */
@@ -90,7 +90,7 @@ const telegramBotController = botController({
         }
       }
     },
-    ['auth_by_contact']: registrationByPhoneAction,
+    ['auth_by_contact']: checkAuth(registrationByPhoneAction),
     ['send_calendar']: checkAuth(sendCalendar),
 
     // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день

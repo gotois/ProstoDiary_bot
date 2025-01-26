@@ -3,6 +3,7 @@ module.exports = function (callback) {
     try {
       await callback(bot, message, user);
     } catch (error) {
+      console.error(error);
       await bot.setMessageReaction(message.chat.id, message.message_id, {
         reaction: JSON.stringify([
           {
@@ -27,7 +28,8 @@ module.exports = function (callback) {
           );
         }
         default: {
-          return bot.sendMessage(message.chat.id, 'Произошла ошибка: ' + error, {
+          return bot.sendMessage(message.chat.id, error?.message ?? 'Произошла ошибка', {
+            message_effect_id: '5046589136895476101', // 💩
             disable_web_page_preview: true,
           });
         }
