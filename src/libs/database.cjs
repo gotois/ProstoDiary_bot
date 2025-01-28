@@ -21,10 +21,10 @@ function createCalendarsTable() {
         id INTEGER PRIMARY KEY,
         message_id INTEGER,
         title TEXT,
-        details TEXT,
-        location TEXT,
+        details TEXT NULL,
+        location TEXT NULL,
         start TEXT,
-        end TEXT
+        end TEXT NULL
       ) STRICT
     `);
 }
@@ -59,24 +59,22 @@ module.exports.setJWT = (userId, jwt) => {
   insert.run({ key: userId, jwt: jwt });
 };
 
-module.exports.getCalendars = (id) => {
+module.exports.getCalendarMessage = (id) => {
   const query = database.prepare(`SELECT * FROM calendars WHERE message_id == ${id}`);
   const events = query.all();
-  return events;
+  return events[0];
 };
 
-module.exports.saveCalendar = (idMessage, idUser, ical) => {
-  const insert = database.prepare('INSERT INTO calendars (id, idUser, ical) VALUES (?, ?, ?)');
-  insert.run(idMessage, idUser, ical);
-module.exports.saveCalendar = ({ id, title, details, location, start, end }) => {
+module.exports.saveCalendar = ({ id, title, details = null, location = null, start, end = null }) => {
   const insert = database.prepare(`
     INSERT INTO calendars (message_id, title, details, location, start, end)
-    VALUES (:message_id, :title, :details, :location, :start, ?)`);
+    VALUES (:message_id, :title, :details, :location, :start, :end)`);
   insert.run({
     message_id: id,
     title: title,
     details: details,
     location: location,
     start: start,
+    end: end,
   });
 };

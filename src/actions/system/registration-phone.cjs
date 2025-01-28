@@ -74,17 +74,16 @@ module.exports = async (bot, message) => {
   const fileBuffer = await response1.arrayBuffer();
   const pngPages = await pdfToPng(Buffer.from(fileBuffer));
   await bot.sendPhoto(message.chat.id, pngPages[0].content, {
-    caption: result.credentialSubject.object.attachment[0].name,
+    caption:
+      'Продолжая использовать сервис вы принимаете условия: ' + result.credentialSubject.object.attachment[0].name,
     parse_mode: 'HTML',
     filename: pngPages[0].name,
     contentType: 'image/png',
-  });
-  await bot.deleteMessage(message.chat.id, message.message_id);
-  setJWT(Number(message.chat.id), jwt);
-  await bot.sendMessage(message.chat.id, 'Вы авторизованы!', {
     message_effect_id: '5046509860389126442', // 🎉
     reply_markup: {
       remove_keyboard: true,
     },
   });
+  await bot.deleteMessage(message.chat.id, message.message_id);
+  setJWT(Number(message.chat.id), jwt);
 };

@@ -1,6 +1,6 @@
 const { SERVER_APP_URL, IS_DEV } = require('../../environments/index.cjs');
 const { notifyCalendar } = require('../../controllers/generate-calendar.cjs');
-const { getCalendars } = require('../../libs/database.cjs');
+const { getCalendarMessage } = require('../../libs/database.cjs');
 
 // Добавление события в открываемой ссылке на Google Calendar
 function formatGoogleCalendarUrl({ text, details, start, end, location }) {
@@ -27,10 +27,7 @@ function formatGoogleCalendarUrl({ text, details, start, end, location }) {
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message, user) => {
-  const [event] = await getCalendars(message.message_id);
-
-  // fixme Шаг 2 - превращаем данные в icalendar
-  // ...
+  const event = await getCalendarMessage(message.message_id);
 
   const googleCalendarUrl = formatGoogleCalendarUrl({
     text: event.title,
@@ -53,7 +50,9 @@ module.exports = async (bot, message, user) => {
     ]),
   });
 
-  // fixme Шаг 3 - делаем вызов в notify с передачей ical
+  // fixme превращаем данные в icalendar
+  // ...
+  // fixme делаем вызов в notify с передачей ical
   console.log('notify')
   const { credentialSubject } = await notifyCalendar({
     id: message.id,
