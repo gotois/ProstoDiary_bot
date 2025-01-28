@@ -82,7 +82,6 @@ module.exports = async (bot, message) => {
   await bot.deleteMessage(message.chat.id, message.message_id);
   setJWT(Number(message.chat.id), jwt);
   await bot.sendMessage(message.chat.id, 'Вы авторизованы!', {
-    parse_mode: 'MarkdownV2',
     message_effect_id: '5046509860389126442', // 🎉
     reply_markup: {
       remove_keyboard: true,

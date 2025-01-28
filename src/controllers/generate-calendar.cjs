@@ -43,7 +43,7 @@ module.exports.sentToSecretary = async function ({ id, activity, jwt, language }
     url: SERVER_HOST + '/rpc',
     body: {
       id: id,
-      method: 'chat',
+      method: 'generate-calendar',
       params: activity,
     },
     jwt: jwt,
