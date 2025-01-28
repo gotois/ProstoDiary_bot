@@ -77,6 +77,7 @@ const { bot, middleware } = botController({
     ['inline_query']: checkAuth(inlineAction),
     ['message_forwards']: checkAuth(textForwards),
     ['reply_to_message']: () => {},
+    ['pinned_message']: () => {},
 
     /* CALLBACK */
     ['web_app_data']: (bot, message) => {
@@ -91,7 +92,7 @@ const { bot, middleware } = botController({
         }
       }
     },
-    ['auth_by_contact']: checkAuth(registrationByPhoneAction),
+    ['auth_by_contact']: registrationByPhoneAction,
     ['send_calendar']: checkAuth(sendCalendar),
 
     ['generate_calendar']: checkAuth(generateCalendar),
@@ -160,8 +161,8 @@ app.listen(port, () => {
 
 app.use(middleware);
 
-// fixme Webhook обработчик получающий данные с ProxyHub и уведомляющий пользователя
 // Webhook обработчик получающий данные с ProxyHub и уведомляющий пользователя
+// todo - нужна верификация чтобы быть уверенным что отправил GIC Server
 app.post('/subscribe', express.json(), async (request, response) => {
   const reply_message_id = request.header('TG_REPLY_MESSAGE_ID');
   const chat_id = request.header('TG_CHAT_ID');
@@ -176,7 +177,6 @@ app.post('/subscribe', express.json(), async (request, response) => {
         inline_keyboard: [[keyboardStart(request.body.url)]],
       },
     });
-    await bot.pinChatMessage(chat_id, editMessage.message_id);
   } catch {
     // pass
   }

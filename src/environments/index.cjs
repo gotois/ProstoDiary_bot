@@ -4,7 +4,7 @@ module.exports = {
   get IS_DEV() {
     return String(NODE_ENV)?.toLowerCase()?.startsWith('dev');
   },
-  get SERVER_APP() {
+  get SERVER_APP_URL() {
     return SERVER_APP;
   },
   get SERVER_HOST() {

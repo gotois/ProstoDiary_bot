@@ -1,35 +1,4 @@
-os:
-  - linux
-
-language: node_js
-sudo: false
-
-node_js:
-  - '14'
-
-services:
-  - postgresql
-  - redis-server
-
-addons:
-  postgresql: "10"
-
-env:
-  global:
-    - NODE_ENV=TRAVIS_CI
-
-notifications:
-  email:
-    recipients:
-      - support@gotointeractive.com
-    on_success: never
-    on_failure: always
-
-git:
-  depth: 10
-  quiet: true
-  submodules: false
-  lfs_skip_smudge: true
+# todo перенести оставшуюся логику в ci-cd.yml
 
 cache:
   npm: true

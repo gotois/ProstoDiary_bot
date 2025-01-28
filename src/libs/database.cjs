@@ -19,8 +19,12 @@ function createCalendarsTable() {
   database.exec(`
       CREATE TABLE if not exists calendars(
         id INTEGER PRIMARY KEY,
-        idUser INTEGER,
-        ical TEXT
+        message_id INTEGER,
+        title TEXT,
+        details TEXT,
+        location TEXT,
+        start TEXT,
+        end TEXT
       ) STRICT
     `);
 }
@@ -32,8 +36,8 @@ try {
 }
 try {
   createCalendarsTable();
-} catch {
-  // ...
+} catch (error) {
+  console.warn(error);
 }
 
 module.exports = database;
@@ -55,13 +59,24 @@ module.exports.setJWT = (userId, jwt) => {
   insert.run({ key: userId, jwt: jwt });
 };
 
-module.exports.getCalendars = (id, idUser) => {
-  const query = database.prepare(`SELECT * FROM calendars WHERE id == ${id} AND idUser = ${idUser}`);
-  const users = query.all();
-  return users;
+module.exports.getCalendars = (id) => {
+  const query = database.prepare(`SELECT * FROM calendars WHERE message_id == ${id}`);
+  const events = query.all();
+  return events;
 };
 
 module.exports.saveCalendar = (idMessage, idUser, ical) => {
   const insert = database.prepare('INSERT INTO calendars (id, idUser, ical) VALUES (?, ?, ?)');
   insert.run(idMessage, idUser, ical);
+module.exports.saveCalendar = ({ id, title, details, location, start, end }) => {
+  const insert = database.prepare(`
+    INSERT INTO calendars (message_id, title, details, location, start, end)
+    VALUES (:message_id, :title, :details, :location, :start, ?)`);
+  insert.run({
+    message_id: id,
+    title: title,
+    details: details,
+    location: location,
+    start: start,
+  });
 };

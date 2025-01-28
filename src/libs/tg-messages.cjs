@@ -16,28 +16,3 @@ module.exports.sendPrepareMessage = async function (bot, message) {
     ]),
   });
 };
-
-module.exports.sendCalendarMessage = async function (bot, message, output, googleCalendarUrl) {
-  const keyboardDownloadCalendar = {
-    text: 'Скачать ICS',
-    callback_data: 'send_calendar',
-  };
-  const keyboardGoogleCalendar = {
-    text: 'В Google Calendar',
-    url: googleCalendarUrl,
-  };
-  const calendarMessage = await bot.sendMessage(message.chat.id, output, {
-    reply_to_message_id: message.message_id,
-    parse_mode: 'MarkdownV2',
-    protect_content: true,
-    reply_markup: {
-      inline_keyboard: [[keyboardDownloadCalendar, keyboardGoogleCalendar]],
-    },
-  });
-  try {
-    await bot.pinChatMessage(message.chat.id, calendarMessage.message_id);
-  } catch (error) {
-    console.error(error);
-  }
-  return calendarMessage;
-};

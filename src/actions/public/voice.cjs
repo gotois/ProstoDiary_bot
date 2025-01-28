@@ -1,12 +1,6 @@
 const Dialog = require('../../libs/dialog.cjs');
-const { formatGoogleCalendarUrl, sentToSecretary } = require('../../controllers/generate-calendar.cjs');
-const { saveCalendar } = require('../../libs/database.cjs');
-const {
-  RECORD_AUDIO,
-  sendPrepareAction,
-  sendPrepareMessage,
-  sendCalendarMessage,
-} = require('../../libs/tg-messages.cjs');
+const { sentToSecretary } = require('../../controllers/generate-calendar.cjs');
+const { RECORD_AUDIO, sendPrepareAction, sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, message, user) => {
   await sendPrepareAction(bot, message, RECORD_AUDIO);
@@ -34,12 +28,6 @@ module.exports = async (bot, message, user) => {
         reply_to_message_id: message.message_id,
         protect_content: true,
       });
-      break;
-    }
-    case 'text/calendar': {
-      const googleCalendarUrl = formatGoogleCalendarUrl(data);
-      const calendarMessage = await sendCalendarMessage(bot, message, data, googleCalendarUrl.href);
-      await saveCalendar(calendarMessage.message_id, user.key, data);
       break;
     }
     default: {

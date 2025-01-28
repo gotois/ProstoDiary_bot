@@ -2,15 +2,9 @@ const { TELEGRAM_MINI_APP_URL } = require('../../environments/index.cjs');
 
 module.exports = async (bot, message) => {
   console.log('start pomodoro timer', message);
-  await bot.setMessageReaction(message.chat.id, message.message_id, {
-    reaction: JSON.stringify([
-      {
-        type: 'emoji',
-        emoji: '👀',
-      },
-    ]),
-  });
-  // todo - запустить таймер помодоро на 25 мин - сфокусироваться на выполнении
+
+  // todo - для запуска таймера помодоро на 25 мин - сфокусироваться на выполнении
+  //  потребуется включить MiniApps
   // ...
   const editMessage = await bot.editMessageText(message.text, {
     chat_id: message.chat.id,
