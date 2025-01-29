@@ -1,4 +1,5 @@
 const Dialog = require('../../libs/dialog.cjs');
+const { TYPING, sendPrepareAction } = require('../../libs/tg-messages.cjs');
 const { saveCalendar } = require('../../libs/database.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
@@ -15,7 +16,7 @@ module.exports = async (bot, message, user) => {
   const data = credentialSubject.object.contentMap[dialog.language];
   await sendPrepareMessage(bot, message);
   const myMessage = await bot.sendMessage(message.chat.id, data, {
-    parse_mode: credentialSubject.object.mediaType === 'text/markdown' ? 'MarkdownV2' : undefined,
+    parse_mode: credentialSubject.object.mediaType === 'text/markdown' ? 'MarkdownV2' : 'Markdown',
     reply_to_message_id: message.message_id,
     protect_content: true,
     disable_notification: true,
@@ -32,11 +33,11 @@ module.exports = async (bot, message, user) => {
   });
   // сохраняем в базу SQLite на временное хранилище
   await saveCalendar({
-    id: myMessage.message_id, // fixme - взять из from.id + message_id
-    title: 'Событие',
-    details: 'Описание',
-    location: 'Место',
-    start: new Date().toISOString(),
-    // end: calendarMessage.end,
+    id: message.chat.id + '' + myMessage.message_id,
+    title: credentialSubject.object.name,
+    details: credentialSubject.object.summary,
+    location: credentialSubject.object.location,
+    start: credentialSubject.startTime,
+    end: credentialSubject.endTime,
   });
 };

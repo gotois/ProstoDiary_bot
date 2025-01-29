@@ -168,7 +168,7 @@ app.post('/subscribe', express.json(), async (request, response) => {
   const chat_id = request.header('TG_CHAT_ID');
   try {
     await bot.unpinChatMessage(chat_id, {});
-    const editMessage = await bot.editMessageText(request.body.text, {
+    await bot.editMessageText(request.body.text, {
       chat_id: chat_id,
       message_id: reply_message_id,
       parse_mode: 'HTML',

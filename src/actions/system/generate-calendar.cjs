@@ -27,7 +27,10 @@ function formatGoogleCalendarUrl({ text, details, start, end, location }) {
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message, user) => {
-  const event = await getCalendarMessage(message.message_id);
+  const event = await getCalendarMessage(message.chat.id + '' + message.message_id);
+  if (!event) {
+    throw new Error('Событие не найдено');
+  }
 
   const googleCalendarUrl = formatGoogleCalendarUrl({
     text: event.title,
