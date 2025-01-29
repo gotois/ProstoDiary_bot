@@ -159,35 +159,41 @@ app.listen(port, () => {
 
 app.use(middleware);
 
-// Webhook обработчик получающий данные с ProxyHub и уведомляющий пользователя
+// Webhook обработчик получающий данные с сервера и уведомляющий пользователя
 // todo - нужна верификация чтобы быть уверенным что отправил GIC Server
 app.post('/subscribe', express.json(), async (request, response) => {
-  const reply_message_id = request.header('TG_REPLY_MESSAGE_ID');
+  const telegramMessageId = Number(request.header('TG_REPLY_MESSAGE_ID'));
   const chat_id = request.header('TG_CHAT_ID');
-  try {
-    await bot.unpinChatMessage(chat_id, {});
-    await bot.editMessageText(request.body.text, {
-      chat_id: chat_id,
-      message_id: reply_message_id,
-      parse_mode: 'HTML',
-      protect_content: true,
+  if (Number.isNaN(telegramMessageId)) {
+    await bot.sendMessage(chat_id, request.body.text, {
+      parse_mode: 'MarkdownV2',
       reply_markup: {
-        inline_keyboard: [[keyboardStart(request.body.url)]],
+        inline_keyboard: [
+          [keyboardStart(request.body.url)],
+          [keyboardLater(), keyboardLater60(), keyboardLaterTomorrow()],
+        ],
       },
     });
-  } catch {
-    // pass
+  } else {
+    try {
+      await bot.unpinChatMessage(chat_id, {});
+      await bot.editMessageText(request.body.text, {
+        chat_id: chat_id,
+        message_id: telegramMessageId,
+        reply_to_message_id: telegramMessageId,
+        parse_mode: 'MarkdownV2',
+        protect_content: true,
+        reply_markup: {
+          inline_keyboard: [[keyboardStart(request.body.url)]],
+        },
+      });
+      await bot.setMessageReaction(chat_id, telegramMessageId, {
+        reaction: JSON.stringify([]),
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
-  await bot.sendMessage(chat_id, request.body.text, {
-    parse_mode: 'HTML',
-    reply_to_message_id: reply_message_id,
-    reply_markup: {
-      inline_keyboard: [
-        [keyboardStart(request.body.url)],
-        [keyboardLater(), keyboardLater60(), keyboardLaterTomorrow()],
-      ],
-    },
-  });
   response.sendStatus(200);
 });
 

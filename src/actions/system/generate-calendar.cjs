@@ -32,12 +32,13 @@ module.exports = async (bot, message, user) => {
   });
   const icalendar = new ICalendar();
   const vevent = new icalBrowser.VEvent({
-    uid: message.id + 'event',
-    start: new Date(event.start),
-    end: new Date(event.end),
-    summary: event.title,
-    description: event.details,
-    location: event.location,
+    'uid': message.id + 'event',
+    'start': new Date(event.start),
+    'end': new Date(event.end),
+    'summary': event.title,
+    'description': event.details,
+    'location': event.location,
+    'x-telegram-message-id': message.message_id,
   });
   const valarm = new icalBrowser.VAlarm({
     uid: message.id + 'alarm',

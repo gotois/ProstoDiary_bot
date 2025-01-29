@@ -65,6 +65,16 @@ module.exports.getCalendarMessage = (id) => {
   return events[0];
 };
 
+/**
+ * @description сохранение в базу SQLite на временное хранилище
+ * @param {object} calendar - объект события
+ * @param {number} calendar.id - идентификатор сообщения
+ * @param {string} calendar.title - заголовок события
+ * @param {string|null} [calendar.details] - детали события
+ * @param {string|null} [calendar.location] - местоположение события
+ * @param {string} calendar.start - время начала события
+ * @param {string} calendar.end - время окончания события
+ */
 module.exports.saveCalendar = ({ id, title, details = null, location = null, start, end }) => {
   const insert = database.prepare(`
     INSERT INTO calendars (message_id, title, details, location, start, end)

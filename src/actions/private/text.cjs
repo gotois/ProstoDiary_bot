@@ -61,7 +61,6 @@ module.exports = async (bot, message, user) => {
       ],
     },
   });
-  // сохраняем в базу SQLite на временное хранилище
   await saveCalendar({
     id: message.chat.id + '' + myMessage.message_id,
     title: credentialSubject.object.name,
