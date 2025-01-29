@@ -1,49 +1,27 @@
+const icalBrowser = require('ical-browser');
 const { SERVER_APP_URL, IS_DEV } = require('../../environments/index.cjs');
 const { notifyCalendar } = require('../../controllers/generate-calendar.cjs');
 const { getCalendarMessage } = require('../../libs/database.cjs');
 
-// Добавление события в открываемой ссылке на Google Calendar
-function formatGoogleCalendarUrl({ text, details, start, end, location }) {
-  const link = new URL('https://calendar.google.com/calendar/render');
-  link.searchParams.append('action', 'TEMPLATE');
-  link.searchParams.append('text', text);
-  link.searchParams.append('details', details);
-  if (end) {
-    link.searchParams.append('dates', start + '/' + end);
-  } else {
-    link.searchParams.append('dates', start + '/' + start);
-  }
-  if (location) {
-    link.searchParams.append('location', location);
-  }
-  return link;
-}
+const ICalendar = icalBrowser.default;
 
 /**
- * @description Генерация календаря
+ * @description Генерация календаря и отправка файла ical Секретарю
  * @param {any} bot - telegram bot
- * @param user
  * @param {any} message - telegram message
+ * @param {any} user - user data
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message, user) => {
-  const event = await getCalendarMessage(message.chat.id + '' + message.message_id);
-  if (!event) {
-    throw new Error('Событие не найдено');
-  }
-
-  const googleCalendarUrl = formatGoogleCalendarUrl({
-    text: event.title,
-    details: event.details,
-    location: event.location,
-    start: event.start,
-    end: event.end,
-  });
-
   await bot.answerCallbackQuery(message.id, {
     text: 'Идет обработка...',
     show_alert: false,
   });
+  const language = message.reply_to_message?.from?.language_code;
+  const event = await getCalendarMessage(message.chat.id + '' + message.message_id);
+  if (!event) {
+    throw new Error('Событие не найдено');
+  }
   await bot.setMessageReaction(message.chat.id, message.message_id, {
     reaction: JSON.stringify([
       {
@@ -52,36 +30,40 @@ module.exports = async (bot, message, user) => {
       },
     ]),
   });
-
-  // fixme превращаем данные в icalendar
-  // ...
-  // fixme делаем вызов в notify с передачей ical
-  console.log('notify')
+  const icalendar = new ICalendar();
+  const vevent = new icalBrowser.VEvent({
+    uid: message.id + 'event',
+    start: new Date(event.start),
+    end: new Date(event.end),
+    summary: event.title,
+    description: event.details,
+    location: event.location,
+  });
+  const valarm = new icalBrowser.VAlarm({
+    uid: message.id + 'alarm',
+    trigger: '-PT15M', // за 15 минут до начала
+    action: 'display',
+    description: event.title,
+  });
+  vevent.addAlarm(valarm);
+  icalendar.addEvent(vevent);
   const { credentialSubject } = await notifyCalendar({
     id: message.id,
-    activity: {
-      title: event.title,
-      details: event.details,
-      location: event.location,
-      start: event.start,
-      end: event.end,
-      // link: 'https://example.com',
-    },
+    ics: icalendar.ics,
     jwt: user.jwt,
-    language: message.from.language_code,
+    language: language,
   });
-  let webAppUrl = `${SERVER_APP_URL}/?lang=${message.from.language_code}`;
+  let webAppUrl = `${SERVER_APP_URL}/?lang=${language}`;
   // eslint-disable-next-line unicorn/consistent-destructuring
   if (IS_DEV) {
     webAppUrl += '&debug=1';
   }
-
-  const editMessage = await bot.editMessageText(credentialSubject.data, {
+  const editMessage = await bot.editMessageText(credentialSubject.object.content, {
     chat_id: message.chat.id,
-    reply_to_message_id: message.message_id,
+    reply_to_message_id: message.reply_to_message.message_id,
     message_id: message.message_id,
     protect_content: true,
-    parse_mode: 'MarkdownV2',
+    parse_mode: credentialSubject.object.mediaType === 'text/markdown' ? 'MarkdownV2' : null,
     disable_notification: true,
     reply_markup: {
       remove_keyboard: true,
@@ -92,16 +74,6 @@ module.exports = async (bot, message, user) => {
           {
             text: 'Открыть календарь',
             web_app: { url: webAppUrl },
-          },
-        ],
-        [
-          {
-            text: 'Скачать ICS',
-            callback_data: 'send_calendar',
-          },
-          {
-            text: 'В Google Calendar',
-            url: googleCalendarUrl,
           },
         ],
       ],

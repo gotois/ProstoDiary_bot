@@ -9,7 +9,6 @@ const offertaAction = require('./actions/system/offerta.cjs');
 const registrationByMiniAppAction = require('./actions/system/registration.cjs');
 const registrationByPhoneAction = require('./actions/system/registration-phone.cjs');
 const wantAction = require('./actions/system/want.cjs');
-const sendCalendar = require('./actions/system/send-calendar.cjs');
 const startAction = require('./actions/public/start.cjs');
 const editedMessageTextAction = require('./actions/public/edited-message-text.cjs');
 const channelPostAction = require('./actions/public/channel-post.cjs');
@@ -94,8 +93,6 @@ const { bot, middleware } = botController({
       }
     },
     ['auth_by_contact']: registrationByPhoneAction,
-    ['send_calendar']: checkAuth(sendCalendar),
-
     ['generate_calendar']: checkAuth(generateCalendar),
 
     // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день

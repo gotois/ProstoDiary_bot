@@ -3,6 +3,7 @@ const requestJsonRpc2 = require('request-json-rpc2').default;
 const { pdfToPng } = require('pdf-to-png-converter');
 const { setJWT } = require('../../libs/database.cjs');
 const { generateTelegramHash } = require('../../libs/tg-crypto.cjs');
+const { sendPrepareAction, UPLOAD_DOCUMENT } = require('../../libs/tg-messages.cjs');
 const { SERVER_HOST } = require('../../environments/index.cjs');
 
 /**
@@ -69,6 +70,7 @@ module.exports = async (bot, message) => {
   if (error) {
     throw new Error('Произошла ошибка JSON-RPC');
   }
+  await sendPrepareAction(bot, message, UPLOAD_DOCUMENT);
   // Превращаем PDF в PNG
   const response1 = await fetch(result.credentialSubject.object.attachment[0].url);
   const fileBuffer = await response1.arrayBuffer();
