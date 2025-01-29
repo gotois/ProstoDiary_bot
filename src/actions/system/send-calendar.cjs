@@ -1,4 +1,5 @@
-const { sendPrepareAction } = require('../../libs/tg-messages.cjs');
+const icalendar = require('ical-browser');
+const { sendPrepareAction, UPLOAD_DOCUMENT } = require('../../libs/tg-messages.cjs');
 const { getCalendarMessage } = require('../../libs/database.cjs');
 const { TEXT_CALENDAR } = require('../../libs/mime-types.cjs');
 
@@ -9,15 +10,26 @@ const { TEXT_CALENDAR } = require('../../libs/mime-types.cjs');
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  const event = await getCalendarMessage(message.message_id);
-
-  // fixme - нужно сгенерировать ical из данных event
-  console.log('WIP генерировать ical')
-
+  await bot.answerCallbackQuery(message.id, {
+    text: 'Идет обработка...',
+    show_alert: false,
+  });
+  const event = await getCalendarMessage(message.chat.id + '' + message.message_id);
+  const eventIcal = icalendar.event({
+    uid: event.message_id,
+    start: new Date(event.start),
+    end: new Date(event.end),
+    summary: event.title,
+    description: event.details,
+    location: event.location,
+  });
+  const ical = icalendar.default(message.id, {
+    event: eventIcal,
+  });
   const fileEvent = new File([new TextEncoder().encode(ical)], event.title + '.ics', {
     type: TEXT_CALENDAR,
   });
-  bot.sendChatAction(message.chat.id, sendPrepareAction(fileEvent.type));
+  await sendPrepareAction(bot, message, UPLOAD_DOCUMENT);
   const arrayBuffer = await fileEvent.arrayBuffer();
   await bot.sendDocument(
     message.chat.id,

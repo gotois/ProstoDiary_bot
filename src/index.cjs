@@ -39,6 +39,7 @@ const focusPomodoro = require('./actions/system/focus-pomodoro.cjs');
 const generateCalendar = require('./actions/system/generate-calendar.cjs');
 const checkAuth = require('./middleware/check-auth.cjs');
 const errorHandler = require('./middleware/error-handler.cjs');
+const replyToMessageAction = require('./actions/private/reply-to-message.cjs');
 
 const app = express();
 const port = argv.port || 3000;
@@ -76,7 +77,7 @@ const { bot, middleware } = botController({
     ['contact']: checkAuth(contactAction),
     ['inline_query']: checkAuth(inlineAction),
     ['message_forwards']: checkAuth(textForwards),
-    ['reply_to_message']: () => {},
+    ['reply_to_message']: checkAuth(replyToMessageAction),
     ['pinned_message']: () => {},
 
     /* CALLBACK */

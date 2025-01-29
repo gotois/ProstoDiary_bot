@@ -24,7 +24,7 @@ function createCalendarsTable() {
         details TEXT NULL,
         location TEXT NULL,
         start TEXT,
-        end TEXT NULL
+        end TEXT
       ) STRICT
     `);
 }
@@ -65,7 +65,7 @@ module.exports.getCalendarMessage = (id) => {
   return events[0];
 };
 
-module.exports.saveCalendar = ({ id, title, details = null, location = null, start, end = null }) => {
+module.exports.saveCalendar = ({ id, title, details = null, location = null, start, end }) => {
   const insert = database.prepare(`
     INSERT INTO calendars (message_id, title, details, location, start, end)
     VALUES (:message_id, :title, :details, :location, :start, :end)`);
