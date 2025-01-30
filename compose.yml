@@ -5,12 +5,12 @@ services:
     build:
       context: .
       target: build
-    container_name: 'secretary-tg'
+    container_name: "secretary-tg"
     platform: linux/arm64
     ports:
-      - "6666:6666"
+      - "8888:8888"
     expose:
-      - "6666"
+      - "8888"
     environment:
       - TELEGRAM_MINI_APP=$TELEGRAM_MINI_APP
       - TELEGRAM_TOKEN=$TELEGRAM_TOKEN
@@ -20,7 +20,9 @@ services:
       - SERVER_APP=https://archive.gotointeractive.com
     networks:
       - global_lan
+      - default
 
 networks:
   global_lan:
+    driver: bridge
     external: true

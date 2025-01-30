@@ -41,7 +41,7 @@ const errorHandler = require('./middleware/error-handler.cjs');
 const replyToMessageAction = require('./actions/private/reply-to-message.cjs');
 
 const app = express();
-const port = argv.port || 6666;
+const port = Number(argv.port || 8888);
 
 const { bot, middleware } = botController({
   token: TELEGRAM_TOKEN,
@@ -153,10 +153,6 @@ const { bot, middleware } = botController({
   },
 });
 
-app.listen(port, () => {
-  console.log('Telegram Server is listening 🚀');
-});
-
 app.use(middleware);
 
 app.get('/', (request, response) => {
@@ -214,6 +210,10 @@ app.post('/subscribe', express.json(), async (request, response) => {
     }
   }
   return response.sendStatus(400);
+});
+
+app.listen(port, () => {
+  console.log('Telegram Server is listening 🚀', port);
 });
 
 const keyboardStart = (url) => {

@@ -124,7 +124,7 @@ docker compose --env-file .env -f compose.yml -f compose.prod.yml up --build
 
 Возможности управления системой
 
-1) `something text` - Запись. Используется по-умолчанию
+1) `something text` - Уведомление
 2) `? something search` - Поиск
 3) `! something execute` - Выполнение поручения
 
