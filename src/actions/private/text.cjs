@@ -35,7 +35,7 @@ module.exports = async (bot, message, user) => {
   const time = new Intl.DateTimeFormat(dialog.language, {
     dateStyle: 'full',
     timeStyle: 'short',
-    timeZone: 'UTC',
+    timeZone: 'Europe/Moscow', // fixme использовать время пользователя
   }).format(new Date(credentialSubject.startTime));
   const data =
     `Что: ${name}\n` + `Где: ${location ?? '-'}\n` + `Когда: ${time}\n` + 'Напомнить за: 15 минут\n\n' + 'Все верно?';

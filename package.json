@@ -25,7 +25,7 @@
     "pretest": "run-s --silent \"lint -- --quiet\" lint:dependency",
     "test": "nyc --reporter=text run-s test:unit",
     "test:unit": "ava tests/unit/index.js",
-    "dev": "node --experimental-sqlite -r dotenv/config ./bin/server.cjs --port=3000",
+    "dev": "node --experimental-sqlite -r dotenv/config ./bin/server.cjs --port=8888",
     "dev:docs": "cd docs/ ; bundle exec jekyll serve",
     "clean": "npm-run-all clean:logs clean:test-cache",
     "clean:report": "rm -rf .nyc_output",
