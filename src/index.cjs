@@ -41,7 +41,7 @@ const errorHandler = require('./middleware/error-handler.cjs');
 const replyToMessageAction = require('./actions/private/reply-to-message.cjs');
 
 const app = express();
-const port = argv.port || 3000;
+const port = argv.port || 6666;
 
 const { bot, middleware } = botController({
   token: TELEGRAM_TOKEN,
@@ -159,12 +159,16 @@ app.listen(port, () => {
 
 app.use(middleware);
 
+app.get('/', (request, response) => {
+  response.send('Pong');
+});
 // Webhook обработчик получающий данные с сервера и уведомляющий пользователя
 // todo - нужна верификация чтобы быть уверенным что отправил GIC Server
 app.post('/subscribe', express.json(), async (request, response) => {
+  console.log('subscribe');
   const telegramMessageId = Number(request.header('TG_REPLY_MESSAGE_ID'));
   const chatId = Number(request.header('TG_CHAT_ID'));
-  if (!chatId) {
+  if (Number.isNaN(chatId)) {
     return response.sendStatus(400);
   }
   try {

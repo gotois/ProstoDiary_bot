@@ -7,6 +7,10 @@ services:
       target: build
     container_name: 'secretary-tg'
     platform: linux/arm64
+    ports:
+      - "6666:6666"
+    expose:
+      - "6666"
     environment:
       - TELEGRAM_MINI_APP=$TELEGRAM_MINI_APP
       - TELEGRAM_TOKEN=$TELEGRAM_TOKEN
