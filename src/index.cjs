@@ -163,22 +163,36 @@ app.use(middleware);
 // todo - нужна верификация чтобы быть уверенным что отправил GIC Server
 app.post('/subscribe', express.json(), async (request, response) => {
   const telegramMessageId = Number(request.header('TG_REPLY_MESSAGE_ID'));
-  const chat_id = request.header('TG_CHAT_ID');
-  if (Number.isNaN(telegramMessageId)) {
-    await bot.sendMessage(chat_id, request.body.text, {
-      parse_mode: 'MarkdownV2',
-      reply_markup: {
-        inline_keyboard: [
-          [keyboardStart(request.body.url)],
-          [keyboardLater(), keyboardLater60(), keyboardLaterTomorrow()],
-        ],
-      },
+  const chatId = Number(request.header('TG_CHAT_ID'));
+  if (!chatId) {
+    return response.sendStatus(400);
+  }
+  try {
+    await bot.unpinChatMessage(chatId, {
+      message_id: telegramMessageId,
     });
+  } catch {
+    // ...
+  }
+  if (Number.isNaN(telegramMessageId)) {
+    try {
+      await bot.sendMessage(chatId, request.body.text, {
+        parse_mode: 'MarkdownV2',
+        reply_markup: {
+          inline_keyboard: [
+            [keyboardStart(request.body.url)],
+            [keyboardLater(), keyboardLater60(), keyboardLaterTomorrow()],
+          ],
+        },
+      });
+      return response.sendStatus(200);
+    } catch (error) {
+      console.error(error);
+    }
   } else {
     try {
-      await bot.unpinChatMessage(chat_id, {});
       await bot.editMessageText(request.body.text, {
-        chat_id: chat_id,
+        chat_id: chatId,
         message_id: telegramMessageId,
         reply_to_message_id: telegramMessageId,
         parse_mode: 'MarkdownV2',
@@ -187,14 +201,15 @@ app.post('/subscribe', express.json(), async (request, response) => {
           inline_keyboard: [[keyboardStart(request.body.url)]],
         },
       });
-      await bot.setMessageReaction(chat_id, telegramMessageId, {
+      await bot.setMessageReaction(chatId, telegramMessageId, {
         reaction: JSON.stringify([]),
       });
+      return response.sendStatus(200);
     } catch (error) {
       console.error(error);
     }
   }
-  response.sendStatus(200);
+  return response.sendStatus(400);
 });
 
 const keyboardStart = (url) => {

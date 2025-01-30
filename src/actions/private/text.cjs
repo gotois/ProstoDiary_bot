@@ -2,6 +2,7 @@ const Dialog = require('../../libs/dialog.cjs');
 const { TYPING, sendPrepareAction } = require('../../libs/tg-messages.cjs');
 const { saveCalendar } = require('../../libs/database.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
+const { sentToSecretary } = require('../../controllers/generate-calendar.cjs');
 
 // Добавление события в открываемой ссылке на Google Calendar
 function formatGoogleCalendarUrl({ text, details, start, end, location }) {
@@ -30,17 +31,24 @@ module.exports = async (bot, message, user) => {
     jwt: user.jwt,
     language: dialog.language,
   });
-  const data = credentialSubject.object.contentMap[dialog.language];
+  const { name, summary, location } = credentialSubject.object;
+  const time = new Intl.DateTimeFormat(dialog.language, {
+    dateStyle: 'full',
+    timeStyle: 'short',
+    timeZone: 'UTC',
+  }).format(new Date(credentialSubject.startTime));
+  const data =
+    `Что: ${name}\n` + `Где: ${location ?? '-'}\n` + `Когда: ${time}\n` + 'Напомнить за: 15 минут\n\n' + 'Все верно?';
   await sendPrepareMessage(bot, message);
   const googleCalendarUrl = formatGoogleCalendarUrl({
-    text: credentialSubject.object.name,
-    details: credentialSubject.object.summary,
-    location: credentialSubject.object.location,
+    text: name,
+    details: summary,
+    location: location,
     start: credentialSubject.startTime,
     end: credentialSubject.endTime,
   });
   const myMessage = await bot.sendMessage(message.chat.id, data, {
-    parse_mode: credentialSubject.object.mediaType === 'text/markdown' ? 'MarkdownV2' : 'Markdown',
+    parse_mode: 'Markdown',
     reply_to_message_id: message.message_id,
     protect_content: true,
     disable_notification: true,
@@ -63,9 +71,9 @@ module.exports = async (bot, message, user) => {
   });
   await saveCalendar({
     id: message.chat.id + '' + myMessage.message_id,
-    title: credentialSubject.object.name,
-    details: credentialSubject.object.summary,
-    location: credentialSubject.object.location,
+    title: name,
+    details: summary,
+    location: location,
     start: credentialSubject.startTime,
     end: credentialSubject.endTime,
   });
