@@ -1,5 +1,3 @@
-const { v1: uuidv1 } = require('uuid');
-const requestJsonRpc2 = require('request-json-rpc2').default;
 const { pdfToPng } = require('pdf-to-png-converter');
 const { setJWT } = require('../../libs/database.cjs');
 const { generateTelegramHash } = require('../../libs/tg-crypto.cjs');
@@ -59,37 +57,29 @@ module.exports = async (bot, message) => {
   const response1 = await fetch(url);
   const fileBuffer = await response1.arrayBuffer();
   const pngPages = await pdfToPng(Buffer.from(fileBuffer));
-  // todo отправить в виде одного документа
-  // const pngBuffer = Buffer.concat(
-  //   pngPages.map((page) => {
-  //     return page.content;
-  //   }),
-  // );
-  // await bot.sendDocument(
-  //   message.chat.id,
-  //   pngBuffer,
-  //   {
-  //     caption: pngPages[0].name,
-  //     disable_notification: true,
-  //   },
-  //   {
-  //     filename: pngPages[0].name,
-  //     contentType: 'application/octet-stream',
-  //   },
-  // );
-  await bot.sendPhoto(message.chat.id, pngPages[0].content, {
-    caption: 'Вы зарегистрированы! Продолжая использовать сервис вы принимаете условия пользовательского соглашения',
-    parse_mode: 'HTML',
-    filename: pngPages[0].name,
-    contentType: 'image/png',
-    message_effect_id: '5046509860389126442', // 🎉
-    reply_markup: {
-      remove_keyboard: true,
-      resize_keyboard: true,
-      one_time_keyboard: true,
-      keyboard: [],
+  await bot.sendMediaGroup(
+    message.chat.id,
+    pngPages.map((page) => {
+      return {
+        type: 'photo',
+        media: page.content,
+        width: page.width,
+        height: page.height,
+        caption:
+          'Вы зарегистрированы! Продолжая использовать сервис вы принимаете условия пользовательского соглашения',
+      };
+    }),
+    {
+      disable_notification: true,
+      message_effect_id: '5046509860389126442', // 🎉
+      reply_markup: {
+        remove_keyboard: true,
+        resize_keyboard: true,
+        one_time_keyboard: true,
+        keyboard: [],
+      },
     },
-  });
+  );
   await bot.deleteMessage(message.chat.id, message.message_id);
   setJWT(Number(message.chat.id), jwt);
 };

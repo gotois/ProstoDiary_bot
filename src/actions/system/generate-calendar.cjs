@@ -59,12 +59,26 @@ module.exports = async (bot, message, user) => {
   if (IS_DEV) {
     webAppUrl += '&debug=1';
   }
+  let parseMode = null;
+  switch (credentialSubject.object.mediaType) {
+    case 'text/markdown': {
+      parseMode = 'MarkdownV2';
+      break;
+    }
+    case 'text/html': {
+      parseMode = 'HTML';
+      break;
+    }
+    default: {
+      break;
+    }
+  }
   const editMessage = await bot.editMessageText(credentialSubject.object.content, {
     chat_id: message.chat.id,
     reply_to_message_id: message.reply_to_message.message_id,
     message_id: message.message_id,
     protect_content: true,
-    parse_mode: credentialSubject.object.mediaType === 'text/markdown' ? 'MarkdownV2' : null,
+    parse_mode: parseMode,
     disable_notification: true,
     reply_markup: {
       remove_keyboard: true,
