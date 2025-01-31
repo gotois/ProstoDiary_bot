@@ -1,10 +1,30 @@
 const Dialog = require('../../libs/dialog.cjs');
 const { sentToSecretary } = require('../../controllers/generate-calendar.cjs');
+const { updateUserLocation } = require('../../libs/database.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, message, user) => {
-  await sendPrepareMessage(bot, message);
-
+  if (!user.location) {
+    await sendPrepareMessage(bot, message);
+    await updateUserLocation(message.chat.id, message.location);
+    await bot.sendMessage(message.chat.id, 'Теперь нужен контакт', {
+      reply_markup: {
+        remove_keyboard: true,
+        resize_keyboard: true,
+        one_time_keyboard: true,
+        keyboard: [
+          [
+            {
+              // request_contact может работать только в таком виде
+              text: '📞 Отправить контакт',
+              request_contact: true,
+            },
+          ],
+        ],
+      },
+    });
+    return;
+  }
   const { message_id } = await bot.sendMessage(message.chat.id, 'Напиши свои намерения', {
     reply_to_message_id: message.message_id,
     reply_markup: {

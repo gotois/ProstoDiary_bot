@@ -60,7 +60,7 @@ const { bot, middleware } = botController({
 
     /* NATIVE COMMANDS */
 
-    ['location']: errorHandler(locationAction),
+    ['location']: checkAuth(locationAction),
     ['sticker']: checkAuth(stickerAction),
     ['animation']: checkAuth(animationAction),
     ['poll']: checkAuth(pollAction),
@@ -92,7 +92,7 @@ const { bot, middleware } = botController({
         }
       }
     },
-    ['auth_by_contact']: registrationByPhoneAction,
+    ['auth_by_contact']: checkAuth(registrationByPhoneAction),
     ['generate_calendar']: checkAuth(generateCalendar),
 
     // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день

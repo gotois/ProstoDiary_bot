@@ -1,4 +1,5 @@
 const sqlite = require('node:sqlite');
+const tzlookup = require('@photostructure/tz-lookup');
 const { IS_DEV } = require('../environments/index.cjs');
 
 const database = (() => {
@@ -9,7 +10,9 @@ const database = (() => {
 function createUsersTable() {
   database.exec(`
       CREATE TABLE if not exists users(
-        key INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY,
+        location TEXT NULL,
+        timezone TEXT DEFAULT 'UTC',
         jwt TEXT
       ) STRICT
     `);
@@ -42,26 +45,56 @@ try {
 
 module.exports = database;
 
-module.exports.getUsers = (idUser) => {
-  const query = database.prepare(`SELECT * FROM users WHERE key == ${idUser}`);
+module.exports.hasUser = (idUser) => {
+  const query = database.prepare(`SELECT * FROM users WHERE id == ${idUser}`);
   const users = query.all();
-  return users;
+
+  return users.length > 0;
+};
+
+module.exports.getUsers = (idUser) => {
+  const query = database.prepare(`SELECT * FROM users WHERE id == ${idUser}`);
+
+  return query.all();
+};
+
+module.exports.setNewUser = (userId) => {
+  const insert = database.prepare(`
+    INSERT INTO users (id) VALUES (:id)
+  `);
+  insert.run({ id: userId });
+};
+
+module.exports.updateUserLocation = (userId, { latitude, longitude, u = 50 }) => {
+  const timezone = tzlookup(latitude, longitude);
+
+  // https://www.here.com/docs/bundle/places-search-api-developer-guide/page/topics/location-contexts.html#location-contexts__position-format
+  const location = `geo:${latitude},${longitude};cgen=gps;u=${u}`;
+  const insert = database.prepare(`
+    INSERT INTO users (id, location, timezone) VALUES (:id, :location, :timezone)
+    ON CONFLICT(id)
+    DO
+      UPDATE SET location = :location, timezone = :timezone
+      WHERE id = :id
+  `);
+  insert.run({ id: userId, location, timezone });
 };
 
 module.exports.setJWT = (userId, jwt) => {
   const insert = database.prepare(`
-    INSERT INTO users (key, jwt) VALUES (:key, :jwt)
-    ON CONFLICT(key)
+    INSERT INTO users (id, jwt) VALUES (:id, :jwt)
+    ON CONFLICT(id)
     DO
       UPDATE SET jwt = :jwt
-      WHERE key = :key
+      WHERE id = :id
   `);
-  insert.run({ key: userId, jwt: jwt });
+  insert.run({ id: userId, jwt: jwt });
 };
 
 module.exports.getCalendarMessage = (id) => {
   const query = database.prepare(`SELECT * FROM calendars WHERE message_id == ${id}`);
   const events = query.all();
+
   return events[0];
 };
 

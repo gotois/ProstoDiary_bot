@@ -1,4 +1,4 @@
-const { getUsers } = require('../../libs/database.cjs');
+const { setNewUser, hasUser } = require('../../libs/database.cjs');
 
 function getWelcomeText() {
   return (
@@ -16,10 +16,8 @@ function getWelcomeText() {
 
 function getInstallAgainText() {
   return (
-    '**Требуется повторная установка**\n\n' +
-    'Предоставь свои контакты заново, чтобы продолжить пользоваться сервисом\\.\n\n' +
-    'Узнай больше подробностей командой /help\\.\n' +
-    'Продолжая использование вы соглашаетесь с Лицензионным соглашением /licence\\.\n'
+    'Предоставьте свои контакты заново, чтобы продолжить пользоваться сервисом\\.\n\n' +
+    'Узнай больше подробностей командой /help\\.'
   ).trim();
 }
 
@@ -30,8 +28,14 @@ function getInstallAgainText() {
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  const existUser = getUsers(message.chat.id)?.length > 0;
-  await bot.sendMessage(message.chat.id, existUser ? getInstallAgainText() : getWelcomeText(), {
+  let messageText = '';
+  if (hasUser(message.chat.id)) {
+    messageText = getInstallAgainText();
+  } else {
+    await setNewUser(message.chat.id);
+    messageText = getWelcomeText();
+  }
+  await bot.sendMessage(message.chat.id, messageText, {
     parse_mode: 'MarkdownV2',
     disable_notification: true,
     reply_to_message_id: message.message_id,

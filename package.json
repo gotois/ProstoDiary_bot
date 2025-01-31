@@ -80,6 +80,7 @@
     }
   },
   "dependencies": {
+    "@photostructure/tz-lookup": "11.1.0",
     "express": "4.21.2",
     "ical-browser": "0.1.2",
     "minimist": "1.2.8",
