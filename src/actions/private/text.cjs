@@ -35,7 +35,7 @@ module.exports = async (bot, message, user) => {
   const time = new Intl.DateTimeFormat(dialog.language, {
     dateStyle: 'full',
     timeStyle: 'short',
-    timeZone: 'Europe/Moscow', // fixme использовать время пользователя
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, // fixme использовать время пользователя а не сервера
   }).format(new Date(credentialSubject.startTime));
   const data =
     `Что: ${name}\n` + `Где: ${location ?? '-'}\n` + `Когда: ${time}\n` + 'Напомнить за: 15 минут\n\n' + 'Все верно?';
@@ -56,7 +56,7 @@ module.exports = async (bot, message, user) => {
       inline_keyboard: [
         [
           {
-            text: 'Добавить в календарь',
+            text: '☑️ Добавить в календарь',
             callback_data: 'generate_calendar',
           },
         ],

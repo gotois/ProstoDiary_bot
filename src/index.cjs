@@ -60,6 +60,7 @@ const { bot, middleware } = botController({
 
     /* NATIVE COMMANDS */
 
+    ['location']: errorHandler(locationAction),
     ['sticker']: checkAuth(stickerAction),
     ['animation']: checkAuth(animationAction),
     ['poll']: checkAuth(pollAction),
@@ -72,7 +73,6 @@ const { bot, middleware } = botController({
     ['video']: checkAuth(videoAction),
     ['video_note']: checkAuth(videoAction),
     ['document']: checkAuth(documentAction),
-    ['location']: checkAuth(locationAction),
     ['contact']: checkAuth(contactAction),
     ['inline_query']: checkAuth(inlineAction),
     ['message_forwards']: checkAuth(textForwards),

@@ -34,16 +34,16 @@ module.exports = async (bot, message) => {
   await bot.sendMessage(message.chat.id, existUser ? getInstallAgainText() : getWelcomeText(), {
     parse_mode: 'MarkdownV2',
     disable_notification: true,
+    reply_to_message_id: message.message_id,
     reply_markup: {
       remove_keyboard: true,
       resize_keyboard: true,
       one_time_keyboard: true,
       keyboard: [
         [
-          // request_contact может работать только в таком виде
           {
-            text: 'Принимаю лицензионное соглашение',
-            request_contact: true,
+            text: '📍Определи мой часовой пояс',
+            request_location: true,
           },
         ],
       ],
