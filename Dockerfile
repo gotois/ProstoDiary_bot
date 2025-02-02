@@ -2,7 +2,7 @@ FROM node:22.8 AS build
 
 MAINTAINER Denis Baskovsky <denis@baskovsky.ru>
 
-ENV TZ=Europe/Moscow
+ENV TZ=UTC
 
 WORKDIR /app
 
