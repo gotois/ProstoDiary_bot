@@ -11,11 +11,8 @@ services:
       - "8888:8888"
     expose:
       - "8888"
+    env_file: .env
     environment:
-      - TELEGRAM_MINI_APP=$TELEGRAM_MINI_APP
-      - TELEGRAM_TOKEN=$TELEGRAM_TOKEN
-      - TELEGRAM_DOMAIN=$TELEGRAM_DOMAIN
-      - TELEGRAM_GATEWAY=$TELEGRAM_GATEWAY
       - SERVER_HOST=http://web-dev:5555
       - SERVER_APP=https://archive.gotointeractive.com
     networks:

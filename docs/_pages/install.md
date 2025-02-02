@@ -18,7 +18,7 @@ NODE_ENV={ production|development }
 NGROK_AUTHTOKEN={ Your ngrok token }
 
 TELEGRAM_TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
-TELEGRAM_MINI_APP
+TELEGRAM_MINI_APP={ Your telegram mini app name like https://t.me/gotois_bot/App }
 SERVER_APP={ Your server app name like https://archive.gotointeractive.com }
 SERVER_HOST={ Your server api like https://api.gotointeractive.com }
 

@@ -2,8 +2,6 @@ FROM node:22.8 AS build
 
 MAINTAINER Denis Baskovsky <denis@baskovsky.ru>
 
-ENV TZ=UTC
-
 WORKDIR /app
 
 COPY package.json package-lock.json ./

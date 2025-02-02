@@ -3,11 +3,9 @@ version: '3.9'
 services:
   app:
     image: "qertis/secretary-tg:latest"
+    env_file: .env
     environment:
-      - TELEGRAM_MINI_APP=$TELEGRAM_MINI_APP
-      - TELEGRAM_TOKEN=$TELEGRAM_TOKEN
-      - TELEGRAM_DOMAIN=$TELEGRAM_DOMAIN
-      - TELEGRAM_GATEWAY=$TELEGRAM_GATEWAY
+      - TZ=Europe/Moscow
       - SERVER_HOST=http://web-prod:5555
       - SERVER_APP=https://archive.gotointeractive.com
     ports:
