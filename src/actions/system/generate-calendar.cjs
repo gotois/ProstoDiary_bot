@@ -22,7 +22,7 @@ module.exports = async (bot, message, user) => {
   if (!event) {
     throw new Error('Событие не найдено');
   }
-  await bot.setMessageReaction(message.chat.id, message.message_id, {
+  await bot.setMessageReaction(message.chat.id, message.reply_to_message.message_id, {
     reaction: JSON.stringify([
       {
         type: 'emoji',
@@ -49,9 +49,9 @@ module.exports = async (bot, message, user) => {
   vevent.addAlarm(valarm);
   icalendar.addEvent(vevent);
   const { credentialSubject } = await notifyCalendar({
-    id: message.id,
+    uid: message.id,
     ics: icalendar.ics,
-    jwt: user.jwt,
+    user: user,
     language: language,
   });
   let webAppUrl = `${SERVER_APP_URL}/?lang=${language}`;

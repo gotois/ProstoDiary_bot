@@ -1,11 +1,14 @@
 const activitystreams = require('telegram-bot-activitystreams');
 const { v1: uuidv1 } = require('uuid');
 
+/**
+ * @class
+ */
 class Dialog {
   /**
-   * @class
+   * @param {object} user - Объект пользователя
    */
-  constructor() {
+  constructor(user) {
     this._uid = uuidv1();
     this.messages = [];
     this.activity = {
@@ -15,10 +18,10 @@ class Dialog {
       'totalItems': 0,
       'items': [],
     };
+    this.user = user;
   }
   /**
-   * Обрабатывает входящее сообщение и добавляет его в активность.
-   *
+   * @description Обрабатывает входящее сообщение и добавляет его в активность.
    * @param {object} message - Входящее сообщение.
    * @returns {object} - Возвращает объект активности.
    */

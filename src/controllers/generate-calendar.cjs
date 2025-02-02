@@ -1,15 +1,15 @@
 const requestJsonRpc2 = require('request-json-rpc2').default;
 const { SERVER_HOST } = require('../environments/index.cjs');
 
-module.exports.notifyCalendar = async ({ id, ics, jwt, language }) => {
+module.exports.notifyCalendar = async ({ uid, ics, user, language }) => {
   const { result, error } = await requestJsonRpc2({
     url: SERVER_HOST + '/rpc',
     body: {
-      id: id,
+      id: uid,
       method: 'notify',
       params: [ics],
     },
-    jwt: jwt,
+    jwt: user.jwt,
     headers: {
       'Accept': 'text/markdown',
       'Accept-Language': language,
@@ -21,15 +21,15 @@ module.exports.notifyCalendar = async ({ id, ics, jwt, language }) => {
   return result;
 };
 
-module.exports.sentToSecretary = async function ({ id, activity, jwt, language }) {
+module.exports.generateCalendar = async function ({ uid, activity, user, language }) {
   const { result, error } = await requestJsonRpc2({
     url: SERVER_HOST + '/rpc',
     body: {
-      id: id,
+      id: uid,
       method: 'generate-calendar',
       params: activity,
     },
-    jwt: jwt,
+    jwt: user.jwt,
     headers: {
       'Accept': 'text/markdown',
       'Accept-Language': language,

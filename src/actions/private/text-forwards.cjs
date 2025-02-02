@@ -1,22 +1,17 @@
 const Dialog = require('../../libs/dialog.cjs');
-const { sentToSecretary } = require('../../controllers/generate-calendar.cjs');
+const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, messages, user) => {
   console.log(`Обработка транзакции из ${messages.length} сообщений:`);
   const [message] = messages;
   try {
-    const dialog = new Dialog();
+    const dialog = new Dialog(user);
     for (const message of messages) {
       await sendPrepareMessage(bot, message);
       dialog.push(message);
     }
-    const { data, type } = await sentToSecretary({
-      id: dialog.uid,
-      activity: dialog.activity,
-      jwt: user.jwt,
-      language: dialog.language,
-    });
+    const { data, type } = await generateCalendar(dialog);
     await sendPrepareMessage(bot, message);
     switch (type) {
       case 'text/markdown': {

@@ -1,5 +1,5 @@
 const Dialog = require('../../libs/dialog.cjs');
-const { sentToSecretary } = require('../../controllers/generate-calendar.cjs');
+const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 const { updateUserLocation } = require('../../libs/database.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
@@ -35,14 +35,9 @@ module.exports = async (bot, message, user) => {
     message.location.caption = text;
     try {
       await sendPrepareMessage(bot, message);
-      const dialog = new Dialog();
+      const dialog = new Dialog(user);
       dialog.push(message);
-      const { data, type } = await sentToSecretary({
-        id: dialog.uid,
-        activity: dialog.activity,
-        jwt: user.jwt,
-        language: dialog.language,
-      });
+      const { data, type } = await generateCalendar(dialog);
       await sendPrepareMessage(bot, message);
       switch (type) {
         case 'text/markdown': {

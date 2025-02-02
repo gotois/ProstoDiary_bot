@@ -2,7 +2,7 @@ const Dialog = require('../../libs/dialog.cjs');
 const { TYPING, sendPrepareAction } = require('../../libs/tg-messages.cjs');
 const { saveCalendar } = require('../../libs/database.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
-const { sentToSecretary } = require('../../controllers/generate-calendar.cjs');
+const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 
 // Добавление события в открываемой ссылке на Google Calendar
 function formatGoogleCalendarUrl({ text, details, start, end, location }) {
@@ -23,14 +23,9 @@ function formatGoogleCalendarUrl({ text, details, start, end, location }) {
 
 module.exports = async (bot, message, user) => {
   await sendPrepareAction(bot, message, TYPING);
-  const dialog = new Dialog();
+  const dialog = new Dialog(user);
   dialog.push(message);
-  const { credentialSubject } = await sentToSecretary({
-    id: dialog.uid,
-    activity: dialog.activity,
-    jwt: user.jwt,
-    language: dialog.language,
-  });
+  const { credentialSubject } = await generateCalendar(dialog);
   const { name, summary, location } = credentialSubject.object;
   const time = new Intl.DateTimeFormat(dialog.language, {
     dateStyle: 'full',

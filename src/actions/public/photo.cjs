@@ -1,9 +1,9 @@
 const Dialog = require('../../libs/dialog.cjs');
-const { sentToSecretary } = require('../../controllers/generate-calendar.cjs');
+const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, message, user) => {
-  const dialog = new Dialog();
+  const dialog = new Dialog(user);
   dialog.push(message);
   const me = await bot.getMe();
   dialog.activity.origin = {
@@ -11,12 +11,7 @@ module.exports = async (bot, message, user) => {
     name: me.first_name,
     url: 'https://t.me/' + me.username,
   };
-  const { data, type } = await sentToSecretary({
-    id: dialog.uid,
-    activity: dialog.activity,
-    jwt: user.jwt,
-    language: dialog.language,
-  });
+  const { data, type } = await generateCalendar(dialog);
   await sendPrepareMessage(bot, message);
   switch (type) {
     case 'text/markdown': {

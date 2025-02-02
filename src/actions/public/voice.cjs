@@ -1,17 +1,12 @@
 const Dialog = require('../../libs/dialog.cjs');
-const { sentToSecretary } = require('../../controllers/generate-calendar.cjs');
+const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 const { RECORD_AUDIO, sendPrepareAction, sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, message, user) => {
   await sendPrepareAction(bot, message, RECORD_AUDIO);
-  const dialog = new Dialog();
+  const dialog = new Dialog(user);
   dialog.push(message);
-  const { credentialSubject } = await sentToSecretary({
-    id: dialog.uid,
-    activity: dialog.activity,
-    jwt: user.jwt,
-    language: dialog.language,
-  });
+  const { credentialSubject } = await generateCalendar(dialog);
   await sendPrepareMessage(bot, message);
   const data = credentialSubject.object.contentMap[dialog.language];
   switch (credentialSubject.object.mediaType) {
