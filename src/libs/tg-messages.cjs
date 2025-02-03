@@ -16,3 +16,20 @@ module.exports.sendPrepareMessage = async function (bot, message) {
     ]),
   });
 };
+
+module.exports.parseMode = function (mediaType) {
+  switch (mediaType) {
+    case 'text/markdown': {
+      return 'MarkdownV2';
+    }
+    case 'text/plain': {
+      return 'Markdown';
+    }
+    case 'text/html': {
+      return 'HTML';
+    }
+    default: {
+      throw new Error('Unknown mediaType ' + mediaType);
+    }
+  }
+};

@@ -2,6 +2,7 @@ const icalBrowser = require('ical-browser');
 const { SERVER_APP_URL, IS_DEV } = require('../../environments/index.cjs');
 const { notifyCalendar } = require('../../controllers/generate-calendar.cjs');
 const { getCalendarMessage } = require('../../libs/database.cjs');
+const { parseMode } = require('../../libs/tg-messages.cjs');
 
 const ICalendar = icalBrowser.default;
 
@@ -34,7 +35,9 @@ module.exports = async (bot, message, user) => {
   const vevent = new icalBrowser.VEvent({
     'uid': message.id + 'event',
     'start': new Date(event.start),
+    'startTz': user.timezone,
     'end': new Date(event.end),
+    'endTz': user.timezone,
     'summary': event.title,
     'description': event.details,
     'location': event.location,
@@ -42,7 +45,7 @@ module.exports = async (bot, message, user) => {
   });
   const valarm = new icalBrowser.VAlarm({
     uid: message.id + 'alarm',
-    trigger: '-PT15M', // за 15 минут до начала
+    trigger: 'RELATED=START:-PT15M', // за 15 минут до начала
     action: 'display',
     description: event.title,
   });
@@ -59,26 +62,12 @@ module.exports = async (bot, message, user) => {
   if (IS_DEV) {
     webAppUrl += '&debug=1';
   }
-  let parseMode = null;
-  switch (credentialSubject.object.mediaType) {
-    case 'text/markdown': {
-      parseMode = 'MarkdownV2';
-      break;
-    }
-    case 'text/html': {
-      parseMode = 'HTML';
-      break;
-    }
-    default: {
-      break;
-    }
-  }
   const editMessage = await bot.editMessageText(credentialSubject.object.content, {
     chat_id: message.chat.id,
     reply_to_message_id: message.reply_to_message.message_id,
     message_id: message.message_id,
     protect_content: true,
-    parse_mode: parseMode,
+    parse_mode: parseMode(credentialSubject.object.mediaType),
     disable_notification: true,
     reply_markup: {
       remove_keyboard: true,
@@ -93,6 +82,9 @@ module.exports = async (bot, message, user) => {
         ],
       ],
     },
+  });
+  await bot.setMessageReaction(message.chat.id, editMessage.message_id, {
+    reaction: JSON.stringify([]),
   });
   await bot.pinChatMessage(message.chat.id, editMessage.message_id);
 };

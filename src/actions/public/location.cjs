@@ -5,8 +5,8 @@ const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, message, user) => {
   await sendPrepareMessage(bot, message);
-  await updateUserLocation(message.chat.id, message.location);
-  if (!user.location) {
+  if (!user.jwt) {
+    await updateUserLocation(message.chat.id, message.location);
     await bot.sendMessage(message.chat.id, 'Теперь нужен контакт', {
       reply_markup: {
         remove_keyboard: true,

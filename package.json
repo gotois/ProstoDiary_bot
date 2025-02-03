@@ -82,7 +82,7 @@
   "dependencies": {
     "@photostructure/tz-lookup": "11.1.0",
     "express": "4.21.2",
-    "ical-browser": "0.1.2",
+    "ical-browser": "0.1.4",
     "minimist": "1.2.8",
     "pdf-to-png-converter": "3.6.4",
     "request-json-rpc2": "2.2.3",

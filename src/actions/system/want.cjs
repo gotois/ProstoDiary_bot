@@ -5,7 +5,7 @@ module.exports = async function (bot, message) {
     })
     // eslint-disable-next-line unicorn/no-array-reduce
     .reduce((accumulator, command) => {
-      accumulator = accumulator.substring(command.offset + command.length);
+      accumulator = accumulator.slice(Math.max(0, command.offset + command.length));
       return accumulator;
     }, message.text)
     .trim();

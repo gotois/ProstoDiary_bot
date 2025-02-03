@@ -4,15 +4,20 @@ module.exports = function (callback) {
       await callback(bot, message, user);
     } catch (error) {
       console.error(error);
-      await bot.setMessageReaction(message.chat.id, message.message_id, {
-        reaction: JSON.stringify([
-          {
-            type: 'emoji',
-            emoji: '🤷‍♀', // 👾
-          },
-        ]),
-      });
+      if (message.id) {
+        await bot.setMessageReaction(message.chat.id, message.message_id, {
+          reaction: JSON.stringify([
+            {
+              type: 'emoji',
+              emoji: '👾', //  🤷‍♀
+            },
+          ]),
+        });
+      }
       switch (error?.message) {
+        case 'fetch failed': {
+          return bot.sendMessage(message.chat.id, 'Произошла ошибка при обращении к серверу');
+        }
         case 'Unauthorized': {
           return bot.sendMessage(message.chat.id, 'Требуется авторизация /start', {
             disable_web_page_preview: true,
@@ -21,7 +26,7 @@ module.exports = function (callback) {
         case 'Bad Request': {
           return bot.sendMessage(
             message.chat.id,
-            'Пожалуйста, уточните дату и время. Даты которые уже прошли не могут быть созданы.',
+            'Произошла ошибка на сервере. Пожалуйста попробуйте попозже, уточните дату и время.',
             {
               disable_web_page_preview: true,
             },
