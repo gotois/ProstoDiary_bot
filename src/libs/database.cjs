@@ -10,10 +10,11 @@ const database = (() => {
 function createUsersTable() {
   database.exec(`
       CREATE TABLE if not exists users(
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         location TEXT NULL,
         timezone TEXT DEFAULT 'UTC',
-        jwt TEXT
+        jwt TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
       ) STRICT
     `);
 }
