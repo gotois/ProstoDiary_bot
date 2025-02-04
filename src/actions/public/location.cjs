@@ -13,7 +13,7 @@ module.exports = async (bot, message, user) => {
       latitude: message.location.latitude,
       longitude: message.location.longitude,
     });
-    const data = `Твоя таймзона: ${timezone}.\nДля завершения регистрации требуется указать свой номер телефона`;
+    const data = `Ваша таймзона: ${timezone}.\nДля завершения регистрации требуется указать свой номер телефона`;
     await bot.sendMessage(message.chat.id, data, {
       reply_markup: {
         remove_keyboard: true,
@@ -32,7 +32,7 @@ module.exports = async (bot, message, user) => {
     });
     return;
   }
-  const { message_id } = await bot.sendMessage(message.chat.id, 'Напиши свои намерения', {
+  const { message_id } = await bot.sendMessage(message.chat.id, 'Укажите свои намерения', {
     reply_to_message_id: message.message_id,
     reply_markup: {
       force_reply: true,
