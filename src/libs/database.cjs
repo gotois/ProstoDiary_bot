@@ -1,5 +1,4 @@
 const sqlite = require('node:sqlite');
-const tzlookup = require('@photostructure/tz-lookup');
 const { IS_DEV } = require('../environments/index.cjs');
 
 const database = (() => {
@@ -60,6 +59,9 @@ module.exports.getUsers = (idUser) => {
   return query.all();
 };
 
+/**
+ * @param {string} userId - telegram user id
+ */
 module.exports.setNewUser = (userId) => {
   const insert = database.prepare(`
     INSERT INTO users (id) VALUES (:id)
@@ -67,9 +69,7 @@ module.exports.setNewUser = (userId) => {
   insert.run({ id: userId });
 };
 
-module.exports.updateUserLocation = (userId, { latitude, longitude, u = 50 }) => {
-  const timezone = tzlookup(latitude, longitude);
-
+module.exports.updateUserLocation = (userId, { timezone, latitude, longitude, u = 50 }) => {
   // https://www.here.com/docs/bundle/places-search-api-developer-guide/page/topics/location-contexts.html#location-contexts__position-format
   const location = `geo:${latitude},${longitude};cgen=gps;u=${u}`;
   const insert = database.prepare(`

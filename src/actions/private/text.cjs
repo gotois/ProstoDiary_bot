@@ -4,7 +4,15 @@ const { saveCalendar } = require('../../libs/database.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 
-// Добавление события в открываемой ссылке на Google Calendar
+/**
+ * @description Добавление события в открываемой ссылке на Google Calendar
+ * @param text
+ * @param details
+ * @param start
+ * @param end
+ * @param location
+ * @return {module:url.URL}
+ */
 function formatGoogleCalendarUrl({ text, details, start, end, location }) {
   const link = new URL('https://calendar.google.com/calendar/render');
   link.searchParams.append('action', 'TEMPLATE');
@@ -30,13 +38,13 @@ module.exports = async (bot, message, user) => {
   const time = new Intl.DateTimeFormat(dialog.language, {
     dateStyle: 'full',
     timeStyle: 'short',
-    timeZone: 'UTC',
+    timeZone: user.timezone ?? 'UTC',
   }).format(new Date(credentialSubject.startTime));
   const data =
     `Что: ${name}\n` +
-    `Где: ${location.name ?? '-'}\n` +
+    `Где: ${location?.name ?? '-'}\n` +
     `Когда: ${time}\n` +
-    'Напомнить за: 15 минут\n\n' +
+    'Напомнить за: 15 минут\n\n' + // todo убрать хардкод
     'Все верно?';
   await sendPrepareMessage(bot, message);
   const googleCalendarUrl = formatGoogleCalendarUrl({
@@ -52,6 +60,7 @@ module.exports = async (bot, message, user) => {
     protect_content: true,
     disable_notification: true,
     reply_markup: {
+      remove_keyboard: true,
       inline_keyboard: [
         [
           {

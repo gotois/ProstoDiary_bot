@@ -3,7 +3,11 @@ module.exports.TYPING = 'typing';
 module.exports.UPLOAD_DOCUMENT = 'upload_document';
 
 module.exports.sendPrepareAction = async function (bot, message, type) {
-  await bot.sendChatAction(message.chat.id, type);
+  try {
+    await bot.sendChatAction(message.chat.id, type);
+  } catch {
+    // ...
+  }
 };
 
 module.exports.sendPrepareMessage = async function (bot, message) {

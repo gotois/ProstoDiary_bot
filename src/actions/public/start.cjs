@@ -37,7 +37,7 @@ module.exports = async (bot, message) => {
   }
   await bot.sendMessage(message.chat.id, messageText, {
     parse_mode: 'MarkdownV2',
-    disable_notification: true,
+    disable_notification: false,
     reply_to_message_id: message.message_id,
     reply_markup: {
       remove_keyboard: true,

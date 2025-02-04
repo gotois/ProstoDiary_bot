@@ -4,7 +4,7 @@ const yaml = require('js-yaml');
 // eslint-disable-next-line ava/use-test
 const { ExecutionContext } = require('ava');
 /**
- * @param {object} t - test
+ * @param {ExecutionContext} t - ava test
  */
 module.exports = (t) => {
   t.log('testing');

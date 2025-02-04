@@ -1,3 +1,4 @@
+const tzlookup = require('@photostructure/tz-lookup');
 const Dialog = require('../../libs/dialog.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 const { updateUserLocation } = require('../../libs/database.cjs');
@@ -6,8 +7,14 @@ const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 module.exports = async (bot, message, user) => {
   await sendPrepareMessage(bot, message);
   if (!user.jwt) {
-    await updateUserLocation(message.chat.id, message.location);
-    await bot.sendMessage(message.chat.id, 'Теперь нужен контакт', {
+    const timezone = tzlookup(message.location.latitude, message.location.longitude);
+    await updateUserLocation(message.chat.id, {
+      timezone,
+      latitude: message.location.latitude,
+      longitude: message.location.longitude,
+    });
+    const data = `Твоя таймзона: ${timezone}.\nДля завершения регистрации требуется указать свой номер телефона`;
+    await bot.sendMessage(message.chat.id, data, {
       reply_markup: {
         remove_keyboard: true,
         resize_keyboard: true,

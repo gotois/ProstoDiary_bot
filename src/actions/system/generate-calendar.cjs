@@ -32,9 +32,10 @@ module.exports = async (bot, message, user) => {
     ]),
   });
   const icalendar = new ICalendar();
+  const startDate = new Date(event.start);
   const vevent = new icalBrowser.VEvent({
     'uid': message.id + 'event',
-    'start': new Date(event.start),
+    'start': new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60_000),
     'startTz': user.timezone,
     'end': new Date(event.end),
     'endTz': user.timezone,

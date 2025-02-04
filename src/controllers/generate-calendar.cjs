@@ -13,6 +13,7 @@ module.exports.notifyCalendar = async ({ uid, ics, user, language }) => {
     headers: {
       'Accept': 'text/markdown',
       'Accept-Language': language,
+      'Geolocation': user.location,
     },
   });
   if (error) {
@@ -33,6 +34,7 @@ module.exports.generateCalendar = async function ({ uid, activity, user, languag
     headers: {
       'Accept': 'text/markdown',
       'Accept-Language': language,
+      'Geolocation': user.location,
     },
   });
   if (error) {
