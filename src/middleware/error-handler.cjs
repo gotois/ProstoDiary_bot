@@ -4,7 +4,7 @@ module.exports = function (callback) {
       await callback(bot, message, user);
     } catch (error) {
       console.error(error);
-      if (message.id) {
+      if (!message.id) {
         await bot.setMessageReaction(message.chat.id, message.message_id, {
           reaction: JSON.stringify([
             {
