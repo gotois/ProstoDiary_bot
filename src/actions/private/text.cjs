@@ -33,12 +33,16 @@ module.exports = async (bot, message, user) => {
     timeZone: 'UTC',
   }).format(new Date(credentialSubject.startTime));
   const data =
-    `Что: ${name}\n` + `Где: ${location ?? '-'}\n` + `Когда: ${time}\n` + 'Напомнить за: 15 минут\n\n' + 'Все верно?';
+    `Что: ${name}\n` +
+    `Где: ${location.name ?? '-'}\n` +
+    `Когда: ${time}\n` +
+    'Напомнить за: 15 минут\n\n' +
+    'Все верно?';
   await sendPrepareMessage(bot, message);
   const googleCalendarUrl = formatGoogleCalendarUrl({
     text: name,
     details: summary,
-    location: location,
+    location: location?.name,
     start: credentialSubject.startTime,
     end: credentialSubject.endTime,
   });
@@ -68,8 +72,9 @@ module.exports = async (bot, message, user) => {
     id: message.chat.id + '' + myMessage.message_id,
     title: name,
     details: summary,
-    location: location,
+    location: location?.name,
     start: credentialSubject.startTime,
     end: credentialSubject.endTime,
+    geo: location['geojson:geometry']?.coordinates,
   });
 };

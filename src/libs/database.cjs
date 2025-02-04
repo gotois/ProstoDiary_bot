@@ -3,7 +3,7 @@ const tzlookup = require('@photostructure/tz-lookup');
 const { IS_DEV } = require('../environments/index.cjs');
 
 const database = (() => {
-  const location = IS_DEV ? 'database.sqlite' : ':memory:';
+  const location = IS_DEV ? 'database/database.sqlite' : ':memory:';
   return new sqlite.DatabaseSync(location);
 })();
 
@@ -28,7 +28,8 @@ function createCalendarsTable() {
         details TEXT NULL,
         location TEXT NULL,
         start TEXT,
-        end TEXT
+        end TEXT,
+        geo TEXT NULL
       ) STRICT
     `);
 }
@@ -104,15 +105,16 @@ module.exports.getCalendarMessage = (id) => {
  * @param {object} calendar - объект события
  * @param {number} calendar.id - идентификатор сообщения
  * @param {string} calendar.title - заголовок события
- * @param {string|null} [calendar.details] - детали события
+ * @param {string} [calendar.details] - детали события
  * @param {string|null} [calendar.location] - местоположение события
  * @param {string} calendar.start - время начала события
  * @param {string} calendar.end - время окончания события
+ * @param {number[]} [calendar.geo] - geo координата события
  */
-module.exports.saveCalendar = ({ id, title, details = null, location = null, start, end }) => {
+module.exports.saveCalendar = ({ id, title, details = '', location = null, start, end, geo = [] }) => {
   const insert = database.prepare(`
-    INSERT INTO calendars (message_id, title, details, location, start, end)
-    VALUES (:message_id, :title, :details, :location, :start, :end)`);
+    INSERT INTO calendars (message_id, title, details, location, start, end, geo)
+    VALUES (:message_id, :title, :details, :location, :start, :end, :geo)`);
   insert.run({
     message_id: id,
     title: title,
@@ -120,5 +122,6 @@ module.exports.saveCalendar = ({ id, title, details = null, location = null, sta
     location: location,
     start: start,
     end: end,
+    geo: geo ? JSON.stringify(geo) : undefined,
   });
 };

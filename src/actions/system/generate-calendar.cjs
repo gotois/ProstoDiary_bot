@@ -38,6 +38,7 @@ module.exports = async (bot, message, user) => {
     'startTz': user.timezone,
     'end': new Date(event.end),
     'endTz': user.timezone,
+    'geo': JSON.parse(event.geo ?? []),
     'summary': event.title,
     'description': event.details,
     'location': event.location,
