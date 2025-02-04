@@ -1,10 +1,13 @@
 const fs = require('node:fs');
 const validator = require('validator');
 const yaml = require('js-yaml');
+// eslint-disable-next-line ava/use-test
+const { ExecutionContext } = require('ava');
 /**
  * @param {object} t - test
  */
 module.exports = (t) => {
+  t.log('testing');
   const configYML = fs.readFileSync('compose.yml', 'utf8');
   t.notThrows(() => {
     const config = yaml.load(configYML);
