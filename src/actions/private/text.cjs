@@ -1,17 +1,17 @@
 const Dialog = require('../../libs/dialog.cjs');
-const { TYPING, sendPrepareAction } = require('../../libs/tg-messages.cjs');
+const { TYPING, sendPrepareMessage, sendPrepareAction } = require('../../libs/tg-messages.cjs');
 const { saveCalendar } = require('../../libs/database.cjs');
-const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 
 /**
  * @description Добавление события в открываемой ссылке на Google Calendar
- * @param text
- * @param details
- * @param start
- * @param end
- * @param location
- * @return {module:url.URL}
+ * @param {object} o - object
+ * @param {string} o.text - text
+ * @param {string} [o.details] - details
+ * @param {string} o.start - start
+ * @param {string} [o.end] - end
+ * @param {string} [o.location] - location
+ * @returns {module:url.URL}
  */
 function formatGoogleCalendarUrl({ text, details, start, end, location }) {
   const link = new URL('https://calendar.google.com/calendar/render');
@@ -38,8 +38,8 @@ module.exports = async (bot, message, user) => {
   const time = new Intl.DateTimeFormat(dialog.language, {
     dateStyle: 'full',
     timeStyle: 'short',
-    timeZone: user.timezone ?? 'UTC',
-  }).format(new Date(credentialSubject.startTime));
+    timeZone: 'UTC',
+  }).format(credentialSubject.startTime);
   const data =
     `Что: ${name}\n` +
     `Где: ${location?.name ?? '-'}\n` +
@@ -54,6 +54,21 @@ module.exports = async (bot, message, user) => {
     start: credentialSubject.startTime,
     end: credentialSubject.endTime,
   });
+  const inlineKeyboard = [];
+  inlineKeyboard.push(
+    [
+      {
+        text: '☑️ Добавить в календарь',
+        callback_data: 'generate_calendar',
+      },
+    ],
+    [
+      {
+        text: 'Открыть в Google Calendar',
+        url: googleCalendarUrl,
+      },
+    ],
+  );
   const myMessage = await bot.sendMessage(message.chat.id, data, {
     parse_mode: 'Markdown',
     reply_to_message_id: message.message_id,
@@ -61,20 +76,7 @@ module.exports = async (bot, message, user) => {
     disable_notification: true,
     reply_markup: {
       remove_keyboard: true,
-      inline_keyboard: [
-        [
-          {
-            text: '☑️ Добавить в календарь',
-            callback_data: 'generate_calendar',
-          },
-        ],
-        [
-          {
-            text: 'Открыть в Google Calendar',
-            url: googleCalendarUrl,
-          },
-        ],
-      ],
+      inline_keyboard: inlineKeyboard,
     },
   });
   await saveCalendar({

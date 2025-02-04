@@ -53,6 +53,22 @@ module.exports = async (bot, message, user) => {
   });
   vevent.addAlarm(valarm);
   icalendar.addEvent(vevent);
+  if (IS_DEV) {
+    const fileEvent = icalendar.download('calendar.ics');
+    const arrayBuffer = await fileEvent.arrayBuffer();
+    await bot.sendDocument(
+      message.chat.id,
+      Buffer.from(arrayBuffer),
+      {
+        caption: 'Calendar',
+        disable_notification: true,
+      },
+      {
+        filename: fileEvent.name,
+        contentType: 'application/octet-stream',
+      },
+    );
+  }
   const { credentialSubject } = await notifyCalendar({
     uid: message.id,
     ics: icalendar.ics,

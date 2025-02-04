@@ -26,8 +26,8 @@ function createCalendarsTable() {
         title TEXT,
         details TEXT NULL,
         location TEXT NULL,
-        start TEXT,
-        end TEXT,
+        start INTEGER,
+        end INTEGER,
         geo TEXT NULL
       ) STRICT
     `);

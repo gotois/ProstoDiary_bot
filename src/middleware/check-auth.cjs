@@ -11,6 +11,8 @@ module.exports = function (callback) {
       });
       return;
     }
-    errorHandler(callback)(bot, message, users[0]);
+    const [user] = users;
+    user.timezone = user.timezone || 'UTC';
+    errorHandler(callback)(bot, message, user);
   };
 };
