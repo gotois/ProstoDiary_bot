@@ -11,7 +11,7 @@ COPY src/ ./src/
 
 RUN npm install --omit=dev
 
-RUN mkdir -p /app/database && chmod -R 700 /app/database
+RUN mkdir -p /app/database && chmod -R 777 /app/database
 
 USER node
 

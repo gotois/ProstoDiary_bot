@@ -1,6 +1,5 @@
 const sqlite = require('node:sqlite');
 const { DATABASE_PATH } = require('../environments/index.cjs');
-console.log('DATABASE_PATH', DATABASE_PATH);
 
 const database = new sqlite.DatabaseSync(DATABASE_PATH);
 
@@ -67,8 +66,17 @@ module.exports.setNewUser = (userId) => {
   insert.run({ id: userId });
 };
 
+/**
+ * @description обновление местоположения пользователя
+ * @see https://www.here.com/docs/bundle/places-search-api-developer-guide/page/topics/location-contexts.html#location-contexts__position-format
+ * @param {string} userId - user id
+ * @param {object} obj - object
+ * @param {string} obj.timezone - timezone
+ * @param {number} obj.latitude - latitude
+ * @param {number} obj.longitude - longitude
+ * @param {number} [obj.u] - u
+ */
 module.exports.updateUserLocation = (userId, { timezone, latitude, longitude, u = 50 }) => {
-  // https://www.here.com/docs/bundle/places-search-api-developer-guide/page/topics/location-contexts.html#location-contexts__position-format
   const location = `geo:${latitude},${longitude};cgen=gps;u=${u}`;
   const insert = database.prepare(`
     INSERT INTO users (id, location, timezone) VALUES (:id, :location, :timezone)
