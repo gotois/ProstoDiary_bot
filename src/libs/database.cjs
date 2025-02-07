@@ -1,9 +1,8 @@
 const sqlite = require('node:sqlite');
+const { DATABASE_PATH } = require('../environments/index.cjs');
+console.log('DATABASE_PATH', DATABASE_PATH);
 
-const database = (() => {
-  const LOCATION_DB = './database/database.sqlite';
-  return new sqlite.DatabaseSync(LOCATION_DB);
-})();
+const database = new sqlite.DatabaseSync(DATABASE_PATH);
 
 function createUsersTable() {
   database.exec(`
