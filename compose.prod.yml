@@ -5,7 +5,7 @@ services:
     image: "qertis/secretary-tg:latest"
     env_file: .env
     environment:
-      - TZ=Europe/Moscow
+      - TZ=UTC
       - SERVER_HOST=http://web-prod:5555
       - SERVER_APP=https://archive.gotointeractive.com
     ports:
@@ -15,6 +15,12 @@ services:
     networks:
       - global_lan
       - default
+    volumes:
+      - db_data:/app/database
+
+volumes:
+  db_data:
+    driver: local
 
 networks:
   global_lan:

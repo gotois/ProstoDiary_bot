@@ -1,9 +1,8 @@
 const sqlite = require('node:sqlite');
-const { IS_DEV } = require('../environments/index.cjs');
 
 const database = (() => {
-  const location = IS_DEV ? 'database/database.sqlite' : ':memory:';
-  return new sqlite.DatabaseSync(location);
+  const LOCATION_DB = './database/database.sqlite';
+  return new sqlite.DatabaseSync(LOCATION_DB);
 })();
 
 function createUsersTable() {

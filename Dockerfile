@@ -11,6 +11,8 @@ COPY src/ ./src/
 
 RUN npm install --omit=dev
 
+RUN mkdir -p /app/database && chmod -R 700 /app/database
+
 USER node
 
 ENTRYPOINT [ "node", "--experimental-sqlite", "--watch", "src/index.cjs" ]
