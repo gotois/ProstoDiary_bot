@@ -15,10 +15,7 @@ function getWelcomeText() {
 }
 
 function getInstallAgainText() {
-  return (
-    'Предоставьте свои контакты заново, чтобы продолжить пользоваться сервисом\\.\n\n' +
-    'Узнай больше подробностей командой /help\\.'
-  ).trim();
+  return 'Установка не требуется\\.\n\nУзнай больше подробностей командой /help\\.'.trim();
 }
 
 /**
@@ -28,29 +25,37 @@ function getInstallAgainText() {
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  let messageText = '';
   if (hasUser(message.chat.id)) {
-    messageText = getInstallAgainText();
+    await bot.sendMessage(message.chat.id, getInstallAgainText(), {
+      parse_mode: 'MarkdownV2',
+      disable_notification: false,
+      reply_to_message_id: message.message_id,
+      reply_markup: {
+        remove_keyboard: true,
+        resize_keyboard: true,
+        one_time_keyboard: true,
+        keyboard: [],
+      },
+    });
   } else {
     await setNewUser(message.chat.id);
-    messageText = getWelcomeText();
-  }
-  await bot.sendMessage(message.chat.id, messageText, {
-    parse_mode: 'MarkdownV2',
-    disable_notification: false,
-    reply_to_message_id: message.message_id,
-    reply_markup: {
-      remove_keyboard: true,
-      resize_keyboard: true,
-      one_time_keyboard: true,
-      keyboard: [
-        [
-          {
-            text: '📍Определи мой часовой пояс',
-            request_location: true,
-          },
+    await bot.sendMessage(message.chat.id, getWelcomeText(), {
+      parse_mode: 'MarkdownV2',
+      disable_notification: false,
+      reply_to_message_id: message.message_id,
+      reply_markup: {
+        remove_keyboard: true,
+        resize_keyboard: true,
+        one_time_keyboard: true,
+        keyboard: [
+          [
+            {
+              text: '📍Определи мой часовой пояс',
+              request_location: true,
+            },
+          ],
         ],
-      ],
-    },
-  });
+      },
+    });
+  }
 };

@@ -1,9 +1,17 @@
+/**
+ * Обработчик ошибок
+ * @param {Function} callback - callback
+ * @returns {Promise<*>}
+ */
 module.exports = function (callback) {
   return async (bot, message, user) => {
     try {
       await callback(bot, message, user);
     } catch (error) {
       console.error(error);
+      if (!message.chat) {
+        return;
+      }
       if (!message.id) {
         await bot.setMessageReaction(message.chat.id, message.message_id, {
           reaction: JSON.stringify([

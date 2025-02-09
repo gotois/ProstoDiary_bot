@@ -6,16 +6,16 @@ const { getUsers } = require('../libs/database.cjs');
  * @returns {(function(*, *): void)}
  */
 module.exports = function (callback) {
-  return (bot, message) => {
+  return async (bot, message) => {
     const { chat } = Array.isArray(message) ? message[0] : message;
     const [user] = getUsers(chat.id);
     if (!user) {
-      bot.sendMessage(chat.id, 'Пройдите авторизацию нажав /start', {
+      await bot.sendMessage(chat.id, 'Пройдите авторизацию нажав /start', {
         parse_mode: 'MarkdownV2',
       });
       return;
     }
     user.timezone = user.timezone ?? 'UTC';
-    errorHandler(callback)(bot, message, user);
+    await errorHandler(callback)(bot, message, user);
   };
 };

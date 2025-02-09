@@ -33,11 +33,12 @@ module.exports = async (bot, message, user) => {
   });
   const icalendar = new ICalendar();
   const startDate = new Date(event.start);
+  const endDate = new Date(event.end);
   const vevent = new icalBrowser.VEvent({
     'uid': message.id + 'event',
     'start': new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60_000),
     'startTz': user.timezone,
-    'end': new Date(event.end),
+    'end': endDate,
     'endTz': user.timezone,
     'geo': JSON.parse(event.geo ?? []),
     'summary': event.title,
