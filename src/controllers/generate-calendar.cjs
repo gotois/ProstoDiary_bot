@@ -9,8 +9,8 @@ module.exports.notifyCalendar = async ({ uid, ics, user, language }) => {
       method: 'notify',
       params: [ics],
     },
-    jwt: user.jwt,
     headers: {
+      'Authorization': user.jwt,
       'Accept': 'text/markdown',
       'Accept-Language': language,
       'Geolocation': user.location,
@@ -30,8 +30,8 @@ module.exports.generateCalendar = async function ({ uid, activity, user, languag
       method: 'generate-calendar',
       params: activity,
     },
-    jwt: user.jwt,
     headers: {
+      'Authorization': user.jwt,
       'Accept': 'text/markdown',
       'Accept-Language': language,
       'Geolocation': user.location,

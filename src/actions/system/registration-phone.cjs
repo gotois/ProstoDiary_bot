@@ -53,10 +53,11 @@ module.exports = async (bot, message, user) => {
   if (!response.ok) {
     throw new Error('Произошла ошибка');
   }
-  const { jwt, url } = await response.json();
+  const bearerAuth = response.headers.get('Authorization');
+  const { url } = await response.json();
   await sendPrepareAction(bot, message, UPLOAD_DOCUMENT);
-  const response1 = await fetch(url);
-  const fileBuffer = await response1.arrayBuffer();
+  const responseDocument = await fetch(url);
+  const fileBuffer = await responseDocument.arrayBuffer();
   const pngPages = await pdfToPng(Buffer.from(fileBuffer));
   await bot.sendMediaGroup(
     message.chat.id,
@@ -82,5 +83,5 @@ module.exports = async (bot, message, user) => {
     },
   );
   await bot.deleteMessage(message.chat.id, message.message_id);
-  setJWT(Number(message.chat.id), jwt);
+  setJWT(Number(message.chat.id), bearerAuth);
 };
