@@ -1,9 +1,7 @@
-const Dialog = require('../../libs/dialog.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
-module.exports = async (bot, message, user) => {
-  const dialog = new Dialog(user);
+module.exports = async (bot, message, dialog) => {
   dialog.push(message);
   const { data, type } = await generateCalendar(dialog);
   await sendPrepareMessage(bot, message);

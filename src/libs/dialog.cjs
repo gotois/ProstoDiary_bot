@@ -10,6 +10,10 @@ class Dialog {
    */
   constructor(user) {
     this._uid = uuidv1();
+    this.clear();
+    this.user = user;
+  }
+  clear() {
     this.messages = [];
     this.activity = {
       '@context': ['https://www.w3.org/ns/activitystreams'],
@@ -18,7 +22,6 @@ class Dialog {
       'totalItems': 0,
       'items': [],
     };
-    this.user = user;
   }
   /**
    * @description Обрабатывает входящее сообщение и добавляет его в активность.

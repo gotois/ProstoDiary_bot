@@ -1,5 +1,6 @@
 const errorHandler = require('./error-handler.cjs');
 const { getUsers } = require('../libs/database.cjs');
+const Dialog = require('../libs/dialog.cjs');
 
 /**
  * @param {Function} callback - callback
@@ -15,7 +16,10 @@ module.exports = function (callback) {
       });
       return;
     }
-    user.timezone = user.timezone ?? 'UTC';
-    await errorHandler(callback)(bot, message, user);
+    const dialog = new Dialog({
+      ...user,
+      timezone: user.timezone ?? 'UTC',
+    });
+    await errorHandler(callback)(bot, message, dialog);
   };
 };

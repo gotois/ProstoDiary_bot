@@ -1,7 +1,4 @@
-const Dialog = require('../../libs/dialog.cjs');
-
-module.exports = (bot, message) => {
-  const dialog = new Dialog();
+module.exports = (bot, message, dialog) => {
   dialog.push(message);
 
   console.log('video, activity', dialog.activity);

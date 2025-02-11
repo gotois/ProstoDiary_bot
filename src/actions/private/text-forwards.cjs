@@ -1,11 +1,9 @@
-const Dialog = require('../../libs/dialog.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 const { parseMode, sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
-module.exports = async (bot, messages, user) => {
+module.exports = async (bot, messages, dialog) => {
   console.log(`Обработка транзакции из ${messages.length} сообщений:`);
   const [message] = messages;
-  const dialog = new Dialog(user);
   for (const message of messages) {
     await sendPrepareMessage(bot, message);
     dialog.push(message);

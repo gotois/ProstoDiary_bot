@@ -1,10 +1,8 @@
-const Dialog = require('../../libs/dialog.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 const { RECORD_AUDIO, sendPrepareAction, sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
-module.exports = async (bot, message, user) => {
+module.exports = async (bot, message, dialog) => {
   await sendPrepareAction(bot, message, RECORD_AUDIO);
-  const dialog = new Dialog(user);
   dialog.push(message);
   const { credentialSubject } = await generateCalendar(dialog);
   await sendPrepareMessage(bot, message);

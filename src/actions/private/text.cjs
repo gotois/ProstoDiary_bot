@@ -1,4 +1,3 @@
-const Dialog = require('../../libs/dialog.cjs');
 const { TYPING, sendPrepareMessage, sendPrepareAction } = require('../../libs/tg-messages.cjs');
 const { saveCalendar } = require('../../libs/database.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
@@ -29,9 +28,8 @@ function formatGoogleCalendarUrl({ text, details, start, end, location }) {
   return link;
 }
 
-module.exports = async (bot, message, user) => {
+module.exports = async (bot, message, dialog) => {
   await sendPrepareAction(bot, message, TYPING);
-  const dialog = new Dialog(user);
   dialog.push(message);
   const { credentialSubject } = await generateCalendar(dialog);
   const { name, summary, location } = credentialSubject.object;
@@ -44,8 +42,7 @@ module.exports = async (bot, message, user) => {
     `Что: ${name}\n` +
     `Где: ${location?.name ?? '-'}\n` +
     `Когда: ${time}\n` +
-    'Напомнить за: 15 минут\n\n' + // todo убрать хардкод
-    'Все верно?';
+    'Напомнить за: 15 минут\n\n'; // todo убрать хардкод
   await sendPrepareMessage(bot, message);
   const googleCalendarUrl = formatGoogleCalendarUrl({
     text: name,
@@ -77,6 +74,14 @@ module.exports = async (bot, message, user) => {
     reply_markup: {
       remove_keyboard: true,
       inline_keyboard: inlineKeyboard,
+    },
+  });
+  await bot.sendMessage(message.chat.id, 'Все верно?', {
+    reply_to_message_id: myMessage.message_id,
+    disable_notification: true,
+    reply_markup: {
+      remove_keyboard: false,
+      force_reply: true,
     },
   });
   await saveCalendar({
