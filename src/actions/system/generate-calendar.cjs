@@ -10,10 +10,11 @@ const ICalendar = icalBrowser.default;
  * @description Генерация календаря и отправка файла ical Секретарю
  * @param {any} bot - telegram bot
  * @param {any} message - telegram message
- * @param {any} user - user data
+ * @param {any} dialog - dialog data
  * @returns {Promise<void>}
  */
-module.exports = async (bot, message, user) => {
+module.exports = async (bot, message, dialog) => {
+  const { user } = dialog;
   await bot.answerCallbackQuery(message.id, {
     text: 'Идет обработка...',
     show_alert: false,
@@ -76,6 +77,7 @@ module.exports = async (bot, message, user) => {
     user: user,
     language: language,
   });
+  dialog.clear();
   let webAppUrl = `${SERVER_APP_URL}/?lang=${language}`;
   // eslint-disable-next-line unicorn/consistent-destructuring
   if (IS_DEV) {

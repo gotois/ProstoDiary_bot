@@ -1,12 +1,12 @@
 /**
- * Обработчик ошибок
+ * @description Обработчик ошибок
  * @param {Function} callback - callback
  * @returns {Promise<*>}
  */
 module.exports = function (callback) {
-  return async (bot, message, user) => {
+  return async (bot, message, dialog) => {
     try {
-      await callback(bot, message, user);
+      await callback(bot, message, dialog);
     } catch (error) {
       console.error(error);
       if (!message.chat) {

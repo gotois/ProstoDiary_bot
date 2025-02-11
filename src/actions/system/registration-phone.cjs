@@ -8,10 +8,10 @@ const { SERVER_HOST } = require('../../environments/index.cjs');
  * @description Ассистент детектирует пользователя
  * @param {any} bot - telegram bot
  * @param {any} message - telegram message
- * @param {any} user - user
+ * @param {any} dialog - dialog
  * @returns {Promise<void>}
  */
-module.exports = async (bot, message, user) => {
+module.exports = async (bot, message, dialog) => {
   const body = {
     contact: {
       phoneNumber: message.contact.phone_number,
@@ -46,7 +46,7 @@ module.exports = async (bot, message, user) => {
     headers: {
       'Content-Type': 'application/json',
       'Accept-Language': message.from.language_code,
-      'Geolocation': user.location,
+      'Geolocation': dialog.user.location,
     },
     body: JSON.stringify(body),
   });
