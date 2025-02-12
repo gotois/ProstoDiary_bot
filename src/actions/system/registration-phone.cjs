@@ -29,15 +29,8 @@ module.exports = async (bot, message, dialog) => {
     // добавляем в запрос фото профиля
     const profilePhotos = await bot.getUserProfilePhotos(message.chat.id);
     if (profilePhotos.photos.length > 0) {
-      const userPicture = await bot.getFileLink(profilePhotos.photos[0][0].file_id);
-      body.photo_url = userPicture;
+      body.photo_url = await bot.getFileLink(profilePhotos.photos[0][0].file_id);
     }
-    // Вариант №2
-    // const me = await bot.getMe();
-    // const photos = await bot.getUserProfilePhotos(me.id);
-    // const photo = photos.photos?.[0]?.[0]?.file_id;
-    // const file = await bot.getFile(photo);
-    // body.photo_url = await bot.getFileLink(file.file_id);
   } catch (error) {
     console.warn(error);
   }
@@ -54,8 +47,8 @@ module.exports = async (bot, message, dialog) => {
     throw new Error('Произошла ошибка');
   }
   const bearerAuth = response.headers.get('Authorization');
-  const offer = await response.json();
-  const [url] = offer.object.attachment;
+  const { credentialSubject } = await response.json();
+  const [url] = credentialSubject.object.attachment;
   await sendPrepareAction(bot, message, UPLOAD_DOCUMENT);
   const responseDocument = await fetch(url);
   const fileBuffer = await responseDocument.arrayBuffer();
@@ -69,7 +62,9 @@ module.exports = async (bot, message, dialog) => {
         width: page.width,
         height: page.height,
         caption:
-          'Вы зарегистрированы! Продолжая использовать сервис вы принимаете условия пользовательского соглашения',
+          page.pageNumber === 0
+            ? 'Вы зарегистрированы!\nПродолжая использовать сервис вы принимаете условия пользовательского соглашения.'
+            : undefined,
       };
     }),
     {
@@ -83,6 +78,6 @@ module.exports = async (bot, message, dialog) => {
       },
     },
   );
-  await bot.deleteMessage(message.chat.id, message.message_id);
   setJWT(Number(message.chat.id), bearerAuth);
+  await bot.deleteMessage(message.chat.id, message.message_id);
 };

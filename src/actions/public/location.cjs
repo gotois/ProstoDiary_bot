@@ -5,7 +5,7 @@ const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, message, dialog) => {
   await sendPrepareMessage(bot, message);
-  if (!(dialog.user.location && !dialog.user.jwt)) {
+  if (!(dialog.user.location && dialog.user.jwt)) {
     const timezone = tzlookup(message.location.latitude, message.location.longitude);
     await updateUserLocation(message.chat.id, {
       timezone,
