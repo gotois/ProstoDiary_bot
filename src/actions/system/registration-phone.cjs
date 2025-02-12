@@ -54,7 +54,8 @@ module.exports = async (bot, message, dialog) => {
     throw new Error('Произошла ошибка');
   }
   const bearerAuth = response.headers.get('Authorization');
-  const { url } = await response.json();
+  const offer = await response.json();
+  const [url] = offer.object.attachment;
   await sendPrepareAction(bot, message, UPLOAD_DOCUMENT);
   const responseDocument = await fetch(url);
   const fileBuffer = await responseDocument.arrayBuffer();

@@ -18,8 +18,14 @@ services:
     networks:
       - global_lan
       - default
+    volumes:
+      - db_data:/app/database
 
 networks:
   global_lan:
     driver: bridge
     external: true
+
+volumes:
+  db_data:
+    driver: local
