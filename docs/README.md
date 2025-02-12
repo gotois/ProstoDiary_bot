@@ -1,4 +1,4 @@
-# ProstoDiary - Telegram Assistant
+# Secretary: your personal assistant
 
 [![Website](https://img.shields.io/website/https/prosto-diary.gotointeractive.com.svg?link=https://prosto-diary.gotointeractive.com)](https://prosto-diary.gotointeractive.com)
 [![Known Vulnerabilities](https://snyk.io/test/github/gotois/ProstoDiary_bot/badge.svg)](https://snyk.io/test/github/gotois/ProstoDiary_bot)
@@ -39,17 +39,6 @@ Create a `.env` file and write:
 `SERVER_HOST`
 
 `SERVER_APP`
-
-## Simple server
-
-```js
-const bot = require('prosto-diary');
-
-bot({
-  token: process.env.TELEGRAM_TOKEN,
-  domain: process.env.TELEGRAM_DOMAIN,
-});
-```
 
 ## Tests
 
