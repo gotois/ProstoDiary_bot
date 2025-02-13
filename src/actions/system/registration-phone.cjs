@@ -2,7 +2,7 @@ const { pdfToPng } = require('pdf-to-png-converter');
 const { setJWT } = require('../../libs/database.cjs');
 const { generateTelegramHash } = require('../../libs/tg-crypto.cjs');
 const { sendPrepareAction, UPLOAD_DOCUMENT } = require('../../libs/tg-messages.cjs');
-const { SERVER_HOST } = require('../../environments/index.cjs');
+const { SERVER } = require('../../environments/index.cjs');
 
 /**
  * @description Ассистент детектирует пользователя
@@ -34,7 +34,7 @@ module.exports = async (bot, message, dialog) => {
   } catch (error) {
     console.warn(error);
   }
-  const response = await fetch(SERVER_HOST + '/authorization', {
+  const response = await fetch(SERVER.HOST + '/authorization', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

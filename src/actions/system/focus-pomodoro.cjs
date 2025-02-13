@@ -1,4 +1,4 @@
-const { TELEGRAM_MINI_APP_URL } = require('../../environments/index.cjs');
+const { TELEGRAM } = require('../../environments/index.cjs');
 
 module.exports = async (bot, message) => {
   console.log('start pomodoro timer', message);
@@ -17,7 +17,7 @@ module.exports = async (bot, message) => {
         [
           {
             text: 'Завершить',
-            url: TELEGRAM_MINI_APP_URL,
+            url: TELEGRAM.MINI_APP_URL,
           },
         ],
       ],

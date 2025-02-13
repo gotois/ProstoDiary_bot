@@ -1,9 +1,9 @@
 const requestJsonRpc2 = require('request-json-rpc2').default;
-const { SERVER_HOST } = require('../environments/index.cjs');
+const { SERVER } = require('../environments/index.cjs');
 
 module.exports.notifyCalendar = async ({ uid, ics, user, language }) => {
   const { result, error } = await requestJsonRpc2({
-    url: SERVER_HOST + '/rpc',
+    url: SERVER.HOST + '/rpc',
     body: {
       id: uid,
       method: 'notify',

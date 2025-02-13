@@ -1,7 +1,7 @@
 const express = require('express');
 const argv = require('minimist')(process.argv.slice(2));
 const botController = require('telegram-bot-api-express');
-const { TELEGRAM_TOKEN, TELEGRAM_DOMAIN } = require('./environments/index.cjs');
+const { TELEGRAM } = require('./environments/index.cjs');
 const pingAction = require('./actions/system/ping.cjs');
 const dbclearAction = require('./actions/system/dbclear.cjs');
 const helpAction = require('./actions/system/help.cjs');
@@ -46,6 +46,8 @@ const port = Number(argv.port || 8888);
 const { bot, middleware } = botController({
   token: TELEGRAM_TOKEN,
   domain: TELEGRAM_DOMAIN,
+  token: TELEGRAM.TOKEN,
+  // domain: TELEGRAM.DOMAIN,
 
   // Персональные команды
   privateEvents: {

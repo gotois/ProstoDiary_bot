@@ -1,10 +1,23 @@
 const sqlite = require('node:sqlite');
-const { DATABASE_PATH } = require('../environments/index.cjs');
+const { DATABASE } = require('../environments/index.cjs');
 
-const database = new sqlite.DatabaseSync(DATABASE_PATH);
+const userDB = new sqlite.DatabaseSync(DATABASE.USERS);
+const messageDB = new sqlite.DatabaseSync(':memory:');
+const calendarsDB = new sqlite.DatabaseSync(DATABASE.CALENDARS);
+
+function createMessagesTable() {
+  messageDB.exec(`
+      CREATE TABLE if not exists messages(
+        message_id INTEGER PRIMARY KEY,
+        chat_id INTEGER,
+        message_text TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+      ) STRICT
+    `);
+}
 
 function createUsersTable() {
-  database.exec(`
+  userDB.exec(`
       CREATE TABLE if not exists users(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         location TEXT NULL,
@@ -16,7 +29,7 @@ function createUsersTable() {
 }
 
 function createCalendarsTable() {
-  database.exec(`
+  calendarsDB.exec(`
       CREATE TABLE if not exists calendars(
         id INTEGER PRIMARY KEY,
         message_id INTEGER,
@@ -31,9 +44,14 @@ function createCalendarsTable() {
 }
 
 try {
+  createMessagesTable();
+} catch (error) {
+  console.warn(error);
+}
+try {
   createUsersTable();
-} catch {
-  // ...
+} catch (error) {
+  console.warn(error);
 }
 try {
   createCalendarsTable();
@@ -41,17 +59,18 @@ try {
   console.warn(error);
 }
 
-module.exports = database;
+module.exports.users = userDB;
+module.exports.message = messageDB;
 
 module.exports.hasUser = (idUser) => {
-  const query = database.prepare(`SELECT * FROM users WHERE id == ${idUser}`);
+  const query = userDB.prepare(`SELECT * FROM users WHERE id == ${idUser}`);
   const users = query.all();
 
   return users.length > 0;
 };
 
 module.exports.getUsers = (idUser) => {
-  const query = database.prepare(`SELECT * FROM users WHERE id == ${idUser}`);
+  const query = userDB.prepare(`SELECT * FROM users WHERE id == ${idUser}`);
 
   return query.all();
 };
@@ -60,7 +79,7 @@ module.exports.getUsers = (idUser) => {
  * @param {string} userId - telegram user id
  */
 module.exports.setNewUser = (userId) => {
-  const insert = database.prepare(`
+  const insert = userDB.prepare(`
     INSERT INTO users (id) VALUES (:id)
   `);
   insert.run({ id: userId });
@@ -78,7 +97,7 @@ module.exports.setNewUser = (userId) => {
  */
 module.exports.updateUserLocation = (userId, { timezone, latitude, longitude, u = 50 }) => {
   const location = `geo:${latitude},${longitude};cgen=gps;u=${u}`;
-  const insert = database.prepare(`
+  const insert = userDB.prepare(`
     INSERT INTO users (id, location, timezone) VALUES (:id, :location, :timezone)
     ON CONFLICT(id)
     DO
@@ -89,7 +108,7 @@ module.exports.updateUserLocation = (userId, { timezone, latitude, longitude, u 
 };
 
 module.exports.setJWT = (userId, jwt) => {
-  const insert = database.prepare(`
+  const insert = userDB.prepare(`
     INSERT INTO users (id, jwt) VALUES (:id, :jwt)
     ON CONFLICT(id)
     DO
@@ -100,7 +119,7 @@ module.exports.setJWT = (userId, jwt) => {
 };
 
 module.exports.getCalendarMessage = (id) => {
-  const query = database.prepare(`SELECT * FROM calendars WHERE message_id == ${id}`);
+  const query = calendarsDB.prepare(`SELECT * FROM calendars WHERE message_id == ${id}`);
   const events = query.all();
 
   return events[0];
@@ -118,7 +137,7 @@ module.exports.getCalendarMessage = (id) => {
  * @param {number[]} [calendar.geo] - geo координата события
  */
 module.exports.saveCalendar = ({ id, title, details = '', location = null, start, end, geo = [] }) => {
-  const insert = database.prepare(`
+  const insert = calendarsDB.prepare(`
     INSERT INTO calendars (message_id, title, details, location, start, end, geo)
     VALUES (:message_id, :title, :details, :location, :start, :end, :geo)`);
   insert.run({

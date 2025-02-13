@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { TELEGRAM_TOKEN } = require('../environments/index.cjs');
+const { TELEGRAM } = require('../environments/index.cjs');
 
 module.exports.generateTelegramHash = (data) => {
   const checkString = Object.keys(data)
@@ -12,6 +12,6 @@ module.exports.generateTelegramHash = (data) => {
     .sort()
     .join('\n');
 
-  const secretKey = crypto.createHmac('sha256', 'WebAppData').update(TELEGRAM_TOKEN).digest();
+  const secretKey = crypto.createHmac('sha256', 'WebAppData').update(TELEGRAM.TOKEN).digest();
   return crypto.createHmac('sha256', secretKey).update(checkString).digest('hex');
 };

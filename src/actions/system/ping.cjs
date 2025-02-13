@@ -1,4 +1,4 @@
-const { SERVER_HOST } = require('../../environments/index.cjs');
+const { SERVER } = require('../../environments/index.cjs');
 
 /**
  * @description Проверка сети
@@ -7,7 +7,7 @@ const { SERVER_HOST } = require('../../environments/index.cjs');
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  const response = await fetch(SERVER_HOST + '/ping', {
+  const response = await fetch(SERVER.HOST + '/ping', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

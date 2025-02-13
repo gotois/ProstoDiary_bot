@@ -1,5 +1,5 @@
 const icalBrowser = require('ical-browser');
-const { SERVER_APP_URL, IS_DEV } = require('../../environments/index.cjs');
+const { SERVER } = require('../../environments/index.cjs');
 const { notifyCalendar } = require('../../controllers/generate-calendar.cjs');
 const { getCalendarMessage } = require('../../libs/database.cjs');
 const { parseMode } = require('../../libs/tg-messages.cjs');
@@ -55,7 +55,7 @@ module.exports = async (bot, message, dialog) => {
   });
   vevent.addAlarm(valarm);
   icalendar.addEvent(vevent);
-  if (IS_DEV) {
+  if (SERVER.IS_DEV) {
     const fileEvent = icalendar.download('calendar.ics');
     const arrayBuffer = await fileEvent.arrayBuffer();
     await bot.sendDocument(
@@ -78,9 +78,9 @@ module.exports = async (bot, message, dialog) => {
     language: language,
   });
   dialog.clear();
-  let webAppUrl = `${SERVER_APP_URL}/?lang=${language}`;
+  let webAppUrl = `${SERVER.APP_URL}/?lang=${language}`;
   // eslint-disable-next-line unicorn/consistent-destructuring
-  if (IS_DEV) {
+  if (SERVER.IS_DEV) {
     webAppUrl += '&debug=1';
   }
   const editMessage = await bot.editMessageText(credentialSubject.object.content, {
