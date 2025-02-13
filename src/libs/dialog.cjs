@@ -1,5 +1,6 @@
 const activitystreams = require('telegram-bot-activitystreams');
 const { v1: uuidv1 } = require('uuid');
+const { saveMessage, getMessages } = require('../models/messages.cjs');
 
 /**
  * @class
@@ -14,8 +15,7 @@ class Dialog {
     this.user = user;
   }
   clear() {
-    this.messages = [];
-    this.activity = {
+    this._activity = {
       '@context': ['https://www.w3.org/ns/activitystreams'],
       'summary': '',
       'type': 'Collection',
@@ -74,10 +74,13 @@ class Dialog {
       console.error(message);
       throw new Error('Unknown type message');
     }
-    this.activity.totalItems++;
-    this.activity.items.push(activity);
+    this._activity.totalItems++;
+    this._activity.items.push(activity);
 
     return activity;
+  }
+  get activity() {
+    return this._activity;
   }
   /**
    * @returns {string}
@@ -86,11 +89,11 @@ class Dialog {
     return this._uid;
   }
   set language(languageCode) {
-    const hasLang = this.activity['@context'].some((c) => {
+    const hasLang = this._activity['@context'].some((c) => {
       return c && c['@language'] === languageCode;
     });
     if (!hasLang) {
-      this.activity['@context'].push({
+      this._activity['@context'].push({
         '@language': languageCode,
       });
     }
@@ -100,7 +103,7 @@ class Dialog {
    */
   get language() {
     // eslint-disable-next-line unicorn/no-array-reduce
-    return this.activity['@context'].reduce((accumulator, element) => {
+    return this._activity['@context'].reduce((accumulator, element) => {
       if (element['@language']) {
         return element['@language'];
       }

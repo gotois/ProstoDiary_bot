@@ -1,9 +1,11 @@
 const requestJsonRpc2 = require('request-json-rpc2').default;
 const { SERVER } = require('../environments/index.cjs');
 
+const ORIGIN_RPC = SERVER.HOST + '/rpc';
+
 module.exports.notifyCalendar = async ({ uid, ics, user, language }) => {
   const { result, error } = await requestJsonRpc2({
-    url: SERVER.HOST + '/rpc',
+    url: ORIGIN_RPC,
     body: {
       id: uid,
       method: 'notify',
@@ -24,7 +26,7 @@ module.exports.notifyCalendar = async ({ uid, ics, user, language }) => {
 
 module.exports.generateCalendar = async function ({ uid, activity, user, language }) {
   const { result, error } = await requestJsonRpc2({
-    url: SERVER.HOST + '/rpc',
+    url: ORIGIN_RPC,
     body: {
       id: uid,
       method: 'generate-calendar',

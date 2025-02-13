@@ -14,7 +14,8 @@ function createMessagesTable() {
     CREATE TABLE if not exists messages(
       message_id INTEGER PRIMARY KEY,
       chat_id INTEGER,
-      message_text TEXT,
+      text TEXT,
+      role TEXT,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     ) STRICT
   `);
