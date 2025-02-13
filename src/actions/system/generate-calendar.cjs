@@ -1,7 +1,7 @@
 const icalBrowser = require('ical-browser');
 const { SERVER } = require('../../environments/index.cjs');
 const { notifyCalendar } = require('../../controllers/generate-calendar.cjs');
-const { getCalendarMessage } = require('../../libs/database.cjs');
+const { getCalendarMessage } = require('../../models/calendars.cjs');
 const { parseMode } = require('../../libs/tg-messages.cjs');
 
 const ICalendar = icalBrowser.default;

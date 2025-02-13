@@ -1,4 +1,4 @@
-const { setJWT } = require('../../libs/database.cjs');
+const { setJWT } = require('../../models/users.cjs');
 
 /**
  * @description Регистрация через TMA

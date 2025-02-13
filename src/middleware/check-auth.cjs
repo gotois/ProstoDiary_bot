@@ -1,5 +1,5 @@
 const errorHandler = require('./error-handler.cjs');
-const { getUsers } = require('../libs/database.cjs');
+const { getUsers } = require('../models/users.cjs');
 const Dialog = require('../libs/dialog.cjs');
 
 /**

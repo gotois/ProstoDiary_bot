@@ -44,8 +44,6 @@ const app = express();
 const port = Number(argv.port || 8888);
 
 const { bot, middleware } = botController({
-  token: TELEGRAM_TOKEN,
-  domain: TELEGRAM_DOMAIN,
   token: TELEGRAM.TOKEN,
   // domain: TELEGRAM.DOMAIN,
 

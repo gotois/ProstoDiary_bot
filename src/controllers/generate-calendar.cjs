@@ -24,7 +24,7 @@ module.exports.notifyCalendar = async ({ uid, ics, user, language }) => {
 
 module.exports.generateCalendar = async function ({ uid, activity, user, language }) {
   const { result, error } = await requestJsonRpc2({
-    url: SERVER_HOST + '/rpc',
+    url: SERVER.HOST + '/rpc',
     body: {
       id: uid,
       method: 'generate-calendar',

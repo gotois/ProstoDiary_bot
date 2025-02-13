@@ -1,4 +1,4 @@
-const { setNewUser, hasUser } = require('../../libs/database.cjs');
+const { setNewUser, hasUser } = require('../../models/users.cjs');
 
 function getWelcomeText() {
   return (

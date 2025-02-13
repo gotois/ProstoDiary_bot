@@ -1,5 +1,5 @@
 const { pdfToPng } = require('pdf-to-png-converter');
-const { setJWT } = require('../../libs/database.cjs');
+const { setJWT } = require('../../models/users.cjs');
 const { generateTelegramHash } = require('../../libs/tg-crypto.cjs');
 const { sendPrepareAction, UPLOAD_DOCUMENT } = require('../../libs/tg-messages.cjs');
 const { SERVER } = require('../../environments/index.cjs');

@@ -1,5 +1,5 @@
 const { TYPING, sendPrepareMessage, sendPrepareAction } = require('../../libs/tg-messages.cjs');
-const { saveCalendar } = require('../../libs/database.cjs');
+const { saveCalendar } = require('../../models/calendars.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 
 /**

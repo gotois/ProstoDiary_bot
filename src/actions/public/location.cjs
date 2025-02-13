@@ -1,6 +1,6 @@
 const tzlookup = require('@photostructure/tz-lookup');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
-const { updateUserLocation } = require('../../libs/database.cjs');
+const { updateUserLocation } = require('../../models/users.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, message, dialog) => {
