@@ -1,5 +1,26 @@
 const { calendarsDB } = require('../libs/database.cjs');
 
+function createCalendarsTable() {
+  calendarsDB.exec(`
+    CREATE TABLE if not exists calendars(
+      id INTEGER PRIMARY KEY,
+      message_id INTEGER,
+      title TEXT,
+      details TEXT NULL,
+      location TEXT NULL,
+      start INTEGER,
+      end INTEGER,
+      geo TEXT NULL
+    ) STRICT
+  `);
+}
+
+try {
+  createCalendarsTable();
+} catch (error) {
+  console.warn(error);
+}
+
 module.exports.getCalendarMessage = (id) => {
   const query = calendarsDB.prepare(`SELECT * FROM calendars WHERE message_id == ${id}`);
   const events = query.all();

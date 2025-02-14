@@ -1,6 +1,6 @@
 const activitystreams = require('telegram-bot-activitystreams');
 const { v1: uuidv1 } = require('uuid');
-const { saveMessage, getMessages } = require('../models/messages.cjs');
+const { saveMessage, getMessages, clearMessageById } = require('../models/messages.cjs');
 
 /**
  * @class
@@ -10,11 +10,12 @@ class Dialog {
    * @param {object} user - Объект пользователя
    */
   constructor(user) {
-    this._uid = uuidv1();
-    this.clear();
     this.user = user;
+    this.clear();
+    const x = getMessages(user.id);
   }
   clear() {
+    clearMessageById(this.user.id);
     this._activity = {
       '@context': ['https://www.w3.org/ns/activitystreams'],
       'summary': '',
@@ -29,6 +30,7 @@ class Dialog {
    * @returns {object} - Возвращает объект активности.
    */
   push(message) {
+    this._uid = uuidv1();
     const activity = activitystreams(message);
     activity.type = 'Activity';
     this.language = message.from.language_code;
@@ -78,6 +80,17 @@ class Dialog {
     this._activity.items.push(activity);
 
     return activity;
+  }
+  /**
+   * @param {object} message - объект сообщения
+   * @param {number} message.messageId - идентификатор сообщения
+   * @param {string} message.chatId - идентификатор чата
+   * @param {string} message.text - текст сообщения
+   * @param {'user' | 'assistant'} message.role - роль отправителя
+   * @returns {void}
+   */
+  saveMessage(message) {
+    saveMessage(message);
   }
   get activity() {
     return this._activity;

@@ -1,5 +1,23 @@
 const { userDB } = require('../libs/database.cjs');
 
+function createUsersTable() {
+  userDB.exec(`
+      CREATE TABLE if not exists users(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        location TEXT NULL,
+        timezone TEXT DEFAULT 'UTC',
+        jwt TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+      ) STRICT
+    `);
+}
+
+try {
+  createUsersTable();
+} catch (error) {
+  console.warn(error);
+}
+
 module.exports.hasUser = (idUser) => {
   const query = userDB.prepare(`SELECT * FROM users WHERE id == ${idUser}`);
   const users = query.all();

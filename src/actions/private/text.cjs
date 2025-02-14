@@ -31,6 +31,12 @@ function formatGoogleCalendarUrl({ text, details, start, end, location }) {
 module.exports = async (bot, message, dialog) => {
   await sendPrepareAction(bot, message, TYPING);
   dialog.push(message);
+  dialog.saveMessage({
+    messageId: message.message_id,
+    chatId: message.chat.id,
+    text: message.text,
+    role: 'user',
+  });
   const { credentialSubject } = await generateCalendar(dialog);
   const { name, summary, location } = credentialSubject.object;
   const time = new Intl.DateTimeFormat(dialog.language, {
@@ -75,6 +81,12 @@ module.exports = async (bot, message, dialog) => {
       remove_keyboard: true,
       inline_keyboard: inlineKeyboard,
     },
+  });
+  dialog.saveMessage({
+    messageId: myMessage.message_id,
+    chatId: message.chat.id,
+    text: data,
+    role: 'assistant',
   });
   await bot.sendMessage(message.chat.id, 'Все верно?', {
     reply_to_message_id: myMessage.message_id,
