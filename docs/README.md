@@ -105,12 +105,6 @@ docker compose --env-file .env up --build
 docker compose --env-file .env up -d
 ```
 
-### Run Telegram Bot Prod
-
-```bash
-docker compose --env-file .env -f compose.yml -f compose.prod.yml up --build
-```
-
 Возможности управления системой
 
 1) `something text` - Уведомление
