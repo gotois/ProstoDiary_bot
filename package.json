@@ -85,6 +85,7 @@
     "express": "4.21.2",
     "ical-browser": "0.1.4",
     "minimist": "1.2.8",
+    "minisearch": "7.1.1",
     "pdf-to-png-converter": "3.6.4",
     "request-json-rpc2": "2.3.0",
     "telegram-bot-activitystreams": "1.0.7",

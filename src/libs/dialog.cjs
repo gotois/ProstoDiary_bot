@@ -11,11 +11,6 @@ class Dialog {
    */
   constructor(user) {
     this.user = user;
-    this.clear();
-    const x = getMessages(user.id);
-  }
-  clear() {
-    clearMessageById(this.user.id);
     this._activity = {
       '@context': ['https://www.w3.org/ns/activitystreams'],
       'summary': '',
@@ -23,6 +18,9 @@ class Dialog {
       'totalItems': 0,
       'items': [],
     };
+  }
+  clear() {
+    clearMessageById(this.user.id);
   }
   /**
    * @description Обрабатывает входящее сообщение и добавляет его в активность.

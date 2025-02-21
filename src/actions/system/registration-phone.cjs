@@ -62,7 +62,7 @@ module.exports = async (bot, message, dialog) => {
         width: page.width,
         height: page.height,
         caption:
-          page.pageNumber === 0
+          page.pageNumber === 1
             ? 'Вы зарегистрированы!\nПродолжая использовать сервис вы принимаете условия пользовательского соглашения.'
             : undefined,
       };

@@ -47,7 +47,7 @@ module.exports = async (bot, message, dialog) => {
   const data =
     `Что: ${name}\n` +
     `Где: ${location?.name ?? '-'}\n` +
-    `Когда: ${time}\n` +
+    `Когда: ${time} ${dialog.user.timezone} \n` +
     'Напомнить за: 15 минут\n\n'; // todo убрать хардкод
   await sendPrepareMessage(bot, message);
   const googleCalendarUrl = formatGoogleCalendarUrl({
@@ -98,6 +98,7 @@ module.exports = async (bot, message, dialog) => {
   });
   await saveCalendar({
     id: message.chat.id + '' + myMessage.message_id,
+    userId: message.chat.id,
     title: name,
     details: summary,
     location: location?.name,

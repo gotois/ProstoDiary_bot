@@ -74,7 +74,7 @@ const { bot, middleware } = botController({
     ['video_note']: checkAuth(videoAction),
     ['document']: checkAuth(documentAction),
     ['contact']: checkAuth(contactAction),
-    ['inline_query']: checkAuth(inlineAction),
+    ['inline_query']: inlineAction,
     ['message_forwards']: checkAuth(textForwards),
     ['reply_to_message']: checkAuth(replyToMessageAction),
     ['pinned_message']: () => {},
