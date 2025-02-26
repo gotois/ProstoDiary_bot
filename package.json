@@ -22,6 +22,7 @@
   ],
   "scripts": {
     "commit": "git-cz",
+    "publish": "echo 'Publishing is disabled' && exit 1",
     "pretest": "run-s --silent \"lint -- --quiet\" lint:dependency",
     "test": "nyc --reporter=text run-s test:unit",
     "test:unit": "ava tests/unit/index.js",
