@@ -12,6 +12,9 @@ const { SERVER } = require('../../environments/index.cjs');
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message, dialog) => {
+  if (!dialog.user.location) {
+    throw new Error('Unknown location');
+  }
   const body = {
     contact: {
       phoneNumber: message.contact.phone_number,

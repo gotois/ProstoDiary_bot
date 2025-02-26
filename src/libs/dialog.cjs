@@ -10,6 +10,9 @@ class Dialog {
    * @param {object} user - Объект пользователя
    */
   constructor(user) {
+    if (!user.timezone) {
+      user.timezone = 'UTC';
+    }
     this.user = user;
     this._activity = {
       '@context': ['https://www.w3.org/ns/activitystreams'],
@@ -25,6 +28,7 @@ class Dialog {
   /**
    * @description Обрабатывает входящее сообщение и добавляет его в активность.
    * @param {object} message - Входящее сообщение.
+   * @throws {Error} - Выбрасывает ошибку, если тип сообщения неизвестен.
    * @returns {object} - Возвращает объект активности.
    */
   push(message) {

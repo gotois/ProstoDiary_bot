@@ -1,3 +1,5 @@
+const { deleteUser } = require('../models/users.cjs');
+
 /**
  * @description Обработчик ошибок
  * @param {Function} callback - callback
@@ -12,26 +14,42 @@ module.exports = function (callback) {
       if (!message.chat) {
         return;
       }
-      if (!message.id) {
-        await bot.setMessageReaction(message.chat.id, message.message_id, {
-          reaction: JSON.stringify([
-            {
-              type: 'emoji',
-              emoji: '👾', //  🤷‍♀
-            },
-          ]),
-        });
-      }
       switch (error?.message) {
         case 'fetch failed': {
+          await bot.setMessageReaction(message.chat.id, message.message_id, {
+            reaction: JSON.stringify([
+              {
+                type: 'emoji',
+                emoji: '👾',
+              },
+            ]),
+          });
           return bot.sendMessage(message.chat.id, 'Произошла ошибка при обращении к серверу');
         }
         case 'Unauthorized': {
+          console.log('111')
+          deleteUser(message.chat.id);
+          await bot.setMessageReaction(message.chat.id, message.message_id, {
+            reaction: JSON.stringify([
+              {
+                type: 'emoji',
+                emoji: '🤷‍♀',
+              },
+            ]),
+          });
           return bot.sendMessage(message.chat.id, 'Требуется авторизация /start', {
             disable_web_page_preview: true,
           });
         }
         case 'Bad Request': {
+          await bot.setMessageReaction(message.chat.id, message.message_id, {
+            reaction: JSON.stringify([
+              {
+                type: 'emoji',
+                emoji: '👾',
+              },
+            ]),
+          });
           return bot.sendMessage(
             message.chat.id,
             'Произошла ошибка на сервере. Пожалуйста попробуйте попозже, уточните дату и время.',

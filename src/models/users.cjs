@@ -18,17 +18,26 @@ try {
   console.warn(error);
 }
 
-module.exports.hasUser = (idUser) => {
-  const query = userDB.prepare(`SELECT * FROM users WHERE id == ${idUser}`);
-  const users = query.all();
+/**
+ * Удаляет пользователя по id
+ * @param {string} userId - идентификатор пользователя
+ */
+module.exports.deleteUser = (userId) => {
+  const query = userDB.prepare('DELETE FROM users WHERE id == ?');
+  query.run(userId);
+};
+
+module.exports.hasUser = (userId) => {
+  const query = userDB.prepare(`SELECT * FROM users WHERE id == ?`);
+  const users = query.all(userId);
 
   return users.length > 0;
 };
 
-module.exports.getUsers = (idUser) => {
-  const query = userDB.prepare(`SELECT * FROM users WHERE id == ${idUser}`);
+module.exports.getUsers = (userId) => {
+  const query = userDB.prepare(`SELECT * FROM users WHERE id == ?`);
 
-  return query.all();
+  return query.all(userId);
 };
 
 /**
