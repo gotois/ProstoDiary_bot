@@ -1,3 +1,4 @@
+const { v1: uuidv1 } = require('uuid');
 const requestJsonRpc2 = require('request-json-rpc2').default;
 const { SERVER } = require('../environments/index.cjs');
 
@@ -29,11 +30,11 @@ function formatGoogleCalendarUrl({ text, details, start, end, location }) {
   return link;
 }
 
-module.exports.notifyCalendar = async ({ uid, ics, user }) => {
+module.exports.notifyCalendar = async ({ ics, user }) => {
   const { result, error } = await requestJsonRpc2({
     url: ORIGIN_RPC,
     body: {
-      id: uid,
+      id: uuidv1(),
       method: 'notify',
       params: [ics],
     },
@@ -50,11 +51,11 @@ module.exports.notifyCalendar = async ({ uid, ics, user }) => {
   return result;
 };
 
-module.exports.generateCalendar = async function ({ uid, activity, user }) {
+module.exports.generateCalendar = async function ({ activity, user }) {
   const { result, error } = await requestJsonRpc2({
     url: ORIGIN_RPC,
     body: {
-      id: uid,
+      id: uuidv1(),
       method: 'generate-calendar',
       params: activity,
     },

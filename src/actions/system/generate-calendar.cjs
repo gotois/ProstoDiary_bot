@@ -71,7 +71,6 @@ module.exports = async (bot, message, dialog) => {
     );
   }
   const { credentialSubject } = await notifyCalendar({
-    uid: message.id,
     ics: icalendar.ics,
     user: user,
   });

@@ -18,7 +18,6 @@ try {
   console.warn(error);
 }
 /**
- * @todo сохранять в БД activity streams
  * @description Сохранение сообщения в локальную базу данных
  * @param {object} message - объект сообщения
  */

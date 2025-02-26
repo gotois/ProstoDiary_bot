@@ -1,5 +1,4 @@
 const activitystreams = require('telegram-bot-activitystreams');
-const { v1: uuidv1 } = require('uuid');
 const { saveMessage, getMessages, clearMessageById } = require('../models/messages.cjs');
 
 /**
@@ -23,13 +22,13 @@ class Dialog {
     clearMessageById(this.user.id);
   }
   /**
+   * @todo сохранять в БД activity streams
    * @description Обрабатывает входящее сообщение и добавляет его в активность.
    * @param {object} message - Входящее сообщение.
    * @throws {Error} - Выбрасывает ошибку, если тип сообщения неизвестен.
    * @returns {void}
    */
   push(message) {
-    this._uid = uuidv1(); // todo скорее всего он нужен не здесь
     saveMessage(message);
   }
   get activity() {
@@ -96,12 +95,6 @@ class Dialog {
     }
 
     return activities;
-  }
-  /**
-   * @returns {string}
-   */
-  get uid() {
-    return this._uid;
   }
 }
 
