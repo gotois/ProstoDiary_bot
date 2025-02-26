@@ -19,7 +19,6 @@ module.exports = async (bot, message, dialog) => {
     text: 'Идет обработка...',
     show_alert: false,
   });
-  const language = message.reply_to_message?.from?.language_code;
   const event = await getCalendarMessage(message.chat.id + '' + message.message_id);
   if (!event) {
     throw new Error('Событие не найдено');
@@ -75,10 +74,9 @@ module.exports = async (bot, message, dialog) => {
     uid: message.id,
     ics: icalendar.ics,
     user: user,
-    language: language,
   });
   dialog.clear();
-  let webAppUrl = `${SERVER.APP_URL}/?lang=${language}`;
+  let webAppUrl = `${SERVER.APP_URL}/?lang=${message.reply_to_message?.from?.language_code}`;
   // eslint-disable-next-line unicorn/consistent-destructuring
   if (SERVER.IS_DEV) {
     webAppUrl += '&debug=1';

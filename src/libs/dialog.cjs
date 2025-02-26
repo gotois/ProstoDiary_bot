@@ -6,6 +6,10 @@ const { saveMessage, getMessages, clearMessageById } = require('../models/messag
  * @class
  */
 class Dialog {
+  static from(user) {
+    const dialog = new Dialog(user);
+    return dialog;
+  }
   /**
    * @param {object} user - Объект пользователя
    */
@@ -14,13 +18,6 @@ class Dialog {
       user.timezone = 'UTC';
     }
     this.user = user;
-    this._activity = {
-      '@context': ['https://www.w3.org/ns/activitystreams'],
-      'summary': '',
-      'type': 'Collection',
-      'totalItems': 0,
-      'items': [],
-    };
   }
   clear() {
     clearMessageById(this.user.id);
@@ -29,100 +26,82 @@ class Dialog {
    * @description Обрабатывает входящее сообщение и добавляет его в активность.
    * @param {object} message - Входящее сообщение.
    * @throws {Error} - Выбрасывает ошибку, если тип сообщения неизвестен.
-   * @returns {object} - Возвращает объект активности.
-   */
-  push(message) {
-    this._uid = uuidv1();
-    const activity = activitystreams(message);
-    activity.type = 'Activity';
-    this.language = message.from.language_code;
-
-    if (message.voice) {
-      // ...
-    } else if (message.text) {
-      // ...
-    } else if (message.photo) {
-      // ...
-    } else if (message.location) {
-      activity.object = [
-        {
-          type: 'Point',
-          content: {
-            type: 'Feature',
-            geometry: {
-              type: 'Point',
-              coordinates: [message.location.latitude, message.location.longitude],
-            },
-          },
-          mediaType: 'application/geo+json',
-        },
-      ];
-      if (message.location.caption) {
-        activity.object.push({
-          type: 'Note',
-          content: message.location.caption,
-          mediaType: 'text/plain',
-        });
-      }
-    } else if (message.document) {
-      // ...
-    } else if (message.sticker) {
-      // ...
-    } else if (message.video_note) {
-      // ...
-    } else if (message.audio) {
-      // ...
-    } else if (message.contact) {
-      // ...
-    } else {
-      console.error(message);
-      throw new Error('Unknown type message');
-    }
-    this._activity.totalItems++;
-    this._activity.items.push(activity);
-
-    return activity;
-  }
-  /**
-   * @param {object} message - объект сообщения
-   * @param {number} message.messageId - идентификатор сообщения
-   * @param {string} message.chatId - идентификатор чата
-   * @param {string} message.text - текст сообщения
-   * @param {'user' | 'assistant'} message.role - роль отправителя
    * @returns {void}
    */
-  saveMessage(message) {
+  push(message) {
+    this._uid = uuidv1(); // todo скорее всего он нужен не здесь
     saveMessage(message);
   }
   get activity() {
-    return this._activity;
+    const activities = {
+      '@context': [
+        'https://www.w3.org/ns/activitystreams',
+        {
+          '@language': this.user.language,
+        },
+      ],
+      'summary': '',
+      'type': 'Collection',
+      'totalItems': 0,
+      'items': [],
+    };
+    const messages = getMessages(this.user.id);
+    for (let { message } of messages) {
+      message = JSON.parse(message);
+      const activity = activitystreams(message);
+      activity.type = 'Activity';
+      if (message.voice) {
+        // ...
+      } else if (message.text) {
+        // ...
+      } else if (message.photo) {
+        // ...
+      } else if (message.location) {
+        activity.object = [
+          {
+            type: 'Point',
+            content: {
+              type: 'Feature',
+              geometry: {
+                type: 'Point',
+                coordinates: [message.location.latitude, message.location.longitude],
+              },
+            },
+            mediaType: 'application/geo+json',
+          },
+        ];
+        if (message.location.caption) {
+          activity.object.push({
+            type: 'Note',
+            content: message.location.caption,
+            mediaType: 'text/plain',
+          });
+        }
+      } else if (message.document) {
+        // ...
+      } else if (message.sticker) {
+        // ...
+      } else if (message.video_note) {
+        // ...
+      } else if (message.audio) {
+        // ...
+      } else if (message.contact) {
+        // ...
+      } else {
+        console.error(message);
+        throw new Error('Unknown type message');
+      }
+      activities.totalItems++;
+      activities.items.push(activity);
+    }
+
+    return activities;
   }
   /**
    * @returns {string}
    */
   get uid() {
     return this._uid;
-  }
-  set language(languageCode) {
-    const hasLang = this._activity['@context'].some((c) => {
-      return c && c['@language'] === languageCode;
-    });
-    if (!hasLang) {
-      this._activity['@context'].push({
-        '@language': languageCode,
-      });
-    }
-  }
-  /**
-   * @returns {string}
-   */
-  get language() {
-    // eslint-disable-next-line unicorn/no-array-reduce
-    return this._activity['@context'].reduce((accumulator, element) => {
-      if (element['@language']) {
-        return element['@language'];
-      }
-    });
   }
 }
 

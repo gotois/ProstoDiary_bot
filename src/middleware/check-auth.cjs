@@ -16,10 +16,10 @@ module.exports = function (callback) {
       });
       return;
     }
-    const dialog = new Dialog({
-      ...user,
-      timezone: user.timezone ?? 'UTC',
-    });
-    await errorHandler(callback)(bot, message, dialog);
+    // todo если использовать inline тогда
+    if (message.via_bot) {
+      console.log('WIP supports: ', message.via_bot);
+    }
+    await errorHandler(callback)(bot, message, Dialog.from(user));
   };
 };

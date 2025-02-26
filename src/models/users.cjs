@@ -5,6 +5,7 @@ function createUsersTable() {
       CREATE TABLE if not exists users(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         location TEXT NULL,
+        language TEXT DEFAULT 'en',
         timezone TEXT DEFAULT 'UTC',
         jwt TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
@@ -28,14 +29,14 @@ module.exports.deleteUser = (userId) => {
 };
 
 module.exports.hasUser = (userId) => {
-  const query = userDB.prepare(`SELECT * FROM users WHERE id == ?`);
+  const query = userDB.prepare('SELECT * FROM users WHERE id == ?');
   const users = query.all(userId);
 
   return users.length > 0;
 };
 
 module.exports.getUsers = (userId) => {
-  const query = userDB.prepare(`SELECT * FROM users WHERE id == ?`);
+  const query = userDB.prepare('SELECT * FROM users WHERE id == ?');
 
   return query.all(userId);
 };
@@ -81,4 +82,19 @@ module.exports.setJWT = (userId, jwt) => {
       WHERE id = :id
   `);
   insert.run({ id: userId, jwt: jwt });
+};
+/**
+ * @description обновление языка пользователя
+ * @param {string} userId - user id
+ * @param {string} language - language code
+ */
+module.exports.setLanguage = (userId, language) => {
+  const insert = userDB.prepare(`
+    INSERT INTO users (id, language) VALUES (:id, :language)
+    ON CONFLICT(id)
+    DO
+      UPDATE SET language = :language
+      WHERE id = :id
+  `);
+  insert.run({ id: userId, language });
 };

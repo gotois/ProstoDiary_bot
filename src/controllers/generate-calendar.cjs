@@ -29,7 +29,7 @@ function formatGoogleCalendarUrl({ text, details, start, end, location }) {
   return link;
 }
 
-module.exports.notifyCalendar = async ({ uid, ics, user, language }) => {
+module.exports.notifyCalendar = async ({ uid, ics, user }) => {
   const { result, error } = await requestJsonRpc2({
     url: ORIGIN_RPC,
     body: {
@@ -40,7 +40,7 @@ module.exports.notifyCalendar = async ({ uid, ics, user, language }) => {
     headers: {
       'Authorization': user.jwt,
       'Accept': 'text/markdown',
-      'Accept-Language': language,
+      'Accept-Language': user.language,
       'Geolocation': user.location,
     },
   });
@@ -50,7 +50,7 @@ module.exports.notifyCalendar = async ({ uid, ics, user, language }) => {
   return result;
 };
 
-module.exports.generateCalendar = async function ({ uid, activity, user, language }) {
+module.exports.generateCalendar = async function ({ uid, activity, user }) {
   const { result, error } = await requestJsonRpc2({
     url: ORIGIN_RPC,
     body: {
@@ -61,7 +61,7 @@ module.exports.generateCalendar = async function ({ uid, activity, user, languag
     headers: {
       'Authorization': user.jwt,
       'Accept': 'text/markdown',
-      'Accept-Language': language,
+      'Accept-Language': user.language,
       'Geolocation': user.location,
     },
   });
@@ -70,7 +70,7 @@ module.exports.generateCalendar = async function ({ uid, activity, user, languag
   }
   const { credentialSubject } = result;
   const { name, summary, location } = credentialSubject.object;
-  const time = new Intl.DateTimeFormat(language, {
+  const time = new Intl.DateTimeFormat(user.language, {
     dateStyle: 'full',
     timeStyle: 'short',
     timeZone: 'UTC',

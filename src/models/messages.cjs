@@ -5,7 +5,7 @@ function createMessagesTable() {
     CREATE TABLE if not exists messages(
       message_id INTEGER PRIMARY KEY,
       chat_id INTEGER,
-      text TEXT,
+      message TEXT,
       role TEXT,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     ) STRICT
@@ -18,23 +18,20 @@ try {
   console.warn(error);
 }
 /**
- * @description сохранение сообщения в базу данных
+ * @todo сохранять в БД activity streams
+ * @description Сохранение сообщения в локальную базу данных
  * @param {object} message - объект сообщения
- * @param {number} message.messageId - идентификатор сообщения
- * @param {string} message.chatId - идентификатор чата
- * @param {string} message.text - сообщение
- * @param {'user' | 'assistant'} message.role - роль отправителя
  */
-module.exports.saveMessage = ({ messageId, chatId, text, role }) => {
+module.exports.saveMessage = (message) => {
   const insert = messageDB.prepare(`
-    INSERT INTO messages (message_id, chat_id, text, role)
-    VALUES (:message_id, :chat_id, :text, :role)
+    INSERT INTO messages (message_id, message, chat_id, role)
+    VALUES (:message_id, :message, :chat_id, :role)
   `);
   insert.run({
-    message_id: messageId,
-    chat_id: chatId,
-    text: text,
-    role: role,
+    message_id: message.message_id,
+    chat_id: message.chat.id,
+    message: JSON.stringify(message),
+    role: message.from.is_bot ? 'assistant' : 'user', // {'user' | 'assistant'}
   });
 };
 /**
@@ -44,9 +41,9 @@ module.exports.saveMessage = ({ messageId, chatId, text, role }) => {
  */
 module.exports.getMessages = (userId) => {
   const select = messageDB.prepare(`
-    SELECT message_id, chat_id, text, role
+    SELECT message_id, chat_id, message, role
     FROM messages
-    WHERE chat_id = ?
+    WHERE chat_id == ?
   `);
   return select.all(userId);
 };
@@ -57,7 +54,7 @@ module.exports.getMessages = (userId) => {
 module.exports.clearMessageById = (messageId) => {
   const clear = messageDB.prepare(`
     DELETE FROM messages
-    WHERE message_id = ?
+    WHERE message_id == ?
   `);
   clear.run(messageId);
 };

@@ -1,5 +1,5 @@
 const { pdfToPng } = require('pdf-to-png-converter');
-const { setJWT } = require('../../models/users.cjs');
+const { setJWT, setLanguage } = require('../../models/users.cjs');
 const { generateTelegramHash } = require('../../libs/tg-crypto.cjs');
 const { sendPrepareAction, UPLOAD_DOCUMENT } = require('../../libs/tg-messages.cjs');
 const { SERVER } = require('../../environments/index.cjs');
@@ -81,6 +81,7 @@ module.exports = async (bot, message, dialog) => {
       },
     },
   );
-  setJWT(Number(message.chat.id), bearerAuth);
+  setJWT(message.chat.id, bearerAuth);
+  setLanguage(message.chat.id, message.from.language_code);
   await bot.deleteMessage(message.chat.id, message.message_id);
 };

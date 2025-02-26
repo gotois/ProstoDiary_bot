@@ -2,17 +2,11 @@ const { TYPING, sendPrepareMessage, sendPrepareAction } = require('../../libs/tg
 const { saveCalendar } = require('../../models/calendars.cjs');
 const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 
-module.exports = async (bot, message, dialog) => {
-  await sendPrepareAction(bot, message, TYPING);
-  dialog.push(message);
-  dialog.saveMessage({
-    messageId: message.message_id,
-    chatId: message.chat.id,
-    text: message.text,
-    role: 'user',
-  });
+module.exports = async (bot, userMessage, dialog) => {
+  await sendPrepareAction(bot, userMessage, TYPING);
+  dialog.push(userMessage);
   const { credentialSubject, reminder, googleCalendarUrl } = await generateCalendar(dialog);
-  await sendPrepareMessage(bot, message);
+  await sendPrepareMessage(bot, userMessage);
   const inlineKeyboard = [];
   inlineKeyboard.push(
     [
@@ -28,9 +22,9 @@ module.exports = async (bot, message, dialog) => {
       },
     ],
   );
-  const myMessage = await bot.sendMessage(message.chat.id, reminder, {
+  const assistMessage = await bot.sendMessage(userMessage.chat.id, reminder, {
     parse_mode: 'Markdown',
-    reply_to_message_id: message.message_id,
+    reply_to_message_id: userMessage.message_id,
     protect_content: true,
     disable_notification: true,
     reply_markup: {
@@ -38,14 +32,9 @@ module.exports = async (bot, message, dialog) => {
       inline_keyboard: inlineKeyboard,
     },
   });
-  dialog.saveMessage({
-    messageId: myMessage.message_id,
-    chatId: message.chat.id,
-    text: reminder,
-    role: 'assistant',
-  });
-  await bot.sendMessage(message.chat.id, 'Все верно?', {
-    reply_to_message_id: myMessage.message_id,
+  dialog.push(assistMessage);
+  await bot.sendMessage(userMessage.chat.id, 'Все верно?', {
+    reply_to_message_id: assistMessage.message_id,
     disable_notification: true,
     reply_markup: {
       remove_keyboard: false,
@@ -53,8 +42,8 @@ module.exports = async (bot, message, dialog) => {
     },
   });
   await saveCalendar({
-    id: message.chat.id + '' + myMessage.message_id,
-    userId: message.chat.id,
+    id: userMessage.chat.id + '' + assistMessage.message_id,
+    userId: userMessage.chat.id,
     title: credentialSubject.object.name,
     details: credentialSubject.object.summary,
     location: credentialSubject.object.location?.name,
