@@ -48,12 +48,12 @@ module.exports.getMessages = (userId) => {
 };
 /**
  * @description Очистка сообщений из базы данных по идентификатору сообщения
- * @param {number} messageId - идентификатор сообщения
+ * @param {number} chatId - идентификатор пользователя
  */
-module.exports.clearMessageById = (messageId) => {
+module.exports.clearMessageById = (chatId) => {
   const clear = messageDB.prepare(`
     DELETE FROM messages
-    WHERE message_id == ?
+    WHERE chat_id == ?
   `);
-  clear.run(messageId);
+  clear.run(chatId);
 };

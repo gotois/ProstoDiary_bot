@@ -32,7 +32,7 @@ module.exports = async (bot, userMessage, dialog) => {
       inline_keyboard: inlineKeyboard,
     },
   });
-  dialog.push(userMessage);
+  dialog.push(assistMessage);
   await bot.sendMessage(userMessage.chat.id, 'Все верно?', {
     reply_to_message_id: assistMessage.message_id,
     disable_notification: true,

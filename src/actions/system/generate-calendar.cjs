@@ -23,6 +23,7 @@ module.exports = async (bot, message, dialog) => {
   if (!event) {
     throw new Error('Событие не найдено');
   }
+  dialog.clear();
   await bot.setMessageReaction(message.chat.id, message.reply_to_message.message_id, {
     reaction: JSON.stringify([
       {
@@ -74,7 +75,6 @@ module.exports = async (bot, message, dialog) => {
     ics: icalendar.ics,
     user: user,
   });
-  dialog.clear();
   let webAppUrl = `${SERVER.APP_URL}/?lang=${message.reply_to_message?.from?.language_code}`;
   // eslint-disable-next-line unicorn/consistent-destructuring
   if (SERVER.IS_DEV) {

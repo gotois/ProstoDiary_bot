@@ -18,6 +18,9 @@ class Dialog {
     }
     this.user = user;
   }
+  /**
+   * Удаление сообщений из базы данных
+   */
   clear() {
     clearMessageById(this.user.id);
   }
@@ -45,7 +48,10 @@ class Dialog {
       'items': [],
     };
     const messages = getMessages(this.user.id);
-    for (let { message } of messages) {
+
+    // отправляем только последнее сообщение от ассистента и следующие за ним сообщения от пользователя
+    // eslint-disable-next-line prefer-const
+    for (let { message, role } of messages.reverse()) {
       message = JSON.parse(message);
       const activity = activitystreams(message);
       activity.type = 'Activity';
@@ -91,7 +97,11 @@ class Dialog {
         throw new Error('Unknown type message');
       }
       activities.totalItems++;
-      activities.items.push(activity);
+      activities.items.unshift(activity);
+
+      if (role === 'assistant') {
+        break;
+      }
     }
 
     return activities;
