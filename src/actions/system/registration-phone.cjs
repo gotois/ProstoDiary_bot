@@ -37,7 +37,7 @@ module.exports = async (bot, message, dialog) => {
   } catch (error) {
     console.warn(error);
   }
-  const response = await fetch(SERVER.HOST + '/authorization', {
+  const response = await fetch(SERVER.HOST + '/users/telegram/oauth', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -47,11 +47,24 @@ module.exports = async (bot, message, dialog) => {
     body: JSON.stringify(body),
   });
   if (!response.ok) {
-    throw new Error('Произошла ошибка');
+    throw new Error(`Произошла ошибка ${response.statusText}`);
   }
   const bearerAuth = response.headers.get('Authorization');
-  const { credentialSubject } = await response.json();
-  const [url] = credentialSubject.object.attachment;
+  const user = await response.json();
+  const responseRegistration = await fetch(SERVER.HOST + `/users/${user.id}/offer`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept-Language': message.from.language_code,
+      'Geolocation': dialog.user.location,
+      'Authorization': bearerAuth,
+    },
+  });
+  if (!responseRegistration.ok) {
+    throw new Error(`Ошибка регистрации: ${responseRegistration.statusText}`);
+  }
+  const registrationResult = await responseRegistration.json();
+  const [url] = registrationResult.credentialSubject.object.attachment;
   await sendPrepareAction(bot, message, UPLOAD_DOCUMENT);
   const responseDocument = await fetch(url);
   const fileBuffer = await responseDocument.arrayBuffer();

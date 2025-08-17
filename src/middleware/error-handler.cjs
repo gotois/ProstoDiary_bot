@@ -27,7 +27,6 @@ module.exports = function (callback) {
           return bot.sendMessage(message.chat.id, 'Произошла ошибка при обращении к серверу');
         }
         case 'Unauthorized': {
-          console.log('111')
           deleteUser(message.chat.id);
           await bot.setMessageReaction(message.chat.id, message.message_id, {
             reaction: JSON.stringify([
