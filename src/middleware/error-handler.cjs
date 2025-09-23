@@ -6,9 +6,9 @@ const { deleteUser } = require('../models/users.cjs');
  * @returns {Promise<*>}
  */
 module.exports = function (callback) {
-  return async (bot, message, dialog) => {
+  return async (bot, message, dialog, client) => {
     try {
-      await callback(bot, message, dialog);
+      await callback(bot, message, dialog, client);
     } catch (error) {
       console.error(error);
       if (!message.chat) {
