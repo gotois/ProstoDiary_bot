@@ -43,7 +43,7 @@ const replyToMessageAction = require('./actions/private/reply-to-message.cjs');
 const app = express();
 const port = Number(argv.port || 8888);
 
-const { bot, middleware } = botController({
+const { middleware } = botController({
   token: TELEGRAM.TOKEN,
   // domain: TELEGRAM.DOMAIN,
 
@@ -158,93 +158,7 @@ app.use(middleware);
 app.get('/', (request, response) => {
   response.send('Pong');
 });
-// Webhook обработчик получающий данные с сервера и уведомляющий пользователя
-// todo - нужна верификация чтобы быть уверенным что отправил GIC Server
-app.post('/subscribe', express.json(), async (request, response) => {
-  console.log('subscribe');
-  const telegramMessageId = Number(request.header('TG_REPLY_MESSAGE_ID'));
-  const chatId = Number(request.header('TG_CHAT_ID'));
-  if (Number.isNaN(chatId)) {
-    return response.sendStatus(400);
-  }
-  try {
-    await bot.unpinChatMessage(chatId, {
-      message_id: telegramMessageId,
-    });
-  } catch {
-    // ...
-  }
-  if (Number.isNaN(telegramMessageId)) {
-    try {
-      await bot.sendMessage(chatId, request.body.text, {
-        parse_mode: 'MarkdownV2',
-        reply_markup: {
-          inline_keyboard: [
-            [keyboardStart(request.body.url)],
-            [keyboardLater(), keyboardLater60(), keyboardLaterTomorrow()],
-          ],
-        },
-      });
-      return response.sendStatus(200);
-    } catch (error) {
-      console.error(error);
-    }
-  } else {
-    try {
-      await bot.editMessageText(request.body.text, {
-        chat_id: chatId,
-        message_id: telegramMessageId,
-        reply_to_message_id: telegramMessageId,
-        parse_mode: 'MarkdownV2',
-        protect_content: true,
-        reply_markup: {
-          inline_keyboard: [[keyboardStart(request.body.url)]],
-        },
-      });
-      await bot.setMessageReaction(chatId, telegramMessageId, {
-        reaction: JSON.stringify([]),
-      });
-      return response.sendStatus(200);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  return response.sendStatus(400);
-});
 
 app.listen(port, () => {
   console.log('Telegram Server is listening 🚀', port);
 });
-
-const keyboardStart = (url) => {
-  const keyboard = {
-    text: 'Начать',
-    // fixme открытие TMA для запуска Pomodoro таймера
-    web_app: { url: 'https://archive.gotointeractive.com/pomodoro' },
-  };
-  if (url) {
-    keyboard.url = url;
-  }
-  return keyboard;
-};
-const keyboardLater = () => {
-  const keyboard = {
-    text: 'Позже',
-    callback_data: 'notify_calendar--15',
-  };
-  return keyboard;
-};
-const keyboardLater60 = () => {
-  const keyboard = {
-    text: 'Напомнить через 1 час',
-    callback_data: 'notify_calendar--60',
-  };
-  return keyboard;
-};
-const keyboardLaterTomorrow = () => {
-  const keyboard = {
-    text: 'Напомнить завтра',
-    callback_data: 'notify_calendar--next-day',
-  };
-  return keyboard;
-};
