@@ -1,8 +1,9 @@
+const { StreamableHTTPClientTransport } = require('@modelcontextprotocol/sdk/client/streamableHttp.js');
 const errorHandler = require('./error-handler.cjs');
 const { getUsers } = require('../models/users.cjs');
 const Dialog = require('../libs/dialog.cjs');
-const { StreamableHTTPClientTransport } = require('@modelcontextprotocol/sdk/client/streamableHttp.js');
 const client = require('../libs/mcp-client.cjs');
+const { SERVER } = require('../environments/index.cjs');
 
 /**
  * @param {Function} callback - callback
@@ -22,14 +23,18 @@ module.exports = function (callback) {
     if (message.via_bot) {
       console.log('WIP supports: ', message.via_bot);
     }
-    const transport = new StreamableHTTPClientTransport('http://localhost:5555/mcp', {
+    const transport = new StreamableHTTPClientTransport(SERVER.HOST + '/mcp', {
       requestInit: {
         headers: {
           Authorization: user.jwt,
         },
       },
     });
-    await client.connect(transport);
+    try {
+      await client.connect(transport);
+    } catch (error) {
+      console.error('Ошибка подключения к MCP:', error);
+    }
 
     await errorHandler(callback)(bot, message, Dialog.from(user), client);
   };

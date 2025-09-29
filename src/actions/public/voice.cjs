@@ -2,8 +2,11 @@ const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 const { RECORD_AUDIO, sendPrepareAction, sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 const { saveCalendar } = require('../../models/calendars.cjs');
 
-module.exports = async (bot, userMessage, dialog) => {
+module.exports = async (bot, userMessage, dialog, client) => {
   await sendPrepareAction(bot, userMessage, RECORD_AUDIO);
+  const transcriptionData = await client.readResource({
+    uri: `transcription://${userMessage.voice.file_id}`,
+  });
   dialog.push(userMessage);
   const { reminder, credentialSubject, googleCalendarUrl } = await generateCalendar(dialog);
   await sendPrepareMessage(bot, userMessage);
