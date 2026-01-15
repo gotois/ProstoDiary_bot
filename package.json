@@ -84,8 +84,10 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.18.1",
     "@photostructure/tz-lookup": "11.1.0",
+    "cities.json": "1.1.50",
     "express": "4.21.2",
     "ical-browser": "0.1.4",
+    "langchain-yandexgpt": "0.0.8",
     "minimist": "1.2.8",
     "minisearch": "7.1.1",
     "pdf-to-png-converter": "3.6.4",

@@ -4,6 +4,16 @@ const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 
 module.exports = async (bot, userMessage, dialog) => {
   await sendPrepareAction(bot, userMessage, TYPING);
+  const { content } = await secretaryAI.chat(userMessage.text, {
+    user_id: dialog.user.id,
+  });
+  await bot.sendMessage(userMessage.chat.id, content[0].text, {
+    parse_mode: 'Markdown',
+    reply_to_message_id: userMessage.message_id,
+    protect_content: true,
+    disable_notification: true,
+  });
+
   dialog.push(userMessage);
   const { credentialSubject, reminder, googleCalendarUrl } = await generateCalendar(dialog);
   await sendPrepareMessage(bot, userMessage);

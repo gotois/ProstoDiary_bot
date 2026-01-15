@@ -41,7 +41,6 @@ module.exports = async (bot, message, dialog) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Accept-Language': message.from.language_code,
       'Geolocation': dialog.user.location,
     },
     body: JSON.stringify(body),
@@ -55,7 +54,6 @@ module.exports = async (bot, message, dialog) => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'Accept-Language': message.from.language_code,
       'Geolocation': dialog.user.location,
       'Authorization': bearerAuth,
     },

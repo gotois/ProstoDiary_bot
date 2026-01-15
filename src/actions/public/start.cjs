@@ -1,4 +1,4 @@
-const { setNewUser, hasUser } = require('../../models/users.cjs');
+const { setNewUser, hasUser, getUsers } = require('../../models/users.cjs');
 
 function getWelcomeText() {
   return (
@@ -10,7 +10,8 @@ function getWelcomeText() {
     '⏰ Напоминания о важных встречах и делах\n\n' +
     '🔄 Синхронизация с другими календарями\n\n' +
     '📊 Анализ вашего расписания\n\n' +
-    'Продолжая использование вы соглашаетесь с Лицензионным соглашением /licence\\.\n'
+    'Продолжая использование вы соглашаетесь с Лицензионным соглашением /licence\\.\n\n' +
+    'Введите ваш город на английском\\:'
   ).trim();
 }
 
@@ -26,6 +27,14 @@ function getInstallAgainText() {
  */
 module.exports = async (bot, message) => {
   if (hasUser(message.chat.id)) {
+    const [user] = getUsers(message.chat.id);
+    if (!user.timezone) {
+      console.warn('timezone не установлен');
+    }
+    if (!user.jwt) {
+      console.warn('JWT не установлен');
+    }
+
     await bot.sendMessage(message.chat.id, getInstallAgainText(), {
       parse_mode: 'MarkdownV2',
       disable_notification: false,
@@ -50,7 +59,7 @@ module.exports = async (bot, message) => {
         keyboard: [
           [
             {
-              text: '📍Определи мой часовой пояс',
+              text: '📍Определи мой часовой пояс или введи свой город на английском',
               request_location: true,
             },
           ],
