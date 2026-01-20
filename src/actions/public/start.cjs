@@ -3,13 +3,13 @@ const { setNewUser, hasUser, getUsers } = require('../../models/users.cjs');
 function getWelcomeText() {
   return (
     '**Привет\\! 👋**\n\n' +
-    'Я \\- __ваш персональный календарный бот__, ' +
+    'Я \\- ваш персональный календарный бот, ' +
     'и я здесь, чтобы помочь вам управлять своим временем и задачами\\. ' +
     'Вот что я могу для вас сделать:\\.\n\n' +
-    '📅 Создание и управление событиями\n\n' +
-    '⏰ Напоминания о важных встречах и делах\n\n' +
-    '🔄 Синхронизация с другими календарями\n\n' +
-    '📊 Анализ вашего расписания\n\n' +
+    '📅 __Создание и управление событиями__\n\n' +
+    '⏰ __Напоминания о важных встречах и делах__\n\n' +
+    '🔄 __Синхронизация с другими календарями__\n\n' +
+    '📊 __Анализ вашего расписания__\n\n' +
     'Продолжая использование вы соглашаетесь с Лицензионным соглашением /licence\\.\n\n' +
     'Введите ваш город на английском\\:'
   ).trim();
@@ -28,11 +28,18 @@ function getInstallAgainText() {
 module.exports = async (bot, message) => {
   if (hasUser(message.chat.id)) {
     const [user] = getUsers(message.chat.id);
-    if (!user.timezone) {
-      console.warn('timezone не установлен');
+    if (!user.location) {
+      await bot.sendMessage(message.chat.id, 'Введите свой город на английском языке:', {
+        reply_to_message_id: message.message_id,
+        reply_markup: {
+          force_reply: true,
+        },
+      });
+      return;
     }
     if (!user.jwt) {
       console.warn('JWT не установлен');
+      return;
     }
 
     await bot.sendMessage(message.chat.id, getInstallAgainText(), {

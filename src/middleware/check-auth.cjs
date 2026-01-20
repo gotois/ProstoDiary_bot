@@ -1,10 +1,9 @@
 const { LangChainYandexGPT } = require('langchain-yandexgpt');
 const tzlookup = require('@photostructure/tz-lookup');
 const errorHandler = require('./error-handler.cjs');
-const { getUsers, deleteUser, updateUserLocation } = require('../models/users.cjs');
+const { getUsers, deleteUser } = require('../models/users.cjs');
 const Dialog = require('../libs/dialog.cjs');
 const { SERVER } = require('../environments/index.cjs');
-const cities = require('cities.json');
 
 /**
  * @param {Function} callback - callback
@@ -20,38 +19,6 @@ module.exports = function (callback) {
         parse_mode: 'MarkdownV2',
       });
       return;
-    }
-    if (!user.location) {
-      const cityName = text.toLowerCase();
-      const city = cities.find((city) => {
-        return city.name.toLowerCase() === cityName;
-      });
-
-      if (city) {
-        const timezone = tzlookup(city.lat, city.lng);
-        await updateUserLocation(chat.id, {
-          timezone,
-          latitude: city.lat,
-          longitude: city.lng,
-        });
-        const data = `Ваша таймзона: ${timezone}.\nДля завершения регистрации требуется подтвердить свой номер телефона`;
-        await bot.sendMessage(chat.id, data, {
-          reply_markup: {
-            remove_keyboard: true,
-            resize_keyboard: true,
-            one_time_keyboard: true,
-            keyboard: [
-              [
-                {
-                  // request_contact может работать только в таком виде
-                  text: '📞 Отправить контакт',
-                  request_contact: true,
-                },
-              ],
-            ],
-          },
-        });
-      }
     }
 
     // todo если использовать inline тогда

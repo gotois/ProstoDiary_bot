@@ -82,17 +82,8 @@ module.exports.generateCalendar = async function ({ activity, user }) {
     `Когда: ${time} ${user.timezone} \n` +
     'Напомнить за: 15 минут\n\n'; // todo убрать хардкод
 
-  const googleCalendarUrl = formatGoogleCalendarUrl({
-    text: name,
-    details: summary,
-    location: location?.name,
-    start: credentialSubject.startTime,
-    end: credentialSubject.endTime,
-  });
-
   return {
     reminder: data,
-    googleCalendarUrl,
     ...result,
   };
 };
