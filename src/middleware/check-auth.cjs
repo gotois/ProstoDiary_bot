@@ -37,7 +37,9 @@ module.exports = function (callback) {
     if (user.jwt) {
       try {
         await secretaryAI.connect('secretary-mcp-server', {
+          Accept: 'text/plain',
           Authorization: user.jwt,
+          Geolocation: user.location,
         });
       } catch (error) {
         if (error.code === 401) {

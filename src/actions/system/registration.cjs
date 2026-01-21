@@ -3,7 +3,7 @@ const { setJWT } = require('../../models/users.cjs');
 /**
  * @description Регистрация через TMA
  * @param {any} bot - telegram bot
- * @param {any} message - telegram message
+ * @param {object} message - telegram message
  * @param {string} jwt - Server JWT
  * @returns {Promise<void>}
  */

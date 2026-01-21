@@ -2,7 +2,7 @@ const activitystreams = require('telegram-bot-activitystreams');
 
 /**
  * @param {any} bot - telegram bot
- * @param {any} message - telegram message
+ * @param {object} message - telegram message
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {

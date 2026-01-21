@@ -1,5 +1,4 @@
 const tzlookup = require('@photostructure/tz-lookup');
-const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 const { updateUserLocation } = require('../../models/users.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
@@ -42,7 +41,6 @@ module.exports = async (bot, message, dialog) => {
     try {
       await sendPrepareMessage(bot, message);
       dialog.push(message);
-      const { data, type } = await generateCalendar(dialog);
       await sendPrepareMessage(bot, message);
       switch (type) {
         case 'text/markdown': {

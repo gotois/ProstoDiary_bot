@@ -39,6 +39,23 @@ module.exports = async (bot, message) => {
     }
     if (!user.jwt) {
       console.warn('JWT не установлен');
+      const data = 'Требуется подтвердить свой номер телефона';
+      await bot.sendMessage(message.chat.id, data, {
+        reply_markup: {
+          remove_keyboard: true,
+          resize_keyboard: true,
+          one_time_keyboard: true,
+          keyboard: [
+            [
+              {
+                // request_contact может работать только в таком виде
+                text: '📞 Отправить контакт',
+                request_contact: true,
+              },
+            ],
+          ],
+        },
+      });
       return;
     }
 

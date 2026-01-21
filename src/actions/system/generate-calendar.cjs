@@ -9,7 +9,7 @@ const ICalendar = icalBrowser.default;
 /**
  * @description Генерация календаря и отправка файла ical Секретарю
  * @param {any} bot - telegram bot
- * @param {any} message - telegram message
+ * @param {object} message - telegram message
  * @param {any} dialog - dialog data
  * @returns {Promise<void>}
  */

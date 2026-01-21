@@ -1,4 +1,3 @@
-const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 const { RECORD_AUDIO, sendPrepareAction, sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 const { saveCalendar } = require('../../models/calendars.cjs');
 

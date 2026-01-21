@@ -7,7 +7,7 @@ const dbclearAction = require('./actions/system/dbclear.cjs');
 const helpAction = require('./actions/system/help.cjs');
 const offertaAction = require('./actions/system/offerta.cjs');
 const registrationByMiniAppAction = require('./actions/system/registration.cjs');
-const registrationByPhoneAction = require('./actions/system/registration-phone.cjs');
+const authByPhone = require('./actions/system/registration-phone.cjs');
 const wantAction = require('./actions/system/want.cjs');
 const startAction = require('./actions/public/start.cjs');
 const editedMessageTextAction = require('./actions/public/edited-message-text.cjs');
@@ -35,7 +35,6 @@ const textAction = require('./actions/private/text.cjs');
 const textForwards = require('./actions/private/text-forwards.cjs');
 const { notifyDice, notifyNextHour, notifyNextDay } = require('./actions/system/notifier.cjs');
 const focusPomodoro = require('./actions/system/focus-pomodoro.cjs');
-const generateCalendar = require('./actions/system/generate-calendar.cjs');
 const checkAuth = require('./middleware/check-auth.cjs');
 const errorHandler = require('./middleware/error-handler.cjs');
 const replyToMessageAction = require('./actions/private/reply-to-message.cjs');
@@ -92,8 +91,7 @@ const { middleware } = botController({
         }
       }
     },
-    ['auth_by_contact']: checkAuth(registrationByPhoneAction),
-    ['generate_calendar']: checkAuth(generateCalendar),
+    ['auth_by_contact']: checkAuth(authByPhone),
 
     // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день
     ['notify_calendar--15']: checkAuth(notifyDice),

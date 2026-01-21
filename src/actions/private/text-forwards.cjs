@@ -1,4 +1,3 @@
-const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 const { parseMode, sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, messages, dialog) => {
@@ -8,7 +7,6 @@ module.exports = async (bot, messages, dialog) => {
     await sendPrepareMessage(bot, message);
     dialog.push(message);
   }
-  const { credentialSubject } = await generateCalendar(dialog);
   await sendPrepareMessage(bot, message);
   await bot.sendMessage(message.chat.id, credentialSubject.object.name, {
     parse_mode: parseMode(credentialSubject.object.mediaType),

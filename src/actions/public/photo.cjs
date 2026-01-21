@@ -1,4 +1,3 @@
-const { generateCalendar } = require('../../controllers/generate-calendar.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
 module.exports = async (bot, message, dialog) => {
@@ -9,7 +8,6 @@ module.exports = async (bot, message, dialog) => {
     name: me.first_name,
     url: 'https://t.me/' + me.username,
   };
-  const { data, type } = await generateCalendar(dialog);
   await sendPrepareMessage(bot, message);
   switch (type) {
     case 'text/markdown': {
