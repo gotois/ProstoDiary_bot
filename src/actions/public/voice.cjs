@@ -8,6 +8,13 @@ module.exports = async (bot, userMessage, dialog, client) => {
   });
   dialog.push(userMessage);
   const { reminder, credentialSubject, googleCalendarUrl } = await generateCalendar(dialog);
+  const text = transcriptionData.contents[0].text;
+  const chatTool = await client.callTool({
+    name: 'chat',
+    arguments: {
+      query: text,
+    },
+  });
   await sendPrepareMessage(bot, userMessage);
   const inlineKeyboard = [];
   inlineKeyboard.push(

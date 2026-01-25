@@ -37,6 +37,7 @@ module.exports.getCalendarsByUser = (userId) => {
 };
 
 /**
+ * @deprecated
  * @description сохранение в базу SQLite на временное хранилище
  * @param {object} calendar - объект события
  * @param {number} calendar.id - идентификатор сообщения
