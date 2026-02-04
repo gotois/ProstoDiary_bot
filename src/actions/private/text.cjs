@@ -12,6 +12,10 @@ module.exports = async (bot, userMessage, dialog) => {
   const secretaryData = await secretaryAI.chat(userMessage.text, {
     configurable: {
       thread_id: userMessage.chat.id,
+      tenant_id: userMessage.from.id,
+    },
+    metadata: {
+      user_id: dialog.user.id,
     },
     headers: {
       'Accept': 'text/markdown',
@@ -33,5 +37,7 @@ module.exports = async (bot, userMessage, dialog) => {
       force_reply: true,
     },
   });
-  await sendPrepareMessage(bot, userMessage);
+  if (artifact) {
+    await sendPrepareMessage(bot, userMessage);
+  }
 };
