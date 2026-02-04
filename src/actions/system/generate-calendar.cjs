@@ -1,6 +1,5 @@
 const icalBrowser = require('ical-browser');
 const { SERVER } = require('../../environments/index.cjs');
-const { notifyCalendar } = require('../../controllers/generate-calendar.cjs');
 const { getCalendarMessage } = require('../../models/calendars.cjs');
 const { parseMode } = require('../../libs/tg-messages.cjs');
 
@@ -71,10 +70,6 @@ module.exports = async (bot, message, dialog) => {
       },
     );
   }
-  const { credentialSubject } = await notifyCalendar({
-    ics: icalendar.ics,
-    user: user,
-  });
   let webAppUrl = `${SERVER.APP_URL}/?lang=${message.reply_to_message?.from?.language_code}`;
   // eslint-disable-next-line unicorn/consistent-destructuring
   if (SERVER.IS_DEV) {

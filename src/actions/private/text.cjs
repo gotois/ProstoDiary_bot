@@ -14,6 +14,10 @@ module.exports = async (bot, userMessage, dialog) => {
       thread_id: userMessage.chat.id,
     },
     headers: {
+      'Accept': 'text/markdown',
+      'Accept-Language': dialog.user.language,
+      'Authorization': dialog.user.jwt,
+      'Geolocation': dialog.user.location,
     },
   });
   const { content, artifact } = secretaryData;
