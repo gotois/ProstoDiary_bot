@@ -82,7 +82,7 @@
     }
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.18.1",
+    "@modelcontextprotocol/sdk": "1.26.0",
     "@photostructure/tz-lookup": "11.1.0",
     "express": "4.21.2",
     "ical-browser": "0.1.4",
