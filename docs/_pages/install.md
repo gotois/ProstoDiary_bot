@@ -19,7 +19,7 @@ NGROK_AUTHTOKEN={ Your ngrok token }
 
 TELEGRAM_TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
 TELEGRAM_MINI_APP={ Your telegram mini app name like https://t.me/gotois_bot/App }
-SERVER_APP={ Your server app name like https://archive.gotointeractive.com }
+TELEGRAM_APP_URL={ Your server app name like https://archive.gotointeractive.com }
 SERVER_HOST={ Your server api like https://api.gotointeractive.com }
 
 <details>

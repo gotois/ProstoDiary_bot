@@ -1,5 +1,12 @@
 const path = require('node:path');
-const { NODE_ENV, SERVER_APP, SERVER_HOST, TELEGRAM_TOKEN, TELEGRAM_DOMAIN, TELEGRAM_MINI_APP } = process.env;
+const {
+  NODE_ENV,
+  TELEGRAM_APP_URL,
+  SERVER_HOST,
+  TELEGRAM_TOKEN,
+  TELEGRAM_DOMAIN,
+  TELEGRAM_MINI_APP,
+} = process.env;
 
 module.exports = {
   DATABASE: {
@@ -30,7 +37,7 @@ module.exports = {
       return String(NODE_ENV)?.toLowerCase()?.startsWith('dev');
     },
     get APP_URL() {
-      return SERVER_APP;
+      return TELEGRAM_APP_URL;
     },
     get HOST() {
       return SERVER_HOST;

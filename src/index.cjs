@@ -1,3 +1,5 @@
+const fs = require('node:fs');
+const https = require('node:https');
 const express = require('express');
 const argv = require('minimist')(process.argv.slice(2));
 const botController = require('telegram-bot-api-express');
@@ -82,7 +84,7 @@ const { middleware } = botController({
     ['web_app_data']: (bot, message) => {
       const webAppData = JSON.parse(message.web_app_data.data);
       switch (webAppData.type) {
-        case 'registration': {
+        case 'jwt': {
           return registrationByMiniAppAction(bot, message, webAppData.data);
         }
         default: {
@@ -157,6 +159,23 @@ app.get('/', (request, response) => {
   response.send('Pong');
 });
 
-app.listen(port, () => {
-  console.log('Telegram Server is listening 🚀', port);
-});
+if (port === 443) {
+  const keyPath = 'cert/localhost.key';
+  const certPath = 'cert/localhost.crt';
+
+  if (!fs.existsSync(keyPath) || !fs.existsSync(certPath)) {
+    console.error(`Missing TLS files: ${keyPath} or ${certPath}`);
+    // eslint-disable-next-line unicorn/no-process-exit
+    process.exit(1);
+  }
+
+  const key = fs.readFileSync(keyPath);
+  const cert = fs.readFileSync(certPath);
+  https.createServer({ key, cert }, app).listen(443, () => {
+    console.log('🚀 Telegram Server (HTTPS) listening on: https://bot.lh/');
+  });
+} else {
+  app.listen(port, () => {
+    console.log(`🚀 Telegram Server is listening port:${port}`);
+  });
+}

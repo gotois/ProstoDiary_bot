@@ -26,6 +26,28 @@ chmod +x scripts/prepare
 scripts/prepare
 ```
 
+> For HTTPS
+ 
+Add host for local development
+```
+127.0.0.1       bot.lh
+```
+
+```
+mkdir cert;
+openssl req -x509 -newkey rsa:2048 -keyout cert/localhost.key -out cert/localhost.crt -days 365 -nodes -subj "/CN=bot.lh" -addext "subjectAltName=DNS:bot.lh"
+```
+
+For MacOS add certificate to trusted
+```
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain cert/localhost.crt
+```
+
+Run dev server
+```bash
+npm run dev:secure
+```
+
 ### ENVIRONMENTS
 
 Create a `.env` file and write:
@@ -38,7 +60,7 @@ Create a `.env` file and write:
 
 `SERVER_HOST`
 
-`SERVER_APP`
+`TELEGRAM_APP_URL`
 
 ## Tests
 
