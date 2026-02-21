@@ -83,7 +83,7 @@
     }
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.18.1",
+    "@modelcontextprotocol/sdk": "1.26.0",
     "@photostructure/tz-lookup": "11.1.0",
     "cities.json": "1.1.50",
     "express": "4.21.2",
