@@ -1,6 +1,5 @@
-module.exports = async (bot, message, dialog) => {
-  dialog.push(message);
-  await bot.sendMessage(message.chat.id, dialog.activity.items[0].object[0].content, {
+module.exports = async (bot, message) => {
+  await bot.sendMessage(message.chat.id, message.activity.items[0].object[0].content, {
     parse_mode: 'MarkdownV2',
   });
 };

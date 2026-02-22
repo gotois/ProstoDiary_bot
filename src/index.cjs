@@ -2,13 +2,14 @@ const fs = require('node:fs');
 const https = require('node:https');
 const express = require('express');
 const argv = require('minimist')(process.argv.slice(2));
-const botController = require('telegram-bot-api-express');
+const activitystreams = require('telegram-bot-activitystreams');
+const { getUsers, setNewUser, setLanguage } = require('./models/users.cjs');
+const botController = require('../../telegram-bot-api-express/index.cjs');
 const { TELEGRAM } = require('./environments/index.cjs');
 const pingAction = require('./actions/system/ping.cjs');
 const dbclearAction = require('./actions/system/dbclear.cjs');
 const helpAction = require('./actions/system/help.cjs');
 const offertaAction = require('./actions/system/offerta.cjs');
-const registrationByMiniAppAction = require('./actions/system/registration.cjs');
 const authByPhone = require('./actions/system/registration-phone.cjs');
 const wantAction = require('./actions/system/want.cjs');
 const startAction = require('./actions/public/start.cjs');
@@ -40,11 +41,12 @@ const focusPomodoro = require('./actions/system/focus-pomodoro.cjs');
 const checkAuth = require('./middleware/check-auth.cjs');
 const errorHandler = require('./middleware/error-handler.cjs');
 const replyToMessageAction = require('./actions/private/reply-to-message.cjs');
+const { setJWT, updateUserLocation, updateUserTimezone } = require('./models/users.cjs');
 
 const app = express();
 const port = Number(argv.port || 8888);
 
-const { middleware } = botController({
+const { middleware, bot } = botController({
   token: TELEGRAM.TOKEN,
   // domain: TELEGRAM.DOMAIN,
 
@@ -83,13 +85,24 @@ const { middleware } = botController({
     /* CALLBACK */
     ['web_app_data']: (bot, message) => {
       const webAppData = JSON.parse(message.web_app_data.data);
-      switch (webAppData.type) {
-        case 'jwt': {
-          return registrationByMiniAppAction(bot, message, webAppData.data);
-        }
-        default: {
-          console.warn('Unknown type:' + webAppData.type, webAppData);
-          break;
+      for (const { type, data } of webAppData) {
+        switch (type) {
+          case 'tz': {
+            updateUserTimezone(message.chat.id, data);
+            break;
+          }
+          case 'location': {
+            updateUserLocation(message.chat.id, data);
+            break;
+          }
+          case 'jwt': {
+            setJWT(message.chat.id, data);
+            break;
+          }
+          default: {
+            console.warn('Unknown type:' + webAppData.type, webAppData);
+            break;
+          }
         }
       }
     },
@@ -151,6 +164,45 @@ const { middleware } = botController({
   onError(bot, error) {
     console.error(error);
   },
+});
+
+bot.on('message', (message) => {
+  const { chat } = Array.isArray(message) ? message[0] : message;
+  const [user] = getUsers(chat.id);
+
+  if (!user) {
+    setNewUser(message.chat.id);
+  }
+  if (user) {
+    setLanguage(message.chat.id, message.from.language_code);
+  }
+
+  const activity = activitystreams(message);
+  if (message.location) {
+    activity.object = [
+      {
+        type: 'Point',
+        content: {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [message.location.latitude, message.location.longitude],
+          },
+        },
+        mediaType: 'application/geo+json',
+      },
+    ];
+    if (message.location.caption) {
+      activity.object.push({
+        type: 'Note',
+        content: message.location.caption,
+        mediaType: 'text/plain',
+      });
+    }
+  }
+
+  message.activity = activity;
+  message.user = user;
 });
 
 app.use(middleware);

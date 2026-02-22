@@ -2,6 +2,8 @@ const { LangChainYandexGPT } = require('langchain-yandexgpt');
 // todo - поменять на библиотку из npm
 const SecretaryAI = require('../../../secretary-ai');
 const { SERVER } = require('../environments/index.cjs');
+const path = require('node:path');
+const { DatabaseSync } = require('node:sqlite');
 
 const model = new LangChainYandexGPT({
   temperature: 0,
@@ -10,6 +12,11 @@ const model = new LangChainYandexGPT({
   model: 'yandexgpt-lite',
 });
 
-const secretaryAI = new SecretaryAI.default(SERVER.HOST + '/mcp', 'virtual-secretary-mcp-server', model);
+const secretaryAI = new SecretaryAI.default(
+  SERVER.HOST + '/mcp',
+  'virtual-secretary-mcp-server',
+  model,
+  new DatabaseSync(path.resolve('./database/agent.sqlite')),
+);
 
 module.exports = secretaryAI;

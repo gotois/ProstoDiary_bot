@@ -1,5 +1,3 @@
-module.exports = (bot, message, dialog) => {
-  dialog.push(message);
-
-  console.log('video, activity', dialog.activity);
+module.exports = (bot, message) => {
+  console.log('video, activity', message.activity);
 };

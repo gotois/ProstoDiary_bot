@@ -5,8 +5,8 @@ function createUsersTable() {
       CREATE TABLE if not exists users(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         location TEXT NULL,
-        language TEXT DEFAULT 'en',
-        timezone TEXT DEFAULT 'UTC',
+        language TEXT DEFAULT 'ru-RU',
+        timezone TEXT NULL,
         jwt TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
       ) STRICT
@@ -61,16 +61,27 @@ module.exports.setNewUser = (userId) => {
  * @param {number} obj.longitude - longitude
  * @param {number} [obj.u] - u
  */
-module.exports.updateUserLocation = (userId, { timezone, latitude, longitude, u = 50 }) => {
+module.exports.updateUserLocation = (userId, { latitude, longitude, u = 50 }) => {
   const location = `geo:${latitude},${longitude};cgen=gps;u=${u}`;
   const insert = userDB.prepare(`
-    INSERT INTO users (id, location, timezone) VALUES (:id, :location, :timezone)
+    INSERT INTO users (id, location) VALUES (:id, :location)
     ON CONFLICT(id)
     DO
-      UPDATE SET location = :location, timezone = :timezone
+      UPDATE SET location = :location
       WHERE id = :id
   `);
-  insert.run({ id: userId, location, timezone });
+  insert.run({ id: userId, location });
+};
+
+module.exports.updateUserTimezone = (userId, timezone) => {
+  const insert = userDB.prepare(`
+    INSERT INTO users (id, timezone) VALUES (:id, :timezone)
+    ON CONFLICT(id)
+    DO
+      UPDATE SET timezone = :timezone
+      WHERE id = :id
+  `);
+  insert.run({ id: userId, timezone });
 };
 
 module.exports.setJWT = (userId, jwt) => {

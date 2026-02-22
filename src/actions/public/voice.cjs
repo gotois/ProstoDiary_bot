@@ -1,5 +1,5 @@
 const { RECORD_AUDIO, sendPrepareAction, sendPrepareMessage } = require('../../libs/tg-messages.cjs');
-const { saveCalendar } = require('../../models/calendars.cjs');
+const secretaryAI = require('../../libs/secretary-ai.cjs');
 
 module.exports = async (bot, userMessage, dialog, client) => {
   await sendPrepareAction(bot, userMessage, RECORD_AUDIO);

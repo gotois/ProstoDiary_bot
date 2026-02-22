@@ -6,13 +6,13 @@ const { parseMode } = require('../../libs/tg-messages.cjs');
 const ICalendar = icalBrowser.default;
 
 /**
+ * @deprecated - вся логика по генерации делается в агенте
  * @description Генерация календаря и отправка файла ical Секретарю
  * @param {any} bot - telegram bot
  * @param {object} message - telegram message
- * @param {any} dialog - dialog data
  * @returns {Promise<void>}
  */
-module.exports = async (bot, message, dialog) => {
+module.exports = async (bot, message) => {
   const { user } = dialog;
   await bot.answerCallbackQuery(message.id, {
     text: 'Идет обработка...',
@@ -22,7 +22,6 @@ module.exports = async (bot, message, dialog) => {
   if (!event) {
     throw new Error('Событие не найдено');
   }
-  dialog.clear();
   await bot.setMessageReaction(message.chat.id, message.reply_to_message.message_id, {
     reaction: JSON.stringify([
       {
@@ -70,22 +69,14 @@ module.exports = async (bot, message, dialog) => {
       },
     );
   }
-  let webAppUrl = `${SERVER.APP_URL}/?lang=${message.reply_to_message?.from?.language_code}`;
-  // eslint-disable-next-line unicorn/consistent-destructuring
-  if (SERVER.IS_DEV) {
-    webAppUrl += '&debug=1';
-  }
+
   const editMessage = await bot.editMessageText(credentialSubject.object.content, {
     chat_id: message.chat.id,
     reply_to_message_id: message.reply_to_message.message_id,
     message_id: message.message_id,
     protect_content: true,
     parse_mode: parseMode(credentialSubject.object.mediaType),
-    disable_notification: true,
     reply_markup: {
-      remove_keyboard: true,
-      resize_keyboard: true,
-      one_time_keyboard: true,
       inline_keyboard: [
         [
           {

@@ -1,4 +1,4 @@
-const { setNewUser, hasUser, getUsers } = require('../../models/users.cjs');
+const { SERVER } = require('../../environments/index.cjs');
 
 function getWelcomeText() {
   return (
@@ -10,8 +10,7 @@ function getWelcomeText() {
     '⏰ __Напоминания о важных встречах и делах__\n\n' +
     '🔄 __Синхронизация с другими календарями__\n\n' +
     '📊 __Анализ вашего расписания__\n\n' +
-    'Продолжая использование вы соглашаетесь с Лицензионным соглашением /licence\\.\n\n' +
-    'Введите ваш город на английском\\:'
+    'Продолжая использование вы соглашаетесь с Лицензионным соглашением /licence\\.\n\n'
   ).trim();
 }
 
@@ -26,39 +25,7 @@ function getInstallAgainText() {
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  if (hasUser(message.chat.id)) {
-    const [user] = getUsers(message.chat.id);
-    if (!user.location) {
-      await bot.sendMessage(message.chat.id, 'Введите свой город на английском языке:', {
-        reply_to_message_id: message.message_id,
-        reply_markup: {
-          force_reply: true,
-        },
-      });
-      return;
-    }
-    if (!user.jwt) {
-      console.warn('JWT не установлен');
-      const data = 'Требуется подтвердить свой номер телефона';
-      await bot.sendMessage(message.chat.id, data, {
-        reply_markup: {
-          remove_keyboard: true,
-          resize_keyboard: true,
-          one_time_keyboard: true,
-          keyboard: [
-            [
-              {
-                // request_contact может работать только в таком виде
-                text: '📞 Отправить контакт',
-                request_contact: true,
-              },
-            ],
-          ],
-        },
-      });
-      return;
-    }
-
+  if (message.user?.jwt) {
     await bot.sendMessage(message.chat.id, getInstallAgainText(), {
       parse_mode: 'MarkdownV2',
       disable_notification: false,
@@ -70,11 +37,14 @@ module.exports = async (bot, message) => {
         keyboard: [],
       },
     });
-  } else {
-    await setNewUser(message.chat.id);
-    await bot.sendMessage(message.chat.id, getWelcomeText(), {
+    return;
+  }
+
+  /*
+  if (message.user && !message.user.timezone) {
+    await bot.sendMessage(message.chat.id, 'Требуется определить часовой пояс', {
       parse_mode: 'MarkdownV2',
-      disable_notification: false,
+      disable_notification: true,
       reply_to_message_id: message.message_id,
       reply_markup: {
         remove_keyboard: true,
@@ -83,12 +53,38 @@ module.exports = async (bot, message) => {
         keyboard: [
           [
             {
-              text: '📍Определи мой часовой пояс или введи свой город на английском',
+              text: '📍Определить автоматически',
               request_location: true,
             },
           ],
         ],
       },
     });
+    return;
   }
+  */
+
+  let webAppUrl = `${SERVER.APP_URL}/auth?lang=${message.from?.language_code}`;
+  // eslint-disable-next-line unicorn/consistent-destructuring
+  if (SERVER.IS_DEV) {
+    webAppUrl += '&debug=1';
+  }
+  await bot.sendMessage(message.chat.id, getWelcomeText(), {
+    parse_mode: 'MarkdownV2',
+    disable_notification: true,
+    reply_to_message_id: message.message_id,
+    reply_markup: {
+      remove_keyboard: true,
+      resize_keyboard: true,
+      one_time_keyboard: true,
+      keyboard: [
+        [
+          {
+            text: 'Авторизоваться',
+            web_app: { url: webAppUrl },
+          },
+        ],
+      ],
+    },
+  });
 };

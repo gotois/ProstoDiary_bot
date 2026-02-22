@@ -1,13 +1,6 @@
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
-module.exports = async (bot, message, dialog) => {
-  dialog.push(message);
-  const me = await bot.getMe();
-  dialog.activity.origin = {
-    ...dialog.activity.origin,
-    name: me.first_name,
-    url: 'https://t.me/' + me.username,
-  };
+module.exports = async (bot, message) => {
   await sendPrepareMessage(bot, message);
   switch (type) {
     case 'text/markdown': {

@@ -2,9 +2,9 @@ const tzlookup = require('@photostructure/tz-lookup');
 const { updateUserLocation } = require('../../models/users.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
-module.exports = async (bot, message, dialog) => {
+module.exports = async (bot, message) => {
   await sendPrepareMessage(bot, message);
-  if (!(dialog.user.location && dialog.user.jwt)) {
+  if (!(message.user.location && message.user.jwt)) {
     const timezone = tzlookup(message.location.latitude, message.location.longitude);
     await updateUserLocation(message.chat.id, {
       timezone,
@@ -39,8 +39,6 @@ module.exports = async (bot, message, dialog) => {
   bot.onReplyToMessage(message.chat.id, message_id, async ({ text }) => {
     message.location.caption = text;
     try {
-      await sendPrepareMessage(bot, message);
-      dialog.push(message);
       await sendPrepareMessage(bot, message);
       switch (type) {
         case 'text/markdown': {

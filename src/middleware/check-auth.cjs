@@ -1,6 +1,4 @@
 const errorHandler = require('./error-handler.cjs');
-const { getUsers } = require('../models/users.cjs');
-const Dialog = require('../libs/dialog.cjs');
 
 /**
  * @param {Function} callback - callback
@@ -8,11 +6,8 @@ const Dialog = require('../libs/dialog.cjs');
  */
 module.exports = function (callback) {
   return async (bot, message) => {
-    const { chat, text } = Array.isArray(message) ? message[0] : message;
-    const [user] = getUsers(chat.id);
-
-    if (!user) {
-      await bot.sendMessage(chat.id, 'Пройдите авторизацию нажав /start', {
+    if (!message.user) {
+      await bot.sendMessage(message.chat.id, 'Пройдите авторизацию нажав /start', {
         parse_mode: 'MarkdownV2',
       });
       return;
@@ -23,6 +18,6 @@ module.exports = function (callback) {
       console.log('WIP supports: ', message.via_bot);
     }
 
-    await errorHandler(callback)(bot, message, Dialog.from(user));
+    await errorHandler(callback)(bot, message);
   };
 };

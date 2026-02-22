@@ -1,8 +1,6 @@
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 
-module.exports = async (bot, message, dialog) => {
-  dialog.push(message);
-
+module.exports = async (bot, message) => {
   await sendPrepareMessage(bot, message);
   switch (type) {
     case 'text/markdown': {
