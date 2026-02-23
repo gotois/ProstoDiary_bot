@@ -1,35 +1,58 @@
 const { TYPING, sendPrepareMessage, sendPrepareAction } = require('../../libs/tg-messages.cjs');
 const secretaryAI = require('../../libs/secretary-ai.cjs');
+module.exports = async (bot, message) => {
+  await sendPrepareAction(bot, message, TYPING);
 
 module.exports = async (bot, userMessage) => {
   await sendPrepareAction(bot, userMessage, TYPING);
   const headers = new Headers();
   headers.set('Accept', 'text/markdown');
-  headers.set('Geolocation', userMessage.user.location);
-  headers.set('Timezone', userMessage.user.timezone);
+  headers.set('Geolocation', message.user.location);
+  headers.set('Timezone', message.user.timezone);
 
   if (!secretaryAI.isConnected) {
-    await secretaryAI.connect({
-      Authorization: userMessage.user.jwt,
-    });
+    try {
+      await secretaryAI.connect({
+        Authorization: message.user.jwt,
+      });
+    } catch (error) {
+      if (error.code === 401) {
+        await bot.sendMessage(message.chat.id, 'Пройдите авторизацию заново', {
+          reply_markup: {
+            remove_keyboard: true,
+            resize_keyboard: true,
+            one_time_keyboard: true,
+            keyboard: [
+              [
+                {
+                  text: '📞 Отправить контакт',
+                  request_contact: true,
+                },
+              ],
+            ],
+          },
+        });
+        return;
+      }
+    }
   }
   // todo на будущее используй callbacks, tags, signal
-  const secretaryData = await secretaryAI.chat(userMessage.text, {
+  const secretaryData = await secretaryAI.chat(message.text, {
     configurable: {
-      thread_id: userMessage.chat.id,
-      tenant_id: userMessage.from.id,
+      thread_id: message.chat.id,
+      tenant_id: message.from.id,
     },
     metadata: {
-      user_id: userMessage.user.id,
-      locale: userMessage.user.language,
+      user_id: message.user.id,
+      locale: message.user.language,
     },
     headers: headers,
   });
   const { content, artifact } = secretaryData;
 
-  await bot.sendMessage(userMessage.chat.id, content[0].text, {
+  await bot.sendMessage(message.chat.id, content[0].text, {
     parse_mode: 'Markdown',
-    reply_to_message_id: userMessage.message_id,
+    reply_to_message_id: message.message_id,
     protect_content: true,
     disable_notification: true,
     reply_markup: {
@@ -39,6 +62,6 @@ module.exports = async (bot, userMessage) => {
     },
   });
   if (artifact) {
-    await sendPrepareMessage(bot, userMessage);
+    await sendPrepareMessage(bot, message);
   }
 };
