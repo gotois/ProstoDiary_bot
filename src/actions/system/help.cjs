@@ -1,10 +1,10 @@
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 const packageLock_ = require('../../../package-lock.json');
 const package_ = require('../../../package.json');
 /**
  * @param {Buffer|string} buffer - file
- * @param {string} algorithm - algorithm
- * @param {string} encoding - encoding
+ * @param {string} [algorithm] - algorithm
+ * @param {string} [encoding] - encoding
  * @returns {string}
  */
 const getCheckSum = (buffer, algorithm = 'md5', encoding = 'hex') => {

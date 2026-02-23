@@ -1,7 +1,7 @@
 /**
  * Ava config
  *
- * @returns {Object}
+ * @returns {object}
  */
 module.exports.default = function () {
   // специально скрываем результаты логов от посторонних глаз
