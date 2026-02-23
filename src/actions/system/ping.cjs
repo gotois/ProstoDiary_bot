@@ -14,7 +14,7 @@ module.exports = async (bot, message) => {
     },
   });
   if (!response.ok) {
-    throw new Error('Not ok');
+    throw new Error(`Произошла ошибка ${response.statusText}`);
   }
   const result = await response.text();
   return bot.sendMessage(message.chat.id, result, {

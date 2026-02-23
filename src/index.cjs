@@ -3,7 +3,7 @@ const https = require('node:https');
 const express = require('express');
 const argv = require('minimist')(process.argv.slice(2));
 const activitystreams = require('telegram-bot-activitystreams');
-const { getUsers, setNewUser, setLanguage } = require('./models/users.cjs');
+const { getUser, setNewUser, deleteUser, setLanguage } = require('./models/users.cjs');
 const botController = require('../../telegram-bot-api-express/index.cjs');
 const { TELEGRAM } = require('./environments/index.cjs');
 const pingAction = require('./actions/system/ping.cjs');
@@ -167,14 +167,15 @@ const { middleware, bot } = botController({
 });
 
 bot.on('message', (message) => {
-  const { chat } = Array.isArray(message) ? message[0] : message;
-  const [user] = getUsers(chat.id);
-
+  message = Array.isArray(message) ? message[0] : message;
+  let user = getUser(message.chat.id);
   if (!user) {
-    setNewUser(message.chat.id);
+    user = setNewUser(message.chat.id);
   }
-  if (user) {
-    setLanguage(message.chat.id, message.from.language_code);
+  if (user.expired_at && new Date(user.expired_at) < new Date()) {
+    user = deleteUser(user.id);
+  } else {
+    setLanguage(user.id, message.chat.from.language_code);
   }
 
   const activity = activitystreams(message);

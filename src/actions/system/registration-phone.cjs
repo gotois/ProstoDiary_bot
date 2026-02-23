@@ -65,13 +65,12 @@ async function getOffer(user, headers) {
  * @description Ассистент детектирует пользователя
  * @param {object} bot - telegram bot
  * @param {object} message - telegram message
- * @param {any} dialog - dialog
  * @returns {Promise<void>}
  */
-module.exports = async (bot, message, dialog) => {
-  if (!dialog.user?.location) {
-    throw new Error('Unknown location');
-  }
+module.exports = async (bot, message) => {
+  console.log('перенес эту логику на Mini Apps');
+  return;
+
   const waitingMessage = await bot.sendMessage(message.chat.id, '⏳', {
     reply_markup: {
       remove_keyboard: true,

@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 const { TELEGRAM } = require('../environments/index.cjs');
 
 module.exports.generateTelegramHash = (data) => {

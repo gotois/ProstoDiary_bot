@@ -8,7 +8,8 @@ function createUsersTable() {
         language TEXT DEFAULT 'ru-RU',
         timezone TEXT NULL,
         jwt TEXT,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        expired_at TEXT NULL
       ) STRICT
     `);
 }
@@ -21,7 +22,8 @@ try {
 
 /**
  * Удаляет пользователя по id
- * @param {string} userId - идентификатор пользователя
+ * @param {number} userId - идентификатор пользователя
+ * @returns {undefined}
  */
 module.exports.deleteUser = (userId) => {
   const query = userDB.prepare('DELETE FROM users WHERE id == ?');
@@ -34,29 +36,33 @@ module.exports.hasUser = (userId) => {
 
   return users.length > 0;
 };
-
-module.exports.getUsers = (userId) => {
+/**
+ * @param {number} userId - telegram user id
+ * @returns {Record<string, any>} - user
+ */
+module.exports.getUser = (userId) => {
   const query = userDB.prepare('SELECT * FROM users WHERE id == ?');
 
-  return query.all(userId);
+  return query.get(userId);
 };
-
 /**
- * @param {string} userId - telegram user id
+ * @param {number} userId - telegram user id
+ * @returns {Record<string, any>} - user
  */
 module.exports.setNewUser = (userId) => {
   const insert = userDB.prepare(`
     INSERT INTO users (id) VALUES (:id)
   `);
   insert.run({ id: userId });
+
+  return module.exports.getUser(userId);
 };
 
 /**
  * @description обновление местоположения пользователя
  * @see https://www.here.com/docs/bundle/places-search-api-developer-guide/page/topics/location-contexts.html#location-contexts__position-format
- * @param {string} userId - user id
+ * @param {number} userId - telegram user id
  * @param {object} obj - object
- * @param {string} obj.timezone - timezone
  * @param {number} obj.latitude - latitude
  * @param {number} obj.longitude - longitude
  * @param {number} [obj.u] - u
@@ -72,7 +78,10 @@ module.exports.updateUserLocation = (userId, { latitude, longitude, u = 50 }) =>
   `);
   insert.run({ id: userId, location });
 };
-
+/**
+ * @param {number} userId - telegram user id
+ * @param {string} timezone - timezone
+ */
 module.exports.updateUserTimezone = (userId, timezone) => {
   const insert = userDB.prepare(`
     INSERT INTO users (id, timezone) VALUES (:id, :timezone)
@@ -83,7 +92,10 @@ module.exports.updateUserTimezone = (userId, timezone) => {
   `);
   insert.run({ id: userId, timezone });
 };
-
+/**
+ * @param {number} userId - telegram user id
+ * @param {string} jwt - json web token
+ */
 module.exports.setJWT = (userId, jwt) => {
   const insert = userDB.prepare(`
     INSERT INTO users (id, jwt) VALUES (:id, :jwt)
@@ -96,7 +108,7 @@ module.exports.setJWT = (userId, jwt) => {
 };
 /**
  * @description обновление языка пользователя
- * @param {string} userId - user id
+ * @param {number} userId - user id
  * @param {string} language - language code
  */
 module.exports.setLanguage = (userId, language) => {

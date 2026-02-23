@@ -1,9 +1,7 @@
-const tzlookup = require('@photostructure/tz-lookup');
-const cities = require('cities.json');
 const { TYPING, sendPrepareAction } = require('../../libs/tg-messages.cjs');
-const { getUsers, updateUserLocation } = require('../../models/users.cjs');
+const { getUser, updateUserLocation } = require('../../models/users.cjs');
 
-module.exports = async (bot, message, dialog) => {
+module.exports = async (bot, message) => {
   console.log('reply to message', message);
 
   const [user] = getUsers(message.chat.id);
@@ -43,6 +41,5 @@ module.exports = async (bot, message, dialog) => {
   }
 
   await sendPrepareAction(bot, message, TYPING);
-  dialog.push(message);
   console.log('WIP нужно добавлять в диалог все прежние записи');
 };
