@@ -1,3 +1,4 @@
+const { jwtDecode } = require('jwt-decode');
 const { userDB } = require('../libs/database.cjs');
 
 function createUsersTable() {
@@ -5,11 +6,11 @@ function createUsersTable() {
       CREATE TABLE if not exists users(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         location TEXT NULL,
-        language TEXT DEFAULT 'ru-RU',
+        language TEXT DEFAULT 'en',
         timezone TEXT NULL,
         jwt TEXT,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        expired_at TEXT NULL
+        created_at INTEGER DEFAULT (unixepoch()),
+        expired_at INTEGER NULL
       ) STRICT
     `);
 }
@@ -97,14 +98,16 @@ module.exports.updateUserTimezone = (userId, timezone) => {
  * @param {string} jwt - json web token
  */
 module.exports.setJWT = (userId, jwt) => {
+  const decoded = jwtDecode(jwt);
+
   const insert = userDB.prepare(`
-    INSERT INTO users (id, jwt) VALUES (:id, :jwt)
+    INSERT INTO users (id, jwt, expiredAt) VALUES (:id, :jwt, :expiredAt)
     ON CONFLICT(id)
     DO
-      UPDATE SET jwt = :jwt
+      UPDATE SET jwt = :jwt, expired_at = :expiredAt
       WHERE id = :id
   `);
-  insert.run({ id: userId, jwt: jwt });
+  insert.run({ id: userId, jwt, expiredAt: decoded.exp });
 };
 /**
  * @description обновление языка пользователя

@@ -6,7 +6,7 @@ const errorHandler = require('./error-handler.cjs');
  */
 module.exports = function (callback) {
   return async (bot, message) => {
-    if (!message.user) {
+    if (!message.user || (message.user.expired_at && message.user.expired_at < Date.now())) {
       await bot.sendMessage(message.chat.id, 'Пройдите авторизацию нажав /start', {
         parse_mode: 'MarkdownV2',
       });

@@ -95,10 +95,6 @@ const { middleware, bot } = botController({
             updateUserLocation(message.chat.id, data);
             break;
           }
-          case 'jwt': {
-            setJWT(message.chat.id, data);
-            break;
-          }
           default: {
             console.warn('Unknown type:' + webAppData.type, webAppData);
             break;
@@ -171,11 +167,7 @@ bot.on('message', (message) => {
   let user = getUser(message.chat.id);
   if (!user) {
     user = setNewUser(message.chat.id);
-  }
-  if (user.expired_at && new Date(user.expired_at) < new Date()) {
-    user = deleteUser(user.id);
-  } else {
-    setLanguage(user.id, message.chat.from.language_code);
+    setLanguage(user.id, message.from.language_code);
   }
 
   const activity = activitystreams(message);

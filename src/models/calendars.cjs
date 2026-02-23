@@ -11,7 +11,8 @@ function createCalendarsTable() {
       location TEXT NULL,
       start INTEGER,
       end INTEGER,
-      geo TEXT NULL
+      geo TEXT NULL,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
     ) STRICT
   `);
 }

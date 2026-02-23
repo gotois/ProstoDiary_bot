@@ -41,5 +41,4 @@ module.exports = async (bot, message) => {
   }
 
   await sendPrepareAction(bot, message, TYPING);
-  console.log('WIP нужно добавлять в диалог все прежние записи');
 };

@@ -1,10 +1,23 @@
+/* eslint-disable max-len */
 const { pdfToPng } = require('pdf-to-png-converter');
-const { setJWT, setLanguage } = require('../../models/users.cjs');
+const { setJWT } = require('../../models/users.cjs');
 const { generateTelegramHash } = require('../../libs/tg-crypto.cjs');
 const { sendPrepareAction, UPLOAD_DOCUMENT } = require('../../libs/tg-messages.cjs');
 const { SERVER } = require('../../environments/index.cjs');
 
-async function bodyFormat(bot, message) {
+/**
+ * @description Ассистент детектирует пользователя
+ * @param {object} bot - telegram bot
+ * @param {object} message - telegram message
+ * @returns {Promise<void>}
+ */
+module.exports = async (bot, message) => {
+  await bot.deleteMessage(message.chat.id, message.message_id);
+  const waitingMessage = await bot.sendMessage(message.chat.id, 'Идет авторизация ⏳', {
+    reply_markup: {
+      remove_keyboard: true,
+    },
+  });
   const body = {
     contact: {
       phoneNumber: message.contact.phone_number,
@@ -27,26 +40,26 @@ async function bodyFormat(bot, message) {
   } catch (error) {
     console.warn(error);
   }
-  return body;
-}
 
-async function getOffer(user, headers) {
-  const response = await fetch(SERVER.HOST + `/users/${user.id}/offer`, {
-    method: 'GET',
-    headers: {
-      ...headers,
-    },
+  const headers = new Headers();
+  headers.set('Content-Type', 'application/json');
+  headers.set('Timezone', message.user.timezone);
+  const response = await fetch(SERVER.HOST + '/auth/telegram/oauth', {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(body),
   });
   if (!response.ok) {
     throw new Error(`Ошибка регистрации: ${response.statusText}`);
   }
-  const registrationResult = await response.json();
-  const [url] = registrationResult.credentialSubject.object.attachment;
+  await sendPrepareAction(bot, message, UPLOAD_DOCUMENT);
+
+  const registrationSubject = await response.json();
+  const [url] = registrationSubject.object.attachment;
   const responseDocument = await fetch(url);
   const fileBuffer = await responseDocument.arrayBuffer();
   const pngPages = await pdfToPng(Buffer.from(fileBuffer));
-
-  return pngPages.map((page) => {
+  const data = pngPages.map((page) => {
     return {
       type: 'photo',
       media: page.content,
@@ -55,56 +68,17 @@ async function getOffer(user, headers) {
       caption:
         page.pageNumber === 1
           ? 'Вы зарегистрированы!\n' +
-            'Продолжая использовать сервис вы принимаете условия пользовательского соглашения /licence.'
+            'Продолжая использование сервиса Вы принимаете условия пользовательского Лицензионного соглашения /licence\\.'
           : undefined,
     };
   });
-}
-
-/**
- * @description Ассистент детектирует пользователя
- * @param {object} bot - telegram bot
- * @param {object} message - telegram message
- * @returns {Promise<void>}
- */
-module.exports = async (bot, message) => {
-  console.log('перенес эту логику на Mini Apps');
-  return;
-
-  const waitingMessage = await bot.sendMessage(message.chat.id, '⏳', {
-    reply_markup: {
-      remove_keyboard: true,
-    },
-  });
-  const body = await bodyFormat(bot, message);
-  const response = await fetch(SERVER.HOST + '/auth/telegram/oauth', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Geolocation': dialog.user.location,
-    },
-    body: JSON.stringify(body),
-  });
-  if (!response.ok) {
-    throw new Error(`Произошла ошибка ${response.statusText}`);
-  }
-  const bearerAuth = response.headers.get('Authorization');
-  const user = await response.json();
-  await sendPrepareAction(bot, message, UPLOAD_DOCUMENT);
-  const offerData = await getOffer(user, {
-    'Content-Type': 'application/json',
-    'Geolocation': dialog.user.location,
-    'Authorization': bearerAuth,
-  });
-  await bot.deleteMessage(message.chat.id, waitingMessage.message_id);
-  await bot.sendMediaGroup(message.chat.id, offerData, {
+  await bot.sendMediaGroup(message.chat.id, data, {
     disable_notification: true,
     message_effect_id: '5046509860389126442', // 🎉
     reply_markup: {
       keyboard: [],
     },
   });
-  setJWT(message.chat.id, bearerAuth);
-  setLanguage(message.chat.id, message.from.language_code);
-  await bot.deleteMessage(message.chat.id, message.message_id);
+  await bot.deleteMessage(message.chat.id, waitingMessage.message_id);
+  setJWT(message.user.id, response.headers.get('Authorization'));
 };
