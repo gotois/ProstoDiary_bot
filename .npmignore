@@ -1,15 +1,15 @@
-# Created by .ignore support plugin (hsz.mobi)
-### Node template
 *.log
 
 # Dependency directory
-# https://docs.npmjs.com/misc/faq#should-i-check-my-node-modules-folder-into-git
 node_modules
 
 # IntelliJ project files
 .idea
 *.iml
-data/
+.DS_Store
+
+cert/
+database/
 diagrams/
 docs/
-SQL/
+reports/

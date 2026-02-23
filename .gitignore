@@ -4,6 +4,7 @@ node_modules/
 /reports/
 /.nyc_output/
 /keys/
+/cert/
 /logs/
 /docs/_site
 
@@ -15,6 +16,7 @@ node_modules/
 *.env
 *.rej
 *.log
+*.crt
 *.key
 *.pem
 

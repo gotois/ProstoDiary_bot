@@ -20,7 +20,10 @@ module.exports.sendPrepareMessage = async function (bot, message) {
     ]),
   });
 };
-
+/**
+ * @param {'text/markdown'|'text/plain'|'text/html'|'text/xhtml'} mediaType - media types
+ * @returns {'MarkdownV2'|'Markdown'|'HTML'|undefined}
+ */
 module.exports.parseMode = function (mediaType) {
   switch (mediaType) {
     case 'text/markdown': {
@@ -29,11 +32,12 @@ module.exports.parseMode = function (mediaType) {
     case 'text/plain': {
       return 'Markdown';
     }
+    case 'text/xhtml':
     case 'text/html': {
       return 'HTML';
     }
     default: {
-      throw new Error('Unknown mediaType ' + mediaType);
+      return;
     }
   }
 };
