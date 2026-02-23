@@ -1,5 +1,5 @@
 const { TYPING, sendPrepareAction } = require('../../libs/tg-messages.cjs');
-const { getUser, updateUserLocation } = require('../../models/users.cjs');
+const { updateUserLocation } = require('../../models/users.cjs');
 
 module.exports = async (bot, message) => {
   console.log('reply to message', message);

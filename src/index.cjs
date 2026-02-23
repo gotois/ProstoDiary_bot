@@ -9,7 +9,6 @@ const { TELEGRAM } = require('./environments/index.cjs');
 const pingAction = require('./actions/system/ping.cjs');
 const dbclearAction = require('./actions/system/dbclear.cjs');
 const helpAction = require('./actions/system/help.cjs');
-const offertaAction = require('./actions/system/offerta.cjs');
 const authByPhone = require('./actions/system/registration-phone.cjs');
 const wantAction = require('./actions/system/want.cjs');
 const startAction = require('./actions/public/start.cjs');
@@ -55,7 +54,7 @@ const { middleware, bot } = botController({
     /* MY COMMANDS */
 
     [/^\/(ping|пинг)$/]: errorHandler(pingAction),
-    [/^\/dbclear$/]: checkAuth(dbclearAction),
+    [/^\/exit|выйти$/]: checkAuth(dbclearAction),
     [/^\/start|начать$/]: errorHandler(startAction),
     [/^\/help|man|помощь$/]: errorHandler(helpAction),
     [/^\/licence/]: errorHandler(offertaAction),
@@ -102,7 +101,7 @@ const { middleware, bot } = botController({
         }
       }
     },
-    ['auth_by_contact']: checkAuth(authByPhone),
+    ['auth_by_contact']: authByPhone,
 
     // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день
     ['notify_calendar--15']: checkAuth(notifyDice),
@@ -152,7 +151,11 @@ const { middleware, bot } = botController({
 
     /* CALLBACK */
 
-    ['approve_event']: () => {
+    ['approve_event']: async (bot, message) => {
+      await bot.answerCallbackQuery(message.id, {
+        text: 'Идет обработка...',
+        show_alert: false,
+      });
       console.log('WIP: approve_event');
     },
   },

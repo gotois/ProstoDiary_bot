@@ -1,7 +1,6 @@
 const icalBrowser = require('ical-browser');
 const { SERVER } = require('../../environments/index.cjs');
 const { getCalendarMessage } = require('../../models/calendars.cjs');
-const { parseMode } = require('../../libs/tg-messages.cjs');
 
 const ICalendar = icalBrowser.default;
 
@@ -13,11 +12,6 @@ const ICalendar = icalBrowser.default;
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  const { user } = dialog;
-  await bot.answerCallbackQuery(message.id, {
-    text: 'Идет обработка...',
-    show_alert: false,
-  });
   const event = await getCalendarMessage(message.chat.id + '' + message.message_id);
   if (!event) {
     throw new Error('Событие не найдено');
@@ -74,18 +68,6 @@ module.exports = async (bot, message) => {
     chat_id: message.chat.id,
     reply_to_message_id: message.reply_to_message.message_id,
     message_id: message.message_id,
-    protect_content: true,
-    parse_mode: parseMode(credentialSubject.object.mediaType),
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: 'Открыть календарь',
-            web_app: { url: webAppUrl },
-          },
-        ],
-      ],
-    },
   });
   await bot.setMessageReaction(message.chat.id, editMessage.message_id, {
     reaction: JSON.stringify([]),

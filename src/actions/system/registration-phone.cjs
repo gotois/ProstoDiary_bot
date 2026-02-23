@@ -13,7 +13,7 @@ const { SERVER } = require('../../environments/index.cjs');
  */
 module.exports = async (bot, message) => {
   await bot.deleteMessage(message.chat.id, message.message_id);
-  const waitingMessage = await bot.sendMessage(message.chat.id, 'Идет авторизация ⏳', {
+  const waitingMessage = await bot.sendMessage(message.chat.id, '⏳ Идет авторизация...', {
     reply_markup: {
       remove_keyboard: true,
     },
@@ -32,7 +32,7 @@ module.exports = async (bot, message) => {
     }),
   };
   try {
-    // добавляем в запрос фото профиля
+    // пробуем добавить в запрос фото профиля
     const profilePhotos = await bot.getUserProfilePhotos(message.chat.id);
     if (profilePhotos.photos.length > 0) {
       body.photo_url = await bot.getFileLink(profilePhotos.photos[0][0].file_id);
@@ -52,9 +52,8 @@ module.exports = async (bot, message) => {
   if (!response.ok) {
     throw new Error(`Ошибка регистрации: ${response.statusText}`);
   }
-  await sendPrepareAction(bot, message, UPLOAD_DOCUMENT);
-
   const registrationSubject = await response.json();
+  await sendPrepareAction(bot, message, UPLOAD_DOCUMENT);
   const [url] = registrationSubject.object.attachment;
   const responseDocument = await fetch(url);
   const fileBuffer = await responseDocument.arrayBuffer();
@@ -68,13 +67,14 @@ module.exports = async (bot, message) => {
       caption:
         page.pageNumber === 1
           ? 'Вы зарегистрированы!\n' +
-            'Продолжая использование сервиса Вы принимаете условия пользовательского Лицензионного соглашения /licence\\.'
+            'Продолжая использование сервиса Вы принимаете условия пользовательского Лицензионного соглашения /licence.'
           : undefined,
     };
   });
   await bot.sendMediaGroup(message.chat.id, data, {
     disable_notification: true,
     message_effect_id: '5046509860389126442', // 🎉
+    protect_content: true,
     reply_markup: {
       keyboard: [],
     },

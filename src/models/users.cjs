@@ -1,24 +1,20 @@
 const { jwtDecode } = require('jwt-decode');
 const { userDB } = require('../libs/database.cjs');
 
-function createUsersTable() {
-  userDB.exec(`
-      CREATE TABLE if not exists users(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        location TEXT NULL,
-        language TEXT DEFAULT 'en',
-        timezone TEXT NULL,
-        jwt TEXT,
-        created_at INTEGER DEFAULT (unixepoch()),
-        expired_at INTEGER NULL
-      ) STRICT
-    `);
-}
-
 try {
-  createUsersTable();
+  userDB.exec(`
+    CREATE TABLE if not exists users(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      location TEXT NULL,
+      language TEXT DEFAULT 'en',
+      timezone TEXT NULL,
+      jwt TEXT,
+      created_at INTEGER DEFAULT (unixepoch()),
+      expired_at INTEGER NULL
+    ) STRICT
+  `);
 } catch (error) {
-  console.warn(error);
+  console.error(error);
 }
 
 /**
@@ -31,6 +27,10 @@ module.exports.deleteUser = (userId) => {
   query.run(userId);
 };
 
+/**
+ * @param {number} userId - telegram user id
+ * @returns {boolean}
+ */
 module.exports.hasUser = (userId) => {
   const query = userDB.prepare('SELECT * FROM users WHERE id == ?');
   const users = query.all(userId);
@@ -98,16 +98,15 @@ module.exports.updateUserTimezone = (userId, timezone) => {
  * @param {string} jwt - json web token
  */
 module.exports.setJWT = (userId, jwt) => {
-  const decoded = jwtDecode(jwt);
-
+  const { exp } = jwtDecode(jwt);
   const insert = userDB.prepare(`
-    INSERT INTO users (id, jwt, expiredAt) VALUES (:id, :jwt, :expiredAt)
+    INSERT INTO users (id, jwt, expired_at) VALUES (:id, :jwt, :exp)
     ON CONFLICT(id)
     DO
-      UPDATE SET jwt = :jwt, expired_at = :expiredAt
+      UPDATE SET jwt = :jwt, expired_at = :exp
       WHERE id = :id
   `);
-  insert.run({ id: userId, jwt, expiredAt: decoded.exp });
+  insert.run({ id: userId, jwt, exp });
 };
 /**
  * @description обновление языка пользователя
