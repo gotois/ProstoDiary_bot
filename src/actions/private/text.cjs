@@ -5,11 +5,15 @@ module.exports = async (bot, userMessage) => {
   await sendPrepareAction(bot, userMessage, TYPING);
   const headers = new Headers();
   headers.set('Accept', 'text/markdown');
-  headers.set('Accept-Language', userMessage.user.language);
-  headers.set('Authorization', userMessage.user.jwt);
   headers.set('Geolocation', userMessage.user.location);
   headers.set('Timezone', userMessage.user.timezone);
 
+  if (!secretaryAI.isConnected) {
+    await secretaryAI.connect({
+      Authorization: userMessage.user.jwt,
+    });
+  }
+  // todo на будущее используй callbacks, tags, signal
   const secretaryData = await secretaryAI.chat(userMessage.text, {
     configurable: {
       thread_id: userMessage.chat.id,
@@ -17,6 +21,7 @@ module.exports = async (bot, userMessage) => {
     },
     metadata: {
       user_id: userMessage.user.id,
+      locale: userMessage.user.language,
     },
     headers: headers,
   });

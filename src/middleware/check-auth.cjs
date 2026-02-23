@@ -11,7 +11,21 @@ module.exports = function (callback) {
       return;
     }
     if (message.user?.expired_at && message.user.expired_at < Date.now() / 1000) {
-      await bot.sendMessage(message.chat.id, 'Пройдите авторизацию заново /start');
+      await bot.sendMessage(message.chat.id, 'Пройдите авторизацию заново', {
+        reply_markup: {
+          remove_keyboard: true,
+          resize_keyboard: true,
+          one_time_keyboard: true,
+          keyboard: [
+            [
+              {
+                text: '📞 Отправить контакт',
+                request_contact: true,
+              },
+            ],
+          ],
+        },
+      });
       return;
     }
 
