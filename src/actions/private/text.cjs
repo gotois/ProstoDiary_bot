@@ -3,18 +3,15 @@ const secretaryAI = require('../../libs/secretary-ai.cjs');
 module.exports = async (bot, message) => {
   await sendPrepareAction(bot, message, TYPING);
 
-module.exports = async (bot, userMessage) => {
-  await sendPrepareAction(bot, userMessage, TYPING);
   const headers = new Headers();
   headers.set('Accept', 'text/markdown');
+  headers.set('Authorization', message.user.jwt);
   headers.set('Geolocation', message.user.location);
   headers.set('Timezone', message.user.timezone);
 
   if (!secretaryAI.isConnected) {
     try {
-      await secretaryAI.connect({
-        Authorization: message.user.jwt,
-      });
+      await secretaryAI.connect(headers);
     } catch (error) {
       if (error.code === 401) {
         await bot.sendMessage(message.chat.id, 'Пройдите авторизацию заново', {

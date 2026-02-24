@@ -22,12 +22,6 @@ module.exports = {
     get USERS() {
       return path.join(this.root(), 'database', 'users.sqlite');
     },
-    /**
-     * @returns {string}
-     */
-    get CALENDARS() {
-      return path.join(this.root(), 'database', 'calendars.sqlite');
-    },
   },
   SERVER: {
     /**
