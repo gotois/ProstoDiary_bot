@@ -7,28 +7,30 @@ function generateInlineKeyboard(artifact = []) {
   for (const action of artifact) {
     switch (action['@type']) {
       case 'CreateAction': {
-        for (const { id } of action.object) {
-          const taskId = getTaskId(id);
-          const to = `/edit/${taskId}`; // todo - переделать под формат ссылки календаря
-          const text = 'Открыть';
-          const isMiniApp = 1; // Открыто в MiniApp или WebApp
-          if (isMiniApp) {
-            const payload = Buffer.from(
-              JSON.stringify({
-                debug: SERVER.IS_DEV,
-                to: to,
-              }),
-            ).toString('base64url');
-            inlineKeyboard.push({
+        const taskId = getTaskId(action.id);
+        const to = `/edit/${taskId}`; // todo - переделать под формат ссылки календаря
+        const text = 'Открыть';
+        const isMiniApp = 1; // Открыто в MiniApp или WebApp
+        if (isMiniApp) {
+          const payload = Buffer.from(
+            JSON.stringify({
+              debug: SERVER.IS_DEV,
+              to: to,
+            }),
+          ).toString('base64url');
+          inlineKeyboard.push([
+            {
               text: text,
               url: `${TELEGRAM.BOT_LINK}?startapp=${payload}`,
-            });
-          } else {
-            inlineKeyboard.push({
+            },
+          ]);
+        } else {
+          inlineKeyboard.push([
+            {
               text: text,
               web_app: `${TELEGRAM.APP_URL}${to}`,
-            });
-          }
+            },
+          ]);
         }
         break;
       }

@@ -57,7 +57,6 @@ const { middleware, bot } = botController({
     [/^\/exit|выйти$/]: checkAuth(dbclearAction),
     [/^\/start|начать$/]: errorHandler(startAction),
     [/^\/help|man|помощь$/]: errorHandler(helpAction),
-    [/^\/licence/]: errorHandler(offertaAction),
     [/^\/want/]: checkAuth(wantAction),
 
     /* NATIVE COMMANDS */

@@ -12,11 +12,12 @@ const model = new LangChainYandexGPT({
   model: 'yandexgpt-lite',
 });
 
+const memory = SERVER.IS_DEV ? ':memory:' : path.resolve('./database/agent.sqlite');
 const secretaryAI = new SecretaryAI.default(
   SERVER.HOST + '/mcp',
   'virtual-secretary-mcp-server',
   model,
-  new DatabaseSync(path.resolve('./database/agent.sqlite')),
+  new DatabaseSync(memory),
 );
 
 module.exports = secretaryAI;
