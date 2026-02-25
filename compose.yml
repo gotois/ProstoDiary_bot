@@ -14,7 +14,7 @@ services:
     env_file: .env
     environment:
       - SERVER_HOST=http://web-dev:5555
-      - TELEGRAM_APP_URL=https://archive.gotointeractive.com
+      - APP_URL=https://archive.gotointeractive.com
     networks:
       - global_lan
       - default

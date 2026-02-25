@@ -204,6 +204,9 @@ bot.on('message', (message) => {
 app.use(middleware);
 
 app.get('/', (request, response) => {
+  const { hostname, protocol, socket } = request;
+  const domain = `${protocol}://${hostname}:${socket.localPort}`;
+  console.log('Received request on ' + domain);
   response.send('Pong');
 });
 

@@ -1,5 +1,54 @@
 const { TYPING, sendPrepareMessage, sendPrepareAction } = require('../../libs/tg-messages.cjs');
 const secretaryAI = require('../../libs/secretary-ai.cjs');
+const { SERVER, TELEGRAM } = require('../../environments/index.cjs');
+
+function generateInlineKeyboard(artifact = []) {
+  const inlineKeyboard = [];
+  for (const action of artifact) {
+    switch (action['@type']) {
+      case 'CreateAction': {
+        for (const { id } of action.object) {
+          const taskId = getTaskId(id);
+          const to = `/edit/${taskId}`; // todo - переделать под формат ссылки календаря
+          const text = 'Открыть';
+          const isMiniApp = 1; // Открыто в MiniApp или WebApp
+          if (isMiniApp) {
+            const payload = Buffer.from(
+              JSON.stringify({
+                debug: SERVER.IS_DEV,
+                to: to,
+              }),
+            ).toString('base64url');
+            inlineKeyboard.push({
+              text: text,
+              url: `${TELEGRAM.BOT_LINK}?startapp=${payload}`,
+            });
+          } else {
+            inlineKeyboard.push({
+              text: text,
+              web_app: `${TELEGRAM.APP_URL}${to}`,
+            });
+          }
+        }
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
+  return inlineKeyboard;
+}
+
+const getTaskId = (id) => {
+  const url = new URL(id);
+  const segments = url.pathname.split('/').filter(Boolean);
+  const result = segments[segments.length - 1];
+  if (result.length > 0) {
+    return Number(result);
+  }
+};
+
 module.exports = async (bot, message) => {
   await sendPrepareAction(bot, message, TYPING);
 
@@ -54,7 +103,7 @@ module.exports = async (bot, message) => {
     disable_notification: true,
     reply_markup: {
       remove_keyboard: true,
-      inline_keyboard: artifact?.inline_keyboard ?? [],
+      inline_keyboard: generateInlineKeyboard(artifact),
       force_reply: true,
     },
   });

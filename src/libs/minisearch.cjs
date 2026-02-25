@@ -1,5 +1,4 @@
 const MiniSearch = require('minisearch');
-const { getCalendarsByUser } = require('../models/calendars.cjs');
 
 const miniSearch = new MiniSearch({
   fields: ['title', 'details'],

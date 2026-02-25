@@ -17,7 +17,7 @@ module.exports = async (bot, message) => {
         [
           {
             text: 'Завершить',
-            url: TELEGRAM.MINI_APP_URL,
+            url: TELEGRAM.APP_URL,
           },
         ],
       ],

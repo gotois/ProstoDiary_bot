@@ -60,7 +60,7 @@ Create a `.env` file and write:
 
 `SERVER_HOST`
 
-`TELEGRAM_APP_URL`
+`APP_URL`
 
 ## Tests
 

@@ -1,12 +1,14 @@
 const path = require('node:path');
 const {
   NODE_ENV,
-  TELEGRAM_APP_URL,
   SERVER_HOST,
+  APP_URL,
   TELEGRAM_TOKEN,
   TELEGRAM_DOMAIN,
   TELEGRAM_MINI_APP,
 } = process.env;
+
+const IS_DEV = String(NODE_ENV)?.toLowerCase()?.startsWith('dev');
 
 module.exports = {
   DATABASE: {
@@ -28,10 +30,10 @@ module.exports = {
      * @returns {boolean}
      */
     get IS_DEV() {
-      return String(NODE_ENV)?.toLowerCase()?.startsWith('dev');
+      return IS_DEV;
     },
     get APP_URL() {
-      return TELEGRAM_APP_URL;
+      return APP_URL;
     },
     get HOST() {
       return SERVER_HOST;
@@ -44,8 +46,14 @@ module.exports = {
     get DOMAIN() {
       return TELEGRAM_DOMAIN;
     },
-    get MINI_APP_URL() {
-      return TELEGRAM_MINI_APP;
+    get BOT_LINK() {
+      if (IS_DEV) {
+        return 'https://t.me/secretary_dev_bot/Contracts';
+      }
+      return 'https://t.me/gotois_bot/App';
+    },
+    get APP_URL() {
+      return APP_URL;
     },
   },
 };
