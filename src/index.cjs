@@ -1,11 +1,20 @@
 const fs = require('node:fs');
 const https = require('node:https');
 const express = require('express');
+const session = require('express-session');
+const {
+  discovery,
+  authorizationCodeGrant,
+  buildAuthorizationUrl,
+  randomPKCECodeVerifier,
+  calculatePKCECodeChallenge,
+  randomState,
+} = require('openid-client');
 const argv = require('minimist')(process.argv.slice(2));
 const activitystreams = require('telegram-bot-activitystreams');
 const { getUser, setNewUser, deleteUser, setLanguage } = require('./models/users.cjs');
 const botController = require('../../telegram-bot-api-express/index.cjs');
-const { TELEGRAM } = require('./environments/index.cjs');
+const { TELEGRAM, SERVER } = require('./environments/index.cjs');
 const pingAction = require('./actions/system/ping.cjs');
 const dbclearAction = require('./actions/system/dbclear.cjs');
 const helpAction = require('./actions/system/help.cjs');
@@ -43,7 +52,8 @@ const replyToMessageAction = require('./actions/private/reply-to-message.cjs');
 const { setJWT, updateUserLocation, updateUserTimezone } = require('./models/users.cjs');
 
 const app = express();
-const port = Number(argv.port || 8888);
+const port = Number(argv.port || 443);
+let client;
 
 const { middleware, bot } = botController({
   token: TELEGRAM.TOKEN,
@@ -200,11 +210,57 @@ bot.on('message', (message) => {
   message.user = user;
 });
 
+app.use(
+  session({
+    secret: 'supersecret',
+    resave: false,
+    saveUninitialized: true,
+  }),
+);
 app.use(middleware);
 
 app.get('/', (request, response) => {
   response.send('Pong');
 });
+
+app.get('/token', async (request, response) => {
+  if (!request.session.code_verifier || !request.session.state) {
+    return response.status(400).send('Missing PKCE verifier or state in session');
+  }
+
+  const callbackUrl = new URL(request.url, `https://${request.headers.host}`);
+
+  const tokens = await authorizationCodeGrant(client, callbackUrl, {
+    pkceCodeVerifier: request.session.code_verifier,
+    expectedState: request.session.state,
+  });
+  response.send('ok');
+});
+
+app.get('/login', async (request, response) => {
+  const codeVerifier = randomPKCECodeVerifier();
+  const codeChallenge = await calculatePKCECodeChallenge(codeVerifier);
+  const state = randomState();
+
+  request.session.code_verifier = codeVerifier;
+  request.session.state = state;
+  await request.session.save();
+
+  const authorizationUrl = buildAuthorizationUrl(client, {
+    scope: 'openid profile',
+    code_challenge: codeChallenge,
+    code_challenge_method: 'S256',
+    state,
+  });
+  response.redirect(authorizationUrl.toString());
+});
+
+(async function main() {
+  client = await discovery(new URL(SERVER.HOST), 'telegram', {
+    redirect_uris: ['https://bot.lh:443/token'],
+    response_types: ['code'],
+  });
+})();
 
 if (port === 443) {
   const keyPath = 'cert/localhost.key';
