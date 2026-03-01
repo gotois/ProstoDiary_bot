@@ -31,7 +31,7 @@ module.exports = function (callback) {
 
     // todo если использовать inline тогда
     if (message.via_bot) {
-      console.log('WIP supports: ', message.via_bot);
+      console.log('WIP supports: bot = ' + message.via_bot.is_bot, message.via_bot);
     }
 
     await errorHandler(callback)(bot, message);

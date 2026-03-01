@@ -65,6 +65,7 @@ module.exports = async (bot, message) => {
       await secretaryAI.connect(headers);
     } catch (error) {
       if (error.code === 401) {
+        // todo - есть дублирование этой логики
         await bot.sendMessage(message.chat.id, 'Пройдите авторизацию заново', {
           reply_markup: {
             remove_keyboard: true,

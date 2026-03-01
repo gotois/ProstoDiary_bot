@@ -25,6 +25,23 @@ module.exports = {
       return path.join(this.root(), 'database', 'users.sqlite');
     },
   },
+  AGENT: {
+    /**
+     * @returns {string}
+     */
+    get MODEL() {
+      return 'yandexgpt-lite';
+    },
+    /**
+     * @returns {string}
+     */
+    get MEMORY() {
+      if (IS_DEV) {
+        return ':memory:';
+      }
+      return path.resolve('./database/agent.sqlite');
+    },
+  },
   SERVER: {
     /**
      * @returns {boolean}
@@ -32,9 +49,15 @@ module.exports = {
     get IS_DEV() {
       return IS_DEV;
     },
+    /**
+     * @returns {string}
+     */
     get APP_URL() {
       return APP_URL;
     },
+    /**
+     * @returns {string}
+     */
     get HOST() {
       return SERVER_HOST;
     },
