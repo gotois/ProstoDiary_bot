@@ -9,6 +9,7 @@ const {
   randomPKCECodeVerifier,
   calculatePKCECodeChallenge,
   randomState,
+  fetchUserInfo,
 } = require('openid-client');
 const argv = require('minimist')(process.argv.slice(2));
 const activitystreams = require('telegram-bot-activitystreams');
@@ -53,7 +54,10 @@ const { setJWT, updateUserLocation, updateUserTimezone } = require('./models/use
 
 const app = express();
 const port = Number(argv.port || 443);
+const host = 'https://bot.lh';
 let client;
+const CLIENT_ID = 'telegram';
+const CLIENT_REDIRECT = host + '/token';
 
 const { middleware, bot } = botController({
   token: TELEGRAM.TOKEN,
@@ -230,11 +234,60 @@ app.get('/token', async (request, response) => {
 
   const callbackUrl = new URL(request.url, `https://${request.headers.host}`);
 
-  const tokens = await authorizationCodeGrant(client, callbackUrl, {
-    pkceCodeVerifier: request.session.code_verifier,
-    expectedState: request.session.state,
+  try {
+    const tokens = await authorizationCodeGrant(client, callbackUrl, {
+      pkceCodeVerifier: request.session.code_verifier,
+      expectedState: request.session.state,
+    });
+
+    const userInfo = await fetchUserInfo(
+      client,
+      tokens.access_token,
+      tokens.claims().sub,
+    );
+
+  response.send(
+    `
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Success</title>
+<script>
+function appendTelegramWebAppScript() {
+  return new Promise((resolve, reject) => {
+  const script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://telegram.org/js/telegram-web-app.js';
+  script.onload = () => {
+    resolve();
+  };
+  script.onerror = () => {
+    reject();
+  };
+  document.head.appendChild(script);
   });
-  response.send('ok');
+};
+(async function main() {
+  await appendTelegramWebAppScript();
+  const timeZone = {
+    type: 'tz',
+    data: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  };
+  Telegram.WebApp.sendData(JSON.stringify(timeZone));
+}());
+    </script>
+</head>
+<body>
+<h1>Authentication successful!</h1>
+</body>
+</html>
+  `.trim(),
+  );
+  } catch (error) {
+    response.send(error.stack)
+  }
 });
 
 app.get('/login', async (request, response) => {
@@ -251,13 +304,14 @@ app.get('/login', async (request, response) => {
     code_challenge: codeChallenge,
     code_challenge_method: 'S256',
     state,
+    redirect_uri: CLIENT_REDIRECT,
   });
   response.redirect(authorizationUrl.toString());
 });
 
 (async function main() {
-  client = await discovery(new URL(SERVER.HOST), 'telegram', {
-    redirect_uris: ['https://bot.lh:443/token'],
+  client = await discovery(new URL(SERVER.HOST), CLIENT_ID, {
+    redirect_uris: [CLIENT_REDIRECT],
     response_types: ['code'],
   });
 })();
@@ -275,7 +329,7 @@ if (port === 443) {
   const key = fs.readFileSync(keyPath);
   const cert = fs.readFileSync(certPath);
   https.createServer({ key, cert }, app).listen(443, () => {
-    console.log('🚀 Telegram Server (HTTPS) listening on: https://bot.lh/');
+    console.log('🚀 Telegram Server (HTTPS) listening on: ' + host);
   });
 } else {
   app.listen(port, () => {
