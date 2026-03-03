@@ -8,7 +8,9 @@ try {
       location TEXT NULL,
       language TEXT DEFAULT 'en',
       timezone TEXT NULL,
-      jwt TEXT,
+      access_token TEXT,
+      id_token TEXT,
+      refresh_token TEXT,
       created_at INTEGER DEFAULT (unixepoch()),
       expired_at INTEGER NULL
     ) STRICT
@@ -80,7 +82,7 @@ module.exports.updateUserLocation = (userId, { latitude, longitude, u = 50 }) =>
   insert.run({ id: userId, location });
 };
 /**
- * @param {number} userId - telegram user id
+ * @param {number|string} userId - telegram user id
  * @param {string} timezone - timezone
  */
 module.exports.updateUserTimezone = (userId, timezone) => {
@@ -91,22 +93,29 @@ module.exports.updateUserTimezone = (userId, timezone) => {
       UPDATE SET timezone = :timezone
       WHERE id = :id
   `);
-  insert.run({ id: userId, timezone });
+  insert.run({ id: Number(userId), timezone });
 };
 /**
- * @param {number} userId - telegram user id
- * @param {string} jwt - json web token
+ * @description обновление JWT токенов пользователя
+ * @param {string} userId - telegram user id
+ * @param {{access_token:string,expires_in:number,id_token:string,refresh_token:string,token_type:string}} tokens - json web tokens
  */
-module.exports.setJWT = (userId, jwt) => {
-  const { exp } = jwtDecode(jwt);
+module.exports.setJWT = (userId, tokens) => {
+  const { access_token, id_token, refresh_token } = tokens;
+  const { exp } = jwtDecode(id_token);
+
   const insert = userDB.prepare(`
-    INSERT INTO users (id, jwt, expired_at) VALUES (:id, :jwt, :exp)
+    INSERT INTO users (id, access_token, id_token, refresh_token, expired_at) VALUES (:id, :access_token, :id_token, :refresh_token, :exp)
     ON CONFLICT(id)
     DO
-      UPDATE SET jwt = :jwt, expired_at = :exp
+      UPDATE SET
+        access_token = :access_token,
+        id_token = :id_token,
+        refresh_token = :refresh_token,
+        expired_at = :exp
       WHERE id = :id
   `);
-  insert.run({ id: userId, jwt, exp });
+  insert.run({ id: userId, access_token, id_token, refresh_token, exp });
 };
 /**
  * @description обновление языка пользователя

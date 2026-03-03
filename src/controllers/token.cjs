@@ -18,18 +18,12 @@ module.exports = async (request, response) => {
     });
 
     const userInfo = await fetchUserInfo(client, tokens.access_token, tokens.claims().sub);
-    console.log('userInfo', userInfo);
-
-    // todo - надо сохранять эти токены в БД
-    // tokens.refresh_token;
-    // tokens.id_token;
-
-    setJWT(tokens.id_token);
+    setJWT(userInfo.tid, tokens);
 
     response.send(
       `
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

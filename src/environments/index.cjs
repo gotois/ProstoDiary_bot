@@ -6,7 +6,6 @@ const {
   APP_URL,
   TELEGRAM_TOKEN,
   TELEGRAM_DOMAIN,
-  TELEGRAM_MINI_APP,
 } = process.env;
 
 const IS_DEV = String(NODE_ENV)?.toLowerCase()?.startsWith('dev');
