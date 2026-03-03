@@ -1,6 +1,7 @@
 const path = require('node:path');
 const {
   NODE_ENV,
+  HOST,
   SERVER_HOST,
   APP_URL,
   TELEGRAM_TOKEN,
@@ -11,6 +12,17 @@ const {
 const IS_DEV = String(NODE_ENV)?.toLowerCase()?.startsWith('dev');
 
 module.exports = {
+  OIDC: {
+    get HOST() {
+      return HOST;
+    },
+    get CLIENT_ID() {
+      return 'telegram';
+    },
+    get CLIENT_REDIRECT() {
+      return HOST + '/token';
+    },
+  },
   DATABASE: {
     /**
      * @returns {string}

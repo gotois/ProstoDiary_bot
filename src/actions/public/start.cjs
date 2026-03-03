@@ -1,4 +1,4 @@
-const { SERVER } = require('../../environments/index.cjs');
+const { SERVER, OIDC } = require('../../environments/index.cjs');
 
 function getWelcomeText() {
   return (
@@ -64,7 +64,7 @@ module.exports = async (bot, message) => {
   }
   */
 
-  let webAppUrl = `${SERVER.APP_URL}/auth?lang=${message.from?.language_code}`;
+  let webAppUrl = `${OIDC.HOST}/login?lang=${message.from?.language_code}`;
   // eslint-disable-next-line unicorn/consistent-destructuring
   if (SERVER.IS_DEV) {
     webAppUrl += '&debug=1';
