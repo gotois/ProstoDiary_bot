@@ -77,11 +77,13 @@ module.exports = async (bot, message) => {
       remove_keyboard: true,
       resize_keyboard: true,
       one_time_keyboard: true,
-      keyboard: [
+      inline_keyboard: [
         [
           {
             text: 'Авторизоваться',
-            web_app: { url: webAppUrl },
+            web_app: {
+              url: webAppUrl,
+            },
           },
         ],
       ],

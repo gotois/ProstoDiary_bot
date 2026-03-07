@@ -16,7 +16,7 @@ module.exports = {
       return HOST;
     },
     get CLIENT_ID() {
-      return 'telegram';
+      return 'bot';
     },
     get CLIENT_REDIRECT() {
       return HOST + '/token';
@@ -71,6 +71,9 @@ module.exports = {
      */
     get HOST() {
       return SERVER_HOST;
+    },
+    get RPC() {
+      return SERVER_HOST + '/rpc';
     },
   },
   TELEGRAM: {

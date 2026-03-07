@@ -216,3 +216,4 @@ bot.on('message', (message) => {
 });
 
 module.exports = middleware;
+module.exports.bot = bot;

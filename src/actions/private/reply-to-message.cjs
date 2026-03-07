@@ -11,5 +11,5 @@ module.exports = async (bot, message) => {
     });
   }
 
-  await sendPrepareAction(bot, message, TYPING);
+  await sendPrepareAction(bot, message.chat.id, TYPING);
 };

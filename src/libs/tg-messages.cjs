@@ -2,9 +2,9 @@ module.exports.RECORD_AUDIO = 'record_audio';
 module.exports.TYPING = 'typing';
 module.exports.UPLOAD_DOCUMENT = 'upload_document';
 
-module.exports.sendPrepareAction = async function (bot, message, type) {
+module.exports.sendPrepareAction = async function (bot, chatId, type) {
   try {
-    await bot.sendChatAction(message.chat.id, type);
+    await bot.sendChatAction(chatId, type);
   } catch {
     // ...
   }

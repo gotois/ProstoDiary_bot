@@ -1,5 +1,4 @@
 /* eslint-disable */
-// const requestJsonRpc2 = require('request-json-rpc2');
 const { deleteUser } = require('../../models/users.cjs');
 
 /**
