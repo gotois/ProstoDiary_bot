@@ -52,35 +52,23 @@ const getTaskId = (id) => {
 };
 
 module.exports = async (bot, message) => {
-  await sendPrepareAction(bot, message, TYPING);
+  await sendPrepareAction(bot, message.chat.id, TYPING);
 
   const headers = new Headers();
   headers.set('Accept', 'text/markdown');
-  headers.set('Authorization', message.user.jwt);
-  headers.set('Geolocation', message.user.location);
-  headers.set('Timezone', message.user.timezone);
+  headers.set('Authorization', message.user.access_token);
+  if (message.user.location) {
+    headers.set('Geolocation', message.user.location);
+  } else {
+    headers.set('Timezone', message.user.timezone);
+  }
 
   if (!secretaryAI.isConnected) {
     try {
       await secretaryAI.connect(headers);
     } catch (error) {
       if (error.code === 401) {
-        // todo - есть дублирование этой логики
-        await bot.sendMessage(message.chat.id, 'Пройдите авторизацию заново', {
-          reply_markup: {
-            remove_keyboard: true,
-            resize_keyboard: true,
-            one_time_keyboard: true,
-            keyboard: [
-              [
-                {
-                  text: '📞 Отправить контакт',
-                  request_contact: true,
-                },
-              ],
-            ],
-          },
-        });
+        await bot.sendMessage(message.chat.id, 'Пройдите авторизацию заново /start');
         return;
       }
     }

@@ -1,4 +1,7 @@
+const { refreshTokenGrant } = require('openid-client');
 const errorHandler = require('./error-handler.cjs');
+const getClient = require('../oidc-client.cjs');
+const { setJWT } = require('../models/users.cjs');
 
 /**
  * @param {Function} callback - callback
@@ -6,27 +9,37 @@ const errorHandler = require('./error-handler.cjs');
  */
 module.exports = function (callback) {
   return async (bot, message) => {
-    if (!message.user?.jwt) {
-      await bot.sendMessage(message.chat.id, 'Требуется авторизация /start');
-      return;
-    }
     if (message.user?.expired_at && message.user.expired_at < Date.now() / 1000) {
-      await bot.sendMessage(message.chat.id, 'Пройдите авторизацию заново', {
-        reply_markup: {
-          remove_keyboard: true,
-          resize_keyboard: true,
-          one_time_keyboard: true,
-          keyboard: [
-            [
-              {
-                text: '📞 Отправить контакт',
-                request_contact: true,
-              },
+      // делаем ротацию ключей для обновления
+      if (message.user.refresh_token) {
+        try {
+          const client = await getClient();
+          const tokens = await refreshTokenGrant(client, message.user.refresh_token);
+          setJWT(message.user.id, tokens);
+        } catch (error) {
+          console.error('Ошибка обновления токена:', error);
+          return;
+        }
+      } else {
+        /* todo - это старый механизм - с работой отправки контакта - оставить его где-то в другом месте
+        await bot.sendMessage(message.chat.id, 'Предоставьте свой номер телефона', {
+          reply_markup: {
+            remove_keyboard: true,
+            resize_keyboard: true,
+            one_time_keyboard: true,
+            keyboard: [
+              [
+                {
+                  text: '📞 Отправить контакт',
+                  request_contact: true,
+                },
+              ],
             ],
-          ],
-        },
-      });
-      return;
+          },
+        });
+        /**/
+        return;
+      }
     }
 
     // todo если использовать inline тогда

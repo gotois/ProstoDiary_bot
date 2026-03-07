@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const requestJsonRpc2 = require('request-json-rpc2').default;
 const { authorizationCodeGrant, fetchUserInfo } = require('openid-client');
-const { setJWT } = require('../models/users.cjs');
+const { setJWT, updateUserTimezone } = require('../models/users.cjs');
 const getClient = require('../oidc-client.cjs');
 const { bot } = require('./bot.cjs');
 const { SERVER } = require('../environments/index.cjs');
@@ -31,6 +31,7 @@ module.exports = async (request, response) => {
 
     const userInfo = await fetchUserInfo(client, tokens.access_token, tokens.claims().sub);
     setJWT(userInfo.tid, tokens);
+    updateUserTimezone(userInfo.tid, userInfo.tz);
 
     const waitingMessage = await bot.sendMessage(userInfo.tid, '⏳ Идет авторизация...', {
       reply_markup: {
@@ -47,7 +48,7 @@ module.exports = async (request, response) => {
         params: {},
       },
       headers: {
-        Timezone: userInfo.time_zone,
+        Timezone: userInfo.tz,
         Authorization: tokens.access_token,
       },
     });

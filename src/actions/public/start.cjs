@@ -25,7 +25,7 @@ function getInstallAgainText() {
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  if (message.user?.jwt) {
+  if (message.user?.expired_at && message.user.expired_at >= Date.now() / 1000) {
     await bot.sendMessage(message.chat.id, getInstallAgainText(), {
       parse_mode: 'MarkdownV2',
       disable_notification: false,
@@ -40,7 +40,6 @@ module.exports = async (bot, message) => {
     return;
   }
 
-  /*
   if (message.user && !message.user.timezone) {
     await bot.sendMessage(message.chat.id, 'Требуется определить часовой пояс', {
       parse_mode: 'MarkdownV2',
@@ -62,7 +61,6 @@ module.exports = async (bot, message) => {
     });
     return;
   }
-  */
 
   let webAppUrl = `${OIDC.HOST}/login?lang=${message.from?.language_code}`;
   // eslint-disable-next-line unicorn/consistent-destructuring
