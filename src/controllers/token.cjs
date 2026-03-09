@@ -33,13 +33,7 @@ module.exports = async (request, response) => {
     setJWT(userInfo.tid, tokens);
     updateUserTimezone(userInfo.tid, userInfo.tz);
 
-    const waitingMessage = await bot.sendMessage(userInfo.tid, '⏳ Идет авторизация...', {
-      reply_markup: {
-        remove_keyboard: true,
-      },
-    });
-
-    const { result } = await requestJsonRpc2({
+    const { result, error } = await requestJsonRpc2({
       url: SERVER.RPC,
       body: {
         jsonrpc: '2.0',
@@ -48,8 +42,16 @@ module.exports = async (request, response) => {
         params: {},
       },
       headers: {
+        Authorization: tokens.token_type + ' ' + tokens.access_token,
         Timezone: userInfo.tz,
-        Authorization: tokens.access_token,
+      },
+    });
+    if (error) {
+      return response.status(500).json(error);
+    }
+    const waitingMessage = await bot.sendMessage(userInfo.tid, '⏳ Идет авторизация...', {
+      reply_markup: {
+        remove_keyboard: true,
       },
     });
 
