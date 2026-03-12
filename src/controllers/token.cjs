@@ -88,14 +88,17 @@ module.exports = async (request, response) => {
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+<link rel="preconnect" href="https://telegram.org">
 <link rel="preload" href="https://telegram.org/js/telegram-web-app.js" as="script" fetchpriority="high">
 <script src="https://telegram.org/js/telegram-web-app.js" fetchpriority="high"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Авторизация успешно пройдена</title>
 <script>
+window.location.hash ||= sessionStorage.getItem('__tma_hash');
 window.Telegram.WebApp.ready();
 window.Telegram.WebApp.close();
+sessionStorage.clear();
 </script>
 </head>
 <body style="display:none">

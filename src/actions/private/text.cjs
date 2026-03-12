@@ -56,7 +56,7 @@ module.exports = async (bot, message) => {
 
   const headers = new Headers();
   headers.set('Accept', 'text/markdown');
-  headers.set('Authorization', message.user.access_token);
+  headers.set('Authorization', 'Bearer ' + message.user.access_token);
   if (message.user.location) {
     headers.set('Geolocation', message.user.location);
   } else {

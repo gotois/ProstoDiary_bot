@@ -24,5 +24,19 @@ module.exports = async (request, response) => {
     state,
     redirect_uri: OIDC.CLIENT_REDIRECT,
   });
-  response.redirect(authorizationUrl.toString());
+
+  response.send(`
+    <html lang="ru">
+      <head>
+        <title>Перенаправление...</title>
+        <script>
+          sessionStorage.setItem('__tma_hash', window.location.hash);
+        </script>
+        <meta http-equiv="refresh" content="0; url=${authorizationUrl.toString()}">
+      </head>
+      <body>
+        Перенаправление...
+      </body>
+    </html>
+  `);
 };
