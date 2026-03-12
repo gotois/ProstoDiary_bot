@@ -3,6 +3,8 @@ const {
   NODE_ENV,
   HOST,
   SERVER_HOST,
+  CLIENT_ID,
+  CLIENT_SECRET,
   APP_URL,
   TELEGRAM_TOKEN,
   TELEGRAM_DOMAIN,
@@ -16,7 +18,10 @@ module.exports = {
       return HOST;
     },
     get CLIENT_ID() {
-      return 'bot';
+      return CLIENT_ID;
+    },
+    get CLIENT_SECRET() {
+      return CLIENT_SECRET;
     },
     get CLIENT_REDIRECT() {
       return HOST + '/token';

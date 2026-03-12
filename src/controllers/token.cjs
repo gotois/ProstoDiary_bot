@@ -86,39 +86,23 @@ module.exports = async (request, response) => {
     response.send(
       `
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
+<link rel="preload" href="https://telegram.org/js/telegram-web-app.js" as="script" fetchpriority="high">
+<script src="https://telegram.org/js/telegram-web-app.js" fetchpriority="high"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Success</title>
+<title>Авторизация успешно пройдена</title>
 <script>
-function appendTelegramWebAppScript() {
-  return new Promise((resolve, reject) => {
-  const script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = 'https://telegram.org/js/telegram-web-app.js';
-  script.onload = () => {
-    resolve();
-  };
-  script.onerror = () => {
-    reject();
-  };
-  document.head.appendChild(script);
-  });
-};
-(async function main() {
-  await appendTelegramWebAppScript();
-  const timeZone = {
-    type: 'tz',
-    data: Intl.DateTimeFormat().resolvedOptions().timeZone,
-  };
-  Telegram.WebApp.sendData(JSON.stringify(timeZone));
-}());
-    </script>
+window.Telegram.WebApp.ready();
+window.Telegram.WebApp.close();
+</script>
 </head>
-<body>
-<h1>Authentication successful!</h1>
-<img src="${url}" alt="">
+<body style="display:none">
+<h1 style="color: forestgreen">Аутентификация прошла успешно.</h1>
+<script>
+document.body.style.display = 'block';
+</script>
 </body>
 </html>
   `.trim(),
