@@ -101,7 +101,7 @@
     "commitizen": "4.3.1",
     "cz-conventional-changelog": "3.3.0",
     "dependency-cruiser": "15.3.0",
-    "dotenv": "16.4.7",
+    "dotenv": "17.3.1",
     "eslint": "8.8.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-ava": "13.2.0",

@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 const { deleteUser } = require('../../models/users.cjs');
 
 /**
