@@ -28,6 +28,23 @@ app.use(botController);
 app.get('/', pingController);
 app.get('/token', tokenController);
 app.get('/login', loginController);
+app.post('/webhook', express.json(), async (request, response) => {
+  console.log("WEBHOOK", request.body)
+  // ...
+  // пусть уже сам клиент дергает fetch pапросом activity.object
+
+
+  // const response = await fetch('https://bot.lh/webhook', {
+  //       method: 'POST',
+  //       body: JSON.stringify(activity),
+  //     });
+  //     if (!response.ok) {
+  //       throw new Error('Response Fetching error');
+  //     }
+
+
+  return response.status(202).send('Accepted');
+});
 
 if (port === SECURE_PORT) {
   const keyPath = 'cert/localhost.key';
