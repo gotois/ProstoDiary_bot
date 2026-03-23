@@ -30,7 +30,7 @@ module.exports = async (request, response) => {
     });
 
     const userInfo = await fetchUserInfo(client, tokens.access_token, tokens.claims().sub);
-    setJWT(userInfo.tid, tokens);
+    setJWT(userInfo.tid, actorId, tokens);
     updateUserTimezone(userInfo.tid, userInfo.tz);
 
     const { result, error } = await requestJsonRpc2({
@@ -56,7 +56,7 @@ module.exports = async (request, response) => {
     });
 
     await sendPrepareAction(bot, userInfo.tid, UPLOAD_DOCUMENT);
-    const [url] = result.credentialSubject.object.attachment;
+    const [url] = result.object.attachment;
     const responseDocument = await fetch(url);
     const fileBuffer = await responseDocument.arrayBuffer();
     const pngPages = await pdfToPng(Buffer.from(fileBuffer));

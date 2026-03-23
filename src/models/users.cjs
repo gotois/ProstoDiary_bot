@@ -5,6 +5,7 @@ try {
   userDB.exec(`
     CREATE TABLE if not exists users(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      actor_id TEXT,
       location TEXT NULL,
       language TEXT DEFAULT 'en',
       timezone TEXT NULL,
@@ -48,6 +49,16 @@ module.exports.getUser = (userId) => {
 
   return query.get(userId);
 };
+
+/**
+ * @param {string} actorId - secretary actor id
+ * @returns {Record<string, any>|undefined} - user or undefined if not found
+ */
+module.exports.getUserByActorId = (actorId) => {
+  const query = userDB.prepare('SELECT * FROM users WHERE actor_id == ?');
+  return query.get(actorId);
+};
+
 /**
  * @param {number} userId - telegram user id
  * @returns {Record<string, any>} - user
@@ -98,24 +109,26 @@ module.exports.updateUserTimezone = (userId, timezone) => {
 /**
  * @description обновление JWT токенов пользователя
  * @param {string} userId - telegram user id
+ * @param {string} actorId - secretary actor id
  * @param {{access_token:string,expires_in:number,id_token:string,refresh_token:string,token_type:string}} tokens - json web tokens
  */
-module.exports.setJWT = (userId, tokens) => {
+module.exports.setJWT = (userId, actorId, tokens) => {
   const { access_token, id_token, refresh_token } = tokens;
   const { exp } = jwtDecode(id_token);
 
   const insert = userDB.prepare(`
-    INSERT INTO users (id, access_token, id_token, refresh_token, expired_at) VALUES (:id, :access_token, :id_token, :refresh_token, :exp)
+    INSERT INTO users (id, actor_id, access_token, id_token, refresh_token, expired_at) VALUES (:id, :actor_id, :access_token, :id_token, :refresh_token, :exp)
     ON CONFLICT(id)
     DO
       UPDATE SET
+        actor_id = :actor_id,
         access_token = :access_token,
         id_token = :id_token,
         refresh_token = :refresh_token,
         expired_at = :exp
       WHERE id = :id
   `);
-  insert.run({ id: userId, access_token, id_token, refresh_token, exp });
+  insert.run({ id: userId, actor_id: actorId, access_token, id_token, refresh_token, exp });
 };
 /**
  * @description обновление языка пользователя

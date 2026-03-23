@@ -15,7 +15,7 @@ module.exports = function (callback) {
         try {
           const client = await getClient();
           const tokens = await refreshTokenGrant(client, message.user.refresh_token);
-          setJWT(message.user.id, tokens);
+          setJWT(message.user.id, message.user.actor_id, tokens);
         } catch (error) {
           console.error('Ошибка обновления токена:', error);
           return;
