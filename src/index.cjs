@@ -52,13 +52,17 @@ async function vcLdJsonParser(req, res, next) {
 }
 
 app.post('/webhook', vcLdJsonParser, async (request, response) => {
+
+  // todo нужно провалидировать vc issue от сервера
   // ...
-  const activity = request.body;
+
+  const activity = request.body?.credentialSubject;
 
 
   switch (activity.type) {
     case 'Announce': {
 
+      // todo - нужно открывать в Mini App (web_app) с передачей ссылки object
       const keyboardOpen = {
         text: 'Посмотреть',
         url: activity.object,
@@ -72,7 +76,9 @@ app.post('/webhook', vcLdJsonParser, async (request, response) => {
         callback_data: 'notify_calendar--60',
       };
 
+      console.log('WIP...')
       for (let to of activity.to) {
+        // to = 'https://steepled-lisabeth-blazingly.ngrok-free.dev/users/3'
         const user = getUserByActorId(to);
         if (!user) {
           console.warn(`User from ${to} not found!`);
@@ -107,6 +113,24 @@ app.post('/webhook', vcLdJsonParser, async (request, response) => {
         text: 'Принять',
         callback_data: 'accept',
       };
+      for (const to of activity.to) {
+        // fixme нужно извлекать chatId из activity.to
+        const chatId = to;
+        await botController.bot.sendMessage(chatId, activity.summaryRu, {
+          protect_content: true,
+          parse_mode: 'MarkdownV2',
+          // message_id: telegramMessageId,
+          // reply_to_message_id: telegramMessageId,
+          reply_markup: {
+            inline_keyboard: [
+              [keyboardOpen],
+              [keyboardReject, keyboardAccept],
+            ],
+          },
+        });
+      }
+      break;
+    }
     default: {
       break;
     }

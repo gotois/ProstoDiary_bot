@@ -30,6 +30,8 @@ module.exports = async (request, response) => {
     });
 
     const userInfo = await fetchUserInfo(client, tokens.access_token, tokens.claims().sub);
+    // todo вместо sub: '3' нужно возвращать целиком серверный 'https://steepled-lisabeth-blazingly.ngrok-free.dev/users/3'
+    const actorId = 'https://steepled-lisabeth-blazingly.ngrok-free.dev/users/' + userInfo.sub;
     setJWT(userInfo.tid, actorId, tokens);
     updateUserTimezone(userInfo.tid, userInfo.tz);
 
