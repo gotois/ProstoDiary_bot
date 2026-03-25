@@ -7,25 +7,35 @@ const {
 const { OIDC } = require('../environments/index.cjs');
 const getClient = require('../oidc-client.cjs');
 
-module.exports = async (request, response) => {
+async function getAuthorization() {
   const client = await getClient();
   const codeVerifier = randomPKCECodeVerifier();
   const codeChallenge = await calculatePKCECodeChallenge(codeVerifier);
   const state = randomState();
 
-  request.session.code_verifier = codeVerifier;
-  request.session.state = state;
-  await request.session.save();
+  return {
+    client,
+    codeVerifier,
+    parameters: {
+      scope: 'openid profile',
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
+      state,
+      redirect_uri: OIDC.CLIENT_REDIRECT,
+    },
+  }
+}
 
-  const authorizationUrl = buildAuthorizationUrl(client, {
-    scope: 'openid profile',
-    code_challenge: codeChallenge,
-    code_challenge_method: 'S256',
-    state,
-    redirect_uri: OIDC.CLIENT_REDIRECT,
-  });
+module.exports = async (request, response) => {
+  try {
+    const { client, codeVerifier, parameters } = await getAuthorization();
+    request.session.code_verifier = codeVerifier;
+    request.session.state = parameters.state;
+    await request.session.save();
 
-  response.send(`
+    const authorizationUrl = buildAuthorizationUrl(client, parameters);
+
+    response.send(`
     <html lang="ru">
       <head>
         <title>Перенаправление...</title>
@@ -39,4 +49,8 @@ module.exports = async (request, response) => {
       </body>
     </html>
   `);
+  } catch (error) {
+    console.error(error);
+    response.status(400).send('Произошла ошибка авторизации клиента');
+  }
 };

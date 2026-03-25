@@ -1,17 +1,16 @@
 const fs = require('node:fs');
 const https = require('node:https');
-const { json } = require('node:stream/consumers');
 const express = require('express');
 const session = require('express-session');
 const argv = require('minimist')(process.argv.slice(2));
 const { OIDC } = require('./environments/index.cjs');
 const botController = require('./controllers/bot.cjs');
+const vcLdJsonParser = require('./middleware/vc-ld-json-parser.cjs');
+const verifyCredential = require('./middleware/verify-credentials.cjs');
 const pingController = require('./controllers/ping.cjs');
 const tokenController = require('./controllers/token.cjs');
 const loginController = require('./controllers/login.cjs');
-const {
-  getUserByActorId,
-} = require('./models/users.cjs');
+const webhookController = require('./controllers/webhook.cjs');
 
 const app = express();
 const SECURE_PORT = 443;
@@ -32,112 +31,7 @@ app.use(botController);
 app.get('/', pingController);
 app.get('/login', loginController);
 app.get('/token', tokenController);
-
-async function vcLdJsonParser(req, res, next) {
-  const rawContentType = req?.headers['content-type'] ?? (req?.get('content-type')) ?? '';
-  const contentType = String(rawContentType).split(';')[0].trim().toLowerCase();
-
-  if (contentType !== 'application/vc+ld+json') {
-    return next();
-  }
-
-  try {
-    const bodyObj = await json(req);
-    req.body = bodyObj ?? {};
-    next();
-  } catch (err) {
-    console.error('Не удалось использовать node:stream/consumers:', err && err.message ? err.message : err);
-    next(err);
-  }
-}
-
-app.post('/webhook', vcLdJsonParser, async (request, response) => {
-
-  // todo нужно провалидировать vc issue от сервера
-  // ...
-
-  const activity = request.body?.credentialSubject;
-
-
-  switch (activity.type) {
-    case 'Announce': {
-
-      // todo - нужно открывать в Mini App (web_app) с передачей ссылки object
-      const keyboardOpen = {
-        text: 'Посмотреть',
-        url: activity.object,
-      };
-      const keyboardLater = {
-        text: 'Пойду',
-        callback_data: 'notify_calendar--15',
-      };
-      const keyboardLater60 = {
-        text: 'Не пойду',
-        callback_data: 'notify_calendar--60',
-      };
-
-      console.log('WIP...')
-      for (let to of activity.to) {
-        // to = 'https://steepled-lisabeth-blazingly.ngrok-free.dev/users/3'
-        const user = getUserByActorId(to);
-        if (!user) {
-          console.warn(`User from ${to} not found!`);
-          continue;
-        }
-
-        await botController.bot.sendMessage(user.id, activity.summaryMap.ru, {
-          protect_content: true,
-          parse_mode: 'HTML',
-          reply_markup: {
-            inline_keyboard: [
-              [keyboardOpen],
-              [keyboardLater, keyboardLater60],
-            ],
-          },
-        });
-      }
-      break;
-    }
-    case 'Offer': {
-      const keyboardOpen = {
-        text: 'Посмотреть',
-        url: activity.object,
-      };
-      // todo - при нажатии отправлять Post с типом Reject Activity
-      const keyboardReject = {
-        text: 'Отменить',
-        callback_data: 'reject',
-      };
-      // todo - при нажатии отправлять Post с типом Accept Activity
-      const keyboardAccept = {
-        text: 'Принять',
-        callback_data: 'accept',
-      };
-      for (const to of activity.to) {
-        // fixme нужно извлекать chatId из activity.to
-        const chatId = to;
-        await botController.bot.sendMessage(chatId, activity.summaryRu, {
-          protect_content: true,
-          parse_mode: 'MarkdownV2',
-          // message_id: telegramMessageId,
-          // reply_to_message_id: telegramMessageId,
-          reply_markup: {
-            inline_keyboard: [
-              [keyboardOpen],
-              [keyboardReject, keyboardAccept],
-            ],
-          },
-        });
-      }
-      break;
-    }
-    default: {
-      break;
-    }
-  }
-
-  return response.status(202).send('Accepted');
-});
+app.post('/webhook', vcLdJsonParser, verifyCredential, webhookController);
 
 if (port === SECURE_PORT) {
   const keyPath = 'cert/localhost.key';

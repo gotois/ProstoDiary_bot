@@ -1,18 +1,17 @@
 const { RECORD_AUDIO, sendPrepareAction, sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 const secretaryAI = require('../../libs/secretary-ai.cjs');
 
-module.exports = async (bot, userMessage, dialog, client) => {
-  await sendPrepareAction(bot, userMessage, RECORD_AUDIO);
-  const transcriptionData = await client.readResource({
-    uri: `transcription://${userMessage.voice.file_id}`,
-  });
-  dialog.push(userMessage);
-  const { reminder, credentialSubject, googleCalendarUrl } = await generateCalendar(dialog);
-  const text = transcriptionData.contents[0].text;
-  const chatTool = await client.callTool({
-    name: 'chat',
-    arguments: {
-      query: text,
+module.exports = async (bot, userMessage) => {
+  await sendPrepareAction(bot, userMessage.chat.id, RECORD_AUDIO);
+
+  const query = await secretaryAI.transcription(userMessage.voice.file_id);
+  const secretaryData = await secretaryAI.chat(query, {
+    configurable: {
+      thread_id: userMessage.chat.id,
+    },
+    headers: {
+      Accept: 'text/plain',
+      Authorization: userMessage.user.jwt,
     },
   });
   await sendPrepareMessage(bot, userMessage);

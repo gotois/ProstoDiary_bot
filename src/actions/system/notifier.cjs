@@ -5,19 +5,26 @@ module.exports.notifyDice = async (bot, message) => {
   const {
     dice: { value },
   } = diceMessage;
-  await bot.sendMessage(message.chat.id, 'Напомню через: ' + value + 'мин.', {
-    message_id: message.message_id,
-  });
+
+  setTimeout(async () => {
+    await bot.sendMessage(message.chat.id, 'Напоминаю.', {
+      message_id: message.message_id,
+    });
+  }, value * 1_000);
 };
 
 module.exports.notifyNextHour = async (bot, message) => {
-  await bot.sendMessage(message.chat.id, 'Напомню через: 60 мин.', {
-    message_id: message.message_id,
-  });
+  setTimeout(async () => {
+    await bot.sendMessage(message.chat.id, 'Напоминаю.', {
+      message_id: message.message_id,
+    });
+  }, 60_000);
 };
 
 module.exports.notifyNextDay = async (bot, message) => {
-  await bot.sendMessage(message.chat.id, 'Напомню завтра', {
-    message_id: message.message_id,
-  });
+  setTimeout(async () => {
+    await bot.sendMessage(message.chat.id, 'Напоминаю.', {
+      message_id: message.message_id,
+    });
+  }, 1_000); // fixme - напоминать рано утром
 };

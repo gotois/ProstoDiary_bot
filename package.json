@@ -79,6 +79,9 @@
     }
   },
   "dependencies": {
+    "@digitalbazaar/ed25519-verification-key-2020": "4.2.0",
+    "@digitalbazaar/ed25519-signature-2020": "5.4.0",
+    "@digitalbazaar/vc": "7.1.2",
     "express": "4.21.2",
     "express-session": "1.19.0",
     "ical-browser": "0.1.4",

@@ -37,7 +37,6 @@ const checkAuth = require('../middleware/check-auth.cjs');
 const errorHandler = require('../middleware/error-handler.cjs');
 const replyToMessageAction = require('../actions/private/reply-to-message.cjs');
 const {
-  setJWT,
   updateUserLocation,
   updateUserTimezone,
   getUser,
@@ -73,7 +72,7 @@ const { middleware, bot } = botController({
     // ['edited_message_text']: checkAuth(editedMessageTextAction),
     ['text']: checkAuth(textAction),
     // ['photo']: checkAuth(photoAction),
-    // ['voice']: checkAuth(voiceAction),
+    ['voice']: checkAuth(voiceAction),
     // ['audio']: checkAuth(audioAction),
     // ['video']: checkAuth(videoAction),
     // ['video_note']: checkAuth(videoAction),
