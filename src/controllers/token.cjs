@@ -1,10 +1,7 @@
-const { v4: uuidv4 } = require('uuid');
-const requestJsonRpc2 = require('request-json-rpc2').default;
 const { authorizationCodeGrant, fetchUserInfo } = require('openid-client');
 const { setJWT, updateUserTimezone } = require('../models/users.cjs');
 const getClient = require('../oidc-client.cjs');
 const { bot } = require('./bot.cjs');
-const { SERVER } = require('../environments/index.cjs');
 const { pdfToPng } = require('pdf-to-png-converter');
 const { sendPrepareAction, UPLOAD_DOCUMENT } = require('../libs/tg-messages.cjs');
 
@@ -30,25 +27,28 @@ module.exports = async (request, response) => {
     });
 
     const userInfo = await fetchUserInfo(client, tokens.access_token, tokens.claims().sub);
+    if (!userInfo.tid) {
+      return response.status(400).send('Telegram не подключен к аккаунту');
+    }
+
     setJWT(userInfo.tid, userInfo.sub, tokens);
     updateUserTimezone(userInfo.tid, userInfo.tz);
 
-    const { result, error } = await requestJsonRpc2({
-      url: SERVER.RPC,
-      body: {
-        jsonrpc: '2.0',
-        id: uuidv4(),
-        method: 'hello',
-        params: {},
-      },
+    const inboxResponse = await fetch(userInfo.sub + '/inbox', {
+      method: 'GET',
       headers: {
-        Authorization: tokens.token_type + ' ' + tokens.access_token,
-        Timezone: userInfo.tz,
+        'Content-Type': 'application/json',
+        'Accept': 'application/activity+json',
+        'Authorization': tokens.token_type + ' ' + tokens.access_token,
+        'Timezone': userInfo.tz,
       },
-    });
-    if (error) {
-      return response.status(500).json(error);
+    })
+    if (!inboxResponse.ok) {
+      return response.status(400).send('Unknown server error');
     }
+    const result = await inboxResponse.json();
+    const item = result.orderedItems[0];
+
     const waitingMessage = await bot.sendMessage(userInfo.tid, '⏳ Идет авторизация...', {
       reply_markup: {
         remove_keyboard: true,
@@ -56,7 +56,18 @@ module.exports = async (request, response) => {
     });
 
     await sendPrepareAction(bot, userInfo.tid, UPLOAD_DOCUMENT);
-    const [url] = result.object.attachment;
+    const objectResponse = await fetch(item.object, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/activity+json',
+        'Authorization': tokens.token_type + ' ' + tokens.access_token,
+      },
+    });
+    if (!objectResponse.ok) {
+      throw new Error('Unknown server error');
+    }
+    const { attachment } = await objectResponse.json();
+    const [url] = attachment;
     const responseDocument = await fetch(url);
     const fileBuffer = await responseDocument.arrayBuffer();
     const pngPages = await pdfToPng(Buffer.from(fileBuffer));

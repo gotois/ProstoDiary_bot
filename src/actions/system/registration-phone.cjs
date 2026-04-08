@@ -1,4 +1,3 @@
- 
 const { setJWT } = require('../../models/users.cjs');
 const { generateTelegramHash } = require('../../libs/tg-crypto.cjs');
 const { SERVER } = require('../../environments/index.cjs');

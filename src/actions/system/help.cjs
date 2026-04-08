@@ -16,13 +16,11 @@ module.exports = async (bot, message) => {
   const helpData = Object.entries({
     help: 'Помощь',
     ping: 'Проверка связи',
-     
   }).reduce((accumulator, [command, description]) => {
     accumulator['/' + command.toLowerCase()] = description;
     return accumulator;
   }, {});
   const commandsReadable =
-     
     Object.keys(helpData).reduce((accumulator, key) => {
       const description = helpData[key];
       const result = `${key}: ${description}\n`;

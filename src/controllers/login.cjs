@@ -23,7 +23,7 @@ async function getAuthorization() {
       state,
       redirect_uri: OIDC.CLIENT_REDIRECT,
     },
-  }
+  };
 }
 
 module.exports = async (request, response) => {

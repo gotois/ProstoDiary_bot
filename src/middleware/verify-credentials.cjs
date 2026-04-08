@@ -5,6 +5,7 @@ const cred = require('credentials-context');
 const { JsonLdDocumentLoader } = require('jsonld-document-loader');
 
 /**
+ * @param key
  * @description Создание загрузчика документов с кэшированием контекстов под конкретный ключ
  * @returns {(url: string) => any}
  */
@@ -12,40 +13,34 @@ function createDocumentLoader(key) {
   const jdl = new JsonLdDocumentLoader();
   jdl.addStatic(suiteContext.CONTEXT_URL, suiteContext.CONTEXT);
   jdl.addStatic(Ed25519Signature2020.CONTEXT_URL, Ed25519Signature2020.CONTEXT);
-  jdl.addStatic(
-    cred.CREDENTIALS_CONTEXT_V1_URL,
-    cred.contexts.get(cred.constants.CREDENTIALS_CONTEXT_V1_URL),
-  );
-  jdl.addStatic(
-    'https://www.w3.org/ns/activitystreams',
-    {
-      '@context': {
-        '@vocab': 'https://www.w3.org/ns/activitystreams#',
-        'type': '@type',
-        'id': '@id',
-        'actor': 'https://www.w3.org/ns/activitystreams#actor',
-        'name': 'https://www.w3.org/ns/activitystreams#name',
-        'email': 'https://www.w3.org/ns/activitystreams#email',
-        'url': 'https://www.w3.org/ns/activitystreams#url',
-        'object': 'https://www.w3.org/ns/activitystreams#object',
-        'summary': 'https://www.w3.org/ns/activitystreams#summary',
-        'attachment': 'https://www.w3.org/ns/activitystreams#attachment',
-        'mediaType': 'https://www.w3.org/ns/activitystreams#mediaType',
-        'target': 'https://www.w3.org/ns/activitystreams#target',
-        'startTime': 'https://www.w3.org/ns/activitystreams#startTime',
-        'endTime': 'https://www.w3.org/ns/activitystreams#endTime',
-        'tag': 'https://www.w3.org/ns/activitystreams#tag',
-        'published': 'https://www.w3.org/ns/activitystreams#published',
-        'location': 'https://www.w3.org/ns/activitystreams#location',
-      },
+  jdl.addStatic(cred.CREDENTIALS_CONTEXT_V1_URL, cred.contexts.get(cred.constants.CREDENTIALS_CONTEXT_V1_URL));
+  jdl.addStatic('https://www.w3.org/ns/activitystreams', {
+    '@context': {
+      '@vocab': 'https://www.w3.org/ns/activitystreams#',
+      'type': '@type',
+      'id': '@id',
+      'actor': 'https://www.w3.org/ns/activitystreams#actor',
+      'name': 'https://www.w3.org/ns/activitystreams#name',
+      'email': 'https://www.w3.org/ns/activitystreams#email',
+      'url': 'https://www.w3.org/ns/activitystreams#url',
+      'object': 'https://www.w3.org/ns/activitystreams#object',
+      'summary': 'https://www.w3.org/ns/activitystreams#summary',
+      'attachment': 'https://www.w3.org/ns/activitystreams#attachment',
+      'mediaType': 'https://www.w3.org/ns/activitystreams#mediaType',
+      'target': 'https://www.w3.org/ns/activitystreams#target',
+      'startTime': 'https://www.w3.org/ns/activitystreams#startTime',
+      'endTime': 'https://www.w3.org/ns/activitystreams#endTime',
+      'tag': 'https://www.w3.org/ns/activitystreams#tag',
+      'published': 'https://www.w3.org/ns/activitystreams#published',
+      'location': 'https://www.w3.org/ns/activitystreams#location',
     },
-  );
+  });
   jdl.addStatic('https://www.w3.org/ns/did/v1', {
     '@context': {
       '@protected': true,
       'id': '@id',
-      'type': '@type'
-    }
+      'type': '@type',
+    },
   });
   jdl.addStatic('https://w3id.org/security/v2', {
     '@context': {
@@ -56,16 +51,16 @@ function createDocumentLoader(key) {
       'assertionMethod': {
         '@id': 'https://w3id.org/security#assertionMethod',
         '@type': '@id',
-        '@container': '@set'
+        '@container': '@set',
       },
       'authentication': {
         '@id': 'https://w3id.org/security#authenticationMethod',
         '@type': '@id',
-        '@container': '@set'
+        '@container': '@set',
       },
       'controller': {
         '@id': 'https://w3id.org/security#controller',
-        '@type': '@id'
+        '@type': '@id',
       },
       'publicKeyMultibase': 'https://w3id.org/security#publicKeyMultibase',
       'Ed25519VerificationKey2020': {
@@ -77,25 +72,24 @@ function createDocumentLoader(key) {
           'type': '@type',
           'controller': {
             '@id': 'https://w3id.org/security#controller',
-            '@type': '@id'
+            '@type': '@id',
           },
-          'publicKeyMultibase': 'https://w3id.org/security#publicKeyMultibase'
-        }
-      }
-    }
+          'publicKeyMultibase': 'https://w3id.org/security#publicKeyMultibase',
+        },
+      },
+    },
   });
   jdl.addStatic(key.controller, {
-    '@context': [
-      'https://www.w3.org/ns/did/v1',
-      'https://w3id.org/security/v2'
+    '@context': ['https://www.w3.org/ns/did/v1', 'https://w3id.org/security/v2'],
+    'id': key.controller,
+    'assertionMethod': [
+      {
+        id: key.id,
+        type: 'Ed25519VerificationKey2020',
+        controller: key.controller,
+        publicKeyMultibase: key.publicKeyMultibase,
+      },
     ],
-    id: key.controller,
-    assertionMethod: [{
-      id: key.id,
-      type: 'Ed25519VerificationKey2020',
-      controller: key.controller,
-      publicKeyMultibase: key.publicKeyMultibase,
-    }]
   });
 
   return jdl.build();
@@ -141,4 +135,4 @@ module.exports = async function (request, response, next) {
   } catch (error) {
     return next(error);
   }
-}
+};

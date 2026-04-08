@@ -1,4 +1,3 @@
- 
 const { deleteUser } = require('../../models/users.cjs');
 
 /**

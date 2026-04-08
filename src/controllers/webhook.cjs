@@ -1,7 +1,5 @@
 const { bot } = require('./bot.cjs');
-const {
-  getUserByActorId,
-} = require('../models/users.cjs');
+const { getUserByActorId } = require('../models/users.cjs');
 
 module.exports = async (request, response) => {
   const activity = request.body?.credentialSubject;
@@ -11,7 +9,6 @@ module.exports = async (request, response) => {
 
   switch (activity.type) {
     case 'Announce': {
-
       // todo - нужно открывать в Mini App (web_app) с передачей ссылки object
       const keyboardOpen = {
         text: 'Посмотреть',
@@ -29,7 +26,7 @@ module.exports = async (request, response) => {
         text: 'Напомнить завтра',
         callback_data: 'notify_calendar--next-day',
       };
-      for (let to of activity.to) {
+      for (const to of activity.to) {
         const user = getUserByActorId(to);
         if (!user) {
           console.warn(`User from ${to} not found!`);
@@ -90,4 +87,4 @@ module.exports = async (request, response) => {
   }
 
   return response.status(202).send('Accepted');
-}
+};
