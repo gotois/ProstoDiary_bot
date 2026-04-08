@@ -8,7 +8,7 @@ node_modules
 *.iml
 .DS_Store
 
-cert/
+certs/
 database/
 diagrams/
 docs/

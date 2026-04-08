@@ -4,7 +4,7 @@ node_modules/
 /reports/
 /.nyc_output/
 /keys/
-/cert/
+/certs/
 /logs/
 /docs/_site
 

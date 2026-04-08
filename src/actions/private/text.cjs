@@ -80,7 +80,7 @@ module.exports = async (bot, message) => {
       tenant_id: message.from.id,
     },
     metadata: {
-      user_id: message.user.id,
+      user_id: message.user.sub,
       locale: message.user.language,
     },
     headers: headers,

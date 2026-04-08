@@ -35,12 +35,12 @@ Add host for local development
 
 ```
 mkdir cert;
-openssl req -x509 -newkey rsa:2048 -keyout cert/localhost.key -out cert/localhost.crt -days 365 -nodes -subj "/CN=bot.lh" -addext "subjectAltName=DNS:bot.lh"
+openssl req -x509 -newkey rsa:2048 -keyout certs/server/bot-key.pem -out certs/server/bot-cert.pem -days 365 -nodes -subj "/CN=bot.lh" -addext "subjectAltName=DNS:bot.lh"
 ```
 
 For MacOS add certificate to trusted
 ```
-sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain cert/localhost.crt
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain certs/server/bot-cert.pem
 ```
 
 Run dev server

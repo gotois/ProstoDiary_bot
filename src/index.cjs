@@ -13,14 +13,14 @@ const loginController = require('./controllers/login.cjs');
 const webhookController = require('./controllers/webhook.cjs');
 
 const app = express();
-const SECURE_PORT = 443;
-const port = Number(argv.port || SECURE_PORT);
+const port = Number(argv.port || 443);
+const local = argv.local;
 
 app.use(
   session({
     secret: 'supersecret',
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
       sameSite: 'none',
       secure: true,
@@ -33,9 +33,9 @@ app.get('/login', loginController);
 app.get('/token', tokenController);
 app.post('/webhook', vcLdJsonParser, verifyCredential, webhookController);
 
-if (port === SECURE_PORT) {
-  const keyPath = 'cert/localhost.key';
-  const certPath = 'cert/localhost.crt';
+if (local) {
+  const keyPath = 'certs/server/bot-key.pem';
+  const certPath = 'certs/server/bot-cert.pem';
 
   if (!fs.existsSync(keyPath) || !fs.existsSync(certPath)) {
     console.error(`Missing TLS files: ${keyPath} or ${certPath}`);
@@ -45,7 +45,7 @@ if (port === SECURE_PORT) {
 
   const key = fs.readFileSync(keyPath);
   const cert = fs.readFileSync(certPath);
-  https.createServer({ key, cert }, app).listen(SECURE_PORT, () => {
+  https.createServer({ key, cert }, app).listen(port, () => {
     console.log('🔒 Telegram Server listening on: ' + OIDC.HOST);
   });
 } else {

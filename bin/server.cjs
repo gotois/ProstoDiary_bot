@@ -21,5 +21,5 @@ if (process.env.NGROK_AUTHTOKEN) {
     });
 } else {
   const url = ''; // empty telegram domain
-  nodemon(`-x 'TELEGRAM_DOMAIN=${url} node' ./src/index.cjs --port ${argv.port}`);
+  nodemon(`-x 'TELEGRAM_DOMAIN=${url} node' ./src/index.cjs --port ${argv.port} --local`);
 }
