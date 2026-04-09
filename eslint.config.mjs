@@ -1,0 +1,183 @@
+import unicornPlugin from 'eslint-plugin-unicorn';
+import jsdocPlugin from 'eslint-plugin-jsdoc';
+import prettierPlugin from 'eslint-plugin-prettier';
+import avaPlugin from 'eslint-plugin-ava';
+import baseConfig from '../eslint.config.base.js';
+
+const TG_FILES = ['src/**/*.cjs', 'tests/**/*.js'];
+const toArray = (cfg) => (Array.isArray(cfg) ? cfg : [cfg]);
+
+/** @type {import('eslint').Linter.Config[]} */
+export default [
+  ...baseConfig,
+  {
+    files: TG_FILES,
+    languageOptions: {
+      sourceType: 'script',
+      ecmaVersion: 2022,
+    },
+  },
+  ...toArray(unicornPlugin.configs['flat/recommended']).map((cfg) => ({
+    ...cfg,
+    files: TG_FILES,
+  })),
+  ...toArray(jsdocPlugin.configs['flat/recommended']).map((cfg) => ({
+    ...cfg,
+    files: TG_FILES,
+  })),
+  {
+    files: TG_FILES,
+    settings: {
+      jsdoc: {
+        overrideReplacesDocs: true,
+        augmentsExtendsReplacesDocs: true,
+        implementsReplacesDocs: true,
+      },
+    },
+  },
+  {
+    files: TG_FILES,
+    plugins: { prettier: prettierPlugin },
+    rules: { 'prettier/prettier': 'error' },
+  },
+  {
+    files: TG_FILES,
+    plugins: { ava: avaPlugin },
+  },
+  {
+    files: TG_FILES,
+    rules: {
+      // Style
+      'linebreak-style': ['error', 'unix'],
+      'dot-location': ['error', 'property'],
+      'array-bracket-spacing': ['error', 'never'],
+      'block-spacing': ['error', 'always'],
+      'brace-style': ['error', '1tbs', { allowSingleLine: true }],
+      'comma-spacing': 'error',
+      'comma-style': 'error',
+      'computed-property-spacing': 'error',
+      'consistent-this': ['error', 'self'],
+      'eol-last': 'error',
+      'func-call-spacing': 'error',
+      'key-spacing': 'error',
+      'keyword-spacing': 'error',
+      'max-depth': 'error',
+      'max-len': [
+        'error',
+        {
+          ignoreComments: true,
+          tabWidth: 2,
+          comments: 140,
+          ignoreTemplateLiterals: true,
+          ignoreTrailingComments: true,
+          ignoreUrls: true,
+          code: 120,
+        },
+      ],
+      'new-parens': 'error',
+      'no-lonely-if': 'error',
+      'no-multiple-empty-lines': 'error',
+      'no-nested-ternary': 'error',
+      'no-unneeded-ternary': 'error',
+      'no-whitespace-before-property': 'error',
+      'object-property-newline': ['error', { allowMultiplePropertiesPerLine: true }],
+      'semi-spacing': 'error',
+      'space-before-blocks': 'error',
+      'space-in-parens': 'error',
+      'space-unary-ops': 'error',
+      'unicode-bom': 'error',
+      'arrow-spacing': 'error',
+      // Logic
+      'no-duplicate-imports': 'error',
+      'constructor-super': 'error',
+      'no-var': 'error',
+      'prefer-const': 'error',
+      'no-eq-null': 'error',
+      'no-global-assign': 'error',
+      'no-invalid-this': 'error',
+      'no-loop-func': 'error',
+      'no-multi-spaces': 'error',
+      'no-return-assign': ['error', 'always'],
+      'no-self-compare': 'error',
+      'no-sequences': 'error',
+      'no-throw-literal': 'error',
+      'no-unmodified-loop-condition': 'error',
+      'no-useless-escape': 'error',
+      'no-undef-init': 'error',
+      'one-var': ['error', 'never'],
+      // Override base
+      'indent': ['error', 2, { SwitchCase: 1, VariableDeclarator: 0, MemberExpression: 1 }],
+      'quotes': ['error', 'single'],
+      'semi': ['error', 'always'],
+      'no-unused-vars': ['error', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }],
+      // Async
+      'require-await': 'error',
+      'no-return-await': 'error',
+      // Arrow
+      'arrow-body-style': ['error', 'always'],
+      'prefer-destructuring': ['error', { array: true, object: false }, { enforceForRenamedProperties: false }],
+      'comma-dangle': ['error', 'only-multiline'],
+      'prefer-arrow-callback': 'error',
+      'curly': ['error', 'all'],
+      'no-console': 'warn',
+      'prettier/prettier': 'error',
+      // jsdoc
+      'jsdoc/check-alignment': 'error',
+      'jsdoc/check-indentation': 'error',
+      'jsdoc/check-param-names': 'error',
+      'jsdoc/check-syntax': 'error',
+      'jsdoc/require-description': 'off',
+      'jsdoc/require-returns': 'error',
+      'jsdoc/require-returns-check': 'error',
+      'jsdoc/require-returns-description': 'off',
+      'jsdoc/require-example': 'off',
+      'jsdoc/require-description-complete-sentence': 'off',
+      'jsdoc/require-hyphen-before-param-description': 'error',
+      'jsdoc/require-param-type': 'error',
+      'jsdoc/require-param': 'error',
+      'jsdoc/check-tag-names': 'error',
+      'jsdoc/check-types': 'error',
+      'jsdoc/no-undefined-types': 'error',
+      'jsdoc/require-param-description': 'error',
+      'jsdoc/require-param-name': 'error',
+      'jsdoc/require-returns-type': 'error',
+      'jsdoc/valid-types': 'error',
+      // ava
+      'ava/assertion-arguments': 'error',
+      'ava/max-asserts': ['error', { max: 5 }],
+      'ava/no-async-fn-without-await': 'error',
+      'ava/no-duplicate-modifiers': 'error',
+      'ava/no-identical-title': 'error',
+      'ava/no-ignored-test-files': 'error',
+      'ava/no-import-test-files': 'warn',
+      'ava/no-nested-tests': 'error',
+      'ava/no-only-test': 'error',
+      'ava/no-skip-assert': 'error',
+      'ava/no-skip-test': 'error',
+      'ava/no-todo-implementation': 'error',
+      'ava/no-todo-test': 'warn',
+      'ava/no-unknown-modifiers': 'error',
+      'ava/prefer-async-await': 'error',
+      'ava/prefer-power-assert': 'error',
+      'ava/prefer-t-regex': 'error',
+      'ava/test-title': 'error',
+      'ava/test-title-format': 'error',
+      'ava/use-t': 'error',
+      'ava/use-t-well': 'error',
+      'ava/use-test': 'error',
+      'ava/use-true-false': 'error',
+      // unicorn overrides (differ from flat/recommended defaults; no-process-exit removed in v64)
+      'unicorn/no-null': 'warn',
+      'unicorn/no-useless-undefined': 'warn',
+      'unicorn/no-abusive-eslint-disable': 'warn',
+      'unicorn/no-array-reduce': 'warn',
+      'unicorn/prefer-module': 'off',
+      'unicorn/expiring-todo-comments': [
+        'warn',
+        {
+          terms: ['todo', 'fixme', 'hack'],
+        },
+      ],
+    },
+  },
+];

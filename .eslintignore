@@ -1,5 +1,7 @@
 /node_modules
 /docs
-/keys
+/certs
 /data
+/reports
+/database
 scripts/prepare.sh

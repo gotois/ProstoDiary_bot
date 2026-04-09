@@ -6,7 +6,7 @@ module.exports = async (bot, message) => {
   // todo - для запуска таймера помодоро на 25 мин - сфокусироваться на выполнении
   //  потребуется включить MiniApps
   // ...
-   
+
   const editMessage = await bot.editMessageText(message.text, {
     chat_id: message.chat.id,
     message_id: message.message_id,
