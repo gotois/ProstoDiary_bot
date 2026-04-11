@@ -2,7 +2,7 @@ const { TELEGRAM } = require('../environments/index.cjs');
 const { getMimeType } = require('../libs/file-type.cjs');
 
 /**
- * @description Проксирует аудиофайл из Telegram по file_id.
+ * @description Проксирует файл из Telegram по file_id
  * @param {import('express').Request<{ file_id: string }>} request
  * @param {import('express').Response} response
  * @returns {Promise<void>}

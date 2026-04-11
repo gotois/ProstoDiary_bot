@@ -1,4 +1,4 @@
-const { SERVER } = require('../../environments/index.cjs');
+const { SECRETARY } = require('../../environments/index.cjs');
 
 /**
  * @description Проверка сети
@@ -7,7 +7,7 @@ const { SERVER } = require('../../environments/index.cjs');
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {
-  const response = await fetch(SERVER.HOST + '/health?service=redis', {
+  const response = await fetch(SECRETARY.HOST + '/health?service=redis', {
     method: 'GET',
     headers: {
       'Content-Type': 'text/plain',

@@ -1,5 +1,5 @@
 const icalBrowser = require('ical-browser');
-const { SERVER } = require('../../environments/index.cjs');
+const { IS_DEV } = require('../../environments/index.cjs');
 const { getCalendarMessage } = require('../../models/calendars.cjs');
 
 const ICalendar = icalBrowser.default;
@@ -47,7 +47,7 @@ module.exports = async (bot, message) => {
   });
   vevent.addAlarm(valarm);
   icalendar.addEvent(vevent);
-  if (SERVER.IS_DEV) {
+  if (IS_DEV) {
     const fileEvent = icalendar.download('calendar.ics');
     const arrayBuffer = await fileEvent.arrayBuffer();
     await bot.sendDocument(

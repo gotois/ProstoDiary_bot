@@ -1,6 +1,6 @@
 const { TYPING, sendPrepareMessage, sendPrepareAction } = require('../../libs/tg-messages.cjs');
 const secretaryAI = require('../../libs/secretary-ai.cjs');
-const { SERVER, TELEGRAM } = require('../../environments/index.cjs');
+const { IS_DEV, TELEGRAM } = require('../../environments/index.cjs');
 
 function generateInlineKeyboard(artifact = []) {
   const inlineKeyboard = [];
@@ -14,7 +14,7 @@ function generateInlineKeyboard(artifact = []) {
         if (isMiniApp) {
           const payload = Buffer.from(
             JSON.stringify({
-              debug: SERVER.IS_DEV,
+              debug: IS_DEV,
               to: to,
             }),
           ).toString('base64url');

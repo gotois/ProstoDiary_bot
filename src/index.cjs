@@ -11,6 +11,7 @@ const pingController = require('./controllers/ping.cjs');
 const tokenController = require('./controllers/token.cjs');
 const loginController = require('./controllers/login.cjs');
 const fileController = require('./controllers/file.cjs');
+const transcriptionController = require('./controllers/transcription.cjs');
 const webhookController = require('./controllers/webhook.cjs');
 
 const app = express();
@@ -33,6 +34,7 @@ app.get('/', pingController);
 app.get('/login', loginController);
 app.get('/token', tokenController);
 app.get('/file/:file_id', fileController);
+app.get('/transcription/:file_id', transcriptionController);
 app.post('/webhook', vcLdJsonParser, verifyCredential, webhookController);
 
 if (local) {

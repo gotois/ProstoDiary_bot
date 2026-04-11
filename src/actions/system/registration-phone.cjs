@@ -1,9 +1,9 @@
 const { setJWT } = require('../../models/users.cjs');
 const { generateTelegramHash } = require('../../libs/tg-crypto.cjs');
-const { SERVER } = require('../../environments/index.cjs');
+const { SECRETARY } = require('../../environments/index.cjs');
 
 /**
- * @deprecated - теперь новый FLOW
+ * @deprecated - теперь новый FLOW - перенести отработку в интерактив OIDC
  * @description Ассистент детектирует пользователя
  * @param {object} bot - telegram bot
  * @param {object} message - telegram message
@@ -38,7 +38,7 @@ module.exports = async (bot, message) => {
   const headers = new Headers();
   headers.set('Content-Type', 'application/json');
   headers.set('Timezone', message.user.timezone);
-  const response = await fetch(SERVER.HOST + '/auth/telegram/oauth', {
+  const response = await fetch(SECRETARY.HOST + '/auth/telegram/oauth', {
     method: 'POST',
     headers: headers,
     body: JSON.stringify(body),

@@ -6,6 +6,7 @@ const {
   CLIENT_ID,
   CLIENT_SECRET,
   APP_URL,
+  VOSK_RECOGNIZE_URL,
   TELEGRAM_TOKEN,
   TELEGRAM_DOMAIN,
 } = process.env;
@@ -14,9 +15,6 @@ const IS_DEV = String(NODE_ENV)?.toLowerCase()?.startsWith('dev');
 
 module.exports = {
   OIDC: {
-    get HOST() {
-      return HOST;
-    },
     get CLIENT_ID() {
       return CLIENT_ID;
     },
@@ -60,10 +58,16 @@ module.exports = {
   },
   SERVER: {
     /**
-     * @returns {boolean}
+     * @returns {string}
      */
-    get IS_DEV() {
-      return IS_DEV;
+    get HOST() {
+      return HOST;
+    },
+    /**
+     * @returns {string}
+     */
+    get MCP() {
+      return HOST + '/mcp';
     },
     /**
      * @returns {string}
@@ -71,14 +75,21 @@ module.exports = {
     get APP_URL() {
       return APP_URL;
     },
+  },
+  VOSK: {
+    get URL() {
+      return VOSK_RECOGNIZE_URL;
+    },
+  },
+  SECRETARY: {
+    get RPC() {
+      return SERVER_HOST + '/rpc';
+    },
     /**
      * @returns {string}
      */
     get HOST() {
       return SERVER_HOST;
-    },
-    get RPC() {
-      return SERVER_HOST + '/rpc';
     },
   },
   TELEGRAM: {
@@ -97,5 +108,11 @@ module.exports = {
     get APP_URL() {
       return APP_URL;
     },
+  },
+  /**
+   * @returns {boolean}
+   */
+  get IS_DEV() {
+    return IS_DEV;
   },
 };

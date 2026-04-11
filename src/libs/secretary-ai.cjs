@@ -1,6 +1,6 @@
 const { LangChainYandexGPT } = require('langchain-yandexgpt');
 const SecretaryAI = require('../../../secretary-ai'); // todo - поменять на библиотку из npm
-const { SERVER, AGENT } = require('../environments/index.cjs');
+const { SECRETARY, AGENT } = require('../environments/index.cjs');
 const { DatabaseSync } = require('node:sqlite');
 
 const model = new LangChainYandexGPT({
@@ -11,7 +11,7 @@ const model = new LangChainYandexGPT({
 });
 
 const secretaryAI = new SecretaryAI.default(
-  SERVER.HOST + '/mcp',
+  SECRETARY.MCP,
   'virtual-secretary-mcp-server',
   model,
   new DatabaseSync(AGENT.MEMORY),

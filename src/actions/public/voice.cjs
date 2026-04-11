@@ -1,10 +1,17 @@
+const { SECRETARY } = require('../../environments/index.cjs');
 const { RECORD_AUDIO, sendPrepareAction, sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 const secretaryAI = require('../../libs/secretary-ai.cjs');
 
 module.exports = async (bot, userMessage) => {
   await sendPrepareAction(bot, userMessage.chat.id, RECORD_AUDIO);
 
-  const query = await secretaryAI.transcription(userMessage.voice.file_id);
+  const url = `${SECRETARY.HOST}/transcription/${userMessage.voice.file_id}`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error('Ошибка');
+  }
+  const query = await response.text();
+
   const secretaryData = await secretaryAI.chat(query, {
     configurable: {
       thread_id: userMessage.chat.id,

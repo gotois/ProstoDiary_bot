@@ -76,7 +76,7 @@ const { middleware, bot } = botController({
     // ['audio']: checkAuth(audioAction),
     // ['video']: checkAuth(videoAction),
     // ['video_note']: checkAuth(videoAction),
-    // ['document']: checkAuth(documentAction),
+    ['document']: checkAuth(documentAction),
     // ['contact']: checkAuth(contactAction),
     // ['inline_query']: inlineAction,
     // ['message_forwards']: checkAuth(textForwards),
