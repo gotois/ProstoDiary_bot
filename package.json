@@ -16,6 +16,23 @@
     "src",
     "scripts"
   ],
+  "targets": {
+    "main": {
+      "includeNodeModules": [],
+      "context": "node",
+      "outputFormat": "esmodule",
+      "isLibrary": true,
+      "optimize": true,
+      "scopeHoist": true
+    },
+    "module": {
+      "includeNodeModules": [],
+      "outputFormat": "esmodule",
+      "isLibrary": true,
+      "optimize": true,
+      "scopeHoist": true
+    }
+  },
   "scripts": {
     "commit": "git-cz",
     "publish": "echo 'Publishing is disabled' && exit 1",
@@ -81,6 +98,10 @@
     "@digitalbazaar/ed25519-verification-key-2020": "4.2.0",
     "@digitalbazaar/ed25519-signature-2020": "5.4.0",
     "@digitalbazaar/vc": "7.1.2",
+    "cheerio": "1.0.0",
+    "fast-xml-parser": "4.5.1",
+    "jimp": "0.22.12",
+    "jsqr": "1.4.0",
     "express": "4.21.2",
     "express-session": "1.19.0",
     "ical-browser": "0.1.4",

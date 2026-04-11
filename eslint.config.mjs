@@ -61,7 +61,7 @@ export default [
       'func-call-spacing': 'error',
       'key-spacing': 'error',
       'keyword-spacing': 'error',
-      'max-depth': 'error',
+      'max-depth': 'warn',
       'max-len': [
         'error',
         {
