@@ -10,6 +10,7 @@ const verifyCredential = require('./middleware/verify-credentials.cjs');
 const pingController = require('./controllers/ping.cjs');
 const tokenController = require('./controllers/token.cjs');
 const loginController = require('./controllers/login.cjs');
+const fileController = require('./controllers/file.cjs');
 const webhookController = require('./controllers/webhook.cjs');
 
 const app = express();
@@ -31,6 +32,7 @@ app.use(botController);
 app.get('/', pingController);
 app.get('/login', loginController);
 app.get('/token', tokenController);
+app.get('/file/:file_id', fileController);
 app.post('/webhook', vcLdJsonParser, verifyCredential, webhookController);
 
 if (local) {

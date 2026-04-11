@@ -58,8 +58,8 @@ const { middleware, bot } = botController({
     [/^\/start|начать$/]: errorHandler(startAction),
     // [/^\/help|man|помощь$/]: errorHandler(helpAction),
     // [/^\/want/]: checkAuth(wantAction),
-    [/^\/newchat$/]: () => {
-      console.log('TODO: очистка истории агента и запуск нового чата');
+    [/^\/new$/]: () => {
+      console.log('TODO: очистка истории агента');
     },
 
     /* NATIVE COMMANDS */
