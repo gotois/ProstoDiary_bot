@@ -7,6 +7,9 @@ const {
 const { OIDC } = require('../environments/index.cjs');
 const getClient = require('../oidc-client.cjs');
 
+/**
+ * @returns {object}
+ */
 async function getAuthorization() {
   const client = await getClient();
   const codeVerifier = randomPKCECodeVerifier();

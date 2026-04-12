@@ -31,17 +31,17 @@ const convertAudio = (inputBuffer) => {
       .on('end', () => {
         resolve(Buffer.concat(buffers));
       })
-      .on('error', (err) => {
-        console.error('Conversion error:', err);
-        reject(err);
+      .on('error', (error) => {
+        console.error('Conversion error:', error);
+        reject(error);
       });
   });
 };
 
 /**
  * @description Преобразует аудиофайл из Telegram по file_id
- * @param {import('express').Request<{ file_id: string }>} request
- * @param {import('express').Response} response
+ * @param {import('express').Request<{ file_id: string }>} request - request
+ * @param {import('express').Response} response - response
  * @returns {Promise<void>} Результат транскрипции
  */
 module.exports = async (request, response) => {

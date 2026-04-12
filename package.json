@@ -106,6 +106,7 @@
     "minimist": "1.2.8",
     "minisearch": "7.1.1",
     "openid-client": "6.8.2",
+    "@photostructure/tz-lookup": "11.4.0",
     "pdf-to-png-converter": "3.6.4",
     "music-metadata": "7.14.0",
     "fluent-ffmpeg": "2.1.3",

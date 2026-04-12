@@ -5,7 +5,7 @@ const cred = require('credentials-context');
 const { JsonLdDocumentLoader } = require('jsonld-document-loader');
 
 /**
- * @param key
+ * @param {any} key - key
  * @description Создание загрузчика документов с кэшированием контекстов под конкретный ключ
  * @returns {(url: string) => any}
  */
@@ -97,10 +97,10 @@ function createDocumentLoader(key) {
 
 /**
  * @description Верификация подписанного документа (Verifiable Credential)
- * @param {object} request
+ * @param {object} request - request
  * @param {object} request.body - Подписанный VC документ
- * @param {object} response
- * @param {any} next
+ * @param {object} response - response
+ * @param {any} next - next
  * @returns {Promise<{verified: boolean, results: Array}>}
  * @throws {Error} - VerificationError
  */

@@ -2,8 +2,8 @@ const { deleteUser } = require('../../models/users.cjs');
 
 /**
  * Очистить базу данных с подтверждением - Удаление всей истории пользователя целиком
- * @param bot
- * @param {object} message
+ * @param {any} bot - bot
+ * @param {object} message - message
  * @returns {Promise<void>}
  */
 module.exports = async (bot, message) => {

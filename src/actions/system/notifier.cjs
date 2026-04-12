@@ -10,10 +10,10 @@ module.exports.notifyDice = async (bot, message) => {
     await bot.sendMessage(message.chat.id, 'Напоминаю.', {
       message_id: message.message_id,
     });
-  }, value * 1_000);
+  }, value * 1000);
 };
 
-module.exports.notifyNextHour = async (bot, message) => {
+module.exports.notifyNextHour = (bot, message) => {
   setTimeout(async () => {
     await bot.sendMessage(message.chat.id, 'Напоминаю.', {
       message_id: message.message_id,
@@ -21,10 +21,10 @@ module.exports.notifyNextHour = async (bot, message) => {
   }, 60_000);
 };
 
-module.exports.notifyNextDay = async (bot, message) => {
+module.exports.notifyNextDay = (bot, message) => {
   setTimeout(async () => {
     await bot.sendMessage(message.chat.id, 'Напоминаю.', {
       message_id: message.message_id,
     });
-  }, 1_000); // fixme - напоминать рано утром
+  }, 1000); // fixme - напоминать рано утром
 };

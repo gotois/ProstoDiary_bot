@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const validator = require('validator');
 const yaml = require('js-yaml');
-// eslint-disable-next-line ava/use-test
+
 const { ExecutionContext } = require('ava');
 /**
  * @param {ExecutionContext} t - ava test

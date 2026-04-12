@@ -38,11 +38,12 @@ module.exports = async (bot, message) => {
   });
   bot.onReplyToMessage(message.chat.id, message_id, async ({ text }) => {
     message.location.caption = text;
+    const type = 'text/markdown';
     try {
       await sendPrepareMessage(bot, message);
       switch (type) {
         case 'text/markdown': {
-          await bot.sendMessage(message.chat.id, data, {
+          await bot.sendMessage(message.chat.id, text, {
             parse_mode: 'MarkdownV2',
             reply_to_message_id: message.message_id,
             protect_content: true,
@@ -50,7 +51,7 @@ module.exports = async (bot, message) => {
           break;
         }
         case 'text/plain': {
-          await bot.sendMessage(message.chat.id, data, {
+          await bot.sendMessage(message.chat.id, text, {
             reply_to_message_id: message.message_id,
             protect_content: true,
           });

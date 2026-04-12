@@ -16,11 +16,7 @@ module.exports.getMimeType = async function (input, filename) {
     }
   }
   if (typeof input === 'string') {
-    if (input.startsWith('data:')) {
-      return input.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0];
-    } else {
-      return 'text/plain';
-    }
+    return input.startsWith('data:') ? input.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0] : 'text/plain';
   }
   throw new Error('Cannot detect input');
-}
+};

@@ -3,8 +3,8 @@ const { getMimeType } = require('../libs/file-type.cjs');
 
 /**
  * @description Проксирует файл из Telegram по file_id
- * @param {import('express').Request<{ file_id: string }>} request
- * @param {import('express').Response} response
+ * @param {import('express').Request<{ file_id: string }>} request - request
+ * @param {import('express').Response} response - response
  * @returns {Promise<void>}
  */
 module.exports = async (request, response) => {

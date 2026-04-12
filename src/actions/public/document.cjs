@@ -1,4 +1,4 @@
-import { unpack } from 'zip-pack-unpack';
+const { unpack } = require('zip-pack-unpack');
 const { SECRETARY } = require('../../environments/index.cjs');
 const { sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 const secretaryAI = require('../../libs/secretary-ai.cjs');
@@ -16,10 +16,9 @@ module.exports = async (bot, message) => {
   let query;
   // todo в случае zip архива, распаковываем и передаем данные секретарю
   if (response.headers.get('content-type') === 'application/zip') {
-    const documents = [];
-    const input = Buffer.from(await response.arrayBuffer())
+    const input = Buffer.from(await response.arrayBuffer());
     const data = await unpack(input);
-    for (const [name, input] of data.entries()) {
+    for (const [_name, _input] of data.entries()) {
       // ...
     }
   } else {
@@ -30,7 +29,7 @@ module.exports = async (bot, message) => {
   const type = 'text/markdown';
   switch (type) {
     case 'text/markdown': {
-      await bot.sendMessage(message.chat.id, data, {
+      await bot.sendMessage(message.chat.id, url, {
         parse_mode: 'MarkdownV2',
         reply_to_message_id: message.message_id,
         protect_content: true,

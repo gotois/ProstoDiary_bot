@@ -2,14 +2,27 @@ import unicornPlugin from 'eslint-plugin-unicorn';
 import jsdocPlugin from 'eslint-plugin-jsdoc';
 import prettierPlugin from 'eslint-plugin-prettier';
 import avaPlugin from 'eslint-plugin-ava';
+import globals from 'globals';
 import baseConfig from '../eslint.config.base.js';
 
 const TG_FILES = ['src/**/*.cjs', 'tests/**/*.js'];
+const TG_CJS_ALL = ['**/*.cjs', 'bin/**/*.cjs', '.dependency-cruiser.js', 'ava.config.cjs', 'tests/**/*.js'];
 const toArray = (cfg) => (Array.isArray(cfg) ? cfg : [cfg]);
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   ...baseConfig,
+  {
+    files: TG_CJS_ALL,
+    languageOptions: {
+      sourceType: 'script',
+      ecmaVersion: 2022,
+      globals: {
+        ...globals.node,
+        ...globals.commonjs,
+      },
+    },
+  },
   {
     files: TG_FILES,
     languageOptions: {
@@ -172,6 +185,7 @@ export default [
       'unicorn/no-abusive-eslint-disable': 'warn',
       'unicorn/no-array-reduce': 'warn',
       'unicorn/prefer-module': 'off',
+      'unicorn/no-anonymous-default-export': 'off',
       'unicorn/expiring-todo-comments': [
         'warn',
         {

@@ -41,7 +41,6 @@ const {
   updateUserTimezone,
   getUser,
   setNewUser,
-  deleteUser,
   setLanguage,
 } = require('../models/users.cjs');
 

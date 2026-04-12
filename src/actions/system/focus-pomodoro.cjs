@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { TELEGRAM } = require('../../environments/index.cjs');
 
 module.exports = async (bot, message) => {

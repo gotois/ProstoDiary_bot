@@ -2,6 +2,10 @@ const { TYPING, sendPrepareMessage, sendPrepareAction } = require('../../libs/tg
 const secretaryAI = require('../../libs/secretary-ai.cjs');
 const { IS_DEV, TELEGRAM } = require('../../environments/index.cjs');
 
+/**
+ * @param {any[]} [artifact] - artifact
+ * @returns {*}
+ */
 function generateInlineKeyboard(artifact = []) {
   const inlineKeyboard = [];
   for (const action of artifact) {
@@ -45,7 +49,7 @@ function generateInlineKeyboard(artifact = []) {
 const getTaskId = (id) => {
   const url = new URL(id);
   const segments = url.pathname.split('/').filter(Boolean);
-  const result = segments[segments.length - 1];
+  const result = segments.at(-1);
   if (result.length > 0) {
     return Number(result);
   }

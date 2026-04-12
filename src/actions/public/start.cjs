@@ -1,10 +1,13 @@
 const { IS_DEV, OIDC } = require('../../environments/index.cjs');
 
+/**
+ * @returns {string}
+ */
 function getWelcomeText() {
   return (
     '**Привет\\! 👋**\n\n' +
-    'Я \\- ваш персональный календарный бот, ' +
-    'и я здесь, чтобы помочь вам управлять своим временем и задачами\\. ' +
+    String.raw`Я \- ваш персональный календарный бот, ` +
+    String.raw`и я здесь, чтобы помочь вам управлять своим временем и задачами\. ` +
     'Вот что я могу для вас сделать:\\.\n\n' +
     '📅 __Создание и управление событиями__\n\n' +
     '⏰ __Напоминания о важных встречах и делах__\n\n' +
@@ -14,6 +17,9 @@ function getWelcomeText() {
   ).trim();
 }
 
+/**
+ * @returns {string}
+ */
 function getInstallAgainText() {
   return 'Установка не требуется\\.\n\nУзнай больше подробностей командой /help\\.'.trim();
 }
@@ -63,7 +69,7 @@ module.exports = async (bot, message) => {
   }
 
   let webAppUrl = `${OIDC.HOST}/login?lang=${message.from?.language_code}`;
-  // eslint-disable-next-line unicorn/consistent-destructuring
+
   if (IS_DEV) {
     webAppUrl += '&debug=1';
   }

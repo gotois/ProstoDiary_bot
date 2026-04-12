@@ -42,12 +42,12 @@ module.exports = async (request, response) => {
         'Authorization': tokens.token_type + ' ' + tokens.access_token,
         'Timezone': userInfo.tz,
       },
-    })
+    });
     if (!inboxResponse.ok) {
       return response.status(400).send('Unknown server error');
     }
     const result = await inboxResponse.json();
-    const item = result.orderedItems[0];
+    const [item] = result.orderedItems;
 
     const waitingMessage = await bot.sendMessage(userInfo.tid, '⏳ Идет авторизация...', {
       reply_markup: {
@@ -59,8 +59,8 @@ module.exports = async (request, response) => {
     const objectResponse = await fetch(item.object, {
       method: 'GET',
       headers: {
-        'Accept': 'application/activity+json',
-        'Authorization': tokens.token_type + ' ' + tokens.access_token,
+        Accept: 'application/activity+json',
+        Authorization: tokens.token_type + ' ' + tokens.access_token,
       },
     });
     if (!objectResponse.ok) {
@@ -80,7 +80,8 @@ module.exports = async (request, response) => {
         caption:
           page.pageNumber === 1
             ? 'Вы зарегистрированы!\n' +
-              'Продолжая использование сервиса Вы принимаете условия пользовательского Лицензионного соглашения /licence.'
+              'Продолжая использование сервиса ' +
+              'Вы принимаете условия пользовательского Лицензионного соглашения /licence.'
             : undefined,
       };
     });

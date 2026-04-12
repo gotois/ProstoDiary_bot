@@ -9,7 +9,7 @@ module.exports.generateTelegramHash = (data) => {
     .map((key) => {
       return `${key}=${data[key]}`;
     })
-    .sort()
+    .toSorted()
     .join('\n');
 
   const secretKey = crypto.createHmac('sha256', 'WebAppData').update(TELEGRAM.TOKEN).digest();
