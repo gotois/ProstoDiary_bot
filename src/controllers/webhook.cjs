@@ -38,11 +38,13 @@ module.exports = async (request, response) => {
           protect_content: true,
           parse_mode: 'HTML',
           reply_markup: {
+            /* eslint-disable prettier/prettier */
             inline_keyboard: [
               [keyboardOpen],
               [keyboardLater, keyboardLater60],
               [keyboardLaterTomorrow],
             ],
+            /* eslint-enable */
           },
         });
       }
@@ -72,10 +74,12 @@ module.exports = async (request, response) => {
           protect_content: true,
           parse_mode: 'MarkdownV2',
           reply_markup: {
+            /* eslint-disable prettier/prettier */
             inline_keyboard: [
               [keyboardOpen],
               [keyboardReject, keyboardAccept],
             ],
+            /* eslint-enable */
           },
         });
       }

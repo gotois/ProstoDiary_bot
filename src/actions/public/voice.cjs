@@ -17,7 +17,7 @@ module.exports = async (bot, userMessage) => {
       thread_id: userMessage.chat.id,
     },
     headers: {
-      Accept: 'text/plain',
+      Accept: 'text/markdown',
       Authorization: userMessage.user.jwt,
     },
   });
@@ -25,7 +25,7 @@ module.exports = async (bot, userMessage) => {
   const inlineKeyboard = [];
 
   const assistMessage = await bot.sendMessage(userMessage.chat.id, reminder, {
-    parse_mode: credentialSubject.object.mediaType === 'text/markdown' ? 'MarkdownV2' : 'Markdown',
+    parse_mode: 'MarkdownV2',
     reply_to_message_id: userMessage.message_id,
     protect_content: true,
     disable_notification: true,
