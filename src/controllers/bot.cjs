@@ -1,5 +1,4 @@
 /* eslint-disable */
-const { randomUUID } = require('node:crypto');
 const activitystreams = require('telegram-bot-activitystreams');
 // const botController = require('telegram-bot-api-express');
 const botController = require('../../../telegram-bot-api-express/index.cjs');
@@ -44,7 +43,8 @@ const {
   setNewUser,
   setLanguage,
 } = require('../models/users.cjs');
-const jsonRpc = require('request-json-rpc2').default;
+const acceptCallback = require('../actions/private/accept.cjs');
+const rejectCallback = require('../actions/private/reject.cjs');
 
 const { middleware, bot } = botController({
   token: TELEGRAM.TOKEN,
@@ -111,48 +111,9 @@ const { middleware, bot } = botController({
     // ['notify_calendar--15']: checkAuth(notifyDice),
     // ['notify_calendar--60']: checkAuth(notifyNextHour),
     // ['notify_calendar--next-day']: checkAuth(notifyNextDay),
-    [/^reject/]: async (bot, message) => {
-      const user = getUser(message.chat.id);
-      const [_method, userId, activityId] = message.data.split(':');
 
-      const approvalResult = await jsonRpc({
-        url: SECRETARY.RPC,
-        body: {
-          jsonrpc: '2.0',
-          id: randomUUID(),
-          method: 'approval',
-          params: {
-            activity_id: activityId,
-            user_id: userId,
-            type: 'reject',
-          }
-        },
-        headers: {
-          'Authorization': `Bearer ${user.access_token}`,
-        }
-      });
-    },
-    [/^accept/]: async (bot, message) => {
-      const user = getUser(message.chat.id);
-
-      const [_method, userId, activityId] = message.data.split(':');
-      const approvalResult = await jsonRpc({
-        url: SECRETARY.RPC,
-        body: {
-          jsonrpc: '2.0',
-          id: randomUUID(),
-          method: 'approval',
-          params: {
-            activity_id: activityId,
-            user_id: userId,
-            type: 'accept',
-          }
-        },
-        headers: {
-          'Authorization': `Bearer ${user.access_token}`,
-        }
-      });
-    },
+    [/^reject/]: rejectCallback,
+    [/^accept/]: acceptCallback,
 
     // ['business_message']: () => {
     //   console.log('business_message');

@@ -8,6 +8,26 @@ module.exports = async (request, response) => {
   }
 
   switch (activity.type) {
+    case 'Accept': {
+      for (const to of activity.to) {
+        const user = getUserByActorId(to);
+        if (!user) {
+          continue;
+        }
+        await bot.sendMessage(user.id, 'Пользователь принял ваше предложение');
+      }
+      break;
+    }
+    case 'Reject': {
+      for (const to of activity.to) {
+        const user = getUserByActorId(to);
+        if (!user) {
+          continue;
+        }
+        await bot.sendMessage(user.id, 'Пользователь отклонил ваше предложение');
+      }
+      break;
+    }
     case 'Announce': {
       // todo - нужно открывать в Mini App (web_app) с передачей ссылки object
       const keyboardOpen = {
