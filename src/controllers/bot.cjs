@@ -3,7 +3,7 @@ const { randomUUID } = require('node:crypto');
 const activitystreams = require('telegram-bot-activitystreams');
 // const botController = require('telegram-bot-api-express');
 const botController = require('../../../telegram-bot-api-express/index.cjs');
-const { TELEGRAM } = require('../environments/index.cjs');
+const { TELEGRAM, SECRETARY } = require('../environments/index.cjs');
 const pingAction = require('../actions/system/ping.cjs');
 const dbclearAction = require('../actions/system/dbclear.cjs');
 const helpAction = require('../actions/system/help.cjs');
@@ -111,25 +111,47 @@ const { middleware, bot } = botController({
     // ['notify_calendar--15']: checkAuth(notifyDice),
     // ['notify_calendar--60']: checkAuth(notifyNextHour),
     // ['notify_calendar--next-day']: checkAuth(notifyNextDay),
-    // ['notify_calendar--start-pomodoro']: checkAuth(focusPomodoro),
-    [/^accept/]: async (bot, message) => {
+    [/^reject/]: async (bot, message) => {
       const user = getUser(message.chat.id);
-      const [_method, _userId, activityId] = message.data.split(':');
+      const [_method, userId, activityId] = message.data.split(':');
+
       const approvalResult = await jsonRpc({
-        url: 'https://web-dev.lh/rpc',
+        url: SECRETARY.RPC,
         body: {
           jsonrpc: '2.0',
           id: randomUUID(),
           method: 'approval',
           params: {
             activity_id: activityId,
+            user_id: userId,
+            type: 'reject',
+          }
+        },
+        headers: {
+          'Authorization': `Bearer ${user.access_token}`,
+        }
+      });
+    },
+    [/^accept/]: async (bot, message) => {
+      const user = getUser(message.chat.id);
+
+      const [_method, userId, activityId] = message.data.split(':');
+      const approvalResult = await jsonRpc({
+        url: SECRETARY.RPC,
+        body: {
+          jsonrpc: '2.0',
+          id: randomUUID(),
+          method: 'approval',
+          params: {
+            activity_id: activityId,
+            user_id: userId,
             type: 'accept',
           }
         },
         headers: {
           'Authorization': `Bearer ${user.access_token}`,
         }
-      })
+      });
     },
 
     // ['business_message']: () => {
