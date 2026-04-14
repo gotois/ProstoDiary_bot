@@ -1,3 +1,5 @@
+/* eslint-disable */
+const { randomUUID } = require('node:crypto');
 const activitystreams = require('telegram-bot-activitystreams');
 // const botController = require('telegram-bot-api-express');
 const botController = require('../../../telegram-bot-api-express/index.cjs');
@@ -43,6 +45,7 @@ const {
   setNewUser,
   setLanguage,
 } = require('../models/users.cjs');
+const jsonRpc = require('request-json-rpc2').default;
 
 const { middleware, bot } = botController({
   token: TELEGRAM.TOKEN,
@@ -110,6 +113,25 @@ const { middleware, bot } = botController({
     // ['notify_calendar--60']: checkAuth(notifyNextHour),
     // ['notify_calendar--next-day']: checkAuth(notifyNextDay),
     // ['notify_calendar--start-pomodoro']: checkAuth(focusPomodoro),
+    [/^accept/]: async (bot, message) => {
+      const user = getUser(message.chat.id);
+      const [_method, _userId, activityId] = message.data.split(':');
+      const approvalResult = await jsonRpc({
+        url: 'https://web-dev.lh/rpc',
+        body: {
+          jsonrpc: '2.0',
+          id: randomUUID(),
+          method: 'approval',
+          params: {
+            activity_id: activityId,
+            type: 'accept',
+          }
+        },
+        headers: {
+          'Authorization': `Bearer ${user.access_token}`,
+        }
+      })
+    },
 
     // ['business_message']: () => {
     //   console.log('business_message');

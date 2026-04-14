@@ -51,17 +51,19 @@ module.exports = async (request, response) => {
       break;
     }
     case 'Offer': {
+      const uuid = activity.id.split('/').pop();
+      const actorId = activity.actor.split('/').pop();
       const keyboardOpen = {
         text: 'Посмотреть',
         url: activity.object,
       };
       const keyboardReject = {
         text: 'Отменить',
-        callback_data: 'reject-offer',
+        callback_data: `reject:${actorId}:${uuid}`,
       };
       const keyboardAccept = {
         text: 'Принять',
-        callback_data: 'accept-offer',
+        callback_data: `accept:${actorId}:${uuid}`,
       };
       for (const to of activity.to) {
         const user = getUserByActorId(to);
@@ -69,7 +71,6 @@ module.exports = async (request, response) => {
           console.warn(`User from ${to} not found!`);
           continue;
         }
-        // todo - данные нужно брать из тела activity.object.summaryMap.ru
         await bot.sendMessage(user.id, activity.summaryMap.ru, {
           protect_content: true,
           parse_mode: 'MarkdownV2',

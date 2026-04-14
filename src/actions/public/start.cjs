@@ -1,4 +1,4 @@
-const { IS_DEV, OIDC } = require('../../environments/index.cjs');
+const { IS_DEV, SECRETARY } = require('../../environments/index.cjs');
 
 /**
  * @returns {string}
@@ -46,7 +46,7 @@ module.exports = async (bot, message) => {
     return;
   }
 
-  if (message.user && !message.user.timezone) {
+  if (message.user?.access_token && !message.user.timezone) {
     await bot.sendMessage(message.chat.id, 'Требуется определить часовой пояс', {
       parse_mode: 'MarkdownV2',
       disable_notification: true,
@@ -68,7 +68,7 @@ module.exports = async (bot, message) => {
     return;
   }
 
-  let webAppUrl = `${OIDC.HOST}/login?lang=${message.from?.language_code}`;
+  let webAppUrl = `${SECRETARY.HOST}/login?lang=${message.from?.language_code}`;
 
   if (IS_DEV) {
     webAppUrl += '&debug=1';
