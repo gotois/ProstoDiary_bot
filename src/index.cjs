@@ -3,7 +3,7 @@ const https = require('node:https');
 const express = require('express');
 const session = require('express-session');
 const argv = require('minimist')(process.argv.slice(2));
-const { OIDC } = require('./environments/index.cjs');
+const { SERVER } = require('./environments/index.cjs');
 const botController = require('./controllers/bot.cjs');
 const vcLdJsonParser = require('./middleware/vc-ld-json-parser.cjs');
 const verifyCredential = require('./middleware/verify-credentials.cjs');
@@ -50,7 +50,7 @@ if (local) {
   const key = fs.readFileSync(keyPath);
   const cert = fs.readFileSync(certPath);
   https.createServer({ key, cert }, app).listen(port, () => {
-    console.log('🔒 Telegram Server listening on: ' + OIDC.HOST);
+    console.log('🔒 Telegram Server listening on: ' + SERVER.HOST);
   });
 } else {
   app.listen(port, () => {
