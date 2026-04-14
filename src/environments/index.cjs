@@ -7,6 +7,7 @@ const {
   CLIENT_SECRET,
   APP_URL,
   VOSK_RECOGNIZE_URL,
+  TELEGRAM_BOT_NAME,
   TELEGRAM_TOKEN,
   TELEGRAM_DOMAIN,
 } = process.env;
@@ -98,6 +99,9 @@ module.exports = {
     },
     get DOMAIN() {
       return TELEGRAM_DOMAIN;
+    },
+    get BOT_NAME() {
+      return TELEGRAM_BOT_NAME;
     },
     get BOT_LINK() {
       if (IS_DEV) {

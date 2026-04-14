@@ -1,4 +1,4 @@
-const { IS_DEV, SECRETARY } = require('../../environments/index.cjs');
+const { IS_DEV, SERVER } = require('../../environments/index.cjs');
 
 /**
  * @returns {string}
@@ -68,7 +68,7 @@ module.exports = async (bot, message) => {
     return;
   }
 
-  let webAppUrl = `${SECRETARY.HOST}/login?lang=${message.from?.language_code}`;
+  let webAppUrl = `${SERVER.HOST}/login?lang=${message.from?.language_code}`;
 
   if (IS_DEV) {
     webAppUrl += '&debug=1';

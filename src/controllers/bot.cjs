@@ -34,7 +34,6 @@ const inlineAction = require('../actions/public/inline.cjs');
 const textAction = require('../actions/private/text.cjs');
 const textForwards = require('../actions/private/text-forwards.cjs');
 const { notifyDice, notifyNextHour, notifyNextDay } = require('../actions/system/notifier.cjs');
-const focusPomodoro = require('../actions/system/focus-pomodoro.cjs');
 const checkAuth = require('../middleware/check-auth.cjs');
 const errorHandler = require('../middleware/error-handler.cjs');
 const replyToMessageAction = require('../actions/private/reply-to-message.cjs');

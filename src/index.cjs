@@ -10,6 +10,7 @@ const verifyCredential = require('./middleware/verify-credentials.cjs');
 const pingController = require('./controllers/ping.cjs');
 const tokenController = require('./controllers/token.cjs');
 const loginController = require('./controllers/login.cjs');
+const loginControllerPost = require('./controllers/login-post.cjs');
 const fileController = require('./controllers/file.cjs');
 const transcriptionController = require('./controllers/transcription.cjs');
 const webhookController = require('./controllers/webhook.cjs');
@@ -32,6 +33,7 @@ app.use(
 app.use(botController);
 app.get('/', pingController);
 app.get('/login', loginController);
+app.post('/login', express.json(), loginControllerPost);
 app.get('/token', tokenController);
 app.get('/file/:file_id', fileController);
 app.get('/transcription/:file_id', transcriptionController);

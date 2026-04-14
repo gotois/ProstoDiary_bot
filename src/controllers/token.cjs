@@ -4,6 +4,7 @@ const getClient = require('../oidc-client.cjs');
 const { bot } = require('./bot.cjs');
 const { pdfToPng } = require('pdf-to-png-converter');
 const { sendPrepareAction, UPLOAD_DOCUMENT } = require('../libs/tg-messages.cjs');
+const { TELEGRAM } = require('../environments/index.cjs');
 
 module.exports = async (request, response) => {
   if (request.query?.error) {
@@ -105,6 +106,7 @@ module.exports = async (request, response) => {
 <script src="https://telegram.org/js/telegram-web-app.js" fetchpriority="high"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="refresh" content="0; url='https://t.me/${TELEGRAM.BOT_NAME}?start=start'">
 <title>Авторизация успешно пройдена</title>
 <script>
 window.location.hash ||= sessionStorage.getItem('__tma_hash');
