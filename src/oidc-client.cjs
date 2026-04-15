@@ -1,9 +1,35 @@
-const { discovery } = require('openid-client');
+const {
+  randomPKCECodeVerifier,
+  calculatePKCECodeChallenge,
+  randomState,
+  discovery } = require('openid-client');
 const { SECRETARY, OIDC } = require('./environments/index.cjs');
 
 let client;
 
-module.exports = async () => {
+/**
+ * @returns {object}
+ */
+async function getAuthorization() {
+  const client = await getClient();
+  const codeVerifier = randomPKCECodeVerifier();
+  const codeChallenge = await calculatePKCECodeChallenge(codeVerifier);
+  const state = randomState();
+
+  return {
+    client,
+    codeVerifier,
+    parameters: {
+      scope: 'openid profile',
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
+      state,
+      redirect_uri: OIDC.CLIENT_REDIRECT,
+    },
+  };
+}
+
+async function getClient() {
   if (client) {
     return client;
   }
@@ -14,4 +40,9 @@ module.exports = async () => {
     token_endpoint_auth_method: 'client_secret_basic',
   });
   return client;
+}
+
+module.exports = {
+  getAuthorization,
+  getClient,
 };

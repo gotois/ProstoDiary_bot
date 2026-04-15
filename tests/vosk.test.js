@@ -1,10 +1,6 @@
-import assert from 'node:assert';
-import { test, describe } from 'node:test';
-import { readFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const test = require('ava');
+const { readFileSync } = require('node:fs');
+const { resolve } = require('node:path');
 
 const VOSK_HOST = process.env.VOSK_HOST || 'localhost';
 const VOSK_PORT = process.env.VOSK_PORT || 2700;
@@ -22,40 +18,36 @@ function makeFormData() {
   return form;
 }
 
-describe('Vosk', () => {
-  describe('POST /recognize', () => {
-    test('Status HTTP correct', async () => {
-      const response = await fetch(`${VOSK_URL}/recognize`, {
-        method: 'POST',
-        body: makeFormData(),
-      });
-      assert.strictEqual(response.status, 200);
-      const result = await response.json();
-      assert.ok(result !== null, 'Ответ не является JSON');
-      assert.ok(Object.hasOwn(result, 'text'), `Поле 'text' отсутствует в ответе: ${JSON.stringify(result)}`);
-    });
-
-    test('Recognize text', async () => {
-      const response = await fetch(`${VOSK_URL}/recognize`, {
-        method: 'POST',
-        body: makeFormData(),
-      });
-      const result = await response.json();
-      assert.strictEqual(typeof result.text, 'string');
-      assert.ok(
-        result.text.trim().length > 0,
-        `Модель не распознала речь в test-ru.wav. Полный ответ: ${JSON.stringify(result)}`,
-      );
-    });
-
-    test('No audio', async () => {
-      const response = await fetch(`${VOSK_URL}/recognize`, {
-        method: 'POST',
-      });
-      assert.strictEqual(response.status, 400);
-      const result = await response.json();
-      assert.ok(result !== null);
-      assert.ok(Object.hasOwn(result, 'error'), `Поле 'error' отсутствует в ответе: ${JSON.stringify(result)}`);
-    });
+test('Vosk - Status HTTP correct', async (t) => {
+  const response = await fetch(`${VOSK_URL}/recognize`, {
+    method: 'POST',
+    body: makeFormData(),
   });
+  t.is(response.status, 200);
+  const result = await response.json();
+  t.not(result, null, 'Ответ не является JSON');
+  t.true(Object.hasOwn(result, 'text'), `Поле 'text' отсутствует в ответе: ${JSON.stringify(result)}`);
+});
+
+test('Vosk - Recognize text', async (t) => {
+  const response = await fetch(`${VOSK_URL}/recognize`, {
+    method: 'POST',
+    body: makeFormData(),
+  });
+  const result = await response.json();
+  t.is(typeof result.text, 'string');
+  t.true(
+    result.text.trim().length > 0,
+    `Модель не распознала речь в test-ru.wav. Полный ответ: ${JSON.stringify(result)}`,
+  );
+});
+
+test('Vosk - No audio', async (t) => {
+  const response = await fetch(`${VOSK_URL}/recognize`, {
+    method: 'POST',
+  });
+  t.is(response.status, 400);
+  const result = await response.json();
+  t.not(result, null);
+  t.true(Object.hasOwn(result, 'error'), `Поле 'error' отсутствует в ответе: ${JSON.stringify(result)}`);
 });

@@ -1,10 +1,10 @@
 const { authorizationCodeGrant, fetchUserInfo } = require('openid-client');
-const { setJWT, updateUserTimezone } = require('../models/users.cjs');
-const getClient = require('../oidc-client.cjs');
-const { bot } = require('./bot.cjs');
 const { pdfToPng } = require('pdf-to-png-converter');
+const { setJWT, updateUserTimezone } = require('../models/users.cjs');
+const { getClient } = require('../oidc-client.cjs');
+const { bot } = require('./bot.cjs');
 const { sendPrepareAction, UPLOAD_DOCUMENT } = require('../libs/tg-messages.cjs');
-const { TELEGRAM } = require('../environments/index.cjs');
+const { TELEGRAM, SECRETARY } = require('../environments/index.cjs');
 
 module.exports = async (request, response) => {
   if (request.query?.error) {
@@ -48,7 +48,10 @@ module.exports = async (request, response) => {
       return response.status(400).send('Unknown server error');
     }
     const result = await inboxResponse.json();
-    const [item] = result.orderedItems;
+    const [item] = result.orderedItems.filter(item => {
+      // todo - получать данные об акторе через .well-known
+      return item.actor === SECRETARY.HOST + '/actor';
+    });
 
     const waitingMessage = await bot.sendMessage(userInfo.tid, '⏳ Идет авторизация...', {
       reply_markup: {
