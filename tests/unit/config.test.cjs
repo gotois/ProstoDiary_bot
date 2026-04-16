@@ -2,9 +2,8 @@ const fs = require('node:fs');
 const validator = require('validator');
 const yaml = require('js-yaml');
 
-const { ExecutionContext } = require('ava');
 /**
- * @param {ExecutionContext} t - ava test
+ * @param {import('ava').ExecutionContext} t - ava test
  */
 module.exports = (t) => {
   t.log('testing');

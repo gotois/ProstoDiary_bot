@@ -67,12 +67,6 @@ module.exports = {
     /**
      * @returns {string}
      */
-    get MCP() {
-      return HOST + '/mcp';
-    },
-    /**
-     * @returns {string}
-     */
     get APP_URL() {
       return APP_URL;
     },
@@ -83,6 +77,15 @@ module.exports = {
     },
   },
   SECRETARY: {
+    /**
+     * @returns {string}
+     */
+    get MCP() {
+      return SERVER_HOST + '/mcp';
+    },
+    /**
+     * @returns {string}
+     */
     get RPC() {
       return SERVER_HOST + '/rpc';
     },

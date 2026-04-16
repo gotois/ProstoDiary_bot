@@ -1,9 +1,5 @@
-const {
-  randomPKCECodeVerifier,
-  calculatePKCECodeChallenge,
-  randomState,
-  discovery } = require('openid-client');
-const { SECRETARY, OIDC } = require('./environments/index.cjs');
+const { randomPKCECodeVerifier, calculatePKCECodeChallenge, randomState, discovery } = require('openid-client');
+const { SECRETARY, OIDC } = require('../environments/index.cjs');
 
 let client;
 
@@ -29,6 +25,10 @@ async function getAuthorization() {
   };
 }
 
+/**
+ *
+ * @returns {Promise<import('openid-client').Configuration>}
+ */
 async function getClient() {
   if (client) {
     return client;

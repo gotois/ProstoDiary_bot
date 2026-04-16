@@ -1,7 +1,7 @@
 const { authorizationCodeGrant, fetchUserInfo } = require('openid-client');
 const { pdfToPng } = require('pdf-to-png-converter');
 const { setJWT, updateUserTimezone } = require('../models/users.cjs');
-const { getClient } = require('../oidc-client.cjs');
+const { getClient } = require('../libs/oidc-client.cjs');
 const { bot } = require('./bot.cjs');
 const { sendPrepareAction, UPLOAD_DOCUMENT } = require('../libs/tg-messages.cjs');
 const { TELEGRAM, SECRETARY } = require('../environments/index.cjs');
@@ -48,10 +48,41 @@ module.exports = async (request, response) => {
       return response.status(400).send('Unknown server error');
     }
     const result = await inboxResponse.json();
-    const [item] = result.orderedItems.filter(item => {
-      // todo - получать данные об акторе через .well-known
-      return item.actor === SECRETARY.HOST + '/actor';
-    });
+    const [item] =
+      result.orderedItems?.filter((item) => {
+        // todo - получать данные об акторе через .well-known
+        return item.actor === SECRETARY.HOST + '/actor';
+      }) ?? [];
+    if (!item) {
+      response.send(
+        `
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <link rel="preconnect" href="https://telegram.org">
+  <link rel="preload" href="https://telegram.org/js/telegram-web-app.js" as="script" fetchpriority="high">
+  <script src="https://telegram.org/js/telegram-web-app.js" fetchpriority="high"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="0; url='https://t.me/${TELEGRAM.BOT_NAME}?start=start'">
+  <title>Авторизация успешно пройдена</title>
+  <script>
+  window.location.hash ||= sessionStorage.getItem('__tma_hash');
+  window.Telegram.WebApp.ready();
+  window.Telegram.WebApp.close();
+  sessionStorage.clear();
+</script>
+</head>
+<body style="display:none">
+<h1 style="color: forestgreen">Аутентификация прошла успешно.</h1>
+<script>
+document.body.style.display = 'block';
+</script>
+</body>
+</html>
+`.trim(),
+      );
+    }
 
     const waitingMessage = await bot.sendMessage(userInfo.tid, '⏳ Идет авторизация...', {
       reply_markup: {

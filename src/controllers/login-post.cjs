@@ -1,7 +1,5 @@
-const {
-  buildAuthorizationUrlWithPAR,
-} = require('openid-client');
-const { getAuthorization } = require('../oidc-client.cjs');
+const { buildAuthorizationUrlWithPAR } = require('openid-client');
+const { getAuthorization } = require('../libs/oidc-client.cjs');
 
 module.exports = async (request, response) => {
   try {

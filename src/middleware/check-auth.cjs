@@ -1,6 +1,6 @@
 const { refreshTokenGrant } = require('openid-client');
 const errorHandler = require('./error-handler.cjs');
-const { getClient } = require('../oidc-client.cjs');
+const { getClient } = require('../libs/oidc-client.cjs');
 const { setJWT } = require('../models/users.cjs');
 
 /**

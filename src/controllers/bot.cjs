@@ -2,7 +2,7 @@
 const activitystreams = require('telegram-bot-activitystreams');
 // const botController = require('telegram-bot-api-express');
 const botController = require('../../../telegram-bot-api-express/index.cjs');
-const { TELEGRAM, SECRETARY } = require('../environments/index.cjs');
+const { TELEGRAM } = require('../environments/index.cjs');
 const pingAction = require('../actions/system/ping.cjs');
 const dbclearAction = require('../actions/system/dbclear.cjs');
 const helpAction = require('../actions/system/help.cjs');

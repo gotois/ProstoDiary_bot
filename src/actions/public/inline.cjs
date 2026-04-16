@@ -1,28 +1,29 @@
-module.exports = (bot, message) => {
-  console.log('WIP inline action');
+/* eslint-disable */
+
+// пример запроса:
+// @secretary_dev_bot какие сегодня встречи?
+
+module.exports = async (bot, message) => {
+  console.log('WIP inline action', message);
   if (message.location) {
     console.log(message.location.latitude);
     console.log(message.location.longitude);
   }
-  const results = [];
-  // example
-  results.push(
+
+  // Todo использовать автодополнение
+  // const suggestionElement = new Set();
+  const results = [
     {
-      id: 1,
+      id: result.id,
       type: 'article',
-      title: '+79999991122',
-      description: 'Номер Ивана',
+      title: result.title,
+      description: result.details,
       thumbnail_url: '',
       input_message_content: { message_text: 'article 1' },
     },
-    {
-      id: 2,
-      type: 'article',
-      title: '+78889991121',
-      description: 'Номер Василия',
-      input_message_content: { message_text: 'article 2' },
-    },
-  );
+  ];
+
+  console.log('results', results);
 
   return bot.answerInlineQuery(message.id, results, {
     is_personal: true,
