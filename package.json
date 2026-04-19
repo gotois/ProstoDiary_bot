@@ -105,15 +105,16 @@
     "langchain-yandexgpt": "0.0.10",
     "minimist": "1.2.8",
     "minisearch": "7.1.1",
-    "openid-client": "6.8.2",
+    "openid-client": "6.8.3",
     "@photostructure/tz-lookup": "11.4.0",
-    "pdf-to-png-converter": "3.6.4",
+    "pdf-to-png-converter": "3.18.0",
     "music-metadata": "7.14.0",
     "fluent-ffmpeg": "2.1.3",
     "request-json-rpc2": "2.3.0",
+    "secretary-ai": "github:gotois/secretary-ai",
     "telegram-bot-activitystreams": "1.0.8",
     "telegram-bot-api-express": "1.3.6",
-    "uuid": "11.0.5"
+    "uuid": "14.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.5",

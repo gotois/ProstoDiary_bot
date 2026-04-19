@@ -1,8 +1,7 @@
-// const { LangChainYandexGPT } = require('langchain-yandexgpt');
-const { LangChainYandexGPT } = require('../../../../langchain-yandexgpt/index.mjs');
+const { LangChainYandexGPT } = require('langchain-yandexgpt');
 const { DatabaseSync } = require('node:sqlite');
 const { ChatOpenAI } = require('@langchain/openai');
-const SecretaryAI = require('../../../../secretary-ai'); // todo - поменять на библиотку из npm
+const SecretaryAI = require('secretary-ai');
 const { SECRETARY, AGENT } = require('../environments/index.cjs');
 
 const model = AGENT.MODEL.startsWith('yandex')
