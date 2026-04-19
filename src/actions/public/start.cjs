@@ -32,6 +32,9 @@ function getInstallAgainText() {
  */
 module.exports = async (bot, message) => {
   if (message.user?.expired_at && message.user.expired_at >= Date.now() / 1000) {
+    // todo - делать дополнительную проверку доступности через ping
+    // ...
+
     await bot.sendMessage(message.chat.id, getInstallAgainText(), {
       parse_mode: 'MarkdownV2',
       disable_notification: false,

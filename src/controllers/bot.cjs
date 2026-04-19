@@ -1,7 +1,7 @@
 /* eslint-disable */
 const activitystreams = require('telegram-bot-activitystreams');
-// const botController = require('telegram-bot-api-express');
-const botController = require('../../../telegram-bot-api-express/index.cjs');
+const botController = require('telegram-bot-api-express');
+// const botController = require('../../../../telegram-bot-api-express/index.cjs');
 const { TELEGRAM } = require('../environments/index.cjs');
 const pingAction = require('../actions/system/ping.cjs');
 const dbclearAction = require('../actions/system/dbclear.cjs');
@@ -107,10 +107,9 @@ const { middleware, bot } = botController({
     },
     ['auth_by_contact']: authByPhone,
 
-    // Сделать напоминание того же события через 15 мин, 60 мин или на следующий день
-    // ['notify_calendar--15']: checkAuth(notifyDice),
-    // ['notify_calendar--60']: checkAuth(notifyNextHour),
-    // ['notify_calendar--next-day']: checkAuth(notifyNextDay),
+    ['notify_calendar--later']: checkAuth(notifyDice),
+    ['notify_calendar--60']: checkAuth(notifyNextHour),
+    ['notify_calendar--next-day']: checkAuth(notifyNextDay),
 
     [/^reject/]: rejectCallback,
     [/^accept/]: acceptCallback,
