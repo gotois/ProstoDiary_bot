@@ -1,32 +1,44 @@
-const { SECRETARY } = require('../../environments/index.cjs');
-const { RECORD_AUDIO, sendPrepareAction, sendPrepareMessage } = require('../../libs/tg-messages.cjs');
+const { SERVER } = require('../../environments/index.cjs');
+const { RECORD_AUDIO, parseMode, sendPrepareAction, sendPrepareMessage } = require('../../libs/tg-messages.cjs');
 const secretaryAI = require('../../libs/secretary-ai.cjs');
 
-module.exports = async (bot, userMessage) => {
-  await sendPrepareAction(bot, userMessage.chat.id, RECORD_AUDIO);
+module.exports = async (bot, message) => {
+  await sendPrepareAction(bot, message.chat.id, RECORD_AUDIO);
 
-  const url = `${SECRETARY.HOST}/transcription/${userMessage.voice.file_id}`;
+  const headers = new Headers();
+  headers.set('Accept', 'text/plain');
+  headers.set('Authorization', 'Bearer ' + message.user.access_token);
+  if (message.user.location) {
+    headers.set('Geolocation', message.user.location);
+  } else {
+    headers.set('Timezone', message.user.timezone);
+  }
+
+  const url = `${SERVER.HOST}/transcription/${message.voice.file_id}`;
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error('Ошибка');
+    throw new Error('Ошибка Voice');
   }
   const query = await response.text();
 
   const secretaryData = await secretaryAI.chat(query, {
     configurable: {
-      thread_id: userMessage.chat.id,
+      thread_id: message.chat.id,
+      tenant_id: message.from.id,
     },
-    headers: {
-      Accept: 'text/markdown',
-      Authorization: userMessage.user.jwt,
+    metadata: {
+      user_id: message.user.sub,
+      locale: message.user.language,
     },
+    headers,
   });
-  await sendPrepareMessage(bot, userMessage);
-  const inlineKeyboard = [];
+  console.log('secretaryData', secretaryData);
+  const { content, artifact } = secretaryData;
 
-  const assistMessage = await bot.sendMessage(userMessage.chat.id, reminder, {
-    parse_mode: 'MarkdownV2',
-    reply_to_message_id: userMessage.message_id,
+  const inlineKeyboard = [];
+  await bot.sendMessage(message.chat.id, content[0].text, {
+    parse_mode: parseMode('text/plain'),
+    reply_to_message_id: message.message_id,
     protect_content: true,
     disable_notification: true,
     reply_markup: {
@@ -34,4 +46,7 @@ module.exports = async (bot, userMessage) => {
       inline_keyboard: inlineKeyboard,
     },
   });
+  if (artifact) {
+    await sendPrepareMessage(bot, message);
+  }
 };

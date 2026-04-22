@@ -8,6 +8,33 @@ module.exports = async (request, response) => {
   }
 
   switch (activity.type) {
+    case 'Create': {
+      const keyboardOpen = {
+        text: 'Посмотреть',
+        url: activity.object,
+      };
+      for (const to of activity.to) {
+        const user = getUserByActorId(to);
+        if (!user) {
+          console.warn(`User from ${to} not found!`);
+          continue;
+        }
+
+        // todo - данные нужно брать из тела activity.object.summaryMap.ru
+        await bot.sendMessage(user.id, 'Задача создана', {
+          protect_content: true,
+          parse_mode: 'HTML',
+          reply_markup: {
+            /* eslint-disable prettier/prettier */
+            inline_keyboard: [
+              [keyboardOpen],
+            ],
+            /* eslint-enable */
+          },
+        });
+      }
+      break;
+    }
     case 'Accept': {
       for (const to of activity.to) {
         const user = getUserByActorId(to);
@@ -107,7 +134,7 @@ module.exports = async (request, response) => {
       break;
     }
     default: {
-      return response.status(422).send('Validation Type Failed');
+      return response.status(422).send(`Validation Type ${activity.type} Failed`);
     }
   }
 

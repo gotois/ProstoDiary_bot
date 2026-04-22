@@ -31,7 +31,7 @@ const audioAction = require('../actions/public/audio.cjs');
 const contactAction = require('../actions/public/contact.cjs');
 const inlineAction = require('../actions/public/inline.cjs');
 const textAction = require('../actions/private/text.cjs');
-const textForwards = require('../actions/private/text-forwards.cjs');
+const forwards = require('../actions/private/text-forwards.cjs');
 const { notifyDice, notifyNextHour, notifyNextDay } = require('../actions/system/notifier.cjs');
 const checkAuth = require('../middleware/check-auth.cjs');
 const errorHandler = require('../middleware/error-handler.cjs');
@@ -74,7 +74,7 @@ const { middleware, bot } = botController({
     ['document']: checkAuth(documentAction),
     // ['contact']: checkAuth(contactAction),
     // ['inline_query']: inlineAction,
-    // ['message_forwards']: checkAuth(textForwards),
+    ['message_forwards']: checkAuth(forwards),
     ['reply_to_message']: checkAuth(replyToMessageAction),
     // ['pinned_message']: () => {},
 

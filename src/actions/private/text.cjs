@@ -1,4 +1,4 @@
-const { TYPING, sendPrepareMessage, sendPrepareAction } = require('../../libs/tg-messages.cjs');
+const { TYPING, parseMode, sendPrepareMessage, sendPrepareAction } = require('../../libs/tg-messages.cjs');
 const secretaryAI = require('../../libs/secretary-ai.cjs');
 const { IS_DEV, TELEGRAM } = require('../../environments/index.cjs');
 
@@ -93,7 +93,7 @@ module.exports = async (bot, message) => {
   const { content, artifact } = secretaryData;
 
   await bot.sendMessage(message.chat.id, content[0].text, {
-    parse_mode: 'Markdown',
+    parse_mode: parseMode('text/markdown'),
     reply_to_message_id: message.message_id,
     protect_content: true,
     disable_notification: true,
