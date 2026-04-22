@@ -18,11 +18,11 @@ comment:
   behavior: once
 
 ignore:
-  - "package.json"
-  - "**/*.md"
-  - "**/*.yml"
-  - "tests/"
-  - "ava.config.cjs"
+  - 'package.json'
+  - '**/*.md'
+  - '**/*.yml'
+  - 'tests/'
+  - 'ava.config.cjs'
 
 parsers:
   javascript:

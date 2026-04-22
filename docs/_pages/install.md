@@ -7,11 +7,11 @@ permalink: /install/
 Server Environments
 ---
 
-* Create ```.env``` file in root project for dev test
+- Create `.env` file in root project for dev test
 
 > You can find your project ID in your Dialogflow agent settings <https://dialogflow.com/docs/agents#settings>
 
-* Create ```keys``` directory in root. Create google-natural-lang.json (example from Google API)
+- Create `keys` directory in root. Create google-natural-lang.json (example from Google API)
 
 ```text
 NODE_ENV={ production|development }
@@ -32,3 +32,4 @@ SERVER_HOST={ Your server api like https://api.gotointeractive.com }
 * Create <Food> in Entities
 * Upload data/dialogflow/entities/food.csv
 </details>
+```

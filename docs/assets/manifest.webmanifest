@@ -1,8 +1,7 @@
 {
   "name": "ProstoDiary",
   "short_name": "prostodiary",
-  "icons": [
-  ],
+  "icons": [],
   "start_url": "/",
   "background_color": "#FAFAFA",
   "display": "standalone",

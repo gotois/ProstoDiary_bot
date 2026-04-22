@@ -1,6 +1,7 @@
 import unicornPlugin from 'eslint-plugin-unicorn';
 import jsdocPlugin from 'eslint-plugin-jsdoc';
 import prettierPlugin from 'eslint-plugin-prettier';
+import prettierConfig from 'eslint-config-prettier';
 import avaPlugin from 'eslint-plugin-ava';
 import globals from 'globals';
 import baseConfig from '../eslint.config.base.js';
@@ -194,4 +195,8 @@ export default [
       ],
     },
   },
+  ...toArray(prettierConfig).map((cfg) => ({
+    ...cfg,
+    files: TG_FILES,
+  })),
 ];

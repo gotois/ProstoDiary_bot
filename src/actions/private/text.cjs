@@ -89,7 +89,7 @@ module.exports = async (bot, message) => {
     },
     headers: headers,
   });
-  console.log('secretaryData', secretaryData)
+  console.log('secretaryData', secretaryData);
   const { content, artifact } = secretaryData;
 
   await bot.sendMessage(message.chat.id, content[0].text, {

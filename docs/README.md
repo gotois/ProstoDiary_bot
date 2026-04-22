@@ -27,8 +27,9 @@ scripts/prepare
 ```
 
 > For HTTPS
- 
+
 Add host for local development
+
 ```
 127.0.0.1       bot.lh
 ```
@@ -39,11 +40,13 @@ openssl req -x509 -newkey rsa:2048 -keyout certs/server/bot-key.pem -out certs/s
 ```
 
 For MacOS add certificate to trusted
+
 ```
 sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain certs/server/bot-cert.pem
 ```
 
 Run dev server
+
 ```bash
 npm run dev:secure
 ```
@@ -69,8 +72,7 @@ npm run test:unit [-- --watch]
 #npm run test:unit [-- --match='config']
 ```
 
-Tools
----
+## Tools
 
 ### Package upgrade
 
@@ -91,7 +93,7 @@ brew install graphviz
 npm run report:dependency
 ```
 
-#### Validate dependencies 
+#### Validate dependencies
 
 ```bash
 npm run lint:dependency
@@ -127,9 +129,10 @@ docker compose --env-file .env up -d
 
 Возможности управления системой
 
-1) `something text` - Уведомление
-2) `? something search` - Поиск
-3) `! something execute` - Выполнение поручения
+1. `something text` - Уведомление
+2. `? something search` - Поиск
+3. `! something execute` - Выполнение поручения
 
 ---
+
 Make with [Manifest GIC DAO](https://gotointeractive.com/manifest).

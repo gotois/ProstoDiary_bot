@@ -1,4 +1,4 @@
-name: "ProstoDiary CodeQL config"
+name: 'ProstoDiary CodeQL config'
 
 queries:
   - uses: security-and-quality

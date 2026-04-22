@@ -36,13 +36,7 @@ const { notifyDice, notifyNextHour, notifyNextDay } = require('../actions/system
 const checkAuth = require('../middleware/check-auth.cjs');
 const errorHandler = require('../middleware/error-handler.cjs');
 const replyToMessageAction = require('../actions/private/reply-to-message.cjs');
-const {
-  updateUserLocation,
-  updateUserTimezone,
-  getUser,
-  setNewUser,
-  setLanguage,
-} = require('../models/users.cjs');
+const { updateUserLocation, updateUserTimezone, getUser, setNewUser, setLanguage } = require('../models/users.cjs');
 const acceptCallback = require('../actions/private/accept.cjs');
 const rejectCallback = require('../actions/private/reject.cjs');
 

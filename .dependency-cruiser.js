@@ -9,8 +9,8 @@ module.exports = {
         'your solution (i.e. use dependency inversion, make sure the modules have a single responsibility) ',
       from: {},
       to: {
-        circular: true
-      }
+        circular: true,
+      },
     },
     {
       name: 'no-orphans',
@@ -21,9 +21,9 @@ module.exports = {
         'dependency-cruiser configuration.',
       from: {
         orphan: true,
-        pathNot: '\\.d\\.ts$'
+        pathNot: '\\.d\\.ts$',
       },
-      to: {}
+      to: {},
     },
     {
       name: 'no-deprecated-core',
@@ -33,11 +33,9 @@ module.exports = {
       severity: 'warn',
       from: {},
       to: {
-        dependencyTypes: [
-          'core'
-        ],
-        path: '^(punycode|domain|constants|sys|_linklist|_stream_wrap)$'
-      }
+        dependencyTypes: ['core'],
+        path: '^(punycode|domain|constants|sys|_linklist|_stream_wrap)$',
+      },
     },
     {
       name: 'not-to-deprecated',
@@ -47,10 +45,8 @@ module.exports = {
       severity: 'warn',
       from: {},
       to: {
-        dependencyTypes: [
-          'deprecated'
-        ]
-      }
+        dependencyTypes: ['deprecated'],
+      },
     },
     {
       name: 'no-non-package-json',
@@ -62,11 +58,8 @@ module.exports = {
         'in your package.json.',
       from: {},
       to: {
-        dependencyTypes: [
-          'npm-no-pkg',
-          'npm-unknown'
-        ]
-      }
+        dependencyTypes: ['npm-no-pkg', 'npm-unknown'],
+      },
     },
     {
       name: 'not-to-unresolvable',
@@ -76,8 +69,8 @@ module.exports = {
       severity: 'warn',
       from: {},
       to: {
-        couldNotResolve: true
-      }
+        couldNotResolve: true,
+      },
     },
     {
       name: 'no-duplicate-dep-types',
@@ -88,8 +81,8 @@ module.exports = {
       severity: 'warn',
       from: {},
       to: {
-        moreThanOneDependencyType: true
-      }
+        moreThanOneDependencyType: true,
+      },
     },
 
     /* rules you might want to tweak for your specific situation: */
@@ -101,11 +94,11 @@ module.exports = {
         "or there's something in the test folder that isn't a test.",
       severity: 'error',
       from: {
-        pathNot: '^(test|spec)'
+        pathNot: '^(test|spec)',
       },
       to: {
-        path: '^(test|spec)'
-      }
+        path: '^(test|spec)',
+      },
     },
     {
       name: 'not-to-spec',
@@ -116,8 +109,8 @@ module.exports = {
       severity: 'error',
       from: {},
       to: {
-        path: '\\.spec\\.(js|ts|ls|coffee|litcoffee|coffee\\.md)$'
-      }
+        path: '\\.spec\\.(js|ts|ls|coffee|litcoffee|coffee\\.md)$',
+      },
     },
     {
       name: 'not-to-dev-dep',
@@ -130,13 +123,11 @@ module.exports = {
         'from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration',
       from: {
         path: '^(src|app|lib)',
-        pathNot: '\\.spec\\.(js|ts|ls|coffee|litcoffee|coffee\\.md)$'
+        pathNot: '\\.spec\\.(js|ts|ls|coffee|litcoffee|coffee\\.md)$',
       },
       to: {
-        dependencyTypes: [
-          'npm-dev'
-        ]
-      }
+        dependencyTypes: ['npm-dev'],
+      },
     },
     {
       name: 'optional-deps-used',
@@ -148,10 +139,8 @@ module.exports = {
         'depdency-cruiser configuration.',
       from: {},
       to: {
-        dependencyTypes: [
-          'npm-optional'
-        ]
-      }
+        dependencyTypes: ['npm-optional'],
+      },
     },
     {
       name: 'peer-deps-used',
@@ -163,26 +152,17 @@ module.exports = {
       severity: 'warn',
       from: {},
       to: {
-        dependencyTypes: [
-          'npm-peer'
-        ]
-      }
-    }
+        dependencyTypes: ['npm-peer'],
+      },
+    },
   ],
   options: {
     doNotFollow: {
-      dependencyTypes: [
-        'npm',
-        'npm-dev',
-        'npm-optional',
-        'npm-peer',
-        'npm-bundled',
-        'npm-no-pkg'
-      ]
+      dependencyTypes: ['npm', 'npm-dev', 'npm-optional', 'npm-peer', 'npm-bundled', 'npm-no-pkg'],
     },
-    exclude : {
+    exclude: {
       path: 'request|winston-transport',
-      dynamic: true
+      dynamic: true,
     },
     moduleSystems: ['cjs'],
     reporterOptions: {
@@ -191,7 +171,7 @@ module.exports = {
       },
       archi: {
         collapsePattern: '^(node_modules|packages|src|lib|app|test|spec)/[^/]+',
-      }
-    }
-  }
+      },
+    },
+  },
 };
