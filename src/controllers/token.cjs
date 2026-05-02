@@ -4,7 +4,7 @@ const { setJWT, updateUserTimezone } = require('../models/users.cjs');
 const { getClient } = require('../libs/oidc-client.cjs');
 const { bot } = require('./bot.cjs');
 const { sendPrepareAction, UPLOAD_DOCUMENT } = require('../libs/tg-messages.cjs');
-const { TELEGRAM, SECRETARY } = require('../environments/index.cjs');
+const { TELEGRAM, SECRETARY, SERVER } = require('../environments/index.cjs');
 
 module.exports = async (request, response) => {
   if (request.query?.error) {
@@ -34,6 +34,21 @@ module.exports = async (request, response) => {
 
     setJWT(userInfo.tid, userInfo.sub, tokens);
     updateUserTimezone(userInfo.tid, userInfo.tz);
+
+    // Регистрация вебхука бота в Секретаре
+    const webhookUrl = SECRETARY.HOST + '/webhook/settings';
+    const botWebhookUrl = SERVER.HOST + '/webhook';
+    const webhookRegistration = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': tokens.token_type + ' ' + tokens.access_token,
+      },
+      body: JSON.stringify({ webhookUrl: botWebhookUrl }),
+    });
+    if (!webhookRegistration.ok) {
+      throw new Error('[token] webhook registration failed');
+    }
 
     const inboxResponse = await fetch(userInfo.sub + '/inbox', {
       method: 'GET',

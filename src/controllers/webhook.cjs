@@ -9,8 +9,8 @@ module.exports = async (request, response) => {
 
   switch (activity.type) {
     case 'Create': {
-      const keyboardOpen = {
-        text: 'Посмотреть',
+      const keyboardEdit = {
+        text: 'Изменить',
         url: activity.object,
       };
       for (const to of activity.to) {
@@ -27,7 +27,7 @@ module.exports = async (request, response) => {
           reply_markup: {
             /* eslint-disable prettier/prettier */
             inline_keyboard: [
-              [keyboardOpen],
+              [keyboardEdit],
             ],
             /* eslint-enable */
           },
