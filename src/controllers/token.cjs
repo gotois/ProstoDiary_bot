@@ -47,6 +47,7 @@ module.exports = async (request, response) => {
       body: JSON.stringify({ webhookUrl: botWebhookUrl }),
     });
     if (!webhookRegistration.ok) {
+      // todo - обработать ошибку регистрации вебхука (retry, алерт и т.д.)
       throw new Error('[token] webhook registration failed');
     }
 
