@@ -133,6 +133,20 @@ module.exports = async (request, response) => {
       }
       break;
     }
+    case 'Add':
+    case 'Invite':
+    case 'Update':
+    case 'Remove':
+    case 'Delete':
+    case 'Read':
+    case 'Note':
+    case 'Follow':
+    case 'Like':
+    case 'Dislike':
+    case 'Arrive':
+    case 'Leave': {
+      break;
+    }
     default: {
       return response.status(422).send(`Validation Type ${activity.type} Failed`);
     }

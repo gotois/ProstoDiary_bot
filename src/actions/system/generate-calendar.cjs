@@ -1,3 +1,5 @@
+/* eslint-disable */
+// todo - перенести в Secretary AI
 const icalBrowser = require('ical-browser');
 const { IS_DEV } = require('../../environments/index.cjs');
 const { getCalendarMessage } = require('../../models/calendars.cjs');
