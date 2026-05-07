@@ -1,7 +1,4 @@
-const activitystreams = require('telegram-bot-activitystreams');
-
-module.exports = (bot, message) => {
-  const activity = activitystreams(message);
+module.exports = (activity) => {
   console.log('channel', activity);
   // ...
 };

@@ -1,10 +1,10 @@
 /* eslint-disable */
-const activitystreams = require('telegram-bot-activitystreams');
 const botController = require('telegram-bot-api-express');
 // const botController = require('../../../../telegram-bot-api-express/index.cjs');
 const { TELEGRAM } = require('../environments/index.cjs');
 const pingAction = require('../actions/system/ping.cjs');
 const dbclearAction = require('../actions/system/dbclear.cjs');
+const clearAction = require('../actions/system/clear.cjs');
 const helpAction = require('../actions/system/help.cjs');
 const authByPhone = require('../actions/system/registration-phone.cjs');
 const wantAction = require('../actions/system/want.cjs');
@@ -53,9 +53,7 @@ const { middleware, bot } = botController({
     [/^\/start|начать$/]: errorHandler(startAction),
     // [/^\/help|man|помощь$/]: errorHandler(helpAction),
     // [/^\/want/]: checkAuth(wantAction),
-    [/^\/new$/]: () => {
-      console.log('TODO: очистка истории агента');
-    },
+    [/^\/new$/]: () => checkAuth(clearAction),
 
     /* NATIVE COMMANDS */
 
@@ -164,7 +162,7 @@ const { middleware, bot } = botController({
   },
 });
 
-bot.on('message', (message) => {
+bot.on('message', (activity, message) => {
   message = Array.isArray(message) ? message[0] : message;
   let user = getUser(message.chat.id);
   if (!user) {
@@ -177,7 +175,6 @@ bot.on('message', (message) => {
   //    [Bot Server делает POST /oidc/token с grant_type=refresh_token]
   //    [OIDC Server проверяет refresh_token и выдает новый access_token (+ опционально новый refresh_token)]
 
-  const activity = activitystreams(message);
   if (message.location) {
     activity.object = [
       {
