@@ -1,0 +1,22 @@
+/**
+ * 'Some' => 'Some…'
+ * '123456789' => '123456…'
+ * @description Message updated text
+ * @param {string} input - user input text
+ * @returns {string}
+ */
+const previousInput = (input) => {
+  return `${input.replaceAll('\n', ' ').slice(0, 6)}…`;
+};
+
+export default async (bot, message) => {
+  if (message.text.startsWith('/')) {
+    await bot.sendMessage(message.chat.id, 'Редактирование этой записи невозможно', {
+      disable_notification: true,
+    });
+  }
+  // ...
+  await bot.sendMessage(message.chat.id, `Запись ${previousInput(message.text)} обновлена`, {
+    disable_notification: true,
+  });
+};

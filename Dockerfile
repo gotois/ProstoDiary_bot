@@ -1,4 +1,4 @@
-FROM node:22.8 AS build
+FROM node:24 AS build
 
 MAINTAINER Denis Baskovsky <denis@baskovsky.ru>
 
@@ -15,4 +15,4 @@ RUN mkdir -p /app/database && chmod -R 777 /app/database
 
 USER node
 
-ENTRYPOINT [ "node", "--experimental-sqlite", "--watch", "src/index.cjs" ]
+ENTRYPOINT [ "node", "--experimental-sqlite", "--watch", "src/index.mjs" ]
