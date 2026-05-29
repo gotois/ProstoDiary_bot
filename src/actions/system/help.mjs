@@ -1,9 +1,6 @@
 import crypto from 'node:crypto';
-import { createRequire } from 'node:module';
-
-const require = createRequire(import.meta.url);
-const packageLock_ = require('../../../package-lock.json');
-const package_ = require('../../../package.json');
+import packageLock_ from '../../../package-lock.json' with { type: 'json' };
+import package_ from '../../../package.json' with { type: 'json' };
 
 /**
  * @param {Buffer|string} buffer - file

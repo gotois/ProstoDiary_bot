@@ -3,11 +3,9 @@ import jsdocPlugin from 'eslint-plugin-jsdoc';
 import prettierPlugin from 'eslint-plugin-prettier';
 import prettierConfig from 'eslint-config-prettier';
 import avaPlugin from 'eslint-plugin-ava';
-import globals from 'globals';
 import baseConfig from '../eslint.config.base.js';
 
-const TG_FILES = ['src/**/*.cjs', 'tests/**/*.js'];
-const TG_CJS_ALL = ['**/*.cjs', 'bin/**/*.cjs', '.dependency-cruiser.js', 'ava.config.cjs', 'tests/**/*.js'];
+const TG_FILES = ['src/**/*.mjs', 'tests/**/*.mjs'];
 const toArray = (cfg) => (Array.isArray(cfg) ? cfg : [cfg]);
 
 /** @type {import('eslint').Linter.Config[]} */
@@ -22,25 +20,8 @@ export default [
       'reports/',
       'database/',
       'scripts/prepare.sh',
+      '.dependency-cruiser.mjs',
     ],
-  },
-  {
-    files: TG_CJS_ALL,
-    languageOptions: {
-      sourceType: 'script',
-      ecmaVersion: 2022,
-      globals: {
-        ...globals.node,
-        ...globals.commonjs,
-      },
-    },
-  },
-  {
-    files: TG_FILES,
-    languageOptions: {
-      sourceType: 'script',
-      ecmaVersion: 2022,
-    },
   },
   ...toArray(unicornPlugin.configs['flat/recommended']).map((cfg) => ({
     ...cfg,

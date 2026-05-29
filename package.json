@@ -40,14 +40,14 @@
     "pretest": "run-s --silent \"lint -- --quiet\" lint:dependency",
     "test": "ava tests/unit/index.mjs",
     "test:unit": "ava tests/unit/index.mjs",
-    "dev": "node --experimental-sqlite -r dotenv/config ./bin/server.mjs --port=8888",
+    "dev": "node -r dotenv/config ./bin/server.mjs --port=8888",
     "dev:docs": "cd docs/ ; bundle exec jekyll serve",
     "clean": "npm-run-all clean:logs clean:test-cache",
     "clean:report": "rm -rf .nyc_output",
     "clean:logs": "rm -rf logs/",
     "clean:test-cache": "ava reset-cache tests/e2e/index.js --serial",
     "lint": "eslint .",
-    "lint:dependency": "depcruise -x \"node_modules\" --validate .dependency-cruiser.js src tests",
+    "lint:dependency": "depcruise -x \"node_modules\" --validate .dependency-cruiser.mjs src tests",
     "lint:markdown": "markdownlint 'docs/**/*.md' --ignore 'docs/_site' --ignore 'docs/index.md'",
     "report:dependency": "mkdir -p reports && depcruise --include-only ^src --output-type dot src | dot -T svg > reports/dependencygraph.svg",
     "report:coverage": "mkdir -p reports && ava --tap tests/unit/index.mjs | npx tap-lcov > reports/coverage.lcov",
@@ -55,7 +55,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">=22.x",
+    "node": ">=26.x",
     "npm": ">=10.x"
   },
   "cpu": [

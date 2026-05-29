@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   forbidden: [
     /* rules from the 'recommended' preset: */
     {
@@ -164,7 +164,7 @@ module.exports = {
       path: 'request|winston-transport',
       dynamic: true,
     },
-    moduleSystems: ['cjs'],
+    moduleSystems: ['esm'],
     reporterOptions: {
       dot: {
         collapsePattern: 'node_modules/[^/]+',
