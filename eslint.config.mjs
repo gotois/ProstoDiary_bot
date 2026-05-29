@@ -14,6 +14,17 @@ const toArray = (cfg) => (Array.isArray(cfg) ? cfg : [cfg]);
 export default [
   ...baseConfig,
   {
+    ignores: [
+      'node_modules/',
+      'docs/',
+      'certs/',
+      'data/',
+      'reports/',
+      'database/',
+      'scripts/prepare.sh',
+    ],
+  },
+  {
     files: TG_CJS_ALL,
     languageOptions: {
       sourceType: 'script',
