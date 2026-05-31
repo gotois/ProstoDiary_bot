@@ -9,6 +9,10 @@ export default function () {
       HOST: 'localhost',
       PORT: '9001',
     },
+    nodeArguments: [],
+    extensions: {
+      ts: 'module',
+    },
   };
 
   return {
