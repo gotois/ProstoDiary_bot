@@ -5,8 +5,12 @@ const { TELEGRAM } = env;
 
 export const generateTelegramHash = (data: Record<string, string>): string => {
   const checkString = Object.keys(data)
-    .filter((key) => key !== 'hash')
-    .map((key) => `${key}=${data[key]}`)
+    .filter((key) => {
+      return key !== 'hash';
+    })
+    .map((key) => {
+      return `${key}=${data[key]}`;
+    })
     .toSorted()
     .join('\n');
 

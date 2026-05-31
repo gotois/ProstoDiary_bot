@@ -1,6 +1,13 @@
 import type { Request, Response, NextFunction } from 'express';
 import { json } from 'node:stream/consumers';
 
+/**
+ * Парсит тело запроса с Content-Type application/vc+ld+json
+ * @param {Request} request - Express-запрос
+ * @param {Response} response - Express-ответ
+ * @param {NextFunction} next - следующий middleware
+ * @returns {Promise<void>}
+ */
 export default async function (request: Request, response: Response, next: NextFunction): Promise<void> {
   const rawContentType = request?.headers['content-type'] ?? request?.get('content-type') ?? '';
   const contentType = String(rawContentType).split(';')[0].trim().toLowerCase();

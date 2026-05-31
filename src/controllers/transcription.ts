@@ -4,9 +4,9 @@ import ffmpeg from 'fluent-ffmpeg';
 import ffmpegStatic from 'ffmpeg-static';
 import FormData from 'form-data';
 import { parseBuffer } from 'music-metadata';
-import env from '../environments/index.ts';
+import environment from '../environments/index.ts';
 
-const { SERVER, VOSK } = env;
+const { SERVER, VOSK } = environment;
 
 ffmpeg.setFfmpegPath(ffmpegStatic);
 
@@ -36,7 +36,11 @@ const convertAudio = (inputBuffer: Buffer): Promise<Buffer> => {
   });
 };
 
-/** Преобразует аудиофайл из Telegram по file_id в текст */
+/**
+ * Преобразует аудиофайл из Telegram по file_id в текст
+ * @param {Request<{file_id: string}>} request - Express-запрос с file_id в параметрах
+ * @param {Response} response - Express-ответ
+ */
 export default async (request: Request<{ file_id: string }>, response: Response): Promise<void> => {
   const fileId = request.params.file_id;
 

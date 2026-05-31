@@ -1,5 +1,11 @@
 import { fileTypeFromBuffer } from 'file-type';
 
+/**
+ * Определяет MIME-тип входных данных
+ * @param {Buffer | Uint8Array | string} input - входные данные (буфер или строка data URI)
+ * @param {string} [filename] - имя файла для определения типа по расширению
+ * @returns {Promise<string>} MIME-тип
+ */
 export async function getMimeType(input: Buffer | Uint8Array | string, filename?: string): Promise<string> {
   if (input instanceof Uint8Array || Buffer.isBuffer(input)) {
     const result = await fileTypeFromBuffer(input);

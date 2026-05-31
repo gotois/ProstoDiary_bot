@@ -1,25 +1,22 @@
 import ngrok from '@ngrok/ngrok';
-import minimist from 'minimist';
-import type { ParsedArgs } from 'minimist';
+import minimist, { type ParsedArgs } from 'minimist';
 import { spawn } from 'node:child_process';
 
 const argv: ParsedArgs = minimist(process.argv.slice(2));
 
 /**
- * @param {Record<string, string>} [extraEnv] - дополнительные переменные среды
+ * Запускает дочерний процесс tg-сервера
+ * @param {Record<string, string>} [extraEnvironment] - дополнительные переменные среды
  */
-function startServer(extraEnv: Record<string, string> = {}): void {
-  const child = spawn(
-    process.execPath,
-    ['-r', 'dotenv/config', '--watch', 'src/index.ts', `--port=${argv.port}`],
-    {
-      stdio: 'inherit',
-      env: { ...process.env, ...extraEnv },
-    },
-  );
-  child.on('exit', (code) => process.exit(code ?? 0));
-}
+function startServer(extraEnvironment: Record<string, string> = {}): void {
+  const child = spawn(process.execPath, ['-r', 'dotenv/config', '--watch', 'src/index.ts', `--port=${argv.port}`], {
+    stdio: 'inherit',
+    env: { ...process.env, ...extraEnvironment },
+  });
 
+  child.on('exit', (code) => {
+    return process.exit(code ?? 0);
+  });
 if (process.env.NGROK_AUTHTOKEN) {
   const listener = await ngrok.forward({
     addr: argv.port,

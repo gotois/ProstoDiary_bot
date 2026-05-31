@@ -4,6 +4,11 @@ import env from '../../environments/index.ts';
 
 const { IS_DEV, TELEGRAM } = env;
 
+/**
+ * Генерирует inline-клавиатуру из артефактов
+ * @param {unknown[]} artifact - список артефактов из ответа AI
+ * @returns {unknown[][]} Массив строк inline-кнопок
+ */
 function generateInlineKeyboard(artifact: unknown[] = []): unknown[][] {
   const inlineKeyboard = [];
   for (const action of artifact) {

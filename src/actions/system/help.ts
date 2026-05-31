@@ -2,26 +2,30 @@ import crypto from 'node:crypto';
 import packageLock_ from '../../../package-lock.json' with { type: 'json' };
 import package_ from '../../../package.json' with { type: 'json' };
 
-const getCheckSum = (buffer: Buffer | string, algorithm = 'md5', encoding: crypto.BinaryToTextEncoding = 'hex'): string => {
+const getCheckSum = (
+  buffer: Buffer | string,
+  algorithm = 'md5',
+  encoding: crypto.BinaryToTextEncoding = 'hex',
+): string => {
   return crypto.createHash(algorithm).update(buffer, 'utf8').digest(encoding);
 };
 
 // Помощь
 export default async (activity, message, bot) => {
-  const helpData = Object.entries({
+  const helpEntries: Record<string, string> = {
     help: 'Помощь',
     ping: 'Проверка связи',
-  }).reduce((accumulator, [command, description]) => {
-    accumulator['/' + command.toLowerCase()] = description;
-    return accumulator;
-  }, {});
+  };
+  const helpData: Record<string, string> = {};
+  for (const [command, description] of Object.entries(helpEntries)) {
+    helpData['/' + command.toLowerCase()] = description;
+  }
+  let commandsText = '';
+  for (const key of Object.keys(helpData)) {
+    commandsText += `${key}: ${helpData[key]}\n`;
+  }
   const commandsReadable =
-    Object.keys(helpData).reduce((accumulator, key) => {
-      const description = helpData[key];
-      const result = `${key}: ${description}\n`;
-      accumulator += result;
-      return accumulator;
-    }, '') +
+    commandsText +
     '\n' +
     package_.name +
     ': ' +

@@ -3,9 +3,11 @@ import jsdocPlugin from 'eslint-plugin-jsdoc';
 import prettierPlugin from 'eslint-plugin-prettier';
 import prettierConfig from 'eslint-config-prettier';
 import avaPlugin from 'eslint-plugin-ava';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
 import baseConfig from '../eslint.config.base.js';
 
-const TG_FILES = ['src/**/*.mjs', 'tests/**/*.mjs'];
+const TG_FILES = ['src/**/*.{mjs,ts}', 'tests/**/*.{mjs,ts}', 'bin/**/*.ts'];
 const toArray = (cfg) => (Array.isArray(cfg) ? cfg : [cfg]);
 
 /** @type {import('eslint').Linter.Config[]} */
@@ -185,6 +187,38 @@ export default [
           terms: ['todo', 'fixme', 'hack'],
         },
       ],
+    },
+  },
+  {
+    files: ['src/**/*.ts', 'tests/**/*.ts', 'bin/**/*.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 2026,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    rules: {
+      ...tsPlugin.configs['recommended'].rules,
+      'no-undef': 'off',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
+      // jsdoc: disable type-related rules that are redundant in TypeScript
+      'jsdoc/require-param-type': 'off',
+      'jsdoc/require-returns-type': 'off',
+      'jsdoc/no-undefined-types': 'off',
+      'jsdoc/check-types': 'off',
     },
   },
   ...toArray(prettierConfig).map((cfg) => ({

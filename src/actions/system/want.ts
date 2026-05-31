@@ -1,3 +1,9 @@
+/**
+ * Обрабатывает команду /want
+ * @param {unknown} activity - активность ActivityPub
+ * @param {object} message - сообщение Telegram
+ * @param {object} bot - экземпляр бота
+ */
 export default async function (activity, message, bot) {
   const text = message.entities
     .filter((entity) => {

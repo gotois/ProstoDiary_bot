@@ -1,6 +1,11 @@
 import { deleteUser } from '../../models/users.ts';
 
-/** Очистить базу данных с подтверждением — удаление всей истории пользователя */
+/**
+ * Очистить базу данных с подтверждением — удаление всей истории пользователя
+ * @param {unknown} activity - активность ActivityPub
+ * @param {object} message - сообщение Telegram
+ * @param {object} bot - экземпляр бота
+ */
 export default async (activity, message, bot) => {
   const { message_id } = await bot.sendMessage(message.chat.id, 'Очистить ваши записи?\nНапишите: YES', {
     reply_markup: {

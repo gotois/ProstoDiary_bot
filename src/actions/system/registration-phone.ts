@@ -7,6 +7,9 @@ const { SECRETARY } = env;
 /**
  * @deprecated теперь новый FLOW — перенести отработку в интерактив OIDC
  * Ассистент детектирует пользователя
+ * @param {unknown} activity - активность ActivityPub
+ * @param {object} message - сообщение Telegram
+ * @param {object} bot - экземпляр бота
  */
 export default async (activity, message, bot) => {
   await bot.deleteMessage(message.chat.id, message.message_id);

@@ -1,11 +1,20 @@
-import type { Configuration } from 'openid-client';
-import { randomPKCECodeVerifier, calculatePKCECodeChallenge, randomState, discovery } from 'openid-client';
-import env from '../environments/index.ts';
+import {
+  type Configuration,
+  randomPKCECodeVerifier,
+  calculatePKCECodeChallenge,
+  randomState,
+  discovery,
+} from 'openid-client';
+import environment from '../environments/index.ts';
 
-const { SECRETARY, OIDC } = env;
+const { SECRETARY, OIDC } = environment;
 
 let client: Configuration | undefined;
 
+/**
+ * Создаёт объект параметров авторизации PKCE
+ * @returns {Promise<object>} Параметры авторизации с codeVerifier и state
+ */
 export async function getAuthorization() {
   const client = await getClient();
   const codeVerifier = randomPKCECodeVerifier();
@@ -25,6 +34,10 @@ export async function getAuthorization() {
   };
 }
 
+/**
+ * Возвращает или инициализирует OIDC-клиент
+ * @returns {Promise<Configuration>} Конфигурация OIDC-клиента
+ */
 export async function getClient(): Promise<Configuration> {
   if (client) {
     return client;

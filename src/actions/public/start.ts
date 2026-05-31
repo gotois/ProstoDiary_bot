@@ -20,7 +20,12 @@ const getInstallAgainText = (): string => {
   return 'Установка не требуется\\.\n\nУзнай больше подробностей командой /help\\.'.trim();
 };
 
-/** Начало работы с ботом */
+/**
+ * Начало работы с ботом
+ * @param {unknown} activity - активность ActivityPub
+ * @param {object} message - сообщение Telegram
+ * @param {object} bot - экземпляр бота
+ */
 export default async (activity, message, bot) => {
   if (message.user?.expired_at && message.user.expired_at >= Date.now() / 1000) {
     // todo - делать дополнительную проверку доступности через ping

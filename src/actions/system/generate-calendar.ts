@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable unicorn/no-array-reduce, no-undef, unicorn/no-await-expression-member */
 // todo - перенести в Secretary AI
 import icalBrowser from 'ical-browser';
 import env from '../../environments/index.ts';
@@ -10,6 +10,9 @@ const ICalendar = icalBrowser.default;
 /**
  * @deprecated вся логика по генерации делается в агенте
  * Генерация календаря и отправка файла ical Секретарю
+ * @param {unknown} activity - активность ActivityPub
+ * @param {object} message - сообщение Telegram
+ * @param {object} bot - экземпляр бота
  */
 export default async (activity, message, bot) => {
   const event = await getCalendarMessage(message.chat.id + '' + message.message_id);

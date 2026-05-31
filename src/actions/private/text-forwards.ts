@@ -1,6 +1,6 @@
 import { parseMode, sendPrepareMessage } from '../../libs/tg-messages.ts';
 import voiceAction from '../public/voice.ts';
-import textAction from '../public/voice.ts';
+import textAction from '../public/text.ts';
 
 export default async (activity, message, bot) => {
   console.log(`Обработка транзакции из ${messages.length} сообщений:`);

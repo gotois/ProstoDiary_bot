@@ -120,6 +120,8 @@
     "@commitlint/cli": "14.1.0",
     "@eslint/eslintrc": "3.3.5",
     "@ngrok/ngrok": "1.4.1",
+    "@typescript-eslint/eslint-plugin": "8.53.1",
+    "@typescript-eslint/parser": "8.53.1",
     "@types/express": "5.0.3",
     "@types/express-session": "1.18.1",
     "@types/minimist": "1.2.5",

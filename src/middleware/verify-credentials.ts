@@ -5,7 +5,11 @@ import { Ed25519VerificationKey2020 } from '@digitalbazaar/ed25519-verification-
 import * as cred from 'credentials-context';
 import { JsonLdDocumentLoader } from 'jsonld-document-loader';
 
-/** Создание загрузчика документов с кэшированием контекстов под конкретный ключ */
+/**
+ * Создание загрузчика документов с кэшированием контекстов под конкретный ключ
+ * @param {Record<string, string>} key - объект с полями Ed25519 ключа
+ * @returns {Function} Собранный загрузчик документов
+ */
 function createDocumentLoader(key: Record<string, string>) {
   const jdl = new JsonLdDocumentLoader();
   jdl.addStatic(suiteContext.CONTEXT_URL, suiteContext.CONTEXT);
@@ -92,7 +96,13 @@ function createDocumentLoader(key: Record<string, string>) {
   return jdl.build();
 }
 
-/** Верификация подписанного документа (Verifiable Credential) */
+/**
+ * Верификация подписанного документа (Verifiable Credential)
+ * @param {Request} request - Express-запрос с VC в теле
+ * @param {Response} response - Express-ответ
+ * @param {NextFunction} next - следующий middleware
+ * @returns {Promise<void>}
+ */
 export default async function (request: Request, response: Response, next: NextFunction): Promise<void> {
   if (!request?.body) {
     return next(new Error('Invalid credential format'));
