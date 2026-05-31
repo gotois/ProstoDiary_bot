@@ -4,11 +4,12 @@ const { SECRETARY } = env;
 
 /**
  * @description Проверка сети
- * @param {object} bot - telegram bot
+ * @param {object} activity - activity
  * @param {object} message - telegram message
+ * @param {object} bot - telegram bot
  * @returns {Promise<void>}
  */
-export default async (bot, message) => {
+export default async (activity, message, bot) => {
   const response = await fetch(SECRETARY.HOST + '/health?service=redis', {
     method: 'GET',
     headers: {

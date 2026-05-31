@@ -10,7 +10,7 @@ export async function sendPrepareAction(bot, chatId, type) {
   }
 }
 
-export async function sendPrepareMessage(bot, message) {
+export async function sendPrepareMessage(activity, message, bot) {
   await bot.setMessageReaction(message.chat.id, message.message_id, {
     reaction: JSON.stringify([
       {

@@ -6,7 +6,7 @@ import { deleteUser } from '../../models/users.mjs';
  * @param {object} message - message
  * @returns {Promise<void>}
  */
-export default async (bot, message) => {
+export default async (activity, message, bot) => {
   const { message_id } = await bot.sendMessage(message.chat.id, 'Очистить ваши записи?\nНапишите: YES', {
     reply_markup: {
       force_reply: true,

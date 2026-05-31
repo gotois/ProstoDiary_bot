@@ -1,6 +1,6 @@
 import secretaryAI from '../../libs/secretary-ai.mjs';
 
-export default async (bot, message) => {
+export default async (activity, message) => {
   console.log('TODO: очистка истории агента');
 
   await secretaryAI.clear({

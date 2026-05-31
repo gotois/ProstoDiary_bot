@@ -13,7 +13,7 @@ const getCheckSum = (buffer, algorithm = 'md5', encoding = 'hex') => {
 };
 
 // Помощь
-export default async (bot, message) => {
+export default async (activity, message, bot) => {
   const helpData = Object.entries({
     help: 'Помощь',
     ping: 'Проверка связи',

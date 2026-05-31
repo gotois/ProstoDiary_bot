@@ -6,9 +6,9 @@ import { deleteUser } from '../models/users.mjs';
  * @returns {Promise<*>}
  */
 export default function (callback) {
-  return async (bot, message) => {
+  return async (activity, message, bot) => {
     try {
-      await callback(bot, message);
+      await callback(activity, message, bot);
     } catch (error) {
       console.error(error);
       if (!message.chat) {

@@ -14,7 +14,7 @@ const ICalendar = icalBrowser.default;
  * @param {object} message - telegram message
  * @returns {Promise<void>}
  */
-export default async (bot, message) => {
+export default async (activity, message, bot) => {
   const event = await getCalendarMessage(message.chat.id + '' + message.message_id);
   if (!event) {
     throw new Error('Событие не найдено');

@@ -78,7 +78,7 @@ const { middleware, bot } = botController({
     // ['pinned_message']: () => {},
 
     /* CALLBACK */
-    ['web_app_data']: (bot, message) => {
+    ['web_app_data']: (activity, message) => {
       console.log('message::', message);
       const webAppData = JSON.parse(message.web_app_data.data);
       for (const { type, data } of webAppData) {
@@ -149,7 +149,7 @@ const { middleware, bot } = botController({
 
     /* CALLBACK */
 
-    ['approve_event']: async (bot, message) => {
+    ['approve_event']: async (activity, message, bot) => {
       await bot.answerCallbackQuery(message.id, {
         text: 'Идет обработка...',
         show_alert: false,
@@ -163,7 +163,7 @@ const { middleware, bot } = botController({
   },
 });
 
-bot.on('message', (activity, message) => {
+bot.on('message', (message, activity) => {
   message = Array.isArray(message) ? message[0] : message;
   let user = getUser(message.chat.id);
   if (!user) {

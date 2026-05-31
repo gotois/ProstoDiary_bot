@@ -5,7 +5,7 @@ import { getUser } from '../../models/users.mjs';
 
 const { SECRETARY } = env;
 
-export default async (bot, message) => {
+export default async (activity, message, bot) => {
   const user = getUser(message.chat.id);
   const [_method, userId, activityId] = message.data.split(':');
 

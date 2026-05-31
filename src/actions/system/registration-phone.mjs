@@ -11,7 +11,7 @@ const { SECRETARY } = env;
  * @param {object} message - telegram message
  * @returns {Promise<void>}
  */
-export default async (bot, message) => {
+export default async (activity, message, bot) => {
   await bot.deleteMessage(message.chat.id, message.message_id);
 
   const body = {

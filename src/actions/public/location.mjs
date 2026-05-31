@@ -2,8 +2,8 @@ import tzlookup from '@photostructure/tz-lookup';
 import { updateUserLocation } from '../../models/users.mjs';
 import { sendPrepareMessage } from '../../libs/tg-messages.mjs';
 
-export default async (bot, message) => {
-  await sendPrepareMessage(bot, message);
+export default async (activity, message, bot) => {
+  await sendPrepareMessage(activity, message, bot);
   if (!(message.user.location && message.user.jwt)) {
     const timezone = tzlookup(message.location.latitude, message.location.longitude);
     await updateUserLocation(message.chat.id, {
@@ -40,7 +40,7 @@ export default async (bot, message) => {
     message.location.caption = text;
     const type = 'text/markdown';
     try {
-      await sendPrepareMessage(bot, message);
+      await sendPrepareMessage(activity, message, bot);
       switch (type) {
         case 'text/markdown': {
           await bot.sendMessage(message.chat.id, text, {

@@ -1,4 +1,4 @@
-export default async (bot, message) => {
+export default async (activity, message, bot) => {
   console.log('action', message);
   if (message.new_chat_member) {
     const string_ = `Всем привет! Меня зовут ${message.new_chat_member.first_name}`;

@@ -2,17 +2,17 @@ import { parseMode, sendPrepareMessage } from '../../libs/tg-messages.mjs';
 import voiceAction from '../public/voice.mjs';
 import textAction from '../public/voice.mjs';
 
-export default async (bot, messages) => {
+export default async (activity, message, bot) => {
   console.log(`Обработка транзакции из ${messages.length} сообщений:`);
 
   for (const message of messages) {
     console.log('mess', message);
-    await sendPrepareMessage(bot, message);
+    await sendPrepareMessage(activity, message, bot);
 
     if (message.voice) {
-      await voiceAction(bot, message);
+      await voiceAction(activity, message, bot);
     } else if (message.text) {
-      await textAction(bot, message);
+      await textAction(activity, message, bot);
     } else {
       await bot.sendMessage(message.chat.id, 'Unknown message type', {
         parse_mode: parseMode('text/plain'),

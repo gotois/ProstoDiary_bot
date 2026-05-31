@@ -1,4 +1,4 @@
-export default async (bot, message) => {
+export default async (activity, message, bot) => {
   await bot.sendMessage(
     message.chat.id,
     'Приветствую! Я ваш виртуальный секретарь.\n' + 'Проанализирую ваши активности и сформирую из них контракты.',

@@ -3,7 +3,7 @@
 // пример запроса:
 // @secretary_dev_bot какие сегодня встречи?
 
-export default async (bot, message) => {
+export default async (activity, message, bot) => {
   console.log('WIP inline action', message);
   if (message.location) {
     console.log(message.location.latitude);

@@ -32,7 +32,7 @@ function getInstallAgainText() {
  * @param {object} message - telegram message
  * @returns {Promise<void>}
  */
-export default async (bot, message) => {
+export default async (activity, message, bot) => {
   if (message.user?.expired_at && message.user.expired_at >= Date.now() / 1000) {
     // todo - делать дополнительную проверку доступности через ping
     // ...

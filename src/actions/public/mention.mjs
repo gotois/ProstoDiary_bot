@@ -1,6 +1,6 @@
 import textAction from './text.mjs';
 
-export default (bot, message) => {
+export default (activity, message, bot) => {
   console.log('mention', message);
-  return textAction(bot, message);
+  return textAction(activity, message, bot);
 };

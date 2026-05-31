@@ -4,8 +4,8 @@ import { sendPrepareMessage } from '../../libs/tg-messages.mjs';
 
 const { SECRETARY } = env;
 
-export default async (bot, message) => {
-  await sendPrepareMessage(bot, message);
+export default async (activity, message, bot) => {
+  await sendPrepareMessage(activity, message, bot);
 
   console.log('message:', message);
   const url = `${SECRETARY.HOST}/file/${message.audio.audio_id}`;

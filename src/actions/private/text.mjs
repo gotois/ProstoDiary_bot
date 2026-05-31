@@ -57,7 +57,7 @@ const getTaskId = (id) => {
   }
 };
 
-export default async (bot, message) => {
+export default async (activity, message, bot) => {
   await sendPrepareAction(bot, message.chat.id, TYPING);
 
   const headers = new Headers();
@@ -106,6 +106,6 @@ export default async (bot, message) => {
     },
   });
   if (artifact) {
-    await sendPrepareMessage(bot, message);
+    await sendPrepareMessage(activity, message, bot);
   }
 };

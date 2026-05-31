@@ -1,4 +1,4 @@
-export const notifyDice = async (bot, message) => {
+export const notifyDice = async (activity, message, bot) => {
   const diceMessage = await bot.sendDice(message.chat.id, {
     emoji: '🎰',
   });
@@ -13,7 +13,7 @@ export const notifyDice = async (bot, message) => {
   }, value * 1000);
 };
 
-export const notifyNextHour = (bot, message) => {
+export const notifyNextHour = (activity, message, bot) => {
   setTimeout(async () => {
     await bot.sendMessage(message.chat.id, 'Напоминаю.', {
       message_id: message.message_id,
@@ -21,7 +21,7 @@ export const notifyNextHour = (bot, message) => {
   }, 60_000);
 };
 
-export const notifyNextDay = (bot, message) => {
+export const notifyNextDay = (activity, message, bot) => {
   setTimeout(async () => {
     await bot.sendMessage(message.chat.id, 'Напоминаю.', {
       message_id: message.message_id,

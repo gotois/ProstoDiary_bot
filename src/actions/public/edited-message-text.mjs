@@ -9,7 +9,7 @@ const previousInput = (input) => {
   return `${input.replaceAll('\n', ' ').slice(0, 6)}…`;
 };
 
-export default async (bot, message) => {
+export default async (activity, message, bot) => {
   if (message.text.startsWith('/')) {
     await bot.sendMessage(message.chat.id, 'Редактирование этой записи невозможно', {
       disable_notification: true,

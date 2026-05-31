@@ -1,4 +1,4 @@
-export default async function (bot, message) {
+export default async function (activity, message, bot) {
   const text = message.entities
     .filter((entity) => {
       return entity.type === 'bot_command';

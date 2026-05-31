@@ -8,7 +8,7 @@ import { setJWT } from '../models/users.mjs';
  * @returns {(function(*, *): void)}
  */
 export default function (callback) {
-  return async (bot, message) => {
+  return async (activity, message, bot) => {
     if (message.user?.expired_at && message.user.expired_at < Date.now() / 1000) {
       // делаем ротацию ключей для обновления
       if (message.user.refresh_token) {
@@ -47,6 +47,6 @@ export default function (callback) {
       console.log('WIP supports: bot = ' + message.via_bot.is_bot, message.via_bot);
     }
 
-    await errorHandler(callback)(bot, message);
+    await errorHandler(callback)(activity, message, bot);
   };
 }
