@@ -4,11 +4,7 @@ import env from '../../environments/index.ts';
 
 const { IS_DEV, TELEGRAM } = env;
 
-/**
- * @param {any[]} [artifact] - artifact
- * @returns {*}
- */
-function generateInlineKeyboard(artifact = []) {
+function generateInlineKeyboard(artifact: unknown[] = []): unknown[][] {
   const inlineKeyboard = [];
   for (const action of artifact) {
     switch (action['@type']) {

@@ -1,6 +1,23 @@
 import { jwtDecode } from 'jwt-decode';
 import { userDB } from '../libs/database.ts';
 
+export interface User {
+  id: number;
+  actor_id: string | null;
+  location: string | null;
+  language: string;
+  timezone: string | null;
+  access_token: string | null;
+  id_token: string | null;
+  refresh_token: string | null;
+  created_at: number;
+  expired_at: number | null;
+}
+
+function isUser(val: unknown): val is User {
+  return typeof val === 'object' && val !== null && 'id' in val;
+}
+
 try {
   userDB.exec(`
     CREATE TABLE if not exists users(
@@ -20,63 +37,42 @@ try {
   console.error(error);
 }
 
-/**
- * Удаляет пользователя по id
- * @param {number} userId - идентификатор пользователя
- * @returns {undefined}
- */
-export const deleteUser = (userId) => {
+/** Удаляет пользователя по id */
+export const deleteUser = (userId: number): void => {
   const query = userDB.prepare('DELETE FROM users WHERE id == ?');
   query.run(userId);
 };
-/**
- * @param {number} userId - telegram user id
- * @returns {boolean}
- */
-export const hasUser = (userId) => {
+/** Проверяет существование пользователя по telegram id */
+export const hasUser = (userId: number): boolean => {
   const query = userDB.prepare('SELECT * FROM users WHERE id == ?');
   const users = query.all(userId);
   return users.length > 0;
 };
-/**
- * @param {number} userId - telegram user id
- * @returns {Record<string, any>} - user
- */
-export const getUser = (userId) => {
+/** Возвращает пользователя по telegram id */
+export const getUser = (userId: number): User | undefined => {
   const query = userDB.prepare('SELECT * FROM users WHERE id == ?');
-  return query.get(userId);
+  const row = query.get(userId);
+  return isUser(row) ? row : undefined;
 };
-/**
- * @param {string} actorId - secretary actor id
- * @returns {Record<string, any>|undefined} - user or undefined if not found
- */
-export const getUserByActorId = (actorId) => {
+/** Возвращает пользователя по actor id секретаря */
+export const getUserByActorId = (actorId: string): User | undefined => {
   const query = userDB.prepare('SELECT * FROM users WHERE actor_id == ?');
-  return query.get(actorId);
+  const row = query.get(actorId);
+  return isUser(row) ? row : undefined;
 };
-
-/**
- * @param {number} userId - telegram user id
- * @returns {Record<string, any>} - user
- */
-export const setNewUser = (userId) => {
+/** Создаёт нового пользователя по telegram id */
+export const setNewUser = (userId: number): User | undefined => {
   const insert = userDB.prepare(`
     INSERT INTO users (id) VALUES (:id)
   `);
   insert.run({ id: userId });
   return getUser(userId);
 };
-
 /**
- * @description обновление местоположения пользователя
+ * Обновление местоположения пользователя
  * @see https://www.here.com/docs/bundle/places-search-api-developer-guide/page/topics/location-contexts.html#location-contexts__position-format
- * @param {number} userId - telegram user id
- * @param {object} obj - object
- * @param {number} obj.latitude - latitude
- * @param {number} obj.longitude - longitude
- * @param {number} [obj.u] - u
  */
-export const updateUserLocation = (userId, { latitude, longitude, u = 50 }) => {
+export const updateUserLocation = (userId: number, { latitude, longitude, u = 50 }: { latitude: number; longitude: number; u?: number }): void => {
   const location = `geo:${latitude},${longitude};cgen=gps;u=${u}`;
   const insert = userDB.prepare(`
     INSERT INTO users (id, location) VALUES (:id, :location)
@@ -87,11 +83,8 @@ export const updateUserLocation = (userId, { latitude, longitude, u = 50 }) => {
   `);
   insert.run({ id: userId, location });
 };
-/**
- * @param {number|string} userId - telegram user id
- * @param {string} timezone - timezone
- */
-export const updateUserTimezone = (userId, timezone) => {
+/** Обновление часового пояса пользователя */
+export const updateUserTimezone = (userId: number | string, timezone: string): void => {
   const insert = userDB.prepare(`
     INSERT INTO users (id, timezone) VALUES (:id, :timezone)
     ON CONFLICT(id)
@@ -101,16 +94,10 @@ export const updateUserTimezone = (userId, timezone) => {
   `);
   insert.run({ id: Number(userId), timezone });
 };
-/**
- * @description обновление JWT токенов пользователя
- * @param {string} userId - telegram user id
- * @param {string} actorId - secretary actor id
- * @param {{access_token:string,expires_in:number,id_token:string,refresh_token:string,token_type:string}} tokens - json web tokens
- */
-export const setJWT = (userId, actorId, tokens) => {
+/** Обновление JWT токенов пользователя */
+export const setJWT = (userId: number | string, actorId: string, tokens: { access_token: string; expires_in: number; id_token: string; refresh_token: string; token_type: string }): void => {
   const { access_token, id_token, refresh_token } = tokens;
   const { exp } = jwtDecode(id_token);
-
   const insert = userDB.prepare(`
     INSERT INTO users (id, actor_id, access_token, id_token, refresh_token, expired_at) VALUES (:id, :actor_id, :access_token, :id_token, :refresh_token, :exp)
     ON CONFLICT(id)
@@ -125,12 +112,8 @@ export const setJWT = (userId, actorId, tokens) => {
   `);
   insert.run({ id: userId, actor_id: actorId, access_token, id_token, refresh_token, exp });
 };
-/**
- * @description обновление языка пользователя
- * @param {number} userId - user id
- * @param {string} language - language code
- */
-export const setLanguage = (userId, language) => {
+/** Обновление языка пользователя */
+export const setLanguage = (userId: number, language: string): void => {
   const insert = userDB.prepare(`
     INSERT INTO users (id, language) VALUES (:id, :language)
     ON CONFLICT(id)

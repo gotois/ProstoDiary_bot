@@ -1,7 +1,8 @@
+import type { Request, Response } from 'express';
 import { buildAuthorizationUrl } from 'openid-client';
 import { getAuthorization } from '../libs/oidc-client.ts';
 
-export default async (request, response) => {
+export default async (request: Request, response: Response): Promise<void> => {
   try {
     const { client, codeVerifier, parameters } = await getAuthorization();
     request.session.code_verifier = codeVerifier;

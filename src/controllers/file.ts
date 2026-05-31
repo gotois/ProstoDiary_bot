@@ -1,15 +1,10 @@
+import type { Request, Response } from 'express';
 import env from '../environments/index.ts';
 import { getMimeType } from '../libs/file-type.ts';
 
 const { TELEGRAM } = env;
 
-/**
- * @description Проксирует файл из Telegram по file_id
- * @param {import('express').Request<{ file_id: string }>} request - request
- * @param {import('express').Response} response - response
- * @returns {Promise<void>}
- */
-export default async (request, response) => {
+export default async (request: Request<{ file_id: string }>, response: Response): Promise<void> => {
   const fileId = request.params.file_id;
   if (!fileId) {
     throw new Error('Unknown file ID');

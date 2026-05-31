@@ -1,8 +1,9 @@
 import fs from 'node:fs';
 import https from 'node:https';
-import express from 'express';
+import express, { type Express } from 'express';
 import session from 'express-session';
 import minimist from 'minimist';
+import type { ParsedArgs } from 'minimist';
 import env from './environments/index.ts';
 import botController from './controllers/bot.ts';
 import vcLdJsonParser from './middleware/vc-ld-json-parser.ts';
@@ -16,10 +17,10 @@ import transcriptionController from './controllers/transcription.ts';
 import webhookController from './controllers/webhook.ts';
 
 const { SERVER } = env;
-const argv = minimist(process.argv.slice(2));
-const app = express();
-const port = Number(argv.port || 443);
-const local = argv.local;
+const argv: ParsedArgs = minimist(process.argv.slice(2));
+const app: Express = express();
+const port: number = Number(argv.port || 443);
+const local: boolean = Boolean(argv.local);
 
 app.use(
   session({

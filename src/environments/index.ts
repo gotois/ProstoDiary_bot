@@ -28,29 +28,17 @@ export default {
     },
   },
   DATABASE: {
-    /**
-     * @returns {string}
-     */
     root() {
       return path.join(import.meta.dirname, '../../');
     },
-    /**
-     * @returns {string}
-     */
     get USERS() {
       return path.join(this.root(), 'database', 'users.sqlite');
     },
   },
   AGENT: {
-    /**
-     * @returns {string}
-     */
     get MODEL() {
       return 'yandexgpt-lite';
     },
-    /**
-     * @returns {string}
-     */
     get MEMORY() {
       if (IS_DEV) {
         return ':memory:';
@@ -59,15 +47,9 @@ export default {
     },
   },
   SERVER: {
-    /**
-     * @returns {string}
-     */
     get HOST() {
       return HOST;
     },
-    /**
-     * @returns {string}
-     */
     get APP_URL() {
       return APP_URL;
     },
@@ -78,21 +60,12 @@ export default {
     },
   },
   SECRETARY: {
-    /**
-     * @returns {string}
-     */
     get MCP() {
       return SERVER_HOST + '/mcp';
     },
-    /**
-     * @returns {string}
-     */
     get RPC() {
       return SERVER_HOST + '/rpc';
     },
-    /**
-     * @returns {string}
-     */
     get HOST() {
       return SERVER_HOST;
     },
@@ -117,9 +90,6 @@ export default {
       return APP_URL;
     },
   },
-  /**
-   * @returns {boolean}
-   */
   get IS_DEV() {
     return IS_DEV;
   },

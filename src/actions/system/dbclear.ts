@@ -1,11 +1,6 @@
 import { deleteUser } from '../../models/users.ts';
 
-/**
- * Очистить базу данных с подтверждением - Удаление всей истории пользователя целиком
- * @param {any} bot - bot
- * @param {object} message - message
- * @returns {Promise<void>}
- */
+/** Очистить базу данных с подтверждением — удаление всей истории пользователя */
 export default async (activity, message, bot) => {
   const { message_id } = await bot.sendMessage(message.chat.id, 'Очистить ваши записи?\nНапишите: YES', {
     reply_markup: {

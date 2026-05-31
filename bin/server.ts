@@ -1,13 +1,14 @@
 import ngrok from '@ngrok/ngrok';
 import minimist from 'minimist';
+import type { ParsedArgs } from 'minimist';
 import { spawn } from 'node:child_process';
 
-const argv = minimist(process.argv.slice(2));
+const argv: ParsedArgs = minimist(process.argv.slice(2));
 
 /**
  * @param {Record<string, string>} [extraEnv] - дополнительные переменные среды
  */
-function startServer(extraEnv = {}) {
+function startServer(extraEnv: Record<string, string> = {}): void {
   const child = spawn(
     process.execPath,
     ['-r', 'dotenv/config', '--watch', 'src/index.ts', `--port=${argv.port}`],

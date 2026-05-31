@@ -1,3 +1,4 @@
+import type { Request, Response } from 'express';
 import { authorizationCodeGrant, fetchUserInfo } from 'openid-client';
 import { pdfToPng } from 'pdf-to-png-converter';
 import { setJWT, updateUserTimezone } from '../models/users.ts';
@@ -8,7 +9,7 @@ import env from '../environments/index.ts';
 
 const { TELEGRAM, SECRETARY, SERVER } = env;
 
-export default async (request, response) => {
+export default async (request: Request, response: Response): Promise<void> => {
   if (request.query?.error) {
     return response.status(400).send(`
     <h1>${request.query.error_description}</h1>

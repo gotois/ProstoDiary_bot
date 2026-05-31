@@ -2,13 +2,7 @@ import env from '../../environments/index.ts';
 
 const { SECRETARY } = env;
 
-/**
- * @description Проверка сети
- * @param {object} activity - activity
- * @param {object} message - telegram message
- * @param {object} bot - telegram bot
- * @returns {Promise<void>}
- */
+/** Проверка сети */
 export default async (activity, message, bot) => {
   const response = await fetch(SECRETARY.HOST + '/health?service=redis', {
     method: 'GET',

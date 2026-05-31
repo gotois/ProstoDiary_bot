@@ -2,13 +2,7 @@ import crypto from 'node:crypto';
 import packageLock_ from '../../../package-lock.json' with { type: 'json' };
 import package_ from '../../../package.json' with { type: 'json' };
 
-/**
- * @param {Buffer|string} buffer - file
- * @param {string} [algorithm] - algorithm
- * @param {string} [encoding] - encoding
- * @returns {string}
- */
-const getCheckSum = (buffer, algorithm = 'md5', encoding = 'hex') => {
+const getCheckSum = (buffer: Buffer | string, algorithm = 'md5', encoding: crypto.BinaryToTextEncoding = 'hex'): string => {
   return crypto.createHash(algorithm).update(buffer, 'utf8').digest(encoding);
 };
 

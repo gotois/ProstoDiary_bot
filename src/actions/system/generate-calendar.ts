@@ -8,11 +8,8 @@ const { IS_DEV } = env;
 const ICalendar = icalBrowser.default;
 
 /**
- * @deprecated - вся логика по генерации делается в агенте
- * @description Генерация календаря и отправка файла ical Секретарю
- * @param {any} bot - telegram bot
- * @param {object} message - telegram message
- * @returns {Promise<void>}
+ * @deprecated вся логика по генерации делается в агенте
+ * Генерация календаря и отправка файла ical Секретарю
  */
 export default async (activity, message, bot) => {
   const event = await getCalendarMessage(message.chat.id + '' + message.message_id);

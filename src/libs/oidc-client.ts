@@ -1,13 +1,11 @@
+import type { Configuration } from 'openid-client';
 import { randomPKCECodeVerifier, calculatePKCECodeChallenge, randomState, discovery } from 'openid-client';
 import env from '../environments/index.ts';
 
 const { SECRETARY, OIDC } = env;
 
-let client;
+let client: Configuration | undefined;
 
-/**
- * @returns {object}
- */
 export async function getAuthorization() {
   const client = await getClient();
   const codeVerifier = randomPKCECodeVerifier();
@@ -27,10 +25,7 @@ export async function getAuthorization() {
   };
 }
 
-/**
- * @returns {Promise<import('openid-client').Configuration>}
- */
-export async function getClient() {
+export async function getClient(): Promise<Configuration> {
   if (client) {
     return client;
   }

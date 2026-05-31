@@ -5,11 +5,8 @@ import env from '../../environments/index.ts';
 const { SECRETARY } = env;
 
 /**
- * @deprecated - теперь новый FLOW - перенести отработку в интерактив OIDC
- * @description Ассистент детектирует пользователя
- * @param {object} bot - telegram bot
- * @param {object} message - telegram message
- * @returns {Promise<void>}
+ * @deprecated теперь новый FLOW — перенести отработку в интерактив OIDC
+ * Ассистент детектирует пользователя
  */
 export default async (activity, message, bot) => {
   await bot.deleteMessage(message.chat.id, message.message_id);

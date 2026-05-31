@@ -1,11 +1,5 @@
-/**
- * 'Some' => 'Some…'
- * '123456789' => '123456…'
- * @description Message updated text
- * @param {string} input - user input text
- * @returns {string}
- */
-const previousInput = (input) => {
+/** Обрезает input для отображения предыдущего сообщения */
+const previousInput = (input: string): string => {
   return `${input.replaceAll('\n', ' ').slice(0, 6)}…`;
 };
 

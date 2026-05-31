@@ -3,11 +3,7 @@ import errorHandler from './error-handler.ts';
 import { getClient } from '../libs/oidc-client.ts';
 import { setJWT } from '../models/users.ts';
 
-/**
- * @param {Function} callback - callback
- * @returns {(function(*, *): void)}
- */
-export default function (callback) {
+export default function (callback: (...args: unknown[]) => Promise<void>) {
   return async (activity, message, bot) => {
     if (message.user?.expired_at && message.user.expired_at < Date.now() / 1000) {
       // делаем ротацию ключей для обновления

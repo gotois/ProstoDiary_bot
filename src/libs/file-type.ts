@@ -1,17 +1,12 @@
 import { fileTypeFromBuffer } from 'file-type';
 
-/**
- * @param {Buffer|Uint8Array|string} input - input
- * @param {string} [filename] - filename
- * @returns {Promise<string>}
- */
-export async function getMimeType(input, filename) {
+export async function getMimeType(input: Buffer | Uint8Array | string, filename?: string): Promise<string> {
   if (input instanceof Uint8Array || Buffer.isBuffer(input)) {
     const result = await fileTypeFromBuffer(input);
     if (result && result.mime) {
       const [mime] = result.mime.split(' ');
       return mime.replace(';', '');
-    } else if (filename.endsWith('.txt')) {
+    } else if (filename?.endsWith('.txt')) {
       return 'text/plain';
     }
   }

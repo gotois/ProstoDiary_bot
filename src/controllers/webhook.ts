@@ -1,7 +1,8 @@
+import type { Request, Response } from 'express';
 import { bot } from './bot.ts';
 import { getUserByActorId } from '../models/users.ts';
 
-export default async (request, response) => {
+export default async (request: Request, response: Response): Promise<void> => {
   const activity = request.body?.credentialSubject;
   if (!activity) {
     return response.status(400).send('Validation Body Failed');

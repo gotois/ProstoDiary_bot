@@ -1,3 +1,4 @@
+import type { Request, Response } from 'express';
 import { Readable } from 'node:stream';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegStatic from 'ffmpeg-static';
@@ -11,11 +12,7 @@ ffmpeg.setFfmpegPath(ffmpegStatic);
 
 const AUDIO_DURATION_LIMIT = 60;
 
-/**
- * @param {Buffer} inputBuffer - input buffer
- * @returns {Promise<Buffer>}
- */
-const convertAudio = (inputBuffer) => {
+const convertAudio = (inputBuffer: Buffer): Promise<Buffer> => {
   return new Promise((resolve, reject) => {
     const stream = Readable.from(inputBuffer);
     const buffers = [];
@@ -39,13 +36,8 @@ const convertAudio = (inputBuffer) => {
   });
 };
 
-/**
- * @description Преобразует аудиофайл из Telegram по file_id
- * @param {import('express').Request<{ file_id: string }>} request - request
- * @param {import('express').Response} response - response
- * @returns {Promise<void>} Результат транскрипции
- */
-export default async (request, response) => {
+/** Преобразует аудиофайл из Telegram по file_id в текст */
+export default async (request: Request<{ file_id: string }>, response: Response): Promise<void> => {
   const fileId = request.params.file_id;
 
   const url = `${SERVER.HOST}/file/${fileId}`;

@@ -3,14 +3,10 @@ import env from '../environments/index.ts';
 
 const { TELEGRAM } = env;
 
-export const generateTelegramHash = (data) => {
+export const generateTelegramHash = (data: Record<string, string>): string => {
   const checkString = Object.keys(data)
-    .filter((key) => {
-      return key !== 'hash';
-    })
-    .map((key) => {
-      return `${key}=${data[key]}`;
-    })
+    .filter((key) => key !== 'hash')
+    .map((key) => `${key}=${data[key]}`)
     .toSorted()
     .join('\n');
 

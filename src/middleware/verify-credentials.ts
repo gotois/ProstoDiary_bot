@@ -1,15 +1,12 @@
+import type { Request, Response, NextFunction } from 'express';
 import { verifyCredential } from '@digitalbazaar/vc';
 import { Ed25519Signature2020, suiteContext } from '@digitalbazaar/ed25519-signature-2020';
 import { Ed25519VerificationKey2020 } from '@digitalbazaar/ed25519-verification-key-2020';
 import * as cred from 'credentials-context';
 import { JsonLdDocumentLoader } from 'jsonld-document-loader';
 
-/**
- * @param {any} key - key
- * @description Создание загрузчика документов с кэшированием контекстов под конкретный ключ
- * @returns {(url: string) => any}
- */
-function createDocumentLoader(key) {
+/** Создание загрузчика документов с кэшированием контекстов под конкретный ключ */
+function createDocumentLoader(key: Record<string, string>) {
   const jdl = new JsonLdDocumentLoader();
   jdl.addStatic(suiteContext.CONTEXT_URL, suiteContext.CONTEXT);
   jdl.addStatic(Ed25519Signature2020.CONTEXT_URL, Ed25519Signature2020.CONTEXT);
@@ -95,16 +92,8 @@ function createDocumentLoader(key) {
   return jdl.build();
 }
 
-/**
- * @description Верификация подписанного документа (Verifiable Credential)
- * @param {object} request - request
- * @param {object} request.body - Подписанный VC документ
- * @param {object} response - response
- * @param {any} next - next
- * @returns {Promise<{verified: boolean, results: Array}>}
- * @throws {Error} - VerificationError
- */
-export default async function (request, response, next) {
+/** Верификация подписанного документа (Verifiable Credential) */
+export default async function (request: Request, response: Response, next: NextFunction): Promise<void> {
   if (!request?.body) {
     return next(new Error('Invalid credential format'));
   }

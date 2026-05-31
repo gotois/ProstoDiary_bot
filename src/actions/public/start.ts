@@ -2,10 +2,7 @@ import env from '../../environments/index.ts';
 
 const { IS_DEV, SERVER } = env;
 
-/**
- * @returns {string}
- */
-function getWelcomeText() {
+const getWelcomeText = (): string => {
   return (
     '**Привет\\! 👋**\n\n' +
     String.raw`Я \- ваш персональный календарный бот, ` +
@@ -17,21 +14,13 @@ function getWelcomeText() {
     '📊 __Анализ вашего расписания__\n\n' +
     'Пожалуйста, авторизуйтесь\\.\n\n'
   ).trim();
-}
+};
 
-/**
- * @returns {string}
- */
-function getInstallAgainText() {
+const getInstallAgainText = (): string => {
   return 'Установка не требуется\\.\n\nУзнай больше подробностей командой /help\\.'.trim();
-}
+};
 
-/**
- * @description Начало работы
- * @param {object} bot - telegram bot
- * @param {object} message - telegram message
- * @returns {Promise<void>}
- */
+/** Начало работы с ботом */
 export default async (activity, message, bot) => {
   if (message.user?.expired_at && message.user.expired_at >= Date.now() / 1000) {
     // todo - делать дополнительную проверку доступности через ping

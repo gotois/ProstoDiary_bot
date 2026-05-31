@@ -1,11 +1,7 @@
 import { deleteUser } from '../models/users.ts';
 
-/**
- * @description Обработчик ошибок
- * @param {Function} callback - callback
- * @returns {Promise<*>}
- */
-export default function (callback) {
+/** Обработчик ошибок */
+export default function (callback: (...args: unknown[]) => Promise<void>) {
   return async (activity, message, bot) => {
     try {
       await callback(activity, message, bot);
