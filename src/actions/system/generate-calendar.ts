@@ -40,6 +40,7 @@ export default async (activity, message, bot) => {
     'summary': event.title,
     'description': event.details,
     'location': event.location,
+    'x-emotional': 'neutral',
     'x-telegram-message-id': message.message_id,
   });
   const valarm = new icalBrowser.VAlarm({

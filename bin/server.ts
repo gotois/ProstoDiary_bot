@@ -17,6 +17,8 @@ function startServer(extraEnvironment: Record<string, string> = {}): void {
   child.on('exit', (code) => {
     return process.exit(code ?? 0);
   });
+}
+
 if (process.env.NGROK_AUTHTOKEN) {
   const listener = await ngrok.forward({
     addr: argv.port,
