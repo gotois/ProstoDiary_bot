@@ -59,7 +59,7 @@ Create a `.env` file and write:
 
 `TELEGRAM_DOMAIN`
 
-`SERVER_HOST`
+`SECRETARY_HOST`
 
 `APP_URL`
 

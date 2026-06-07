@@ -19,7 +19,7 @@ NGROK_AUTHTOKEN={ Your ngrok token }
 
 TELEGRAM_TOKEN={ Your telegram bot token like 1234567890:AAA-qwertyuiopasdfghjklzxcvbnmqwert }
 APP_URL={ Your telegram app name like https://archive.gotointeractive.com or https://t.me/gotois_bot/App }
-SERVER_HOST={ Your server api like https://api.gotointeractive.com }
+SECRETARY_HOST={ Your server api like https://api.gotointeractive.com }
 
 <details>
 	<summary>Setup PostgreSQL 11.0</summary>

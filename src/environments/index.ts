@@ -3,7 +3,7 @@ import path from 'node:path';
 const {
   NODE_ENV,
   HOST,
-  SERVER_HOST,
+  SECRETARY_HOST,
   CLIENT_ID,
   CLIENT_SECRET,
   APP_URL,
@@ -61,13 +61,13 @@ export default {
   },
   SECRETARY: {
     get MCP() {
-      return SERVER_HOST + '/mcp';
+      return SECRETARY_HOST + '/mcp';
     },
     get RPC() {
-      return SERVER_HOST + '/rpc';
+      return SECRETARY_HOST + '/rpc';
     },
     get HOST() {
-      return SERVER_HOST;
+      return SECRETARY_HOST;
     },
   },
   TELEGRAM: {

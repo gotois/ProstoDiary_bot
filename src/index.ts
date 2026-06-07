@@ -18,8 +18,8 @@ import webhookController from './controllers/webhook.ts';
 const { SERVER } = env;
 const argv: ParsedArgs = minimist(process.argv.slice(2));
 const app: Express = express();
-const port: number = Number(argv.port || 443);
-const local: boolean = Boolean(argv.local);
+const port = Number(argv.port || 443);
+const local = Boolean(argv.local);
 
 app.use(
   session({
@@ -54,10 +54,10 @@ if (local) {
   const key = fs.readFileSync(keyPath);
   const cert = fs.readFileSync(certPath);
   https.createServer({ key, cert }, app).listen(port, () => {
-    console.log('🔒 Telegram Server listening on: ' + SERVER.HOST);
+    console.log(`🔒 Telegram Server listening on: ${SERVER.HOST}:${port}`);
   });
 } else {
   app.listen(port, () => {
-    console.log(`🚀 Telegram Server is listening port:${port}`);
+    console.log(`🚀 Telegram Server is listening http://localhost:${port}`);
   });
 }
