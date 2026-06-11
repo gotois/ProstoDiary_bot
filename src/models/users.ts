@@ -52,8 +52,6 @@ export const deleteUser = (userId: number): void => {
 };
 /**
  * Проверяет существование пользователя по telegram id
- * @param {number} userId - Telegram id пользователя
- * @returns {boolean} true если пользователь существует
  */
 export const hasUser = (userId: number): boolean => {
   const query = userDB.prepare('SELECT * FROM users WHERE id == ?');
@@ -62,8 +60,6 @@ export const hasUser = (userId: number): boolean => {
 };
 /**
  * Возвращает пользователя по telegram id
- * @param {number} userId - Telegram id пользователя
- * @returns {User|undefined} Объект пользователя или undefined
  */
 export const getUser = (userId: number): User | undefined => {
   const query = userDB.prepare('SELECT * FROM users WHERE id == ?');
@@ -72,8 +68,6 @@ export const getUser = (userId: number): User | undefined => {
 };
 /**
  * Возвращает пользователя по actor id секретаря
- * @param {string} actorId - actor id из системы секретаря
- * @returns {User|undefined} Объект пользователя или undefined
  */
 export const getUserByActorId = (actorId: string): User | undefined => {
   const query = userDB.prepare('SELECT * FROM users WHERE actor_id == ?');
@@ -82,8 +76,6 @@ export const getUserByActorId = (actorId: string): User | undefined => {
 };
 /**
  * Создаёт нового пользователя по telegram id
- * @param {number} userId - Telegram id пользователя
- * @returns {User|undefined} Созданный объект пользователя или undefined
  */
 export const setNewUser = (userId: number): User | undefined => {
   const insert = userDB.prepare(`
