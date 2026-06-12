@@ -42,7 +42,7 @@ export default async (request: Request, response: Response, next: NextFunction):
       return response.status(400).send('Created event id is missing');
     }
 
-    if (typeof remindBefore === 'number') {
+    if (typeof remindBefore === 'number' || remindBefore === null) {
       const startDate = new Date(event.start_date);
       const remindResponse = await jsonRpc({
         url: SECRETARY.RPC,
@@ -59,7 +59,7 @@ export default async (request: Request, response: Response, next: NextFunction):
             day_of_month: startDate.getUTCDate(),
             hour: startDate.getUTCHours(),
             minute: startDate.getUTCMinutes(),
-            remind_before: remindBefore * 60,
+            remind_before: remindBefore === null ? null : remindBefore * 60,
           },
         },
         headers: {
@@ -72,15 +72,27 @@ export default async (request: Request, response: Response, next: NextFunction):
       }
     }
 
-    await bot.editMessageText(formatTelegramGroupMeeting(event), {
-      chat_id: chatId,
-      message_id: Number(messageId),
-      reply_markup: getTelegramGroupMeetingReplyMarkup({
-        chatId,
-        messageId,
-        taskId: rpcResponse.result?.id_task,
-      }),
-    });
+    try {
+      await bot.editMessageText(formatTelegramGroupMeeting(event), {
+        chat_id: chatId,
+        message_id: Number(messageId),
+        reply_markup: getTelegramGroupMeetingReplyMarkup({
+          chatId,
+          messageId,
+          taskId: rpcResponse.result?.id_task,
+        }),
+      });
+    } catch (error) {
+      const isMessageNotModified =
+        error instanceof Error &&
+        'code' in error &&
+        error.code === 'ETELEGRAM' &&
+        error.message.includes('message is not modified');
+
+      if (!isMessageNotModified) {
+        throw error;
+      }
+    }
 
     return response.send('OK');
   } catch (error) {
