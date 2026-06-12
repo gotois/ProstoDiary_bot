@@ -2,46 +2,51 @@ import environment from '../../environments/index.ts';
 
 const { TELEGRAM, IS_DEV } = environment;
 
+const ADMIN_STATUSES = new Set(['creator', 'administrator']);
+
 /**
- * Обработка упоминания бота в групповом чате
+ * @description Обработка упоминания бота в групповом чате
  * @param {unknown} activity - активность ActivityPub
  * @param {object} message - сообщение Telegram
  * @param {object} bot - экземпляр бота
  */
-export default async (activity, message, bot) => {
-  console.log('mention', message);
-
-  const botMention = '@' + TELEGRAM.BOT_NAME;
-  const isBotMentioned = message.entities?.some((entity) => {
-    return (
-      entity.type === 'mention' && message.text?.slice(entity.offset, entity.offset + entity.length) === botMention
-    );
-  });
-
-  if (!isBotMentioned) {
+export default async (activity: unknown, message, bot) => {
+  const chatMember = await bot.getChatMember(message.chat.id, message.from.id);
+  if (!ADMIN_STATUSES.has(chatMember.status)) {
+    console.log('Настраивать встречу могут только админы группы.');
     return;
   }
 
-  const newMeetingPayload = Buffer.from(JSON.stringify({ debug: IS_DEV, to: '/calendar/new' })).toString('base64url');
-
-  await bot.sendMessage(message.chat.id, 'Чем могу помочь?', {
-    reply_to_message_id: message.message_id,
+  const sentMessage = await bot.sendMessage(message.chat.id, 'ЧЕРНОВИК СОБЫТИЯ', {
     disable_notification: true,
-    reply_markup: {
+  });
+  await bot.deleteMessage(message.chat.id, message.message_id);
+
+  const to = new URLSearchParams({
+    tgGroupChatId: message.chat.id,
+    tgGroupMessageId: sentMessage.message_id,
+  });
+  const meetingPayload = Buffer.from(
+    JSON.stringify({
+      debug: IS_DEV,
+      to: `/calendar/new?${to.toString()}`,
+    }),
+  ).toString('base64url');
+
+  await bot.editMessageReplyMarkup(
+    {
       inline_keyboard: [
         [
           {
-            text: '📅 Настроить встречу',
-            url: `${TELEGRAM.BOT_LINK}?startapp=${newMeetingPayload}`,
-          },
-        ],
-        [
-          {
-            text: '❓ Помощь',
-            callback_data: 'mention_help',
+            text: '📅 Настроить событие',
+            url: `${TELEGRAM.BOT_LINK}?startapp=${meetingPayload}`,
           },
         ],
       ],
     },
-  });
+    {
+      chat_id: message.chat.id,
+      message_id: sentMessage.message_id,
+    },
+  );
 };

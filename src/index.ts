@@ -8,7 +8,10 @@ import env from './environments/index.ts';
 import botController from './controllers/bot.ts';
 import vcLdJsonParser from './middleware/vc-ld-json-parser.ts';
 import verifyCredential from './middleware/verify-credentials.ts';
+import getUserMiddleware from './middleware/get-user.ts';
 import pingController from './controllers/ping.ts';
+import groupEventPostController from './controllers/group_event-post.ts';
+import groupEventUpdateController from './controllers/group_event-put.ts';
 import tokenController from './controllers/token.ts';
 import loginController from './controllers/login.ts';
 import loginControllerPost from './controllers/login-post.ts';
@@ -16,14 +19,17 @@ import fileController from './controllers/file.ts';
 import transcriptionController from './controllers/transcription.ts';
 import webhookController from './controllers/webhook.ts';
 
-const { SERVER } = env;
+const { SERVER, SECRETARY } = env;
 const argv: ParsedArgs = minimist(process.argv.slice(2));
 const app: Express = express();
 const port = Number(argv.port || 443);
 const local = Boolean(argv.local);
 
-app.use('/event', cors({
-  origin: [new URL(SERVER.APP_URL).origin],
+app.use(cors({
+  origin: [
+    new URL(SERVER.APP_URL).origin,
+    new URL(SECRETARY.HOST).origin,
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
   allowedHeaders: ['Authorization', 'Content-Type', 'Geolocation', 'X-Telegram-Chat-Id', 'X-Telegram-Message-Id'],
@@ -41,6 +47,8 @@ app.use(
 );
 app.use(botController);
 app.get('/', pingController);
+app.post('/event', express.json(), getUserMiddleware, groupEventPostController);
+app.put('/event', express.json(), getUserMiddleware, groupEventUpdateController);
 app.get('/login', loginController);
 app.post('/login', express.json(), loginControllerPost);
 app.get('/token', tokenController);
