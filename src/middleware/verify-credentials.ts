@@ -7,7 +7,6 @@ import { JsonLdDocumentLoader } from 'jsonld-document-loader';
 
 /**
  * Создание загрузчика документов с кэшированием контекстов под конкретный ключ
- * @param {Record<string, string>} key - объект с полями Ed25519 ключа
  * @returns {Function} Собранный загрузчик документов
  */
 function createDocumentLoader(key: Record<string, string>) {

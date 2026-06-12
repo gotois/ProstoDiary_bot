@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import https from 'node:https';
 import express, { type Express } from 'express';
 import session from 'express-session';
+import cors from 'cors';
 import minimist, { type ParsedArgs } from 'minimist';
 import env from './environments/index.ts';
 import botController from './controllers/bot.ts';
@@ -21,6 +22,12 @@ const app: Express = express();
 const port = Number(argv.port || 443);
 const local = Boolean(argv.local);
 
+app.use('/event', cors({
+  origin: [new URL(SERVER.APP_URL).origin],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
+  allowedHeaders: ['Authorization', 'Content-Type', 'Geolocation', 'X-Telegram-Chat-Id', 'X-Telegram-Message-Id'],
+}));
 app.use(
   session({
     secret: 'supersecret',
