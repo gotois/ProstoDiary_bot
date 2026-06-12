@@ -18,7 +18,6 @@ export default async (activity: unknown, message, bot) => {
   const sentMessage = await bot.sendMessage(message.chat.id, 'ЧЕРНОВИК СОБЫТИЯ', {
     disable_notification: true,
   });
-  await bot.deleteMessage(message.chat.id, message.message_id);
 
   const to = new URLSearchParams({
     tgGroupChatId: message.chat.id,
@@ -47,4 +46,5 @@ export default async (activity: unknown, message, bot) => {
       message_id: sentMessage.message_id,
     },
   );
+  await bot.deleteMessage(message.chat.id, message.message_id);
 };

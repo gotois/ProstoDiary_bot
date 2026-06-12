@@ -1,11 +1,10 @@
 import type { NextFunction, Request, Response } from 'express';
 import { randomUUID } from 'node:crypto';
 import jsonRpc from 'request-json-rpc2';
-import { IS_DEV, SECRETARY, TELEGRAM } from '#env';
+import { SECRETARY } from '#env';
 import { bot } from './bot.ts';
-import { formatTelegramGroupMeeting, getTelegramGroupMeetingReplyMarkup } from '../libs/group-event-message.ts';
-
-const GROUP_ADMIN_STATUSES = new Set(['creator', 'administrator']);
+import { formatTelegramGroupMeeting, getTelegramGroupMeetingReplyMarkup } from '../helpers/telegram-markup.ts';
+import { GROUP_ADMIN_STATUSES } from '../helpers/telegram-user-statuses.ts';
 
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
   try {
@@ -18,16 +17,15 @@ export default async (request: Request, response: Response, next: NextFunction):
     if (!messageId) {
       return response.status(403).send('Unknown messageId');
     }
-    const taskId = request.body.id_task;
-    if (!taskId) {
-      throw new TypeError('Updated event id is missing');
+    if (!request.body.id_task) {
+      return response.status(400).send('Updated event id is missing');
     }
-    const chatMember = await bot.getChatMember(chatId, request.user.id);
+    const chatMember = await bot.getChatMember(chatId, request.user?.id);
     if (!GROUP_ADMIN_STATUSES.has(chatMember.status)) {
       return response.status(403).send('Настраивать встречу могут только админы группы.');
     }
 
-    await jsonRpc({
+    const rpcResponse = await jsonRpc({
       url: SECRETARY.RPC,
       body: {
         jsonrpc: '2.0',
@@ -36,19 +34,21 @@ export default async (request: Request, response: Response, next: NextFunction):
         params: request.body,
       },
       headers: {
-        Authorization: `Bearer ${request.user.access_token}`,
+        Authorization: `Bearer ${request.user?.access_token}`,
+        Geolocation: request.get('Geolocation'),
       },
     });
+    if (rpcResponse.error) {
+      return response.status(400).send('Created event id is missing');
+    }
 
     await bot.editMessageText(formatTelegramGroupMeeting(request.body), {
       chat_id: chatId,
       message_id: Number(messageId),
       reply_markup: getTelegramGroupMeetingReplyMarkup({
-        botLink: TELEGRAM.BOT_LINK,
         chatId,
-        debug: IS_DEV,
         messageId,
-        taskId,
+        taskId: rpcResponse.result?.id_task,
       }),
     });
 
