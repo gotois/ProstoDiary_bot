@@ -7,12 +7,12 @@ import yaml from 'js-yaml';
  */
 export default (t) => {
   t.log('testing');
-  const configYML = fs.readFileSync('compose.yml', 'utf8');
+  const configYML = fs.readFileSync(new URL('../../../compose.yml', import.meta.url), 'utf8');
   t.notThrows(() => {
     const config = yaml.load(configYML);
     t.true(validator.isJSON(JSON.stringify(config)));
   });
-  const prettierrcJSON = fs.readFileSync('.prettierrc').toString();
+  const prettierrcJSON = fs.readFileSync(new URL('../../.prettierrc', import.meta.url), 'utf8');
   t.true(validator.isJSON(prettierrcJSON));
   t.pass();
 };
