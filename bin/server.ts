@@ -19,7 +19,7 @@ function startServer(extraEnvironment: Record<string, string> = {}): void {
   );
 
   child.on('exit', (code) => {
-    return process.exit(code ?? 0);
+    process.exitCode = code ?? 0;
   });
 }
 

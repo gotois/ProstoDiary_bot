@@ -3,15 +3,12 @@ import { randomUUID } from 'node:crypto';
 import jsonRpc from 'request-json-rpc2';
 import { SECRETARY } from '#env';
 import { bot } from './bot.ts';
-import {
-  formatTelegramGroupMeeting,
-  getTelegramGroupMeetingReplyMarkup,
-  getTelegramMessageUrl,
-} from '../helpers/telegram-markup.ts';
+import { formatTelegramGroupMeeting, getTelegramGroupMeetingReplyMarkup } from '../helpers/telegram-markup.ts';
 import { GROUP_ADMIN_STATUSES } from '../helpers/telegram-user-statuses.ts';
 
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
   try {
+    const { remind_before: remindBefore, ...event } = request.body;
     const chatId = request.get('X-Telegram-Chat-Id');
     if (!chatId) {
       return response.status(403).send('Unknown chatId');
@@ -20,39 +17,62 @@ export default async (request: Request, response: Response, next: NextFunction):
     if (!messageId) {
       return response.status(403).send('Unknown messageId');
     }
+    if (!event.id_task) {
+      return response.status(400).send('Updated event id is missing');
+    }
     const chatMember = await bot.getChatMember(chatId, request.user?.id);
     if (!GROUP_ADMIN_STATUSES.has(chatMember.status)) {
       return response.status(403).send('Настраивать встречу могут только админы группы.');
     }
-    const chat = await bot.getChat(chatId);
-    console.log('chat:::', chat)
-    const target = getTelegramMessageUrl({
-      chat,
-      messageId,
-    });
 
     const rpcResponse = await jsonRpc({
       url: SECRETARY.RPC,
       body: {
         jsonrpc: '2.0',
         id: randomUUID(),
-        method: 'create',
-        params: {
-          ...request.body,
-          target,
-        },
+        method: 'edit',
+        params: event,
       },
       headers: {
         Authorization: `Bearer ${request.user?.access_token}`,
         Geolocation: request.get('Geolocation'),
       },
     });
-
     if (rpcResponse.error) {
       return response.status(400).send('Created event id is missing');
     }
 
-    await bot.editMessageText(formatTelegramGroupMeeting(request.body), {
+    if (typeof remindBefore === 'number') {
+      const startDate = new Date(event.start_date);
+      const remindResponse = await jsonRpc({
+        url: SECRETARY.RPC,
+        body: {
+          jsonrpc: '2.0',
+          id: randomUUID(),
+          method: 'remind-once',
+          params: {
+            id_task: event.id_task,
+            name: event.name,
+            description: event.description,
+            year: startDate.getUTCFullYear(),
+            month: startDate.getUTCMonth() + 1,
+            day_of_month: startDate.getUTCDate(),
+            hour: startDate.getUTCHours(),
+            minute: startDate.getUTCMinutes(),
+            remind_before: remindBefore * 60,
+          },
+        },
+        headers: {
+          Authorization: `Bearer ${request.user?.access_token}`,
+          Geolocation: request.get('Geolocation'),
+        },
+      });
+      if (remindResponse.error) {
+        return response.status(400).send('Unable to set event reminder');
+      }
+    }
+
+    await bot.editMessageText(formatTelegramGroupMeeting(event), {
       chat_id: chatId,
       message_id: Number(messageId),
       reply_markup: getTelegramGroupMeetingReplyMarkup({
