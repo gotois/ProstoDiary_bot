@@ -164,7 +164,7 @@ export default {
       path: 'request|winston-transport',
       dynamic: true,
     },
-    moduleSystems: ['esm'],
+    moduleSystems: ['es6'],
     reporterOptions: {
       dot: {
         collapsePattern: 'node_modules/[^/]+',

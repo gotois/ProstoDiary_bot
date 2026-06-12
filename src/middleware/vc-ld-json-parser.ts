@@ -17,7 +17,7 @@ export default async function (request: Request, response: Response, next: NextF
     request.body = bodyObject ?? {};
     next();
   } catch (error) {
-    console.error('Не удалось использовать node:stream/consumers:', error?.message ? error.message : error);
+    console.error('Не удалось использовать node:stream/consumers:', error?.message || error);
     next(error);
   }
 }

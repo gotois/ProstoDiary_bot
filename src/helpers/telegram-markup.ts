@@ -11,7 +11,7 @@ interface TelegramGroupMeetingData {
  * @description Builds a link to a Telegram group message when the chat supports it.
  */
 export function getTelegramMessageUrl(options: {
-  chat /*: TelegramBot.Chat */,
+  chat /*: TelegramBot.Chat */;
   messageId: string;
 }): string | undefined {
   console.log('options:', options);
