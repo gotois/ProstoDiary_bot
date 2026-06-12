@@ -5,9 +5,7 @@ import {
   randomState,
   discovery,
 } from 'openid-client';
-import environment from '../environments/index.ts';
-
-const { SECRETARY, OIDC } = environment;
+import { SECRETARY, OIDC } from '#env';
 
 let client: Configuration | undefined;
 

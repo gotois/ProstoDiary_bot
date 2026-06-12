@@ -9,10 +9,14 @@ const argv: ParsedArgs = minimist(process.argv.slice(2));
  * @param {Record<string, string>} [extraEnvironment] - дополнительные переменные среды
  */
 function startServer(extraEnvironment: Record<string, string> = {}): void {
-  const child = spawn(process.execPath, ['-r', 'dotenv/config', '--watch', 'src/index.ts', `--port=${argv.port}`, `--local=${argv.local}`], {
-    stdio: 'inherit',
-    env: { ...process.env, ...extraEnvironment },
-  });
+  const child = spawn(
+    process.execPath,
+    ['-r', 'dotenv/config', '--watch', 'src/index.ts', `--port=${argv.port}`, `--local=${argv.local}`],
+    {
+      stdio: 'inherit',
+      env: { ...process.env, ...extraEnvironment },
+    },
+  );
 
   child.on('exit', (code) => {
     return process.exit(code ?? 0);

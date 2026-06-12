@@ -5,11 +5,9 @@ import { setJWT, updateUserTimezone } from '../models/users.ts';
 import { getClient } from '../libs/oidc-client.ts';
 import { bot } from './bot.ts';
 import { sendPrepareAction, UPLOAD_DOCUMENT } from '../libs/tg-messages.ts';
-import env from '../environments/index.ts';
+import { TELEGRAM, SECRETARY, SERVER } from '#env';
 
-const { TELEGRAM, SECRETARY, SERVER } = env;
-
-export default async (request: Request, response: Response): Promise<void> => {
+export default async (request: Request, response: Response): Promise<Response> => {
   if (request.query?.error) {
     return response.status(400).send(`
     <h1>${request.query.error_description}</h1>

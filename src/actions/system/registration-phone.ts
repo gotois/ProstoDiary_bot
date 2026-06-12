@@ -1,8 +1,6 @@
 import { setJWT } from '../../models/users.ts';
 import { generateTelegramHash } from '../../libs/tg-crypto.ts';
-import env from '../../environments/index.ts';
-
-const { SECRETARY } = env;
+import { SECRETARY } from '#env';
 
 /**
  * @deprecated теперь новый FLOW — перенести отработку в интерактив OIDC

@@ -1,9 +1,7 @@
 import { LangChainYandexGPT } from 'langchain-yandexgpt';
 import { DatabaseSync } from 'node:sqlite';
 import { ChatOpenAI } from '@langchain/openai';
-import environment from '../environments/index.ts';
-
-const { SECRETARY, AGENT } = environment;
+import { SECRETARY, AGENT } from '#env';
 
 // todo - поменять на библиотеку из npm
 import SecretaryAI from '../../../../secretary-ai/index.js';

@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/no-console-spaces, no-undef, require-await */
+/* eslint-disable require-await */
 
 // пример запроса:
 // @secretary_dev_bot какие сегодня встречи?

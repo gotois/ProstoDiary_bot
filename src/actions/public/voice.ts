@@ -1,8 +1,6 @@
-import env from '../../environments/index.ts';
+import { SERVER } from '#env';
 import { RECORD_AUDIO, parseMode, sendPrepareAction, sendPrepareMessage } from '../../libs/tg-messages.ts';
 import secretaryAI from '../../libs/secretary-ai.ts';
-
-const { SERVER } = env;
 
 export default async (activity, message, bot) => {
   await sendPrepareAction(bot, message.chat.id, RECORD_AUDIO);

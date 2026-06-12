@@ -1,10 +1,8 @@
-/* eslint-disable unicorn/no-array-reduce, no-undef, unicorn/no-await-expression-member */
 // todo - перенести в Secretary AI
 import icalBrowser from 'ical-browser';
-import env from '../../environments/index.ts';
+import { IS_DEV } from '#env';
 //import { getCalendarMessage } from '../../models/calendars.ts';
 
-const { IS_DEV } = env;
 const ICalendar = icalBrowser.default;
 
 /**

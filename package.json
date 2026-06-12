@@ -34,6 +34,9 @@
       "scopeHoist": true
     }
   },
+  "imports": {
+    "#env": "./src/environments/index.ts"
+  },
   "scripts": {
     "commit": "git-cz",
     "publish": "echo 'Publishing is disabled' && exit 1",
@@ -56,7 +59,7 @@
   "engineStrict": true,
   "engines": {
     "node": ">=26.x",
-    "npm": ">=10.x"
+    "npm": ">=11.x"
   },
   "cpu": [
     "x64",

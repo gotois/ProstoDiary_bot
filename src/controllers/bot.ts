@@ -1,6 +1,5 @@
 /* eslint-disable */
 import botController from 'telegram-bot-api-express';
-import env from '../environments/index.ts';
 import pingAction from '../actions/system/ping.ts';
 import dbclearAction from '../actions/system/dbclear.ts';
 import clearAction from '../actions/system/clear.ts';
@@ -38,8 +37,7 @@ import replyToMessageAction from '../actions/private/reply-to-message.ts';
 import { updateUserLocation, updateUserTimezone, getUser, setNewUser, setLanguage } from '../models/users.ts';
 import acceptCallback from '../actions/private/accept.ts';
 import rejectCallback from '../actions/private/reject.ts';
-
-const { TELEGRAM } = env;
+import { TELEGRAM } from '#env';
 
 const { middleware, bot } = botController({
   token: TELEGRAM.TOKEN,

@@ -1,6 +1,4 @@
-import env from '../../environments/index.ts';
-
-const { IS_DEV, SERVER } = env;
+import { IS_DEV, SERVER } from '#env';
 
 const getWelcomeText = (): string => {
   return (

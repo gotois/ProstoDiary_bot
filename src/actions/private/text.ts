@@ -1,8 +1,6 @@
 import { TYPING, sendPrepareMessage, sendPrepareAction } from '../../libs/tg-messages.ts';
 import secretaryAI from '../../libs/secretary-ai.ts';
-import env from '../../environments/index.ts';
-
-const { IS_DEV, TELEGRAM } = env;
+import { IS_DEV, TELEGRAM } from '#env';
 
 /**
  * Генерирует inline-клавиатуру из артефактов

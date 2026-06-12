@@ -4,7 +4,7 @@ import express, { type Express } from 'express';
 import session from 'express-session';
 import cors from 'cors';
 import minimist, { type ParsedArgs } from 'minimist';
-import env from './environments/index.ts';
+import { SERVER, SECRETARY } from '#env';
 import botController from './controllers/bot.ts';
 import vcLdJsonParser from './middleware/vc-ld-json-parser.ts';
 import verifyCredential from './middleware/verify-credentials.ts';
@@ -19,7 +19,6 @@ import fileController from './controllers/file.ts';
 import transcriptionController from './controllers/transcription.ts';
 import webhookController from './controllers/webhook.ts';
 
-const { SERVER, SECRETARY } = env;
 const argv: ParsedArgs = minimist(process.argv.slice(2));
 const app: Express = express();
 const port = Number(argv.port || 443);

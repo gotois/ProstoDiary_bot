@@ -1,8 +1,6 @@
-import env from '../../environments/index.ts';
+import { SECRETARY } from '#env';
 import secretaryAI from '../../libs/secretary-ai.ts';
 import { sendPrepareMessage } from '../../libs/tg-messages.ts';
-
-const { SECRETARY } = env;
 
 export default async (activity, message, bot) => {
   await sendPrepareMessage(activity, message, bot);

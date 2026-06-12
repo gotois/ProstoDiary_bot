@@ -6,10 +6,9 @@ import * as cred from 'credentials-context';
 import { JsonLdDocumentLoader } from 'jsonld-document-loader';
 
 /**
- * Создание загрузчика документов с кэшированием контекстов под конкретный ключ
- * @returns {Function} Собранный загрузчик документов
+ * @description Создание загрузчика документов с кэшированием контекстов под конкретный ключ
  */
-function createDocumentLoader(key: Record<string, string>) {
+function createDocumentLoader(key: Record<string, string>): () => void {
   const jdl = new JsonLdDocumentLoader();
   jdl.addStatic(suiteContext.CONTEXT_URL, suiteContext.CONTEXT);
   jdl.addStatic(Ed25519Signature2020.CONTEXT_URL, Ed25519Signature2020.CONTEXT);
@@ -94,13 +93,8 @@ function createDocumentLoader(key: Record<string, string>) {
 
   return jdl.build();
 }
-
 /**
- * Верификация подписанного документа (Verifiable Credential)
- * @param {Request} request - Express-запрос с VC в теле
- * @param {Response} response - Express-ответ
- * @param {NextFunction} next - следующий middleware
- * @returns {Promise<void>}
+ * @description Верификация подписанного документа (Verifiable Credential)
  */
 export default async function (request: Request, response: Response, next: NextFunction): Promise<void> {
   if (!request?.body) {

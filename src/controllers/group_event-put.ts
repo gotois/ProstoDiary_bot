@@ -1,9 +1,7 @@
 import type { Request, Response } from 'express';
 import { randomUUID } from 'node:crypto';
 import jsonRpc from 'request-json-rpc2';
-import environment from '../environments/index.ts';
-
-const { SECRETARY } = environment;
+import { SECRETARY } from '#env';
 
 export default async (request: Request, response: Response): Promise<void> => {
   await jsonRpc({

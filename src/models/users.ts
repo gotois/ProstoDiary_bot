@@ -63,7 +63,7 @@ export const clearJWT = (userId: number): void => {
   query.run(userId);
 };
 /**
- * Проверяет существование пользователя по telegram id
+ * @description Проверяет существование пользователя по telegram id
  */
 export const hasUser = (userId: number): boolean => {
   const query = userDB.prepare('SELECT * FROM users WHERE id == ?');
@@ -71,7 +71,7 @@ export const hasUser = (userId: number): boolean => {
   return users.length > 0;
 };
 /**
- * Возвращает пользователя по telegram id
+ * @description Возвращает пользователя по telegram id
  */
 export const getUser = (userId: number): User | undefined => {
   const query = userDB.prepare('SELECT * FROM users WHERE id == ?');
@@ -79,7 +79,7 @@ export const getUser = (userId: number): User | undefined => {
   return isUser(row) ? row : undefined;
 };
 /**
- * Возвращает пользователя по actor id секретаря
+ * @description Возвращает пользователя по actor id секретаря
  */
 export const getUserByActorId = (actorId: string): User | undefined => {
   const query = userDB.prepare('SELECT * FROM users WHERE actor_id == ?');
@@ -87,7 +87,7 @@ export const getUserByActorId = (actorId: string): User | undefined => {
   return isUser(row) ? row : undefined;
 };
 /**
- * Создаёт нового пользователя по telegram id
+ * @description Создаёт нового пользователя по telegram id
  */
 export const setNewUser = (userId: number): User | undefined => {
   const insert = userDB.prepare(`

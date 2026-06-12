@@ -1,4 +1,4 @@
 import { DatabaseSync } from 'node:sqlite';
-import env from '../environments/index.ts';
+import { DATABASE } from '#env';
 
-export const userDB = new DatabaseSync(env.DATABASE.USERS);
+export const userDB = new DatabaseSync(DATABASE.USERS);

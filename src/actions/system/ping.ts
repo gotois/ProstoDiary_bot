@@ -1,6 +1,4 @@
-import env from '../../environments/index.ts';
-
-const { SECRETARY } = env;
+import { SECRETARY } from '#env';
 
 /**
  * Проверка сети

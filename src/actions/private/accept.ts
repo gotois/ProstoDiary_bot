@@ -1,9 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import jsonRpc from 'request-json-rpc2';
-import env from '../../environments/index.ts';
+import { SECRETARY } from '#env';
 import { getUser } from '../../models/users.ts';
-
-const { SECRETARY } = env;
 
 export default async (activity, message, bot) => {
   const user = getUser(message.chat.id);

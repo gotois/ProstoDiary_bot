@@ -1,6 +1,5 @@
-import environment from '../../environments/index.ts';
+import { TELEGRAM, IS_DEV } from '#env';
 
-const { TELEGRAM, IS_DEV } = environment;
 
 const ADMIN_STATUSES = new Set(['creator', 'administrator']);
 
