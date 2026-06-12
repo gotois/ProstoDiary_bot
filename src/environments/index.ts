@@ -11,6 +11,8 @@ const {
   TELEGRAM_BOT_NAME,
   TELEGRAM_TOKEN,
   TELEGRAM_DOMAIN,
+  GOOGLE_CALENDAR_CLIENT_ID,
+  GOOGLE_CALENDAR_CLIENT_SECRET,
 } = process.env;
 
 export const IS_DEV = String(NODE_ENV)?.toLowerCase()?.startsWith('dev');
@@ -93,5 +95,16 @@ export const TELEGRAM = {
   },
   get APP_URL() {
     return APP_URL;
+  },
+};
+
+export const GOOGLE = {
+  CALENDAR: {
+    get CLIENT_ID() {
+      return GOOGLE_CALENDAR_CLIENT_ID;
+    },
+    get CLIENT_SECRET() {
+      return GOOGLE_CALENDAR_CLIENT_SECRET;
+    },
   },
 };
