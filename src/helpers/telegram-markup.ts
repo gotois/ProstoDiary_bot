@@ -7,6 +7,24 @@ interface TelegramGroupMeetingData {
   start_date?: string | Date;
 }
 
+/**
+ * @description Builds a link to a Telegram group message when the chat supports it.
+ */
+export function getTelegramMessageUrl(options: {
+  chat /*: TelegramBot.Chat */,
+  messageId: string;
+}): string | undefined {
+  console.log('options:', options);
+  if (options.chat.username) {
+    return `https://t.me/${options.chat.username}/${options.messageId}`;
+  } else if (options.chat.type === 'group') {
+    return `https://t.me/c/${Math.abs(options.chat.id)}/${options.messageId}`;
+  }
+  console.warn('unknown message url', options);
+
+  return undefined;
+}
+
 export function formatTelegramGroupMeeting(data: TelegramGroupMeetingData): string {
   const lines = [data.name, ''];
 
@@ -35,18 +53,13 @@ export function formatTelegramGroupMeeting(data: TelegramGroupMeetingData): stri
 }
 
 /**
- * Builds the inline keyboard for a Telegram group meeting.
- * @param options - Keyboard and edit link parameters.
- * @param options.chatId - Telegram group chat id.
- * @param options.debug - Whether the Mini App should use debug mode.
- * @param options.messageId - Telegram message id.
- * @param options.taskId - Calendar event id.
- * @returns Telegram inline keyboard markup.
+ * @description Builds the inline keyboard for a Telegram group meeting.
  */
 export function getTelegramGroupMeetingReplyMarkup(options: {
   chatId: string;
   messageId: string;
   taskId: number | string;
+  sourceUrl?: string;
 }) {
   const to = new URLSearchParams({
     tgGroupChatId: options.chatId,

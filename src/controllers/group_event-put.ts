@@ -9,11 +9,10 @@ import { GROUP_ADMIN_STATUSES } from '../helpers/telegram-user-statuses.ts';
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
   try {
     const chatId = request.get('X-Telegram-Chat-Id');
-    const messageId = request.get('X-Telegram-Message-Id');
-
     if (!chatId) {
       return response.status(403).send('Unknown chatId');
     }
+    const messageId = request.get('X-Telegram-Message-Id');
     if (!messageId) {
       return response.status(403).send('Unknown messageId');
     }

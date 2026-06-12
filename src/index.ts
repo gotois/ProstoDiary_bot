@@ -80,7 +80,8 @@ if (local) {
   const key = fs.readFileSync(keyPath);
   const cert = fs.readFileSync(certPath);
   https.createServer({ key, cert }, app).listen(port, () => {
-    console.log(`🔒 Telegram Server listening on: ${SERVER.HOST}:${port}`);
+    const host = new URL(SERVER.HOST);
+    console.log(`🔒 Telegram Server listening on: ${host.protocol}//${host.hostname}:${port}`);
   });
 } else {
   app.listen(port, () => {

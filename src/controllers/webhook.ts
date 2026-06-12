@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { bot } from './bot.ts';
 import { getUserByActorId } from '../models/users.ts';
 
-export default async (request: Request, response: Response): Promise<void> => {
+export default async (request: Request, response: Response): Promise<Response> => {
   const activity = request.body?.credentialSubject;
   if (!activity) {
     return response.status(400).send('Validation Body Failed');
@@ -22,7 +22,7 @@ export default async (request: Request, response: Response): Promise<void> => {
         }
 
         // todo - данные нужно брать из тела activity.object.summaryMap.ru
-        await bot.sendMessage(user.id, 'Задача создана', {
+        await bot.sendMessage(user.id, `<a href="${activity.target}">Задача</a> создана`, {
           protect_content: true,
           parse_mode: 'HTML',
           reply_markup: {
