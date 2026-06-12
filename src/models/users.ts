@@ -51,6 +51,18 @@ export const deleteUser = (userId: number): void => {
   query.run(userId);
 };
 /**
+ * Удаляет недействительные OAuth-токены пользователя.
+ * @param userId - Telegram id пользователя
+ */
+export const clearJWT = (userId: number): void => {
+  const query = userDB.prepare(`
+    UPDATE users
+    SET access_token = NULL, id_token = NULL, refresh_token = NULL, expired_at = NULL
+    WHERE id == ?
+  `);
+  query.run(userId);
+};
+/**
  * Проверяет существование пользователя по telegram id
  */
 export const hasUser = (userId: number): boolean => {

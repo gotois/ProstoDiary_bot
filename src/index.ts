@@ -24,16 +24,28 @@ const argv: ParsedArgs = minimist(process.argv.slice(2));
 const app: Express = express();
 const port = Number(argv.port || 443);
 const local = Boolean(argv.local);
+const allowedHosts = new Set([
+  new URL(SERVER.HOST).hostname,
+  new URL(SERVER.APP_URL).hostname,
+  new URL(SECRETARY.HOST).hostname,
+]);
 
-app.use(cors({
-  origin: [
-    new URL(SERVER.APP_URL).origin,
-    new URL(SECRETARY.HOST).origin,
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
-  allowedHeaders: ['Authorization', 'Content-Type', 'Geolocation', 'X-Telegram-Chat-Id', 'X-Telegram-Message-Id'],
-}));
+app.use(
+  cors({
+    origin(url, callback) {
+      if (!url) {
+        callback(null, true);
+        return;
+      }
+
+      const parsedUrl = URL.parse(url);
+      callback(null, Boolean(parsedUrl && allowedHosts.has(parsedUrl.hostname)));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
+    allowedHeaders: ['Authorization', 'Content-Type', 'Geolocation', 'X-Telegram-Chat-Id', 'X-Telegram-Message-Id'],
+  }),
+);
 app.use(
   session({
     secret: 'supersecret',
