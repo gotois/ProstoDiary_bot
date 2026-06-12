@@ -1,8 +1,10 @@
 export default function () {
   // специально скрываем результаты логов от посторонних глаз
-  const verbose = !String(process.env.NODE_ENV).toUpperCase().startsWith('DEV');
+  const verbose = !String(globalThis.process.env.NODE_ENV).toUpperCase().startsWith('DEV');
   const avaMainConfig = {
-    ignoredByWatcher: ['src/**/*'],
+    watchMode: {
+      ignoreChanges: ['src/**/*'],
+    },
     concurrency: 5,
     failWithoutAssertions: false,
     environmentVariables: {

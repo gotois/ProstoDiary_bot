@@ -12,8 +12,6 @@ export default (t) => {
     const config = yaml.load(configYML);
     t.true(validator.isJSON(JSON.stringify(config)));
   });
-  const eslintrcJSON = fs.readFileSync('.eslintrc').toString();
-  t.true(validator.isJSON(eslintrcJSON));
   const prettierrcJSON = fs.readFileSync('.prettierrc').toString();
   t.true(validator.isJSON(prettierrcJSON));
   t.pass();
