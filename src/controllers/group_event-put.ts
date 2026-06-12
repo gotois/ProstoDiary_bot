@@ -9,7 +9,7 @@ export default async (request: Request, response: Response): Promise<void> => {
     body: {
       jsonrpc: '2.0',
       id: randomUUID(),
-      method: 'create',
+      method: 'edit',
       params: request.body,
     },
     headers: {

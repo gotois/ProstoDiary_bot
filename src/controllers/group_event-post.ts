@@ -90,7 +90,11 @@ export default async (request: Request, response: Response, next: NextFunction):
         Geolocation: request.get('Geolocation'),
       },
     });
-    console.log('rpcResponse', rpcResponse);
+
+    const taskId = (rpcResponse.result as unknown as { id_task?: number }).id_task;
+    if (!taskId) {
+      throw new TypeError('Created event id is missing');
+    }
 
     const to = new URLSearchParams({
       tgGroupChatId: chatId,
@@ -99,7 +103,7 @@ export default async (request: Request, response: Response, next: NextFunction):
     const payload = Buffer.from(
       JSON.stringify({
         debug: IS_DEV,
-        to: `/calendar/new?${to.toString()}`,
+        to: `/calendar/${taskId}/edit?${to.toString()}`,
       }),
     ).toString('base64url');
 
