@@ -44,7 +44,14 @@ app.use(
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
-    allowedHeaders: ['Authorization', 'Content-Type', 'Geolocation', 'X-Telegram-Chat-Id', 'X-Telegram-Message-Id'],
+    allowedHeaders: [
+      'Authorization',
+      'Content-Type',
+      'Geolocation',
+      'Timezone',
+      'X-Telegram-Chat-Id',
+      'X-Telegram-Message-Id',
+    ],
   }),
 );
 app.use(

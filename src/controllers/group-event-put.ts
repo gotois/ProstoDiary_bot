@@ -36,6 +36,7 @@ export default async (request: Request, response: Response, next: NextFunction):
       headers: {
         Authorization: `Bearer ${request.user?.access_token}`,
         Geolocation: request.get('Geolocation'),
+        Timezone: request.get('Timezone'),
       },
     });
     if (rpcResponse.error) {
@@ -54,17 +55,18 @@ export default async (request: Request, response: Response, next: NextFunction):
             id_task: event.id_task,
             name: event.name,
             description: event.description,
-            year: reminderDate.getUTCFullYear(),
-            month: reminderDate.getUTCMonth() + 1,
-            day_of_month: reminderDate.getUTCDate(),
-            hour: reminderDate.getUTCHours(),
-            minute: reminderDate.getUTCMinutes(),
+            year: reminderDate.getFullYear(),
+            month: reminderDate.getMonth() + 1,
+            day_of_month: reminderDate.getDay(),
+            hour: reminderDate.getHours(),
+            minute: reminderDate.getMinutes(),
             remind_before: remindBefore === null ? 0 : remindBefore * 60,
           },
         },
         headers: {
           Authorization: `Bearer ${request.user?.access_token}`,
           Geolocation: request.get('Geolocation'),
+          Timezone: request.get('Timezone'),
         },
       });
       if (remindResponse.error) {
