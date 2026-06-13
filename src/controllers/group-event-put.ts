@@ -58,7 +58,7 @@ export default async (request: Request, response: Response, next: NextFunction):
             description: event.description,
             year: reminderDate.getFullYear(),
             month: reminderDate.getMonth() + 1,
-            day_of_month: reminderDate.getDay(),
+            day_of_month: reminderDate.getDate(),
             hour: reminderDate.getHours(),
             minute: reminderDate.getMinutes(),
             remind_before: remindBefore === null ? 0 : remindBefore * 60,
