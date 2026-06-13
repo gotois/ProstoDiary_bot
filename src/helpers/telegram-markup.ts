@@ -25,10 +25,11 @@ export function getTelegramMessageUrl(options: {
   return undefined;
 }
 
-export function formatTelegramGroupMeeting(data: TelegramGroupMeetingData): string {
+export function formatTelegramGroupMeeting(data: TelegramGroupMeetingData, tz: string): string {
   const lines = [data.name, ''];
 
   const date = new Intl.DateTimeFormat('ru-RU', {
+    timeZone: tz,
     weekday: 'short',
     day: 'numeric',
     month: 'long',
@@ -37,6 +38,7 @@ export function formatTelegramGroupMeeting(data: TelegramGroupMeetingData): stri
     lines.push(`📅 ${date}`);
   }
   const time = new Intl.DateTimeFormat('ru-RU', {
+    timeZone: tz,
     hour: '2-digit',
     minute: '2-digit',
   }).format(new Date(data.start_date));
@@ -51,7 +53,6 @@ export function formatTelegramGroupMeeting(data: TelegramGroupMeetingData): stri
   }
   return lines.join('\n');
 }
-
 /**
  * @description Builds the inline keyboard for a Telegram group meeting.
  */

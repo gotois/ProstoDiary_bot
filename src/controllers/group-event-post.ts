@@ -25,6 +25,7 @@ export default async (request: Request, response: Response, next: NextFunction):
     if (!GROUP_ADMIN_STATUSES.has(chatMember.status)) {
       return response.status(403).send('Настраивать встречу могут только админы группы.');
     }
+    const tz = request.get('Timezone');
     const chat = await bot.getChat(chatId);
     const target = getTelegramMessageUrl({
       chat,
@@ -45,7 +46,7 @@ export default async (request: Request, response: Response, next: NextFunction):
       headers: {
         Authorization: `Bearer ${request.user?.access_token}`,
         Geolocation: request.get('Geolocation'),
-        Timezone: request.get('Timezone'),
+        Timezone: tz,
       },
     });
 
@@ -77,7 +78,7 @@ export default async (request: Request, response: Response, next: NextFunction):
         headers: {
           Authorization: `Bearer ${request.user?.access_token}`,
           Geolocation: request.get('Geolocation'),
-          Timezone: request.get('Timezone'),
+          Timezone: tz,
         },
       });
       if (remindResponse.error) {
@@ -85,7 +86,7 @@ export default async (request: Request, response: Response, next: NextFunction):
       }
     }
 
-    await bot.editMessageText(formatTelegramGroupMeeting(event), {
+    await bot.editMessageText(formatTelegramGroupMeeting(event, tz), {
       chat_id: chatId,
       message_id: Number(messageId),
       reply_markup: getTelegramGroupMeetingReplyMarkup({

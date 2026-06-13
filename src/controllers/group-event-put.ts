@@ -24,6 +24,7 @@ export default async (request: Request, response: Response, next: NextFunction):
     if (!GROUP_ADMIN_STATUSES.has(chatMember.status)) {
       return response.status(403).send('Настраивать встречу могут только админы группы.');
     }
+    const tz = request.get('Timezone');
 
     const rpcResponse = await jsonRpc({
       url: SECRETARY.RPC,
@@ -36,11 +37,11 @@ export default async (request: Request, response: Response, next: NextFunction):
       headers: {
         Authorization: `Bearer ${request.user?.access_token}`,
         Geolocation: request.get('Geolocation'),
-        Timezone: request.get('Timezone'),
+        Timezone: tz,
       },
     });
     if (rpcResponse.error) {
-      return response.status(400).send('Created event id is missing');
+      return response.status(400).send('Server error occurred');
     }
     if (typeof remindBefore === 'number' || remindBefore === null) {
       const startDate = new Date(event.start_date);
@@ -66,7 +67,7 @@ export default async (request: Request, response: Response, next: NextFunction):
         headers: {
           Authorization: `Bearer ${request.user?.access_token}`,
           Geolocation: request.get('Geolocation'),
-          Timezone: request.get('Timezone'),
+          Timezone: tz,
         },
       });
       if (remindResponse.error) {
@@ -75,7 +76,7 @@ export default async (request: Request, response: Response, next: NextFunction):
     }
 
     try {
-      await bot.editMessageText(formatTelegramGroupMeeting(event), {
+      await bot.editMessageText(formatTelegramGroupMeeting(event, tz), {
         chat_id: chatId,
         message_id: Number(messageId),
         reply_markup: getTelegramGroupMeetingReplyMarkup({
