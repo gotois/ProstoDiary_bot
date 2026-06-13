@@ -78,17 +78,17 @@ export function getTelegramGroupMeetingReplyMarkup(options: {
       [
         {
           text: 'Иду',
-          callback_data: 'meeting_rsvp:yes',
+          callback_data: `meeting_rsvp:${options.taskId}:yes`,
         },
         {
           text: 'Не смогу',
-          callback_data: 'meeting_rsvp:no',
+          callback_data: `meeting_rsvp:${options.taskId}:no`,
         },
       ],
       [
         {
           text: 'Возможно иду',
-          callback_data: 'meeting_rsvp:maybe',
+          callback_data: `meeting_rsvp:${options.taskId}:maybe`,
         },
       ],
       [

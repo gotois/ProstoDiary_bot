@@ -27,6 +27,10 @@ export default async (request: Request, response: Response, next: NextFunction):
     }
     const tz = request.get('Timezone');
     const chat = await bot.getChat(chatId);
+    // todo поддержать supergroup в будущем
+    if (chat.type !== 'group') {
+      return response.status(400).send('Only Telegram groups are supported');
+    }
     const target = getTelegramMessageUrl({
       chat,
       messageId,
