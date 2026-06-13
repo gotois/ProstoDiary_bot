@@ -41,9 +41,9 @@ export default async (request: Request, response: Response, next: NextFunction):
     if (rpcResponse.error) {
       return response.status(400).send('Created event id is missing');
     }
-
     if (typeof remindBefore === 'number' || remindBefore === null) {
       const startDate = new Date(event.start_date);
+      const reminderDate = remindBefore === null ? new Date(0) : startDate;
       const remindResponse = await jsonRpc({
         url: SECRETARY.RPC,
         body: {
@@ -54,12 +54,12 @@ export default async (request: Request, response: Response, next: NextFunction):
             id_task: event.id_task,
             name: event.name,
             description: event.description,
-            year: startDate.getUTCFullYear(),
-            month: startDate.getUTCMonth() + 1,
-            day_of_month: startDate.getUTCDate(),
-            hour: startDate.getUTCHours(),
-            minute: startDate.getUTCMinutes(),
-            remind_before: remindBefore === null ? null : remindBefore * 60,
+            year: reminderDate.getUTCFullYear(),
+            month: reminderDate.getUTCMonth() + 1,
+            day_of_month: reminderDate.getUTCDate(),
+            hour: reminderDate.getUTCHours(),
+            minute: reminderDate.getUTCMinutes(),
+            remind_before: remindBefore === null ? 0 : remindBefore * 60,
           },
         },
         headers: {
