@@ -1,5 +1,4 @@
 import crypto from 'node:crypto';
-import packageLock_ from '../../../package-lock.json' with { type: 'json' };
 import package_ from '../../../package.json' with { type: 'json' };
 
 const getCheckSum = (
@@ -29,12 +28,12 @@ export default async (activity, message, bot) => {
     '\n' +
     package_.name +
     ': ' +
-    packageLock_.version +
+    package_.version +
     '\nF.A.Q.: ' +
     package_.homepage +
     '/faq/' +
     '\nCHECKSUM: ' +
-    getCheckSum(JSON.stringify(packageLock_));
+    getCheckSum(JSON.stringify(package_));
   const string_ = `Используйте команды:\n${commandsReadable}`;
   await bot.sendMessage(message.chat.id, string_, {
     disable_notification: true,
