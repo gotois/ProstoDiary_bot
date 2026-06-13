@@ -23,7 +23,6 @@ export default async (request: Request, response: Response): Promise<Response> =
 
         // todo - данные нужно брать из тела activity.object.summaryMap.ru
         await bot.sendMessage(user.id, `<a href="${activity.target}">Задача</a> создана`, {
-          protect_content: true,
           parse_mode: 'HTML',
           reply_markup: {
             /* eslint-disable prettier/prettier */
@@ -37,22 +36,28 @@ export default async (request: Request, response: Response): Promise<Response> =
       break;
     }
     case 'Accept': {
+      const actor = getUserByActorId(activity.actor);
       for (const to of activity.to) {
         const user = getUserByActorId(to);
         if (!user) {
           continue;
         }
-        await bot.sendMessage(user.id, 'Пользователь принял ваше предложение');
+        await bot.sendMessage(user.id, `<a href="tg://user?id=${actor.id}">Пользователь</a> принял ваше предложение`, {
+          parse_mode: 'HTML',
+        });
       }
       break;
     }
     case 'Reject': {
+      const actor = getUserByActorId(activity.actor);
       for (const to of activity.to) {
         const user = getUserByActorId(to);
         if (!user) {
           continue;
         }
-        await bot.sendMessage(user.id, 'Пользователь отклонил ваше предложение');
+        await bot.sendMessage(user.id, `<a href="tg://user?id=${actor.id}">Пользователь</a> отклонил ваше предложение`, {
+          parse_mode: 'HTML',
+        });
       }
       break;
     }
@@ -114,6 +119,9 @@ export default async (request: Request, response: Response): Promise<Response> =
         callback_data: `accept:${actorId}:${uuid}`,
       };
       for (const to of activity.to) {
+        if (activity.target?.type === 'Group' && activity.target.id === to) {
+          continue;
+        }
         const user = getUserByActorId(to);
         if (!user) {
           console.warn(`User from ${to} not found!`);
