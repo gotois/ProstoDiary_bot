@@ -33,7 +33,7 @@ export default async function (_activity, message, bot): Promise<void> {
       body: {
         jsonrpc: '2.0',
         id: randomUUID(),
-        method: 'approval',
+        method: 'approval-group',
         params: {
           task_id: Number(taskId),
           type: status === 'yes' ? 'accept' : 'reject',

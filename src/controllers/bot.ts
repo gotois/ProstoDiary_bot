@@ -37,6 +37,7 @@ import replyToMessageAction from '../actions/private/reply-to-message.ts';
 import { updateUserLocation, updateUserTimezone, getUser, setNewUser, setLanguage } from '../models/users.ts';
 import acceptCallback from '../actions/private/accept.ts';
 import rejectCallback from '../actions/private/reject.ts';
+import meetingRsvpAction from '../actions/public/meeting-rsvp.ts';
 import { TELEGRAM } from '#env';
 
 const { middleware, bot } = botController({
@@ -154,6 +155,8 @@ const { middleware, bot } = botController({
       });
       console.log('WIP: approve_event');
     },
+
+    [/^meeting_rsvp:\d+:(yes|maybe|no)$/]: errorHandler(meetingRsvpAction),
   },
 
   onError(bot, error) {

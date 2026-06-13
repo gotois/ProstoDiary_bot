@@ -58,6 +58,29 @@ export default async (request: Request, response: Response, next: NextFunction):
       return response.status(400).send('Created event id is missing');
     }
 
+    const shareResponse = await jsonRpc({
+      url: SECRETARY.RPC,
+      body: {
+        jsonrpc: '2.0',
+        id: randomUUID(),
+        method: 'share-group',
+        params: {
+          task_id: rpcResponse.result?.id_task,
+          telegram_chat_id: chatId,
+          name: chat.title,
+          url: target,
+        },
+      },
+      headers: {
+        Authorization: `Bearer ${request.user?.access_token}`,
+        Geolocation: request.get('Geolocation'),
+        Timezone: tz,
+      },
+    });
+    if (shareResponse.error) {
+      return response.status(400).send('Unable to share event with Telegram group');
+    }
+
     if (typeof remindBefore === 'number' || remindBefore === null) {
       const startDate = new Date(event.start_date);
       const reminderDate = remindBefore === null ? new Date(0) : startDate;
