@@ -63,12 +63,10 @@ export default async (request: Request, response: Response, next: NextFunction):
       body: {
         jsonrpc: '2.0',
         id: randomUUID(),
-        method: 'share-group',
+        method: 'share',
         params: {
           task_id: rpcResponse.result?.id_task,
-          telegram_chat_id: chatId,
-          name: chat.title,
-          url: target,
+          acct: `https://t.me/c/${chat.id}`,
         },
       },
       headers: {
