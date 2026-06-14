@@ -2,10 +2,11 @@ import { randomUUID } from 'node:crypto';
 import jsonRpc from 'request-json-rpc2';
 import { SECRETARY } from '#env';
 import { getUser } from '../../models/users.ts';
+import { parseApprovalCallback } from '../../helpers/approval.ts';
 
 export default async (activity, message, bot) => {
   const user = getUser(message.chat.id);
-  const [type, taskId] = message.data.split(':');
+  const { type, taskId } = parseApprovalCallback(message.data);
 
   await bot.answerCallbackQuery(message.id, {
     text: 'Идет обработка...',

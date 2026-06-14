@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { bot } from '../bot.ts';
 import { getUserByActorId } from '../../models/users.ts';
+import { getTaskIdFromReference } from '../../helpers/approval.ts';
 
 export default async (request: Request, response: Response): Promise<Response> => {
   const activity = request.body?.credentialSubject;
@@ -104,17 +105,18 @@ export default async (request: Request, response: Response): Promise<Response> =
       break;
     }
     case 'Offer': {
+      const taskId = getTaskIdFromReference(activity.object);
       const keyboardOpen = {
         text: 'Посмотреть',
         url: activity.object,
       };
       const keyboardReject = {
         text: 'Отменить',
-        callback_data: `reject:${activity.object}`,
+        callback_data: `reject:${taskId}`,
       };
       const keyboardAccept = {
         text: 'Принять',
-        callback_data: `accept:${activity.object}`,
+        callback_data: `accept:${taskId}`,
       };
       for (const to of activity.to) {
         if (activity.target?.type === 'Group' && activity.target.id === to) {
