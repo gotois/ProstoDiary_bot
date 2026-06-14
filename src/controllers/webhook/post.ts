@@ -104,19 +104,17 @@ export default async (request: Request, response: Response): Promise<Response> =
       break;
     }
     case 'Offer': {
-      const uuid = activity.id.split('/').pop();
-      const actorId = activity.actor.split('/').pop();
       const keyboardOpen = {
         text: 'Посмотреть',
         url: activity.object,
       };
       const keyboardReject = {
         text: 'Отменить',
-        callback_data: `reject:${actorId}:${uuid}`,
+        callback_data: `reject:${activity.object}`,
       };
       const keyboardAccept = {
         text: 'Принять',
-        callback_data: `accept:${actorId}:${uuid}`,
+        callback_data: `accept:${activity.object}`,
       };
       for (const to of activity.to) {
         if (activity.target?.type === 'Group' && activity.target.id === to) {

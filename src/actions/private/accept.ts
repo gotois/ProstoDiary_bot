@@ -5,7 +5,7 @@ import { getUser } from '../../models/users.ts';
 
 export default async (activity, message, bot) => {
   const user = getUser(message.chat.id);
-  const [_method, userId, activityId] = message.data.split(':');
+  const [type, taskId] = message.data.split(':');
 
   await bot.answerCallbackQuery(message.id, {
     text: 'Идет обработка...',
@@ -19,9 +19,8 @@ export default async (activity, message, bot) => {
       id: randomUUID(),
       method: 'approval',
       params: {
-        activity_id: activityId,
-        user_id: userId,
-        type: 'accept',
+        task_id: taskId,
+        type: type,
       },
     },
     headers: {

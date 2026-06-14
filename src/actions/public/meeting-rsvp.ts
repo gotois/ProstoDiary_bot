@@ -3,20 +3,13 @@ import jsonRpc from 'request-json-rpc2';
 import { SECRETARY } from '#env';
 import { getUser } from '../../models/users.ts';
 
-const RSVP_ANSWERS = {
-  yes: 'Готово: иду',
-  no: 'Готово: не смогу',
+const ANSWERS = {
+  accept: 'Готово: иду',
+  reject: 'Готово: не смогу',
 };
 
 export default async function (_activity, message, bot): Promise<void> {
-  const [, taskId, status] = message.data.split(':');
-  if (status === 'maybe') {
-    await bot.answerCallbackQuery(message.id, {
-      text: 'Этот вариант пока не поддерживается',
-      show_alert: false,
-    });
-    return;
-  }
+  const [, taskId, type] = message.data.split(':');
 
   const user = getUser(message.from.id);
   if (!user?.access_token) {
@@ -33,10 +26,10 @@ export default async function (_activity, message, bot): Promise<void> {
       body: {
         jsonrpc: '2.0',
         id: randomUUID(),
-        method: 'approval-group',
+        method: 'approval',
         params: {
           task_id: Number(taskId),
-          type: status === 'yes' ? 'accept' : 'reject',
+          type: type,
         },
       },
       headers: {
@@ -49,7 +42,7 @@ export default async function (_activity, message, bot): Promise<void> {
     }
 
     await bot.answerCallbackQuery(message.id, {
-      text: RSVP_ANSWERS[status] ?? 'Готово',
+      text: ANSWERS[type] ?? 'Готово',
       show_alert: false,
     });
   } catch (error) {
