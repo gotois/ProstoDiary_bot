@@ -156,7 +156,7 @@ const { middleware, bot } = botController({
       console.log('WIP: approve_event');
     },
 
-    [/^meeting_rsvp:\d+:(yes|maybe|no)$/]: errorHandler(meetingRsvpAction),
+    [/^meeting_rsvp:\d+:(accept|reject)$/]: errorHandler(meetingRsvpAction),
   },
 
   onError(bot, error) {

@@ -1,7 +1,12 @@
+const messageText = `Приветствую\\!
+Я ваш групповой куратор\\.
+
+Буду помогать создавать события\\.`;
+
 export default async (activity, message, bot) => {
   await bot.sendMessage(
     message.chat.id,
-    'Приветствую! Я ваш виртуальный секретарь.\n' + 'Проанализирую ваши активности и сформирую из них контракты.',
+    messageText,
     {
       parse_mode: 'MarkdownV2',
     },
