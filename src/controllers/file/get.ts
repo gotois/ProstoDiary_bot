@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { TELEGRAM } from '#env';
-import { getMimeType } from '../libs/file-type.ts';
+import { getMimeType } from '../../libs/file-type.ts';
 
 export default async (request: Request<{ file_id: string }>, response: Response): Promise<void> => {
   const fileId = request.params.file_id;

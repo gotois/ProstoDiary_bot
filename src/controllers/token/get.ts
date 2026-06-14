@@ -1,10 +1,10 @@
 import type { Request, Response } from 'express';
 import { authorizationCodeGrant, fetchUserInfo } from 'openid-client';
 import { pdfToPng } from 'pdf-to-png-converter';
-import { setJWT, updateUserTimezone } from '../models/users.ts';
-import { getClient } from '../libs/oidc-client.ts';
-import { bot } from './bot.ts';
-import { sendPrepareAction, UPLOAD_DOCUMENT } from '../libs/tg-messages.ts';
+import { setJWT, updateUserTimezone } from '../../models/users.ts';
+import { getClient } from '../../libs/oidc-client.ts';
+import { bot } from '../bot.ts';
+import { sendPrepareAction, UPLOAD_DOCUMENT } from '../../libs/tg-messages.ts';
 import { TELEGRAM, SECRETARY, SERVER } from '#env';
 
 export default async (request: Request, response: Response): Promise<Response> => {

@@ -2,9 +2,9 @@ import type { NextFunction, Request, Response } from 'express';
 import { randomUUID } from 'node:crypto';
 import jsonRpc from 'request-json-rpc2';
 import { SECRETARY } from '#env';
-import { bot } from './bot.ts';
-import { formatTelegramGroupMeeting, getTelegramGroupMeetingReplyMarkup } from '../helpers/telegram-markup.ts';
-import { GROUP_ADMIN_STATUSES } from '../helpers/telegram-user-statuses.ts';
+import { bot } from '../bot.ts';
+import { formatTelegramGroupMeeting, getTelegramGroupMeetingReplyMarkup } from '../../helpers/telegram-markup.ts';
+import { GROUP_ADMIN_STATUSES } from '../../helpers/telegram-user-statuses.ts';
 
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
   try {

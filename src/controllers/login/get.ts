@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { buildAuthorizationUrl } from 'openid-client';
-import { getAuthorization } from '../libs/oidc-client.ts';
+import { getAuthorization } from '../../libs/oidc-client.ts';
 
 export default async (request: Request, response: Response): Promise<void> => {
   try {

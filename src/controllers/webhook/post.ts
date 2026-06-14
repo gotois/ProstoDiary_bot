@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import { bot } from './bot.ts';
-import { getUserByActorId } from '../models/users.ts';
+import { bot } from '../bot.ts';
+import { getUserByActorId } from '../../models/users.ts';
 
 export default async (request: Request, response: Response): Promise<Response> => {
   const activity = request.body?.credentialSubject;
