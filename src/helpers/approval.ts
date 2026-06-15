@@ -6,11 +6,7 @@ export type ApprovalType = 'accept' | 'reject';
  * @returns Numeric task id.
  */
 export function getTaskIdFromReference(taskReference: string): number {
-  const taskId = Number(taskReference.split('/'));
-  if (!Number.isSafeInteger(taskId)) {
-    throw new TypeError('Некорректный идентификатор события');
-  }
-  return taskId;
+  return Number(taskReference.split('/').pop());
 }
 
 /**

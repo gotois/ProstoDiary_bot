@@ -10,7 +10,7 @@ export default async (request: Request, response: Response, next: NextFunction):
       },
     });
     if (!res.ok) {
-      throw new Error(`${res.status} Failed to load subscription calendar`)
+      return response.status(res.status).send('Failed to load subscription calendar');
     }
     const ics = await res.text();
     return response.send(ics);
