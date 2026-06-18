@@ -71,7 +71,7 @@ const { middleware, bot } = botController({
     // ['video_note']: checkAuth(videoAction),
     ['document']: checkAuth(documentAction),
     // ['contact']: checkAuth(contactAction),
-    // ['inline_query']: inlineAction,
+    ['inline_query']: inlineAction,
     ['message_forwards']: checkAuth(forwards),
     ['reply_to_message']: checkAuth(replyToMessageAction),
     // ['pinned_message']: () => {},
@@ -126,6 +126,7 @@ const { middleware, bot } = botController({
     /* TEXT */
 
     ['channel_post']: channelPostAction,
+    ['inline_query']: inlineAction,
     ['mention']: mentionAction,
     ['text']: groupTextAction,
     ['reply_to_message']: () => {},
