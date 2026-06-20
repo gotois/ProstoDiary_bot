@@ -1,4 +1,4 @@
-import { linkPayload } from '../../libs/tg-messages.ts';
+import { linkStartApp } from '../../libs/tg-messages.ts';
 
 export default (activity, message, bot) => {
   if (message.location) {
@@ -26,7 +26,7 @@ export default (activity, message, bot) => {
     button: {
       text: 'Создать событие',
       web_app: {
-        url: linkPayload({ to: '/calendar/new' }),
+        url: linkStartApp({ to: '/calendar/new' }),
       },
     },
   });

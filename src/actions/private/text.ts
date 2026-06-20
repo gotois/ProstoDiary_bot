@@ -1,6 +1,5 @@
-import { TYPING, sendPrepareMessage, sendPrepareAction } from '../../libs/tg-messages.ts';
+import { TYPING, linkPayload, linkStartApp, sendPrepareMessage, sendPrepareAction } from '../../libs/tg-messages.ts';
 import secretaryAI from '../../libs/secretary-ai.ts';
-import { IS_DEV, TELEGRAM } from '#env';
 
 /**
  * Генерирует inline-клавиатуру из артефактов
@@ -17,23 +16,17 @@ function generateInlineKeyboard(artifact: unknown[] = []): unknown[][] {
         const text = 'Открыть';
         const isMiniApp = 1; // Открыто в MiniApp или WebApp
         if (isMiniApp) {
-          const payload = Buffer.from(
-            JSON.stringify({
-              debug: IS_DEV,
-              to: to,
-            }),
-          ).toString('base64url');
           inlineKeyboard.push([
             {
               text: text,
-              url: `${TELEGRAM.BOT_LINK}?startapp=${payload}`,
+              url: linkStartApp({to}),
             },
           ]);
         } else {
           inlineKeyboard.push([
             {
               text: text,
-              web_app: `${TELEGRAM.APP_URL}${to}`,
+              web_app: linkPayload({to}),
             },
           ]);
         }

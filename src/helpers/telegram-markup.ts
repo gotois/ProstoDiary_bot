@@ -1,4 +1,4 @@
-import { TELEGRAM, IS_DEV } from '#env';
+import { linkStartApp } from '../libs/tg-messages.ts';
 
 function getFormatTime(date, tz) {
   return new Intl.DateTimeFormat('ru-RU', {
@@ -50,12 +50,6 @@ export function getTelegramGroupMeetingReplyMarkup(options: {
     chatId: options.chatId,
     messageId: options.messageId,
   });
-  const payload = Buffer.from(
-    JSON.stringify({
-      debug: IS_DEV,
-      to: `/calendar/${options.taskId}/edit?${to.toString()}`,
-    }),
-  ).toString('base64url');
 
   return {
     inline_keyboard: [
@@ -72,7 +66,7 @@ export function getTelegramGroupMeetingReplyMarkup(options: {
       [
         {
           text: 'Редактировать событие',
-          url: `${TELEGRAM.BOT_LINK}?startapp=${payload}`,
+          url: linkStartApp({to: `/calendar/${options.taskId}/edit?${to.toString()}`}),
         },
       ],
     ],
