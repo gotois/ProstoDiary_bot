@@ -12,9 +12,19 @@ function getTgGroupId(id: number) {
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
   try {
     const { remind_before: remindBefore, target, ...event } = request.body;
+    const targets = Array.isArray(target) ? target : [target];
+    const accounts =
+      targets.length > 0
+        ? [
+            ...new Set(
+              targets.map((item) => {
+                return item?.type === 'Group' ? getTgGroupId(item.id) : request.user.actor_id;
+              }),
+            ),
+          ]
+        : [request.user.actor_id];
 
-    const acct = target?.type === 'Group' ? getTgGroupId(target) : request.user.actor_id;
-    if (!acct) {
+    if (!accounts.length) {
       return response.status(403).send('Unknown acct');
     }
     const tz = request.get('Timezone');
@@ -40,25 +50,27 @@ export default async (request: Request, response: Response, next: NextFunction):
       return response.status(400).send('Created event id is missing');
     }
 
-    const shareResponse = await jsonRpc({
-      url: SECRETARY.RPC,
-      body: {
-        jsonrpc: '2.0',
-        id: randomUUID(),
-        method: 'share',
-        params: {
-          task_id: rpcResponse.result?.id_task,
-          acct: acct,
+    for (const acct of accounts) {
+      const shareResponse = await jsonRpc({
+        url: SECRETARY.RPC,
+        body: {
+          jsonrpc: '2.0',
+          id: randomUUID(),
+          method: 'share',
+          params: {
+            task_id: rpcResponse.result?.id_task,
+            acct,
+          },
         },
-      },
-      headers: {
-        Authorization: `Bearer ${request.user?.access_token}`,
-        Geolocation: request.get('Geolocation'),
-        Timezone: tz,
-      },
-    });
-    if (shareResponse.error) {
-      return response.status(400).send('Unable to share event with Telegram group');
+        headers: {
+          Authorization: `Bearer ${request.user?.access_token}`,
+          Geolocation: request.get('Geolocation'),
+          Timezone: tz,
+        },
+      });
+      if (shareResponse.error) {
+        return response.status(400).send('Unable to share event with Telegram group');
+      }
     }
 
     if (remindBefore) {
@@ -92,10 +104,12 @@ export default async (request: Request, response: Response, next: NextFunction):
       }
     }
 
-    if (target?.id) {
-      await bot.sendMessage(target.id, formatTelegramGroupMeeting(rpcResponse.result, tz), {
-        parse_mode: 'HTML',
-      });
+    for (const target of targets) {
+      if (target?.id) {
+        await bot.sendMessage(target.id, formatTelegramGroupMeeting(rpcResponse.result, tz), {
+          parse_mode: 'HTML',
+        });
+      }
     }
 
     return response.send('OK');
