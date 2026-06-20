@@ -11,6 +11,20 @@ try {
   console.error(error);
 }
 
+interface Group {
+  id: number;
+  created_at: number;
+}
+
+/**
+ * @description Возвращает Telegram id сохранённых групп
+ * @returns {Group[]} Сохранённые группы
+ */
+export const getGroups = (): Group[] => {
+  const query = userDB.prepare('SELECT * FROM groups ORDER BY created_at DESC');
+  return query.all() as Group[];
+};
+
 /**
  * @description Сохраняет Telegram id группы
  * @param {number} groupId - Telegram id группы
