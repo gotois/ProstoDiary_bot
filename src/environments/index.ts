@@ -36,6 +36,9 @@ export const DATABASE = {
   get USERS() {
     return path.join(this.root(), 'database', 'users.sqlite');
   },
+  get GROUPS() {
+    return path.join(this.root(), 'database', 'groups.sqlite');
+  },
 };
 
 export const AGENT = {

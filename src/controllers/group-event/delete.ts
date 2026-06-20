@@ -7,18 +7,13 @@ import { GROUP_ADMIN_STATUSES } from '../../helpers/telegram-user-statuses.ts';
 
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
   try {
-    const chatId = request.get('X-Telegram-Chat-Id');
-    if (!chatId) {
-      return response.status(403).send('Unknown chatId');
+    if (!request.body.group) {
+      return response.status(403).send('Unknown group');
     }
-    const messageId = request.get('X-Telegram-Message-Id');
-    if (!messageId) {
-      return response.status(403).send('Unknown messageId');
-    }
-    if (!request.body.id_task) {
+    if (!request.body.ids) {
       return response.status(400).send('Updated event id is missing');
     }
-    const chatMember = await bot.getChatMember(chatId, request.user?.id);
+    const chatMember = await bot.getChatMember(request.body.group, request.user?.id);
     if (!GROUP_ADMIN_STATUSES.has(chatMember.status)) {
       return response.status(403).send('Настраивать встречу могут только админы группы.');
     }
@@ -29,7 +24,9 @@ export default async (request: Request, response: Response, next: NextFunction):
         jsonrpc: '2.0',
         id: randomUUID(),
         method: 'edit',
-        params: request.body,
+        params: {
+          ids: request.body.ids,
+        },
       },
       headers: {
         Authorization: `Bearer ${request.user?.access_token}`,

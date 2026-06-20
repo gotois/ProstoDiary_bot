@@ -14,6 +14,7 @@ import calendarSubscriptionController from './controllers/tasks/subscription/get
 import groupEventPostController from './controllers/group-event/post.ts';
 import groupEventUpdateController from './controllers/group-event/put.ts';
 import groupEventRemoveController from './controllers/group-event/delete.ts';
+import groupsController from './controllers/groups/get.ts';
 import calendarGooglePostController from './controllers/calendar-google/post.ts';
 import tokenController from './controllers/token/get.ts';
 import loginController from './controllers/login/get.ts';
@@ -50,8 +51,7 @@ app.use(
       'Content-Type',
       'Geolocation',
       'Timezone',
-      'X-Telegram-Chat-Id',
-      'X-Telegram-Message-Id',
+      // 'X-Telegram-Message-Id',
     ],
   }),
 );
@@ -71,6 +71,7 @@ app.get('/', pingController);
 app.post('/event', express.json(), getUserMiddleware, groupEventPostController);
 app.put('/event', express.json(), getUserMiddleware, groupEventUpdateController);
 app.delete('/event', express.json(), getUserMiddleware, groupEventRemoveController);
+app.get('/groups', getUserMiddleware, groupsController);
 app.post('/calendar/google', express.json(), getUserMiddleware, calendarGooglePostController);
 app.get('/calendar/subscription', getUserMiddleware, calendarSubscriptionController);
 app.get('/login', loginController);

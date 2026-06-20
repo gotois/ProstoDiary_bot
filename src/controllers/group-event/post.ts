@@ -3,34 +3,21 @@ import { randomUUID } from 'node:crypto';
 import jsonRpc from 'request-json-rpc2';
 import { SECRETARY } from '#env';
 import { bot } from '../bot.ts';
-import {
-  formatTelegramGroupMeeting,
-  getTelegramGroupMeetingReplyMarkup,
-  getTelegramMessageUrl,
-} from '../../helpers/telegram-markup.ts';
-import { GROUP_ADMIN_STATUSES } from '../../helpers/telegram-user-statuses.ts';
+import { formatTelegramGroupMeeting } from '../../helpers/telegram-markup.ts';
+
+function getTgGroupId(id: number) {
+  return `https://t.me/c/${Math.abs(id)}`;
+}
 
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
   try {
-    const { remind_before: remindBefore, ...event } = request.body;
-    const chatId = request.get('X-Telegram-Chat-Id');
-    if (!chatId) {
-      return response.status(403).send('Unknown chatId');
-    }
-    const messageId = request.get('X-Telegram-Message-Id');
-    if (!messageId) {
-      return response.status(403).send('Unknown messageId');
-    }
-    const chatMember = await bot.getChatMember(chatId, request.user?.id);
-    if (!GROUP_ADMIN_STATUSES.has(chatMember.status)) {
-      return response.status(403).send('Настраивать встречу могут только админы группы.');
+    const { remind_before: remindBefore, target, ...event } = request.body;
+
+    const acct = target?.type === 'Group' ? getTgGroupId(target) : request.user.actor_id;
+    if (!acct) {
+      return response.status(403).send('Unknown acct');
     }
     const tz = request.get('Timezone');
-    const chat = await bot.getChat(chatId);
-    const target = getTelegramMessageUrl({
-      chat,
-      messageId,
-    });
 
     const rpcResponse = await jsonRpc({
       url: SECRETARY.RPC,
@@ -40,7 +27,6 @@ export default async (request: Request, response: Response, next: NextFunction):
         method: 'create',
         params: {
           ...event,
-          target,
         },
       },
       headers: {
@@ -62,7 +48,7 @@ export default async (request: Request, response: Response, next: NextFunction):
         method: 'share',
         params: {
           task_id: rpcResponse.result?.id_task,
-          acct: `https://t.me/c/${chat.id}`,
+          acct: acct,
         },
       },
       headers: {
@@ -75,9 +61,8 @@ export default async (request: Request, response: Response, next: NextFunction):
       return response.status(400).send('Unable to share event with Telegram group');
     }
 
-    if (typeof remindBefore === 'number' || remindBefore === null) {
-      const startDate = new Date(event.start_date);
-      const reminderDate = remindBefore === null ? new Date(0) : startDate;
+    if (remindBefore) {
+      const reminderDate = new Date(event.start_date);
       const remindResponse = await jsonRpc({
         url: SECRETARY.RPC,
         body: {
@@ -93,7 +78,7 @@ export default async (request: Request, response: Response, next: NextFunction):
             day_of_month: reminderDate.getDate(),
             hour: reminderDate.getHours(),
             minute: reminderDate.getMinutes(),
-            remind_before: remindBefore === null ? 0 : remindBefore * 60,
+            remind_before: remindBefore * 60,
           },
         },
         headers: {
@@ -107,15 +92,11 @@ export default async (request: Request, response: Response, next: NextFunction):
       }
     }
 
-    await bot.editMessageText(formatTelegramGroupMeeting(event, tz), {
-      chat_id: chatId,
-      message_id: Number(messageId),
-      reply_markup: getTelegramGroupMeetingReplyMarkup({
-        chatId,
-        messageId,
-        taskId: rpcResponse.result?.id_task,
-      }),
-    });
+    if (target?.id) {
+      await bot.sendMessage(target.id, formatTelegramGroupMeeting(rpcResponse.result, tz), {
+        parse_mode: 'HTML',
+      });
+    }
 
     return response.send('OK');
   } catch (error) {

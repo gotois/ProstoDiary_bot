@@ -11,7 +11,10 @@ export default async (activity, message, bot) => {
     return;
   }
 
-  setGroup(message.chat.id);
+  setGroup({
+    id: message.chat.id,
+    title: message.chat.title ?? '',
+  });
   const string_ = `Всем привет\\!
 Меня зовут ${message.new_chat_member.first_name}\\.
 Буду помогать создавать события в ${message.chat.title}\\.`;

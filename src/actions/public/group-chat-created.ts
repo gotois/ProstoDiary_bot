@@ -6,7 +6,10 @@ const messageText = `Приветствую\\!
 Буду помогать создавать события\\.`;
 
 export default async (activity, message, bot) => {
-  setGroup(message.chat.id);
+  setGroup({
+    id: message.chat.id,
+    title: message.chat.title ?? '',
+  });
 
   await bot.sendMessage(message.chat.id, messageText, {
     parse_mode: 'MarkdownV2',

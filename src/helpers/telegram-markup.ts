@@ -1,31 +1,14 @@
 import { TELEGRAM, IS_DEV } from '#env';
 
-interface TelegramGroupMeetingData {
-  name: string;
-  description?: string;
-  location?: string;
-  start_date?: string | Date;
+function getFormatTime(date, tz) {
+  return new Intl.DateTimeFormat('ru-RU', {
+    timeZone: tz,
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(date));
 }
 
-/**
- * @description Builds a link to a Telegram group message when the chat supports it.
- */
-export function getTelegramMessageUrl(options: {
-  chat /*: TelegramBot.Chat */;
-  messageId: string;
-}): string | undefined {
-  console.log('options:', options);
-  if (options.chat.username) {
-    return `https://t.me/${options.chat.username}/${options.messageId}`;
-  } else if (options.chat.type === 'group') {
-    return `https://t.me/c/${Math.abs(options.chat.id)}/${options.messageId}`;
-  }
-  console.warn('unknown message url', options);
-
-  return undefined;
-}
-
-export function formatTelegramGroupMeeting(data: TelegramGroupMeetingData, tz: string): string {
+export function formatTelegramGroupMeeting(data: any, tz: string): string {
   const lines = [data.name, ''];
 
   const date = new Intl.DateTimeFormat('ru-RU', {
@@ -37,13 +20,14 @@ export function formatTelegramGroupMeeting(data: TelegramGroupMeetingData, tz: s
   if (date) {
     lines.push(`📅 ${date}`);
   }
-  const time = new Intl.DateTimeFormat('ru-RU', {
-    timeZone: tz,
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(data.start_date));
+  const time = getFormatTime(data.start_date, tz);
   if (time) {
-    lines.push(`🕖 ${time}`);
+    let str = `🕖 ${time}`;
+
+    if (data.end_date) {
+      str += ` - ${getFormatTime(data.end_date, tz)}`;
+    }
+    lines.push(str);
   }
   if (data.location) {
     lines.push(`📍 ${data.location}`);
@@ -63,8 +47,8 @@ export function getTelegramGroupMeetingReplyMarkup(options: {
   sourceUrl?: string;
 }) {
   const to = new URLSearchParams({
-    tgGroupChatId: options.chatId,
-    tgGroupMessageId: options.messageId,
+    chatId: options.chatId,
+    messageId: options.messageId,
   });
   const payload = Buffer.from(
     JSON.stringify({
