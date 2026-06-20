@@ -11,6 +11,7 @@ import verifyCredential from './middleware/verify-credentials.ts';
 import getUserMiddleware from './middleware/get-user.ts';
 import pingController from './controllers/ping/get.ts';
 import calendarSubscriptionController from './controllers/tasks/subscription/get.ts';
+import groupEventGetController from './controllers/group-event/get.ts';
 import groupEventPostController from './controllers/group-event/post.ts';
 import groupEventUpdateController from './controllers/group-event/put.ts';
 import groupEventRemoveController from './controllers/group-event/delete.ts';
@@ -68,6 +69,7 @@ app.use(
 );
 app.use(botController);
 app.get('/', pingController);
+app.get('/event/:taskId', getUserMiddleware, groupEventGetController);
 app.post('/event', express.json(), getUserMiddleware, groupEventPostController);
 app.put('/event', express.json(), getUserMiddleware, groupEventUpdateController);
 app.delete('/event', express.json(), getUserMiddleware, groupEventRemoveController);
