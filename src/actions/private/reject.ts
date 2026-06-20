@@ -13,7 +13,7 @@ export default async (activity, message, bot) => {
     show_alert: false,
   });
 
-  const { result } = await jsonRpc.default({
+  const { result } = await jsonRpc({
     url: SECRETARY.RPC,
     body: {
       jsonrpc: '2.0',
