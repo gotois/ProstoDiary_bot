@@ -46,7 +46,7 @@ app.use(
       callback(null, Boolean(parsedUrl && allowedHosts.has(parsedUrl.hostname)));
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: [
       'Authorization',
       'Content-Type',

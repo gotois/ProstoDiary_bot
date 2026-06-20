@@ -7,13 +7,13 @@ import { GROUP_ADMIN_STATUSES } from '../../helpers/telegram-user-statuses.ts';
 
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
   try {
-    if (!request.body.group) {
+    if (!request.body.chatId) {
       return response.status(403).send('Unknown group');
     }
     if (!request.body.ids) {
       return response.status(400).send('Updated event id is missing');
     }
-    const chatMember = await bot.getChatMember(request.body.group, request.user?.id);
+    const chatMember = await bot.getChatMember(request.body.chatId, request.user?.id);
     if (!GROUP_ADMIN_STATUSES.has(chatMember.status)) {
       return response.status(403).send('Настраивать встречу могут только админы группы.');
     }

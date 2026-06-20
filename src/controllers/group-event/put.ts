@@ -8,14 +8,9 @@ import { GROUP_ADMIN_STATUSES } from '../../helpers/telegram-user-statuses.ts';
 
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
   try {
-    const { remind_before: remindBefore, ...event } = request.body;
-    const chatId = request.get('X-Telegram-Chat-Id');
+    const { remind_before: remindBefore, chatId, messageId, ...event } = request.body;
     if (!chatId) {
       return response.status(403).send('Unknown chatId');
-    }
-    const messageId = request.get('X-Telegram-Message-Id');
-    if (!messageId) {
-      return response.status(403).send('Unknown messageId');
     }
     if (!event.id_task) {
       return response.status(400).send('Updated event id is missing');
@@ -43,7 +38,7 @@ export default async (request: Request, response: Response, next: NextFunction):
     if (rpcResponse.error) {
       return response.status(400).send('Server error occurred');
     }
-    if (typeof remindBefore === 'number' || remindBefore === null) {
+    if (remindBefore === 'number' || remindBefore === null) {
       const startDate = new Date(event.start_date);
       const reminderDate = remindBefore === null ? new Date(0) : startDate;
       const remindResponse = await jsonRpc({
@@ -75,25 +70,27 @@ export default async (request: Request, response: Response, next: NextFunction):
       }
     }
 
-    try {
-      await bot.editMessageText(formatTelegramGroupMeeting(event, tz), {
-        chat_id: chatId,
-        message_id: Number(messageId),
-        reply_markup: getTelegramGroupMeetingReplyMarkup({
-          chatId,
-          messageId,
-          taskId: rpcResponse.result?.id_task,
-        }),
-      });
-    } catch (error) {
-      const isMessageNotModified =
-        error instanceof Error &&
-        'code' in error &&
-        error.code === 'ETELEGRAM' &&
-        error.message.includes('message is not modified');
+    if (messageId) {
+      try {
+        await bot.editMessageText(formatTelegramGroupMeeting(event, tz), {
+          chat_id: chatId,
+          message_id: Number(messageId),
+          reply_markup: getTelegramGroupMeetingReplyMarkup({
+            chatId,
+            messageId,
+            taskId: rpcResponse.result?.id_task,
+          }),
+        });
+      } catch (error) {
+        const isMessageNotModified =
+          error instanceof Error &&
+          'code' in error &&
+          error.code === 'ETELEGRAM' &&
+          error.message.includes('message is not modified');
 
-      if (!isMessageNotModified) {
-        throw error;
+        if (!isMessageNotModified) {
+          throw error;
+        }
       }
     }
 
