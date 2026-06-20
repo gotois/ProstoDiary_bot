@@ -1,16 +1,10 @@
-import { TELEGRAM } from '#env';
+import { linkPayload } from '../../libs/tg-messages.ts';
 
 export default (activity, message, bot) => {
   if (message.location) {
     console.log(message.location.latitude);
     console.log(message.location.longitude);
   }
-
-  const payload = Buffer.from(
-    JSON.stringify({
-      to: '/calendar/new',
-    }),
-  ).toString('base64url');
 
   const results = [
     /*
@@ -32,7 +26,7 @@ export default (activity, message, bot) => {
     button: {
       text: 'Создать событие',
       web_app: {
-        url: `${TELEGRAM.BOT_LINK}?startapp=${payload}`,
+        url: linkPayload({ to: '/calendar/new' }),
       },
     },
   });

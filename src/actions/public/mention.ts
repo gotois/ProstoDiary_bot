@@ -1,4 +1,4 @@
-import { TELEGRAM, IS_DEV } from '#env';
+import { linkPayload } from '../../libs/tg-messages.ts';
 
 const ADMIN_STATUSES = new Set(['creator', 'administrator']);
 
@@ -23,12 +23,6 @@ export default async (activity: unknown, message, bot) => {
     tgGroupChatId: message.chat.id,
     tgGroupMessageId: sentMessage.message_id,
   });
-  const meetingPayload = Buffer.from(
-    JSON.stringify({
-      debug: IS_DEV,
-      to: `/calendar/new?${to.toString()}`,
-    }),
-  ).toString('base64url');
 
   await bot.editMessageReplyMarkup(
     {
@@ -36,7 +30,7 @@ export default async (activity: unknown, message, bot) => {
         [
           {
             text: '📅 Настроить событие',
-            url: `${TELEGRAM.BOT_LINK}?startapp=${meetingPayload}`,
+            url: linkPayload({ to: `/calendar/new?${to.toString()}` }),
           },
         ],
       ],

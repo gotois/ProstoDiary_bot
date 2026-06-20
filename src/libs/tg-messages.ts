@@ -1,3 +1,5 @@
+import { TELEGRAM, IS_DEV } from '#env';
+
 export const RECORD_AUDIO = 'record_audio';
 export const TYPING = 'typing';
 export const UPLOAD_DOCUMENT = 'upload_document';
@@ -71,4 +73,15 @@ export function parseMode(
       return;
     }
   }
+}
+
+export function linkPayload({to}) {
+  const payload = Buffer.from(
+    JSON.stringify({
+      debug: IS_DEV,
+      to: to,
+    }),
+  ).toString('base64url');
+
+  return `${TELEGRAM.APP_URL}?payload=${payload}`
 }
