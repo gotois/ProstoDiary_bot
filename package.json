@@ -35,7 +35,7 @@
     }
   },
   "imports": {
-    "#env": "./src/environments/index.ts"
+    "#env": "./src/app/config.ts"
   },
   "scripts": {
     "commit": "git-cz",

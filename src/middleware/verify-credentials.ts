@@ -6,6 +6,7 @@ import * as cred from 'credentials-context';
 import { JsonLdDocumentLoader } from 'jsonld-document-loader';
 
 /**
+ * @param key
  * @description Создание загрузчика документов с кэшированием контекстов под конкретный ключ
  */
 function createDocumentLoader(key: Record<string, string>): () => void {
@@ -94,6 +95,9 @@ function createDocumentLoader(key: Record<string, string>): () => void {
   return jdl.build();
 }
 /**
+ * @param request
+ * @param response
+ * @param next
  * @description Верификация подписанного документа (Verifiable Credential)
  */
 export default async function (request: Request, response: Response, next: NextFunction): Promise<void> {

@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { bot } from '../bot.ts';
-import { getGroups } from '../../models/groups.ts';
+import { bot } from '../../interfaces/telegram/bot.ts';
+import { groupRepository } from '../../app/container.ts';
 
 const ACTIVE_GROUP_STATUSES = new Set(['creator', 'administrator', 'member', 'restricted']);
 
@@ -20,7 +20,8 @@ export default async function getGroupsController(
     // а контакты tg вынести в отдельный контроллер или сервис по текущему паттерну.
     const groups = [];
 
-    for (const group of getGroups(request.query.query)) {
+    const query = typeof request.query.query === 'string' ? request.query.query : '';
+    for (const group of groupRepository.findByTitle(query)) {
       try {
         const member = await bot.getChatMember(group.id, request.user?.id);
         if (!ACTIVE_GROUP_STATUSES.has(member.status)) {

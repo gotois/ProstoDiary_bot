@@ -53,15 +53,9 @@ npm run dev:secure
 
 ### ENVIRONMENTS
 
-Create a `.env` file and write:
+Copy `.env.example` to `.env` and fill in the required values. Do not commit `.env`.
 
-`TELEGRAM_TOKEN`
-
-`TELEGRAM_DOMAIN`
-
-`SECRETARY_HOST`
-
-`APP_URL`
+Required values: `TELEGRAM_TOKEN`, `HOST`, `SECRETARY_HOST`, `APP_URL`, `CLIENT_ID`, and `CLIENT_SECRET`.
 
 ## Tests
 
@@ -70,6 +64,12 @@ Create a `.env` file and write:
 ```bash
 npm run test:unit [-- --watch]
 #npm run test:unit [-- --match='config']
+```
+
+Run the full package check:
+
+```bash
+npm run test
 ```
 
 ## Tools

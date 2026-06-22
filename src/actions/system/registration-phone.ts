@@ -1,4 +1,4 @@
-import { setJWT } from '../../models/users.ts';
+import { setLegacyPhoneJWT } from '../../infrastructure/legacy/phone-token-store.ts';
 import { generateTelegramHash } from '../../libs/tg-crypto.ts';
 import { SECRETARY } from '#env';
 
@@ -47,5 +47,5 @@ export default async (activity, message, bot) => {
     throw new Error(`Ошибка регистрации: ${response.statusText}`);
   }
 
-  setJWT(message.user.id, response.headers.get('Authorization'));
+  setLegacyPhoneJWT(message.user.id, response.headers.get('Authorization'));
 };

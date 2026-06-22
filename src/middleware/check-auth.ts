@@ -1,7 +1,7 @@
-import { refreshTokenGrant, ResponseBodyError } from 'openid-client';
+import { ResponseBodyError } from 'openid-client';
 import errorHandler from './error-handler.ts';
-import { getClient } from '../libs/oidc-client.ts';
-import { clearJWT, setJWT } from '../models/users.ts';
+import { container } from '../app/container.ts';
+import { toUserTokenInput } from '../infrastructure/auth/user-token-input.ts';
 
 /**
  * Middleware проверки авторизации пользователя с автообновлением токена
@@ -14,18 +14,22 @@ export default function (callback: (...arguments_: unknown[]) => Promise<void>) 
       // делаем ротацию ключей для обновления
       if (message.user.refresh_token) {
         try {
-          const client = await getClient();
-          const tokens = await refreshTokenGrant(client, message.user.refresh_token);
-          setJWT(message.user.id, message.user.actor_id, {
-            ...tokens,
-            expires_in: tokens.expires_in ?? 0,
-            id_token: tokens.id_token ?? message.user.id_token,
-            refresh_token: tokens.refresh_token ?? message.user.refresh_token,
-          });
+          const tokens = await container.refreshUserTokens.execute({ refreshToken: message.user.refresh_token });
+          await container.saveUserTokens.execute(
+            toUserTokenInput({
+              telegramId: message.user.id,
+              actorId: message.user.actor_id,
+              tokens: {
+                access_token: tokens.accessToken,
+                id_token: tokens.idToken ?? message.user.id_token,
+                refresh_token: tokens.refreshToken ?? message.user.refresh_token,
+              },
+            }),
+          );
         } catch (error) {
           console.error('Ошибка обновления токена:', error);
           if (error instanceof ResponseBodyError && error.error === 'invalid_grant') {
-            clearJWT(message.user.id);
+            await container.clearUserTokens.execute({ telegramId: message.user.id });
           }
           return;
         }

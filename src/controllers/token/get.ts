@@ -1,11 +1,10 @@
 import type { Request, Response } from 'express';
-import { authorizationCodeGrant, fetchUserInfo } from 'openid-client';
 import { pdfToPng } from 'pdf-to-png-converter';
-import { setJWT, updateUserTimezone } from '../../models/users.ts';
-import { getClient } from '../../libs/oidc-client.ts';
-import { bot } from '../bot.ts';
+import { container } from '../../app/container.ts';
+import { toUserTokenInput } from '../../infrastructure/auth/user-token-input.ts';
+import { bot } from '../../interfaces/telegram/bot.ts';
 import { sendPrepareAction, UPLOAD_DOCUMENT } from '../../libs/tg-messages.ts';
-import { TELEGRAM, SECRETARY, SERVER } from '#env';
+import { TELEGRAM, SERVER } from '#env';
 
 export default async (request: Request, response: Response): Promise<Response> => {
   if (request.query?.error) {
@@ -14,8 +13,6 @@ export default async (request: Request, response: Response): Promise<Response> =
     `);
   }
 
-  const client = await getClient();
-
   if (!request.session.code_verifier || !request.session.state) {
     return response.status(400).send('Missing PKCE verifier or state in session');
   }
@@ -23,54 +20,36 @@ export default async (request: Request, response: Response): Promise<Response> =
   const callbackUrl = new URL(request.url, `https://${request.headers.host}`);
 
   try {
-    const tokens = await authorizationCodeGrant(client, callbackUrl, {
-      pkceCodeVerifier: request.session.code_verifier,
-      expectedState: request.session.state,
+    const authorization = await container.completeAuthorization.execute({
+      callbackUrl,
+      codeVerifier: request.session.code_verifier,
+      state: request.session.state,
     });
 
-    const userInfo = await fetchUserInfo(client, tokens.access_token, tokens.claims().sub);
-    if (!userInfo.tid) {
-      return response.status(400).send('Telegram не подключен к аккаунту');
-    }
-
-    setJWT(userInfo.tid, userInfo.sub, tokens);
-    updateUserTimezone(userInfo.tid, userInfo.tz);
-
-    // Регистрация вебхука бота в Секретаре
-    const webhookUrl = SECRETARY.HOST + '/webhook/settings';
-    const botWebhookUrl = SERVER.HOST + '/webhook';
-    const webhookRegistration = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': tokens.token_type + ' ' + tokens.access_token,
-      },
-      body: JSON.stringify({ webhookUrl: botWebhookUrl }),
+    await container.saveUserTokens.execute(
+      toUserTokenInput({
+        telegramId: authorization.telegramId,
+        actorId: authorization.actorId,
+        tokens: {
+          access_token: authorization.tokens.accessToken,
+          id_token: authorization.tokens.idToken,
+          refresh_token: authorization.tokens.refreshToken,
+        },
+      }),
+    );
+    await container.updateUserTimezone.execute({
+      telegramId: authorization.telegramId,
+      timezone: authorization.timezone,
     });
-    if (!webhookRegistration.ok) {
-      // todo - обработать ошибку регистрации вебхука (retry, алерт и т.д.)
-      throw new Error('[token] webhook registration failed');
-    }
 
-    const inboxResponse = await fetch(userInfo.sub + '/inbox', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/activity+json',
-        'Authorization': tokens.token_type + ' ' + tokens.access_token,
-        'Timezone': userInfo.tz,
-      },
+    const welcome = await container.prepareAuthorizationWelcome.execute({
+      actorId: authorization.actorId,
+      accessToken: authorization.tokens.accessToken,
+      tokenType: authorization.tokens.tokenType,
+      timezone: authorization.timezone,
+      webhookUrl: `${SERVER.HOST}/webhook`,
     });
-    if (!inboxResponse.ok) {
-      return response.status(400).send('Unknown server error');
-    }
-    const result = await inboxResponse.json();
-    const [item] =
-      result.orderedItems?.filter((item) => {
-        // todo - получать данные об акторе через .well-known
-        return item.actor === SECRETARY.HOST + '/actor';
-      }) ?? [];
-    if (!item) {
+    if (!welcome.documentUrl) {
       response.send(
         `
 <!DOCTYPE html>
@@ -102,26 +81,14 @@ document.body.style.display = 'block';
       return;
     }
 
-    const waitingMessage = await bot.sendMessage(userInfo.tid, '⏳ Идет авторизация...', {
+    const waitingMessage = await bot.sendMessage(authorization.telegramId, '⏳ Идет авторизация...', {
       reply_markup: {
         remove_keyboard: true,
       },
     });
 
-    await sendPrepareAction(bot, userInfo.tid, UPLOAD_DOCUMENT);
-    const objectResponse = await fetch(item.object, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/activity+json',
-        Authorization: tokens.token_type + ' ' + tokens.access_token,
-      },
-    });
-    if (!objectResponse.ok) {
-      throw new Error('Unknown server error');
-    }
-    const { attachment } = await objectResponse.json();
-    const [url] = attachment;
-    const responseDocument = await fetch(url);
+    await sendPrepareAction(bot, authorization.telegramId, UPLOAD_DOCUMENT);
+    const responseDocument = await fetch(welcome.documentUrl);
     const fileBuffer = await responseDocument.arrayBuffer();
     const pngPages = await pdfToPng(Buffer.from(fileBuffer));
     const photos = pngPages.map((page) => {
@@ -138,7 +105,7 @@ document.body.style.display = 'block';
             : undefined,
       };
     });
-    await bot.sendMediaGroup(userInfo.tid, photos, {
+    await bot.sendMediaGroup(authorization.telegramId, photos, {
       disable_notification: true,
       message_effect_id: '5046509860389126442', // 🎉
       protect_content: true,
@@ -146,7 +113,7 @@ document.body.style.display = 'block';
         keyboard: [],
       },
     });
-    await bot.deleteMessage(userInfo.tid, waitingMessage.message_id);
+    await bot.deleteMessage(authorization.telegramId, waitingMessage.message_id);
 
     response.send(
       `

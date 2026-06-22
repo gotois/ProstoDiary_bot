@@ -1,8 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { randomUUID } from 'node:crypto';
-import jsonRpc from 'request-json-rpc2';
-import { SECRETARY } from '#env';
-import { bot } from '../bot.ts';
+import { taskGateway } from '../../app/container.ts';
+import { bot } from '../../interfaces/telegram/bot.ts';
 import { GROUP_ADMIN_STATUSES } from '../../helpers/telegram-user-statuses.ts';
 
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
@@ -18,20 +16,11 @@ export default async (request: Request, response: Response, next: NextFunction):
       return response.status(403).send('Настраивать встречу могут только админы группы.');
     }
 
-    const rpcResponse = await jsonRpc({
-      url: SECRETARY.RPC,
-      body: {
-        jsonrpc: '2.0',
-        id: randomUUID(),
-        method: 'edit',
-        params: {
-          ids: request.body.ids,
-        },
-      },
-      headers: {
-        Authorization: `Bearer ${request.user?.access_token}`,
-        Geolocation: request.get('Geolocation'),
-      },
+    const rpcResponse = await taskGateway.call({
+      method: 'edit',
+      params: { ids: request.body.ids },
+      accessToken: request.user?.access_token,
+      geolocation: request.get('Geolocation'),
     });
     if (rpcResponse.error) {
       return response.status(400).send('Created event id is missing');

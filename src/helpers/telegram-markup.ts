@@ -1,5 +1,10 @@
 import { linkStartApp } from '../libs/tg-messages.ts';
 
+/**
+ *
+ * @param date
+ * @param tz
+ */
 function getFormatTime(date, tz) {
   return new Intl.DateTimeFormat('ru-RU', {
     timeZone: tz,
@@ -8,6 +13,11 @@ function getFormatTime(date, tz) {
   }).format(new Date(date));
 }
 
+/**
+ *
+ * @param data
+ * @param tz
+ */
 export function formatTelegramGroupMeeting(data: any, tz: string): string {
   const lines = [data.name, ''];
 
@@ -22,12 +32,12 @@ export function formatTelegramGroupMeeting(data: any, tz: string): string {
   }
   const time = getFormatTime(data.start_date, tz);
   if (time) {
-    let str = `🕖 ${time}`;
+    let string_ = `🕖 ${time}`;
 
     if (data.end_date) {
-      str += ` - ${getFormatTime(data.end_date, tz)}`;
+      string_ += ` - ${getFormatTime(data.end_date, tz)}`;
     }
-    lines.push(str);
+    lines.push(string_);
   }
   if (data.location) {
     lines.push(`📍 ${data.location}`);
@@ -38,6 +48,11 @@ export function formatTelegramGroupMeeting(data: any, tz: string): string {
   return lines.join('\n');
 }
 /**
+ * @param options
+ * @param options.chatId
+ * @param options.messageId
+ * @param options.taskId
+ * @param options.sourceUrl
  * @description Builds the inline keyboard for a Telegram group meeting.
  */
 export function getTelegramGroupMeetingReplyMarkup(options: {
@@ -66,7 +81,7 @@ export function getTelegramGroupMeetingReplyMarkup(options: {
       [
         {
           text: 'Редактировать событие',
-          url: linkStartApp({to: `/calendar/${options.taskId}/edit?${to.toString()}`}),
+          url: linkStartApp({ to: `/calendar/${options.taskId}/edit?${to.toString()}` }),
         },
       ],
     ],

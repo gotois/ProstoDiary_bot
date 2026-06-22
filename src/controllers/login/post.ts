@@ -1,20 +1,14 @@
 import type { Request, Response } from 'express';
-import { buildAuthorizationUrlWithPAR } from 'openid-client';
-import { getAuthorization } from '../../libs/oidc-client.ts';
+import { container } from '../../app/container.ts';
 
 export default async (request: Request, response: Response): Promise<Response> => {
   try {
-    const { client, codeVerifier, parameters } = await getAuthorization();
-    request.session.code_verifier = codeVerifier;
-    request.session.state = parameters.state;
+    const authorization = await container.startAuthorization.execute({ initData: request.body.initData });
+    request.session.code_verifier = authorization.codeVerifier;
+    request.session.state = authorization.state;
     await request.session.save();
 
-    const { initData } = request.body;
-    const authorizationUrl = await buildAuthorizationUrlWithPAR(client, {
-      ...parameters,
-      tma_init_data: initData,
-    });
-    return response.json({ url: authorizationUrl.toString() });
+    return response.json({ url: authorization.url });
   } catch (error) {
     console.error(error);
     response.status(400).send('Произошла ошибка авторизации клиента');

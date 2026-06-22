@@ -12,6 +12,10 @@ interface GoogleTokenResponse {
   refresh_token?: string;
 }
 
+/**
+ *
+ * @param ical
+ */
 function convertIcalToEvent(ical: string) {
   const component = new ICAL.Component(ICAL.parse(ical));
   const event = component.getFirstSubcomponent('vevent');
@@ -38,6 +42,12 @@ function convertIcalToEvent(ical: string) {
   };
 }
 
+/**
+ *
+ * @param code
+ * @param clientId
+ * @param clientSecret
+ */
 async function getRefreshToken(code: string, clientId: string, clientSecret: string): Promise<string> {
   const response = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
@@ -63,6 +73,13 @@ async function getRefreshToken(code: string, clientId: string, clientSecret: str
   return refreshToken;
 }
 
+/**
+ *
+ * @param username
+ * @param refreshToken
+ * @param clientId
+ * @param clientSecret
+ */
 async function getEvents(username: string, refreshToken: string, clientId: string, clientSecret: string) {
   const client = await createDAVClient({
     serverUrl: 'https://apidata.googleusercontent.com/caldav/v2/',

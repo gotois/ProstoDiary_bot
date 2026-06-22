@@ -1,10 +1,13 @@
 import type { Request, Response } from 'express';
-import { bot } from '../bot.ts';
-import { getUserByActorId } from '../../models/users.ts';
+import { bot } from '../../interfaces/telegram/bot.ts';
+import { userRepository } from '../../app/container.ts';
 import { getTaskIdFromReference } from '../../helpers/approval.ts';
 import { linkPayload } from '../../libs/tg-messages.ts';
 
 export default async (request: Request, response: Response): Promise<Response> => {
+  const getUserByActorId = (actorId: string) => {
+    return userRepository.findByActorId(actorId);
+  };
   const activity = request.body?.credentialSubject;
   if (!activity) {
     return response.status(400).send('Validation Body Failed');
@@ -57,9 +60,13 @@ export default async (request: Request, response: Response): Promise<Response> =
         if (!user) {
           continue;
         }
-        await bot.sendMessage(user.id, `<a href="tg://user?id=${actor.id}">Пользователь</a> отклонил ваше предложение`, {
-          parse_mode: 'HTML',
-        });
+        await bot.sendMessage(
+          user.id,
+          `<a href="tg://user?id=${actor.id}">Пользователь</a> отклонил ваше предложение`,
+          {
+            parse_mode: 'HTML',
+          },
+        );
       }
       break;
     }

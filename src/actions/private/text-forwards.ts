@@ -2,7 +2,7 @@ import { parseMode, sendPrepareMessage } from '../../libs/tg-messages.ts';
 import voiceAction from '../public/voice.ts';
 import textAction from '../public/text.ts';
 
-export default async (activity, message, bot) => {
+export default async (activity, messages, bot) => {
   console.log(`Обработка транзакции из ${messages.length} сообщений:`);
 
   for (const message of messages) {
@@ -10,7 +10,8 @@ export default async (activity, message, bot) => {
     await sendPrepareMessage(activity, message, bot);
 
     if (message.voice) {
-      await voiceAction(activity, message, bot);
+      // fixme implemented
+      // await voiceAction(activity, message, bot);
     } else if (message.text) {
       await textAction(activity, message, bot);
     } else {

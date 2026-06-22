@@ -1,10 +1,12 @@
 import type { NextFunction, Request, Response } from 'express';
-import { randomUUID } from 'node:crypto';
-import jsonRpc from 'request-json-rpc2';
-import { SECRETARY } from '#env';
-import { bot } from '../bot.ts';
+import { container, taskGateway } from '../../app/container.ts';
+import { bot } from '../../interfaces/telegram/bot.ts';
 import { formatTelegramGroupMeeting } from '../../helpers/telegram-markup.ts';
 
+/**
+ *
+ * @param id
+ */
 function getTgGroupId(id: number) {
   return `https://t.me/c/${Math.abs(id)}`;
 }
@@ -24,26 +26,17 @@ export default async (request: Request, response: Response, next: NextFunction):
           ]
         : [request.user.actor_id];
 
-    if (!accounts.length) {
+    if (accounts.length === 0) {
       return response.status(403).send('Unknown acct');
     }
     const tz = request.get('Timezone');
 
-    const rpcResponse = await jsonRpc({
-      url: SECRETARY.RPC,
-      body: {
-        jsonrpc: '2.0',
-        id: randomUUID(),
-        method: 'create',
-        params: {
-          ...event,
-        },
-      },
-      headers: {
-        Authorization: `Bearer ${request.user?.access_token}`,
-        Geolocation: request.get('Geolocation'),
-        Timezone: tz,
-      },
+    const rpcResponse = await taskGateway.call({
+      method: 'create',
+      params: event,
+      accessToken: request.user?.access_token,
+      geolocation: request.get('Geolocation'),
+      timezone: tz,
     });
 
     if (rpcResponse.error) {
@@ -51,22 +44,12 @@ export default async (request: Request, response: Response, next: NextFunction):
     }
 
     for (const acct of accounts) {
-      const shareResponse = await jsonRpc({
-        url: SECRETARY.RPC,
-        body: {
-          jsonrpc: '2.0',
-          id: randomUUID(),
-          method: 'share',
-          params: {
-            task_id: rpcResponse.result?.id_task,
-            acct,
-          },
-        },
-        headers: {
-          Authorization: `Bearer ${request.user?.access_token}`,
-          Geolocation: request.get('Geolocation'),
-          Timezone: tz,
-        },
+      const shareResponse = await taskGateway.call({
+        method: 'share',
+        params: { task_id: rpcResponse.result?.id_task, acct },
+        accessToken: request.user?.access_token,
+        geolocation: request.get('Geolocation'),
+        timezone: tz,
       });
       if (shareResponse.error) {
         return response.status(400).send('Unable to share event with Telegram group');
@@ -75,29 +58,22 @@ export default async (request: Request, response: Response, next: NextFunction):
 
     if (remindBefore) {
       const reminderDate = new Date(event.start_date);
-      const remindResponse = await jsonRpc({
-        url: SECRETARY.RPC,
-        body: {
-          jsonrpc: '2.0',
-          id: randomUUID(),
-          method: 'remind-once',
-          params: {
-            id_task: rpcResponse.result?.id_task,
-            name: event.name,
-            description: event.description,
-            year: reminderDate.getFullYear(),
-            month: reminderDate.getMonth() + 1,
-            day_of_month: reminderDate.getDate(),
-            hour: reminderDate.getHours(),
-            minute: reminderDate.getMinutes(),
-            remind_before: remindBefore * 60,
-          },
+      const remindResponse = await taskGateway.call({
+        method: 'remind-once',
+        params: {
+          id_task: rpcResponse.result?.id_task,
+          name: event.name,
+          description: event.description,
+          year: reminderDate.getFullYear(),
+          month: reminderDate.getMonth() + 1,
+          day_of_month: reminderDate.getDate(),
+          hour: reminderDate.getHours(),
+          minute: reminderDate.getMinutes(),
+          remind_before: remindBefore * 60,
         },
-        headers: {
-          Authorization: `Bearer ${request.user?.access_token}`,
-          Geolocation: request.get('Geolocation'),
-          Timezone: tz,
-        },
+        accessToken: request.user?.access_token,
+        geolocation: request.get('Geolocation'),
+        timezone: tz,
       });
       if (remindResponse.error) {
         return response.status(400).send('Unable to set event reminder');

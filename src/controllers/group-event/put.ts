@@ -1,8 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { randomUUID } from 'node:crypto';
-import jsonRpc from 'request-json-rpc2';
-import { SECRETARY } from '#env';
-import { bot } from '../bot.ts';
+import { taskGateway } from '../../app/container.ts';
+import { bot } from '../../interfaces/telegram/bot.ts';
 import { formatTelegramGroupMeeting, getTelegramGroupMeetingReplyMarkup } from '../../helpers/telegram-markup.ts';
 import { GROUP_ADMIN_STATUSES } from '../../helpers/telegram-user-statuses.ts';
 
@@ -21,19 +19,12 @@ export default async (request: Request, response: Response, next: NextFunction):
     }
     const tz = request.get('Timezone');
 
-    const rpcResponse = await jsonRpc({
-      url: SECRETARY.RPC,
-      body: {
-        jsonrpc: '2.0',
-        id: randomUUID(),
-        method: 'edit',
-        params: event,
-      },
-      headers: {
-        Authorization: `Bearer ${request.user?.access_token}`,
-        Geolocation: request.get('Geolocation'),
-        Timezone: tz,
-      },
+    const rpcResponse = await taskGateway.call({
+      method: 'edit',
+      params: event,
+      accessToken: request.user?.access_token,
+      geolocation: request.get('Geolocation'),
+      timezone: tz,
     });
     if (rpcResponse.error) {
       return response.status(400).send('Server error occurred');
@@ -41,29 +32,22 @@ export default async (request: Request, response: Response, next: NextFunction):
     if (remindBefore === 'number' || remindBefore === null) {
       const startDate = new Date(event.start_date);
       const reminderDate = remindBefore === null ? new Date(0) : startDate;
-      const remindResponse = await jsonRpc({
-        url: SECRETARY.RPC,
-        body: {
-          jsonrpc: '2.0',
-          id: randomUUID(),
-          method: 'remind-once',
-          params: {
-            id_task: event.id_task,
-            name: event.name,
-            description: event.description,
-            year: reminderDate.getFullYear(),
-            month: reminderDate.getMonth() + 1,
-            day_of_month: reminderDate.getDate(),
-            hour: reminderDate.getHours(),
-            minute: reminderDate.getMinutes(),
-            remind_before: remindBefore === null ? 0 : remindBefore * 60,
-          },
+      const remindResponse = await taskGateway.call({
+        method: 'remind-once',
+        params: {
+          id_task: event.id_task,
+          name: event.name,
+          description: event.description,
+          year: reminderDate.getFullYear(),
+          month: reminderDate.getMonth() + 1,
+          day_of_month: reminderDate.getDate(),
+          hour: reminderDate.getHours(),
+          minute: reminderDate.getMinutes(),
+          remind_before: remindBefore === null ? 0 : remindBefore * 60,
         },
-        headers: {
-          Authorization: `Bearer ${request.user?.access_token}`,
-          Geolocation: request.get('Geolocation'),
-          Timezone: tz,
-        },
+        accessToken: request.user?.access_token,
+        geolocation: request.get('Geolocation'),
+        timezone: tz,
       });
       if (remindResponse.error) {
         return response.status(400).send('Unable to set event reminder');

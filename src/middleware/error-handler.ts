@@ -1,4 +1,4 @@
-import { deleteUser } from '../models/users.ts';
+import { container } from '../app/container.ts';
 
 /**
  * Обработчик ошибок
@@ -27,7 +27,7 @@ export default function (callback: (...arguments_: unknown[]) => Promise<void>) 
           return bot.sendMessage(message.chat.id, 'Произошла ошибка при обращении к серверу');
         }
         case 'Unauthorized': {
-          deleteUser(message.chat.id);
+          await container.deleteUser.execute({ telegramId: message.chat.id });
           await bot.setMessageReaction(message.chat.id, message.message_id, {
             reaction: JSON.stringify([
               {

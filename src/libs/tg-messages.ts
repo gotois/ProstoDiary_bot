@@ -75,7 +75,12 @@ export function parseMode(
   }
 }
 
-export function linkStartApp({to}) {
+/**
+ *
+ * @param root0
+ * @param root0.to
+ */
+export function linkStartApp({ to }) {
   const payload = Buffer.from(
     JSON.stringify({
       to: to,
@@ -85,7 +90,12 @@ export function linkStartApp({to}) {
   return `${TELEGRAM.BOT_LINK}?startapp=${payload}`;
 }
 
-export function linkPayload({to}) {
+/**
+ *
+ * @param root0
+ * @param root0.to
+ */
+export function linkPayload({ to }) {
   const payload = Buffer.from(
     JSON.stringify({
       debug: IS_DEV,
@@ -93,5 +103,5 @@ export function linkPayload({to}) {
     }),
   ).toString('base64url');
 
-  return `${TELEGRAM.APP_URL}?payload=${payload}`
+  return `${TELEGRAM.APP_URL}?payload=${payload}`;
 }
