@@ -10,6 +10,13 @@ export default async (request: Request, response: Response, next: NextFunction):
     if (!event.id_task) {
       return response.status(400).send('Updated event id is missing');
     }
+    const startDate = new Date(event.start_date);
+    if (Number.isNaN(startDate.getTime())) {
+      return response.status(400).send('Дата начала события указана неверно');
+    }
+    if (startDate.getTime() <= Date.now()) {
+      return response.status(400).send('Нельзя обновить событие: время начала уже прошло');
+    }
     const tz = request.get('Timezone');
 
     const rpcResponse = await taskGateway.call({
@@ -22,8 +29,7 @@ export default async (request: Request, response: Response, next: NextFunction):
     if (rpcResponse.error) {
       return response.status(400).send('Server error occurred');
     }
-    if (remindBefore === 'number' || remindBefore === null) {
-      const startDate = new Date(event.start_date);
+    if (typeof remindBefore === 'number' || remindBefore === null) {
       const reminderDate = remindBefore === null ? new Date(0) : startDate;
       const remindResponse = await taskGateway.call({
         method: 'remind-once',
