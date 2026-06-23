@@ -1,19 +1,33 @@
 import type { NextFunction, Request, Response } from 'express';
-import { taskGateway } from '../../app/container.ts';
+import { taskGateway, telegramEventRepository } from '../../app/container.ts';
 import { bot } from '../../interfaces/telegram/bot.ts';
 import { GROUP_ADMIN_STATUSES } from '../../helpers/telegram-user-statuses.ts';
 
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
   try {
-    if (!request.body.chatId) {
-      return response.status(403).send('Unknown group');
-    }
-    if (!request.body.ids) {
+    if (!Array.isArray(request.body.ids) || request.body.ids.length === 0) {
       return response.status(400).send('Updated event id is missing');
     }
-    const chatMember = await bot.getChatMember(request.body.chatId, request.user?.id);
-    if (!GROUP_ADMIN_STATUSES.has(chatMember.status)) {
-      return response.status(403).send('Настраивать встречу могут только админы группы.');
+
+    const chatIds = [
+      ...new Set(
+        request.body.ids
+          .map((taskId: number) => {
+            return telegramEventRepository.getTelegramEventByTaskId(Number(taskId))?.chatId;
+          })
+          .filter((chatId: number | undefined): chatId is number => {
+            return chatId !== undefined;
+          }),
+      ),
+    ];
+    if (chatIds.length === 0) {
+      return response.status(403).send('Unknown group');
+    }
+    for (const chatId of chatIds) {
+      const chatMember = await bot.getChatMember(chatId, request.user?.id);
+      if (!GROUP_ADMIN_STATUSES.has(chatMember.status)) {
+        return response.status(403).send('Настраивать встречу могут только админы группы.');
+      }
     }
 
     const rpcResponse = await taskGateway.call({
