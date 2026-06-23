@@ -17,7 +17,7 @@ export default async function (request, response, next) {
   }
   const parameters = Object.fromEntries(new URLSearchParams(initData));
   const userParameters = JSON.parse(parameters.user ?? 'null');
-  let user = typeof userParameters?.id === 'number' ? container.userRepository.findById(userParameters.id) : undefined;
+  let user = typeof userParameters?.id === 'number' ? userRepository.findById(userParameters.id) : undefined;
 
   if (!user?.accessToken) {
     response.status(401).send('Unauthorized');

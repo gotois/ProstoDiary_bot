@@ -83,7 +83,7 @@ export function parseMode(
 export function linkStartApp({ to }) {
   const payload = Buffer.from(
     JSON.stringify({
-      to: to,
+      to: encodeURIComponent(to),
     }),
   ).toString('base64url');
 
@@ -99,7 +99,7 @@ export function linkPayload({ to }) {
   const payload = Buffer.from(
     JSON.stringify({
       debug: IS_DEV,
-      to: to,
+      to: encodeURIComponent(to),
     }),
   ).toString('base64url');
 

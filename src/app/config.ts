@@ -11,6 +11,7 @@ export const OIDC = {
 export const DATABASE = {
   USERS: path.join(import.meta.dirname, '../../database/users.sqlite'),
   GROUPS: path.join(import.meta.dirname, '../../database/groups.sqlite'),
+  EVENTS: path.join(import.meta.dirname, '../../database/events.sqlite'),
   AGENT: IS_DEV ? ':memory:' : path.resolve('./database/agent.sqlite'),
 };
 export const AGENT = {
@@ -19,8 +20,13 @@ export const AGENT = {
   YC_API_KEY: environment.YC_API_KEY,
   YC_IAM_TOKEN: environment.YC_IAM_TOKEN,
 };
-export const SERVER = { HOST: environment.HOST, APP_URL: environment.APP_URL };
-export const VOSK = { URL: environment.VOSK_RECOGNIZE_URL };
+export const SERVER = {
+  HOST: environment.HOST,
+  APP_URL: environment.APP_URL,
+};
+export const VOSK = {
+  URL: environment.VOSK_RECOGNIZE_URL,
+};
 export const SECRETARY = {
   MCP: `${environment.SECRETARY_HOST}/mcp`,
   RPC: `${environment.SECRETARY_HOST}/rpc`,
@@ -30,7 +36,9 @@ export const TELEGRAM = {
   TOKEN: environment.TELEGRAM_TOKEN,
   DOMAIN: environment.TELEGRAM_DOMAIN,
   BOT_NAME: environment.TELEGRAM_BOT_NAME,
-  BOT_LINK: IS_DEV ? 'https://t.me/secretary_dev_bot/Contracts' : 'https://t.me/gotois_bot/App',
+  BOT_LINK: IS_DEV
+    ? 'https://t.me/secretary_dev_bot/Contracts'
+    : 'https://t.me/gotois_bot/App',
   APP_URL: environment.APP_URL,
 };
 export const GOOGLE = {

@@ -2,7 +2,7 @@ import { taskGateway, userRepository } from '../../../app/container.ts';
 
 const ANSWERS = {
   accept: 'Готово: иду',
-  reject: 'Готово: не смогу',
+  reject: 'Готово: не иду',
 };
 
 /**

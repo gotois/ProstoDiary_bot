@@ -8,7 +8,7 @@ export default (activity, message, bot) => {
 
   const results = [
     /*
-    todo: поддержать поиск по событиям в группе используя автодополнение
+    todo: поддержать поиск по пользовательским событиям используя автодополнение
     {
       id: 'search-event',
       type: 'article',

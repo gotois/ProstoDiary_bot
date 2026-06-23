@@ -6,16 +6,9 @@ import { GROUP_ADMIN_STATUSES } from '../../helpers/telegram-user-statuses.ts';
 
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
   try {
-    const { remind_before: remindBefore, chatId, messageId, ...event } = request.body;
-    if (!chatId) {
-      return response.status(403).send('Unknown chatId');
-    }
+    const { remind_before: remindBefore, target, messageId, ...event } = request.body;
     if (!event.id_task) {
       return response.status(400).send('Updated event id is missing');
-    }
-    const chatMember = await bot.getChatMember(chatId, request.user?.id);
-    if (!GROUP_ADMIN_STATUSES.has(chatMember.status)) {
-      return response.status(403).send('Настраивать встречу могут только админы группы.');
     }
     const tz = request.get('Timezone');
 
@@ -54,26 +47,34 @@ export default async (request: Request, response: Response, next: NextFunction):
       }
     }
 
-    if (messageId) {
-      try {
-        await bot.editMessageText(formatTelegramGroupMeeting(event, tz), {
-          chat_id: chatId,
-          message_id: Number(messageId),
-          reply_markup: getTelegramGroupMeetingReplyMarkup({
-            chatId,
-            messageId,
-            taskId: rpcResponse.result?.id_task,
-          }),
-        });
-      } catch (error) {
-        const isMessageNotModified =
-          error instanceof Error &&
-          'code' in error &&
-          error.code === 'ETELEGRAM' &&
-          error.message.includes('message is not modified');
+    for (const t of target) {
+      if (t.type === 'Group') {
+        const chatMember = await bot.getChatMember(t.id, request.user?.id);
+        if (!GROUP_ADMIN_STATUSES.has(chatMember.status)) {
+          return response.status(403).send('Настраивать встречу могут только админы группы.');
+        }
+        if (t.messageId) {
+          try {
+            await bot.editMessageText(formatTelegramGroupMeeting(event, tz), {
+              chat_id: t.id,
+              message_id: t.messageId,
+              reply_markup: getTelegramGroupMeetingReplyMarkup({
+                chatId: t.id,
+                messageId: t.messageId,
+                taskId: rpcResponse.result?.id_task,
+              }),
+            });
+          } catch (error) {
+            const isMessageNotModified =
+              error instanceof Error &&
+              'code' in error &&
+              error.code === 'ETELEGRAM' &&
+              error.message.includes('message is not modified');
 
-        if (!isMessageNotModified) {
-          throw error;
+            if (!isMessageNotModified) {
+              throw error;
+            }
+          }
         }
       }
     }

@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
-import { container, taskGateway } from '../../app/container.ts';
+import { taskGateway, telegramEventRepository } from '../../app/container.ts';
 import { bot } from '../../interfaces/telegram/bot.ts';
-import { formatTelegramGroupMeeting } from '../../helpers/telegram-markup.ts';
+import { formatTelegramGroupMeeting, getTelegramGroupMeetingReplyMarkup } from '../../helpers/telegram-markup.ts';
 
 /**
  *
@@ -82,9 +82,29 @@ export default async (request: Request, response: Response, next: NextFunction):
 
     for (const target of targets) {
       if (target?.id) {
-        await bot.sendMessage(target.id, formatTelegramGroupMeeting(rpcResponse.result, tz), {
+        const message = await bot.sendMessage(target.id, formatTelegramGroupMeeting(rpcResponse.result, tz), {
           parse_mode: 'HTML',
         });
+
+        telegramEventRepository.saveTelegramEvent({
+          chatId: target.id,
+          messageId: message.message_id,
+          taskId: rpcResponse.result.id_task,
+          name: String(target.name ?? ''),
+          type: String(target.type ?? ''),
+        });
+
+        await bot.editMessageReplyMarkup(
+          getTelegramGroupMeetingReplyMarkup({
+            chatId: String(target.id),
+            messageId: String(message.message_id),
+            taskId: rpcResponse.result?.id_task,
+          }),
+          {
+            chat_id: target.id,
+            message_id: message.message_id,
+          },
+        );
       }
     }
 

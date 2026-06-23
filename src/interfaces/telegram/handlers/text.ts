@@ -1,4 +1,4 @@
-import { TYPING, linkPayload, linkStartApp, sendPrepareMessage, sendPrepareAction } from '../../../libs/tg-messages.ts';
+import { TYPING, parseMode, linkPayload, linkStartApp, sendPrepareMessage, sendPrepareAction } from '../../../libs/tg-messages.ts';
 import { container } from '../../../app/container.ts';
 
 /**
@@ -75,7 +75,7 @@ export default async (activity, message, bot) => {
   const { content, artifact } = secretaryData;
 
   await bot.sendMessage(message.chat.id, content[0].text, {
-    parse_mode: parseMode('text/markdown'), // fixme parseMode
+    parse_mode: parseMode('text/markdown'),
     reply_to_message_id: message.message_id,
     protect_content: true,
     disable_notification: true,

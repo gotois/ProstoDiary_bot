@@ -1,21 +1,31 @@
 import type { NextFunction, Request, Response } from 'express';
-import { container } from '../../app/container.ts';
+import { container, telegramEventRepository } from '../../app/container.ts';
 
 export default async (
   request: Request<{ taskId: string }>,
   response: Response,
   next: NextFunction,
-): Promise<Response | void> => {
+): Promise<Response> => {
   try {
     const taskResponse = await container.getTask.execute({
       taskId: request.params.taskId,
       accessToken: request.user.access_token,
     });
-    if (!taskResponse.data) return response.status(taskResponse.status).send('Unable to load task');
+    if (!taskResponse.data) {
+      return response.status(taskResponse.status).send('Unable to load task');
+    }
 
-    // TODO: Найти task_id в groupDB.telegram_events и добавить chatId/messageId к JSON-ответу.
-    // Фронтенд сможет редактировать и удалять событие, открытое из календаря, без route.query.
-    return response.json(taskResponse.data);
+    const taskId = Number(request.params.taskId);
+    const telegramEvent = telegramEventRepository.getTelegramEventByTaskId(taskId);
+    if (!telegramEvent) return response.json(taskResponse.data);
+
+    return response.json({
+      ...(taskResponse.data as Record<string, unknown>),
+      chatId: telegramEvent.chatId,
+      messageId: telegramEvent.messageId,
+      targetName: telegramEvent.name,
+      targetType: telegramEvent.type,
+    });
   } catch (error) {
     next(error);
   }
