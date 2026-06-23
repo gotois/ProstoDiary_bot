@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { taskGateway } from '../../app/container.ts';
-import { bot } from '../../interfaces/telegram/bot.ts';
+import { secretaryGateway } from '../../app/container.ts';
+import { bot } from '../../interfaces/bot.ts';
 import { formatTelegramGroupMeeting, getTelegramGroupMeetingReplyMarkup } from '../../helpers/telegram-markup.ts';
 import { GROUP_ADMIN_STATUSES } from '../../helpers/telegram-user-statuses.ts';
 
@@ -19,7 +19,7 @@ export default async (request: Request, response: Response, next: NextFunction):
     }
     const tz = request.get('Timezone');
 
-    const rpcResponse = await taskGateway.call({
+    const rpcResponse = await secretaryGateway.call({
       method: 'edit',
       params: event,
       accessToken: request.user?.access_token,
@@ -31,7 +31,7 @@ export default async (request: Request, response: Response, next: NextFunction):
     }
     if (typeof remindBefore === 'number' || remindBefore === null) {
       const reminderDate = remindBefore === null ? new Date(0) : startDate;
-      const remindResponse = await taskGateway.call({
+      const remindResponse = await secretaryGateway.call({
         method: 'remind-once',
         params: {
           id_task: event.id_task,

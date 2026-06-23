@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import { bot } from '../../interfaces/telegram/bot.ts';
+import { bot } from '../../interfaces/bot.ts';
 import { groupRepository } from '../../app/container.ts';
 
 const ACTIVE_GROUP_STATUSES = new Set(['creator', 'administrator', 'member', 'restricted']);

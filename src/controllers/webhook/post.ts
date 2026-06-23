@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { bot } from '../../interfaces/telegram/bot.ts';
+import { bot } from '../../interfaces/bot.ts';
 import { userRepository } from '../../app/container.ts';
 import { getTaskIdFromReference } from '../../helpers/approval.ts';
 import { linkPayload } from '../../libs/tg-messages.ts';
@@ -9,6 +9,9 @@ export default async (request: Request, response: Response): Promise<Response> =
     return userRepository.findByActorId(actorId);
   };
   const activity = request.body?.credentialSubject;
+  // TODO: валидировать ActivityPub payload и экранировать поля перед HTML/MarkdownV2.
+  // Сейчас код предполагает форму `actor`, `to`, `summaryMap` и может упасть или разметить
+  // пользовательский текст как Telegram-разметку.
   if (!activity) {
     return response.status(400).send('Validation Body Failed');
   }

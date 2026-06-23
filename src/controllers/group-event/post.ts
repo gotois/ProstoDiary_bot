@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { taskGateway, telegramEventRepository } from '../../app/container.ts';
-import { bot } from '../../interfaces/telegram/bot.ts';
+import { secretaryGateway, telegramEventRepository } from '../../app/container.ts';
+import { bot } from '../../interfaces/bot.ts';
 import { formatTelegramGroupMeeting, getTelegramGroupMeetingReplyMarkup } from '../../helpers/telegram-markup.ts';
 
 /**
@@ -31,7 +31,7 @@ export default async (request: Request, response: Response, next: NextFunction):
     }
     const tz = request.get('Timezone');
 
-    const rpcResponse = await taskGateway.call({
+    const rpcResponse = await secretaryGateway.call({
       method: 'create',
       params: event,
       accessToken: request.user?.access_token,
@@ -44,7 +44,7 @@ export default async (request: Request, response: Response, next: NextFunction):
     }
 
     for (const acct of accounts) {
-      const shareResponse = await taskGateway.call({
+      const shareResponse = await secretaryGateway.call({
         method: 'share',
         params: { task_id: rpcResponse.result?.id_task, acct },
         accessToken: request.user?.access_token,
@@ -58,7 +58,7 @@ export default async (request: Request, response: Response, next: NextFunction):
 
     if (remindBefore) {
       const reminderDate = new Date(event.start_date);
-      const remindResponse = await taskGateway.call({
+      const remindResponse = await secretaryGateway.call({
         method: 'remind-once',
         params: {
           id_task: rpcResponse.result?.id_task,

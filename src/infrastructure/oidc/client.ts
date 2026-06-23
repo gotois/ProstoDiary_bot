@@ -15,11 +15,8 @@ import type { OidcGateway } from '../../domain/repositories/oidc-gateway.ts';
 
 let client: Configuration | undefined;
 
-/**
- * Создаёт объект параметров авторизации PKCE
- * @returns {Promise<object>} Параметры авторизации с codeVerifier и state
- */
-export async function getAuthorization() {
+//Создаёт объект параметров авторизации PKCE
+async function getAuthorization() {
   const client = await getClient();
   const codeVerifier = randomPKCECodeVerifier();
   const codeChallenge = await calculatePKCECodeChallenge(codeVerifier);
@@ -39,11 +36,8 @@ export async function getAuthorization() {
   };
 }
 
-/**
- * Возвращает или инициализирует OIDC-клиент
- * @returns {Promise<Configuration>} Конфигурация OIDC-клиента
- */
-export async function getClient(): Promise<Configuration> {
+// Возвращает или инициализирует OIDC-клиент
+async function getClient(): Promise<Configuration> {
   if (client) {
     return client;
   }
@@ -56,7 +50,7 @@ export async function getClient(): Promise<Configuration> {
   return client;
 }
 
-export class SecretaryOidcGateway implements OidcGateway {
+export default class SecretaryOidcGateway implements OidcGateway {
   async refreshTokens(input: {
     refreshToken: string;
   }): Promise<{ accessToken: string; idToken?: string; refreshToken?: string }> {
@@ -71,7 +65,12 @@ export class SecretaryOidcGateway implements OidcGateway {
     const authorizationUrl = input.initData
       ? await buildAuthorizationUrlWithPAR(client, { ...parameters, tma_init_data: input.initData })
       : buildAuthorizationUrl(client, parameters);
-    return { url: authorizationUrl.toString(), codeVerifier, state: parameters.state };
+
+    return {
+      url: authorizationUrl.toString(),
+      codeVerifier,
+      state: parameters.state,
+    };
   }
 
   async completeAuthorization(input: { callbackUrl: URL; codeVerifier: string; state: string }) {
@@ -80,15 +79,13 @@ export class SecretaryOidcGateway implements OidcGateway {
       pkceCodeVerifier: input.codeVerifier,
       expectedState: input.state,
     });
-    const userInfo = (await fetchUserInfo(oidcClient, tokens.access_token, tokens.claims().sub)) as Record<
-      string,
-      unknown
-    >;
-    if (typeof userInfo.tid !== 'number' || typeof userInfo.sub !== 'string' || typeof userInfo.tz !== 'string') {
+    const userInfo = await fetchUserInfo(oidcClient, tokens.access_token, tokens.claims().sub);
+    if (!userInfo.tid || !userInfo.sub || !userInfo.tz) {
       throw new TypeError('Telegram не подключен к аккаунту');
     }
+
     return {
-      telegramId: userInfo.tid,
+      telegramId: Number(userInfo.tid),
       actorId: userInfo.sub,
       timezone: userInfo.tz,
       tokens: {

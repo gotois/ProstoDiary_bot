@@ -8,6 +8,6 @@ export class DeleteUser {
   }
 
   async execute(input: { telegramId: number }): Promise<void> {
-    await this.users.delete(input.telegramId);
+    return this.users.delete(input.telegramId);
   }
 }

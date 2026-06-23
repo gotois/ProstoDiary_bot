@@ -8,6 +8,6 @@ export class UpdateUserTimezone {
   }
 
   async execute(input: { telegramId: number; timezone: string }): Promise<void> {
-    await this.users.updateTimezone(input.telegramId, input.timezone);
+    return this.users.updateTimezone(input.telegramId, input.timezone);
   }
 }

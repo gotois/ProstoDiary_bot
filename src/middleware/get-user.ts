@@ -1,33 +1,24 @@
 import { ResponseBodyError } from 'openid-client';
 import { container, userRepository } from '../app/container.ts';
 import { toUserTokenInput } from '../infrastructure/auth/user-token-input.ts';
-import { toLegacyUser } from '../interfaces/user-legacy-view.ts';
+import type { Request, Response, NextFunction } from 'express';
 
-/**
- * Загружает пользователя TMA и обновляет истекающий access token.
- * @param request - Express request
- * @param response - Express response
- * @param next - следующий middleware
- */
-export default async function (request, response, next) {
+export default async function (request: Request, response: Response, next: NextFunction): Promise<Response> {
   const [scheme, initData] = (request.get('Authorization') ?? '').split(' ', 2);
   if (scheme?.toUpperCase() !== 'TMA' || !initData) {
-    response.status(401).send('Unauthorized');
-    return;
+    return response.status(401).send('Unauthorized');
   }
   const parameters = Object.fromEntries(new URLSearchParams(initData));
   const userParameters = JSON.parse(parameters.user ?? 'null');
   let user = typeof userParameters?.id === 'number' ? userRepository.findById(userParameters.id) : undefined;
 
   if (!user?.accessToken) {
-    response.status(401).send('Unauthorized');
-    return;
+    return response.status(401).send('Unauthorized');
   }
 
   if (user.expiredAt && user.expiredAt <= Date.now() / 1000 + 60) {
     if (!user.refreshToken || !user.actorId || !user.idToken) {
-      response.status(401).send('Unauthorized');
-      return;
+      return response.status(401).send('Unauthorized');
     }
 
     try {
@@ -49,16 +40,25 @@ export default async function (request, response, next) {
       if (error instanceof ResponseBodyError && error.error === 'invalid_grant') {
         await container.clearUserTokens.execute({ telegramId: user.id });
       }
-      response.status(401).send('Unauthorized');
-      return;
+      return response.status(401).send('Unauthorized');
     }
   }
 
   if (!user?.accessToken) {
-    response.status(401).send('Unauthorized');
-    return;
+    return response.status(401).send('Unauthorized');
   }
-  request.user = toLegacyUser(user);
+  request.user = {
+    id: user.id,
+    actor_id: user.actorId,
+    location: user.location,
+    language: user.language,
+    timezone: user.timezone,
+    access_token: user.accessToken,
+    id_token: user.idToken,
+    refresh_token: user.refreshToken,
+    created_at: user.createdAt,
+    expired_at: user.expiredAt,
+  };
 
   next();
 }

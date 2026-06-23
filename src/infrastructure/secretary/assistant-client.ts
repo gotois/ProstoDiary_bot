@@ -16,10 +16,12 @@ const model = AGENT.MODEL.startsWith('yandex')
     })
   : new ChatOpenAI({
       configuration: {
+        // TODO: вынести endpoint, ключ и модель в конфигурацию. Этот fallback намертво
+        // привязан к локальному Docker и содержит фиктивный ключ, поэтому не переносим.
         baseURL: 'http://localhost:12434/engines/v1', // The local Docker endpoint
       },
       openAIApiKey: 'shit',
-      modelName: 'ai/gemma4:E2B',
+      model: 'ai/gemma4:E2B',
     });
 
 const secretaryAI = new SecretaryAI(
@@ -44,11 +46,20 @@ export class SecretaryAssistantGateway implements AssistantGateway {
     location?: string | null;
     timezone?: string | null;
   }): Promise<{ content: Array<{ text: string }>; artifact?: unknown[] }> {
-    const headers = new Headers({ Accept: 'text/markdown', Authorization: `Bearer ${input.accessToken}` });
-    if (input.location) headers.set('Geolocation', input.location);
-    else if (input.timezone) headers.set('Timezone', input.timezone);
+    const headers = new Headers({
+      Accept: 'text/markdown',
+      Authorization: `Bearer ${input.accessToken}`,
+    });
+    if (input.location) {
+      headers.set('Geolocation', input.location);
+    } else if (input.timezone) {
+      headers.set('Timezone', input.timezone);
+    }
 
-    if (!secretaryAI.isConnected) await secretaryAI.connect(headers);
+    if (!secretaryAI.isConnected) {
+      await secretaryAI.connect(headers);
+    }
+
     return secretaryAI.chat(input.text, {
       configurable: { thread_id: input.chatId, tenant_id: input.tenantId },
       metadata: { user_id: input.userId, locale: input.language },

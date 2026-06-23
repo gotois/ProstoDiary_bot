@@ -15,7 +15,7 @@ export class SaveUserTokens {
     refreshToken: string;
     expiresAt: number;
   }): Promise<void> {
-    await this.users.saveTokens(input.telegramId, input.actorId, {
+    return this.users.saveTokens(input.telegramId, input.actorId, {
       accessToken: input.accessToken,
       idToken: input.idToken,
       refreshToken: input.refreshToken,

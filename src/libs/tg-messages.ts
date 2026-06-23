@@ -75,12 +75,7 @@ export function parseMode(
   }
 }
 
-/**
- *
- * @param root0
- * @param root0.to
- */
-export function linkStartApp({ to }) {
+export function linkStartApp({ to }: { to: string }) {
   const payload = Buffer.from(
     JSON.stringify({
       to: encodeURIComponent(to),
@@ -90,12 +85,7 @@ export function linkStartApp({ to }) {
   return `${TELEGRAM.BOT_LINK}?startapp=${payload}`;
 }
 
-/**
- *
- * @param root0
- * @param root0.to
- */
-export function linkPayload({ to }) {
+export function linkPayload({ to }: { to: string }) {
   const payload = Buffer.from(
     JSON.stringify({
       debug: IS_DEV,

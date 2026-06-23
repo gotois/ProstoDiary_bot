@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { pdfToPng } from 'pdf-to-png-converter';
 import { container } from '../../app/container.ts';
 import { toUserTokenInput } from '../../infrastructure/auth/user-token-input.ts';
-import { bot } from '../../interfaces/telegram/bot.ts';
+import { bot } from '../../interfaces/bot.ts';
 import { sendPrepareAction, UPLOAD_DOCUMENT } from '../../libs/tg-messages.ts';
 import { TELEGRAM, SERVER } from '#env';
 

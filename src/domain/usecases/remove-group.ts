@@ -8,6 +8,6 @@ export class RemoveGroup {
   }
 
   async execute(input: { groupId: number }): Promise<void> {
-    await this.groups.delete(input.groupId);
+    return this.groups.delete(input.groupId);
   }
 }

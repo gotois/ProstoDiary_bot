@@ -1,11 +1,6 @@
 import { container } from '../app/container.ts';
 
-/**
- * Обработчик ошибок
- * @param {Function} callback - обработчик действия бота
- * @returns {Function} Обёрнутый обработчик с обработкой ошибок
- */
-export default function (callback: (...arguments_: unknown[]) => Promise<void>) {
+export default function (callback: (...arguments_: unknown[]) => Promise<() => {}>) {
   return async (activity, message, bot) => {
     try {
       await callback(activity, message, bot);

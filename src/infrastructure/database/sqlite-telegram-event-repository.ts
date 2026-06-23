@@ -37,6 +37,8 @@ export class SqliteTelegramEventRepository {
   }
 
   getTelegramEventByTaskId(taskId: number): TelegramEvent | undefined {
+    // TODO: определить cardinality задачи и чатов. LIMIT 1 молча теряет остальные
+    // сообщения, если одна задача была отправлена в несколько Telegram-групп.
     const event = this.database
       .prepare('SELECT chat_id, message_id, task_id, name, type FROM telegram_events WHERE task_id = ? LIMIT 1')
       .get(taskId) as TelegramEventRow | undefined;

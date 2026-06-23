@@ -9,7 +9,7 @@ export class UpdateUserLocation {
 
   async execute(input: { telegramId: number; latitude: number; longitude: number; accuracy?: number }): Promise<void> {
     const accuracy = input.accuracy ?? 50;
-    await this.users.updateLocation(
+    return this.users.updateLocation(
       input.telegramId,
       `geo:${input.latitude},${input.longitude};cgen=gps;u=${accuracy}`,
     );

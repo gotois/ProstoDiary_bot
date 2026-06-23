@@ -10,10 +10,15 @@ export class EnsureUser {
 
   async execute(input: { telegramId: number; language?: string }): Promise<User | undefined> {
     const existing = await this.users.findById(input.telegramId);
-    if (existing) return existing;
+    if (existing) {
+      return existing;
+    }
 
     const user = await this.users.create(input.telegramId);
-    if (user && input.language) await this.users.updateLanguage(user.id, input.language);
+    if (user && input.language) {
+      await this.users.updateLanguage(user.id, input.language);
+    }
+
     return this.users.findById(input.telegramId);
   }
 }

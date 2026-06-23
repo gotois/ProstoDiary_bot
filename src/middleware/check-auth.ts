@@ -34,7 +34,8 @@ export default function (callback: (...arguments_: unknown[]) => Promise<void>) 
           return;
         }
       } else {
-        /* todo - это старый механизм - с работой отправки контакта - оставить его где-то в другом месте
+        console.warn('todo - это старый механизм - с работой отправки контакта - оставить его где-то в другом месте')
+        /*
         await bot.sendMessage(message.chat.id, 'Предоставьте свой номер телефона', {
           reply_markup: {
             remove_keyboard: true,
@@ -53,11 +54,6 @@ export default function (callback: (...arguments_: unknown[]) => Promise<void>) 
         /**/
         return;
       }
-    }
-
-    // todo если использовать inline тогда
-    if (message.via_bot) {
-      console.log('WIP supports: bot = ' + message.via_bot.is_bot, message.via_bot);
     }
 
     await errorHandler(callback)(activity, message, bot);

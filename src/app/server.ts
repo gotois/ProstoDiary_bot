@@ -4,7 +4,7 @@ import express, { type Express } from 'express';
 import session from 'express-session';
 import cors from 'cors';
 import { SERVER, SECRETARY } from './config.ts';
-import botController from '../interfaces/telegram/bot.ts';
+import botController from '../interfaces/bot.ts';
 import vcLdJsonParser from '../middleware/vc-ld-json-parser.ts';
 import verifyCredential from '../middleware/verify-credentials.ts';
 import getUserMiddleware from '../middleware/get-user.ts';

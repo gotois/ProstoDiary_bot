@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import { container, telegramEventRepository } from '../../app/container.ts';
+import { secretaryGateway, telegramEventRepository } from '../../app/container.ts';
 
 export default async (
   request: Request<{ taskId: string }>,
@@ -7,20 +7,17 @@ export default async (
   next: NextFunction,
 ): Promise<Response> => {
   try {
-    const taskResponse = await container.getTask.execute({
+    const data = await secretaryGateway.getTask({
       taskId: request.params.taskId,
       accessToken: request.user.access_token,
     });
-    if (!taskResponse.data) {
-      return response.status(taskResponse.status).send('Unable to load task');
-    }
 
     const taskId = Number(request.params.taskId);
     const telegramEvent = telegramEventRepository.getTelegramEventByTaskId(taskId);
-    if (!telegramEvent) return response.json(taskResponse.data);
+    if (!telegramEvent) return response.json(data);
 
     return response.json({
-      ...(taskResponse.data as Record<string, unknown>),
+      ...(data as Record<string, unknown>),
       chatId: telegramEvent.chatId,
       messageId: telegramEvent.messageId,
       targetName: telegramEvent.name,

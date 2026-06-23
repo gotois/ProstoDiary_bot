@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { taskGateway, telegramEventRepository } from '../../app/container.ts';
-import { bot } from '../../interfaces/telegram/bot.ts';
+import { secretaryGateway, telegramEventRepository } from '../../app/container.ts';
+import { bot } from '../../interfaces/bot.ts';
 import { GROUP_ADMIN_STATUSES } from '../../helpers/telegram-user-statuses.ts';
 
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
@@ -30,7 +30,7 @@ export default async (request: Request, response: Response, next: NextFunction):
       }
     }
 
-    const rpcResponse = await taskGateway.call({
+    const rpcResponse = await secretaryGateway.call({
       method: 'edit',
       params: { ids: request.body.ids },
       accessToken: request.user?.access_token,
