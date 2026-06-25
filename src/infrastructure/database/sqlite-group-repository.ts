@@ -38,13 +38,19 @@ export class SqliteGroupRepository implements GroupRepository {
 
   findByTitle(query: string): Group[] {
     const search = query.trim().toLowerCase();
-    if (!search) return [];
+    if (!search) {
+      return [];
+    }
     const escapedSearch = search.replaceAll('!', '!!').replaceAll('%', '!%').replaceAll('_', '!_');
     return this.#database
       .prepare("SELECT * FROM groups WHERE unicode_lower(title) LIKE ? ESCAPE '!' ORDER BY created_at DESC")
       .all(`%${escapedSearch}%`)
       .map((row: GroupRow) => {
-        return { id: row.id, title: row.title, createdAt: row.created_at };
+        return {
+          id: row.id,
+          title: row.title,
+          createdAt: row.created_at,
+        };
       });
   }
 
