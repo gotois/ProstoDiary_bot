@@ -14,6 +14,11 @@ export const DATABASE = {
   EVENTS: path.join(import.meta.dirname, '../../database/events.sqlite'),
   AGENT: IS_DEV ? ':memory:' : path.resolve('./database/agent.sqlite'),
 };
+export const LLM = {
+  MODEL: 'ai/gemma4:E2B',
+  // TODO: вынести local Docker endpoint, ключ и модель в конфигурацию
+  URL: 'http://localhost:12434/engines/v1',
+};
 export const AGENT = {
   MODEL: 'yandexgpt-lite',
   MEMORY: DATABASE.AGENT,

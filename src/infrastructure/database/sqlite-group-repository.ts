@@ -2,13 +2,17 @@ import { DatabaseSync } from 'node:sqlite';
 import type { Group } from '../../domain/entities/group.ts';
 import type { GroupRepository } from '../../domain/repositories/group-repository.ts';
 
-type GroupRow = { id: number; title: string; created_at: number };
+type GroupRow = {
+  id: number;
+  title: string;
+  created_at: number;
+};
 
 export class SqliteGroupRepository implements GroupRepository {
-  database: DatabaseSync;
+  #database: DatabaseSync;
 
   constructor(database: DatabaseSync) {
-    this.database = database;
+    this.#database = database;
     database.function('unicode_lower', (value: string): string => {
       return value.toLowerCase();
     });
@@ -36,7 +40,7 @@ export class SqliteGroupRepository implements GroupRepository {
     const search = query.trim().toLowerCase();
     if (!search) return [];
     const escapedSearch = search.replaceAll('!', '!!').replaceAll('%', '!%').replaceAll('_', '!_');
-    return this.database
+    return this.#database
       .prepare("SELECT * FROM groups WHERE unicode_lower(title) LIKE ? ESCAPE '!' ORDER BY created_at DESC")
       .all(`%${escapedSearch}%`)
       .map((row: GroupRow) => {
@@ -45,12 +49,12 @@ export class SqliteGroupRepository implements GroupRepository {
   }
 
   save(group: Pick<Group, 'id' | 'title'>): void {
-    this.database
+    this.#database
       .prepare('INSERT INTO groups (id, title) VALUES (?, ?) ON CONFLICT(id) DO UPDATE SET title = excluded.title')
       .run(group.id, group.title);
   }
 
   delete(id: number): void {
-    this.database.prepare('DELETE FROM groups WHERE id == ?').run(id);
+    this.#database.prepare('DELETE FROM groups WHERE id == ?').run(id);
   }
 }

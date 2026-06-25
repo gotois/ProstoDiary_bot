@@ -1,7 +1,7 @@
 import { LangChainYandexGPT } from 'langchain-yandexgpt';
 import { DatabaseSync } from 'node:sqlite';
 import { ChatOpenAI } from '@langchain/openai';
-import { SECRETARY, AGENT } from '#env';
+import { SECRETARY, AGENT, LLM } from '#env';
 import type { AssistantGateway } from '../../domain/repositories/assistant-gateway.ts';
 
 // todo - поменять на библиотеку из npm
@@ -16,12 +16,10 @@ const model = AGENT.MODEL.startsWith('yandex')
     })
   : new ChatOpenAI({
       configuration: {
-        // TODO: вынести endpoint, ключ и модель в конфигурацию. Этот fallback намертво
-        // привязан к локальному Docker и содержит фиктивный ключ, поэтому не переносим.
-        baseURL: 'http://localhost:12434/engines/v1', // The local Docker endpoint
+        baseURL: LLM.URL,
       },
       openAIApiKey: 'shit',
-      model: 'ai/gemma4:E2B',
+      model: LLM.MODEL,
     });
 
 const secretaryAI = new SecretaryAI(
@@ -45,7 +43,7 @@ export class SecretaryAssistantGateway implements AssistantGateway {
     accessToken: string;
     location?: string | null;
     timezone?: string | null;
-  }): Promise<{ content: Array<{ text: string }>; artifact?: unknown[] }> {
+  }): Promise<{ content: Array<{ text: string }>; artifact?: any[] }> {
     const headers = new Headers({
       Accept: 'text/markdown',
       Authorization: `Bearer ${input.accessToken}`,
@@ -61,8 +59,14 @@ export class SecretaryAssistantGateway implements AssistantGateway {
     }
 
     return secretaryAI.chat(input.text, {
-      configurable: { thread_id: input.chatId, tenant_id: input.tenantId },
-      metadata: { user_id: input.userId, locale: input.language },
+      configurable: {
+        thread_id: input.chatId,
+        tenant_id: input.tenantId,
+      },
+      metadata: {
+        user_id: input.userId,
+        locale: input.language,
+      },
       headers,
     });
   }

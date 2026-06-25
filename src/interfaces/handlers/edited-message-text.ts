@@ -1,8 +1,4 @@
-/**
- * Обрезает input для отображения предыдущего сообщения
- * @param {string} input - исходная строка сообщения
- * @returns {string} Усечённая строка с многоточием
- */
+// Обрезает input для отображения предыдущего сообщения
 const previousInput = (input: string): string => {
   return `${input.replaceAll('\n', ' ').slice(0, 6)}…`;
 };

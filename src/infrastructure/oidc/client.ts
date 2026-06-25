@@ -15,7 +15,7 @@ import type { OidcGateway } from '../../domain/repositories/oidc-gateway.ts';
 
 let client: Configuration | undefined;
 
-//Создаёт объект параметров авторизации PKCE
+// Создаёт объект параметров авторизации PKCE
 async function getAuthorization() {
   const client = await getClient();
   const codeVerifier = randomPKCECodeVerifier();
@@ -81,7 +81,7 @@ export default class SecretaryOidcGateway implements OidcGateway {
     });
     const userInfo = await fetchUserInfo(oidcClient, tokens.access_token, tokens.claims().sub);
     if (!userInfo.tid || !userInfo.sub || !userInfo.tz) {
-      throw new TypeError('Telegram не подключен к аккаунту');
+      throw new Error('Telegram не подключен к аккаунту');
     }
 
     return {
@@ -90,8 +90,8 @@ export default class SecretaryOidcGateway implements OidcGateway {
       timezone: userInfo.tz,
       tokens: {
         accessToken: tokens.access_token,
-        idToken: tokens.id_token ?? '',
-        refreshToken: tokens.refresh_token ?? '',
+        idToken: tokens.id_token,
+        refreshToken: tokens.refresh_token,
         tokenType: tokens.token_type,
       },
     };

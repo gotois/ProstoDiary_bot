@@ -15,7 +15,9 @@ type TokenResponse = {
  */
 export function toUserTokenInput(input: { telegramId: number; actorId: string; tokens: TokenResponse }) {
   const expiresAt = jwtDecode<{ exp?: number }>(input.tokens.id_token).exp;
-  if (!expiresAt) throw new Error('Missing token expiration');
+  if (!expiresAt) {
+    throw new Error('Missing token expiration');
+  }
   return {
     telegramId: input.telegramId,
     actorId: input.actorId,

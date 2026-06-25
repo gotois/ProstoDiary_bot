@@ -11,10 +11,10 @@ export interface TelegramEvent {
 type TelegramEventRow = { chat_id: number; message_id: number; task_id: number; name: string; type: string };
 
 export class SqliteTelegramEventRepository {
-  database: DatabaseSync;
+  #database: DatabaseSync;
 
   constructor(database: DatabaseSync) {
-    this.database = database;
+    this.#database = database;
     database.exec(
       "CREATE TABLE if not exists telegram_events(chat_id INTEGER NOT NULL, message_id INTEGER NOT NULL, task_id INTEGER NOT NULL, name TEXT NOT NULL DEFAULT '', type TEXT NOT NULL DEFAULT '', PRIMARY KEY(chat_id, message_id)) STRICT",
     );
@@ -28,8 +28,7 @@ export class SqliteTelegramEventRepository {
   }
 
   saveTelegramEvent(event: TelegramEvent): void {
-    console.log('event', event);
-    this.database
+    this.#database
       .prepare(
         'INSERT INTO telegram_events (chat_id, message_id, task_id, name, type) VALUES (?, ?, ?, ?, ?) ON CONFLICT(chat_id, message_id) DO UPDATE SET task_id = excluded.task_id, name = excluded.name, type = excluded.type',
       )
@@ -39,10 +38,12 @@ export class SqliteTelegramEventRepository {
   getTelegramEventByTaskId(taskId: number): TelegramEvent | undefined {
     // TODO: определить cardinality задачи и чатов. LIMIT 1 молча теряет остальные
     // сообщения, если одна задача была отправлена в несколько Telegram-групп.
-    const event = this.database
+    const event = this.#database
       .prepare('SELECT chat_id, message_id, task_id, name, type FROM telegram_events WHERE task_id = ? LIMIT 1')
       .get(taskId) as TelegramEventRow | undefined;
-    if (!event) return undefined;
+    if (!event) {
+      return;
+    }
 
     return {
       chatId: event.chat_id,

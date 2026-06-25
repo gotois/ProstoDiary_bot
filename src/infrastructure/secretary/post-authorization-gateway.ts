@@ -1,5 +1,6 @@
 import type { PostAuthorizationGateway } from '../../domain/repositories/post-authorization-gateway.ts';
 
+// todo refactor
 export class SecretaryPostAuthorizationGateway implements PostAuthorizationGateway {
   constructor(host: string) {
     this.host = host
@@ -14,10 +15,17 @@ export class SecretaryPostAuthorizationGateway implements PostAuthorizationGatew
     const authorization = `${input.tokenType} ${input.accessToken}`;
     const registration = await fetch(`${this.host}/webhook/settings`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': authorization },
-      body: JSON.stringify({ webhookUrl: input.webhookUrl }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': authorization,
+      },
+      body: JSON.stringify({
+        webhookUrl: input.webhookUrl,
+      }),
     });
-    if (!registration.ok) throw new Error('[token] webhook registration failed');
+    if (!registration.ok) {
+      throw new Error('[token] webhook registration failed');
+    }
     const inbox = await fetch(`${input.actorId}/inbox`, {
       headers: {
         'Content-Type': 'application/json',
@@ -26,18 +34,29 @@ export class SecretaryPostAuthorizationGateway implements PostAuthorizationGatew
         'Timezone': input.timezone,
       },
     });
-    if (!inbox.ok) throw new Error('Unknown server error');
+    if (!inbox.ok) {
+      throw new Error('Unknown server error');
+    }
     const result = await inbox.json();
     const [item] =
       result.orderedItems?.filter((value) => {
         return value.actor === `${this.host}/actor`;
       }) ?? [];
-    if (!item) return {};
+    if (!item) {
+      return {};
+    }
     const object = await fetch(item.object, {
-      headers: { Accept: 'application/activity+json', Authorization: authorization },
+      headers: {
+        Accept: 'application/activity+json',
+        Authorization: authorization,
+      },
     });
-    if (!object.ok) throw new Error('Unknown server error');
+    if (!object.ok) {
+      throw new Error('Unknown server error');
+    }
     const { attachment } = await object.json();
-    return { documentUrl: attachment?.[0] };
+    return {
+      documentUrl: attachment?.[0],
+    };
   }
 }

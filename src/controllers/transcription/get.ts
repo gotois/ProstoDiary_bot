@@ -34,12 +34,8 @@ const convertAudio = (inputBuffer: Buffer): Promise<Buffer> => {
   });
 };
 
-/**
- * @param request
- * @param response
- * @description Преобразует аудиофайл из Telegram по file_id в текст
- */
-export default async (request: Request<{ file_id: string }>, response: Response): Promise<void> => {
+// Преобразует аудиофайл из Telegram по file_id в текст
+export default async (request: Request<{ file_id: string }>, response: Response): Promise<Response> => {
   const fileId = request.params.file_id;
 
   const url = `${SERVER.HOST}/file/${fileId}`;
@@ -90,5 +86,5 @@ export default async (request: Request<{ file_id: string }>, response: Response)
   }
   const { text } = await response2.json();
 
-  response.send(text);
+  return response.send(text);
 };

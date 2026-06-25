@@ -52,7 +52,12 @@ export class SecretaryGateway implements TaskGateway {
   }): Promise<{ result?: any; error?: { message?: string } }> {
     return jsonRpc({
       url: `${this.host}/rpc`,
-      body: { jsonrpc: '2.0', id: randomUUID(), method: input.method, params: input.params },
+      body: {
+        jsonrpc: '2.0',
+        id: randomUUID(),
+        method: input.method,
+        params: input.params,
+      },
       headers: {
         Authorization: `Bearer ${input.accessToken}`,
         Geolocation: input.geolocation,

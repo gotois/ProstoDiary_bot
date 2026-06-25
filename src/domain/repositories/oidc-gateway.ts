@@ -4,7 +4,12 @@ export interface OidcGateway {
     telegramId: number;
     actorId: string;
     timezone: string;
-    tokens: { accessToken: string; idToken: string; refreshToken: string; tokenType: string };
+    tokens: {
+      accessToken: string;
+      idToken?: string;
+      refreshToken?: string;
+      tokenType: string;
+    };
   }>;
   refreshTokens(input: {
     refreshToken: string;

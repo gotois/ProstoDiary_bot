@@ -1,6 +1,7 @@
 import { container } from '../../app/container.ts';
 
 /**
+ * @deprecated
  * Очистить базу данных с подтверждением — удаление всей истории пользователя
  * @param {unknown} activity - активность ActivityPub
  * @param {object} message - сообщение Telegram

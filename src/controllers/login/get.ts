@@ -1,14 +1,14 @@
 import type { Request, Response } from 'express';
 import { container } from '../../app/container.ts';
 
-export default async (request: Request, response: Response): Promise<void> => {
+export default async (request: Request, response: Response): Promise<Response> => {
   try {
     const authorization = await container.startAuthorization.execute({});
     request.session.code_verifier = authorization.codeVerifier;
     request.session.state = authorization.state;
     await request.session.save();
 
-    response.send(`
+    return response.send(`
     <html lang="ru">
       <head>
         <title>Перенаправление...</title>
@@ -35,6 +35,6 @@ export default async (request: Request, response: Response): Promise<void> => {
   `);
   } catch (error) {
     console.error(error);
-    response.status(400).send('Произошла ошибка авторизации клиента');
+    return response.status(400).send('Произошла ошибка авторизации клиента');
   }
 };

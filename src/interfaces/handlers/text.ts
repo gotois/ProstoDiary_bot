@@ -60,7 +60,7 @@ export default async (activity, message, bot) => {
       tenantId: message.from.id,
       userId: message.user.sub,
       language: message.user.language,
-      accessToken: message.user.access_token,
+      accessToken: message.user.accessToken,
       location: message.user.location,
       timezone: message.user.timezone,
     });

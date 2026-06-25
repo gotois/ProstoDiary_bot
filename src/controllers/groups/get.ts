@@ -14,7 +14,7 @@ export default async function getGroupsController(
   request: Request,
   response: Response,
   next: NextFunction,
-): Promise<void> {
+): Promise<Response> {
   try {
     // TODO: Если для формы будет общий endpoint target, сохранить здесь только группу,
     // а контакты tg вынести в отдельный контроллер или сервис по текущему паттерну.
@@ -37,7 +37,7 @@ export default async function getGroupsController(
       }
     }
 
-    response.json(groups);
+    return response.json(groups);
   } catch (error) {
     next(error);
   }

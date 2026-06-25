@@ -5,7 +5,7 @@ import { linkStartApp } from '../libs/tg-messages.ts';
  * @param date
  * @param tz
  */
-function getFormatTime(date, tz) {
+function getFormatTime(date: string, tz: string) {
   return new Intl.DateTimeFormat('ru-RU', {
     timeZone: tz,
     hour: '2-digit',
