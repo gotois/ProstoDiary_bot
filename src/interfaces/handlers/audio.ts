@@ -1,18 +1,16 @@
 import { SECRETARY } from '#env';
-import secretaryAI from '../../infrastructure/secretary/assistant-client.ts';
+import { assistantGateway } from '../../app/container.ts';
 import { sendPrepareMessage } from '../../libs/tg-messages.ts';
 
 export default async (activity, message, bot) => {
   await sendPrepareMessage(activity, message, bot);
 
-  console.log('message:', message);
   const url = `${SECRETARY.HOST}/file/${message.audio.audio_id}`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error('Ошибка');
   }
-  const query = await secretaryAI.vzor(response);
-  console.log('query', query);
+  const query = await assistantGateway.vzor(response);
 
   const type = 'text/markdown';
   switch (type) {
