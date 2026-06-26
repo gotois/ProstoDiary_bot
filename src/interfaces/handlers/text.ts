@@ -1,5 +1,12 @@
-import { TYPING, parseMode, linkPayload, linkStartApp, sendPrepareMessage, sendPrepareAction } from '../../libs/tg-messages.ts';
-import { container } from '../../app/container.ts';
+import {
+  TYPING,
+  parseMode,
+  linkPayload,
+  linkStartApp,
+  sendPrepareMessage,
+  sendPrepareAction,
+} from '../../libs/tg-messages.ts';
+import { assistantGateway } from '../../app/container.ts';
 
 /**
  * Генерирует inline-клавиатуру из артефактов
@@ -54,7 +61,7 @@ export default async (activity, message, bot) => {
 
   let secretaryData;
   try {
-    secretaryData = await container.processTextMessage.execute({
+    secretaryData = await assistantGateway.processText({
       text: message.text,
       chatId: message.chat.id,
       tenantId: message.from.id,

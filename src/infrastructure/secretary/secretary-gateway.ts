@@ -1,25 +1,27 @@
 import { randomUUID } from 'node:crypto';
-import jsonRpc from 'request-json-rpc2';
+import jsonRpc, { type JSONRPCResponse } from 'request-json-rpc2';
 import { unpack } from 'zip-pack-unpack';
-import secretaryAI from './assistant-client.ts';
-import type { TaskGateway } from '../../domain/repositories/task-gateway.ts';
+import { assistantGateway } from '../../app/container.ts';
 
-export class SecretaryGateway implements TaskGateway {
+export class SecretaryGateway {
   host: string;
 
   constructor(host: string) {
     this.host = host;
   }
 
-  async getTask(input: { taskId: string; accessToken: string }): Promise<{ status: number; data?: unknown }> {
+  async getTask(input: { taskId: string; accessToken: string }): Promise<Record<string, unknown>> {
     const response = await fetch(`${this.host}/tasks/${encodeURIComponent(input.taskId)}`, {
       method: 'GET',
-      headers: { Accept: 'application/json', Authorization: `Bearer ${input.accessToken}` },
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${input.accessToken}`,
+      },
     });
     if (!response.ok) {
       throw new Error('Ошибка Task');
     }
-    return await response.json();
+    return response.json();
   }
 
   async transcribe(input: { fileId: string }): Promise<string> {
@@ -30,26 +32,28 @@ export class SecretaryGateway implements TaskGateway {
 
     const text = await response.text();
 
-    return await secretaryAI.vzor(text);
+    return assistantGateway.vzor(text);
   }
 
   async process(input: { fileId: string }): Promise<{ url: string }> {
     const url = `${this.host}/file/${input.fileId}`;
     const response = await fetch(url);
-    if (!response.ok) throw new Error('Ошибка');
+    if (!response.ok) {
+      throw new Error('Ошибка File');
+    }
     await (response.headers.get('content-type') === 'application/zip'
       ? unpack(Buffer.from(await response.arrayBuffer()))
-      : secretaryAI.vzor(response));
+      : assistantGateway.vzor(response));
     return { url };
   }
 
-  async call(input: {
+  call(input: {
     method: string;
     params: Record<string, unknown>;
-    accessToken?: string | null;
-    geolocation?: string | null;
-    timezone?: string | null;
-  }): Promise<{ result?: any; error?: { message?: string } }> {
+    accessToken: string;
+    geolocation?: string;
+    timezone?: string;
+  }): Promise<JSONRPCResponse> {
     return jsonRpc({
       url: `${this.host}/rpc`,
       body: {

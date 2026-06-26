@@ -41,9 +41,7 @@ export const TELEGRAM = {
   TOKEN: environment.TELEGRAM_TOKEN,
   DOMAIN: environment.TELEGRAM_DOMAIN,
   BOT_NAME: environment.TELEGRAM_BOT_NAME,
-  BOT_LINK: IS_DEV
-    ? 'https://t.me/secretary_dev_bot/Contracts'
-    : 'https://t.me/gotois_bot/App',
+  BOT_LINK: IS_DEV ? 'https://t.me/secretary_dev_bot/Contracts' : 'https://t.me/gotois_bot/App',
   APP_URL: environment.APP_URL,
 };
 export const GOOGLE = {

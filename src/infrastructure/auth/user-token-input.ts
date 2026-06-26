@@ -7,11 +7,12 @@ type TokenResponse = {
 };
 
 /**
- *
- * @param input
- * @param input.telegramId
- * @param input.actorId
- * @param input.tokens
+ * Преобразует OIDC tokens в формат сохранения пользователя
+ * @param input - входные данные пользователя
+ * @param input.telegramId - Telegram id пользователя
+ * @param input.actorId - ActivityPub actor id
+ * @param input.tokens - OIDC tokens
+ * @returns Данные для сохранения токенов пользователя
  */
 export function toUserTokenInput(input: { telegramId: number; actorId: string; tokens: TokenResponse }) {
   const expiresAt = jwtDecode<{ exp?: number }>(input.tokens.id_token).exp;

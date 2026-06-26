@@ -13,8 +13,9 @@ interface GoogleTokenResponse {
 }
 
 /**
- *
- * @param ical
+ * @description Конвертирует iCal событие в ActivityStreams Event.
+ * @param {string} ical - iCal данные события
+ * @returns Объект события
  */
 function convertIcalToEvent(ical: string) {
   const component = new ICAL.Component(ICAL.parse(ical));
@@ -43,10 +44,11 @@ function convertIcalToEvent(ical: string) {
 }
 
 /**
- *
- * @param code
- * @param clientId
- * @param clientSecret
+ * Получает refresh token Google OAuth
+ * @param {string} code - код авторизации Google
+ * @param {string} clientId - OAuth client id
+ * @param {string} clientSecret - OAuth client secret
+ * @returns Refresh token
  */
 async function getRefreshToken(code: string, clientId: string, clientSecret: string): Promise<string> {
   const response = await fetch('https://oauth2.googleapis.com/token', {
@@ -74,11 +76,12 @@ async function getRefreshToken(code: string, clientId: string, clientSecret: str
 }
 
 /**
- *
- * @param username
- * @param refreshToken
- * @param clientId
- * @param clientSecret
+ * Получает события основного календаря Google
+ * @param username - имя пользователя Google Calendar
+ * @param refreshToken - refresh token Google OAuth
+ * @param clientId - OAuth client id
+ * @param clientSecret - OAuth client secret
+ * @returns Объекты календаря
  */
 async function getEvents(username: string, refreshToken: string, clientId: string, clientSecret: string) {
   const client = await createDAVClient({

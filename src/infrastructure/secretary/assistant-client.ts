@@ -1,37 +1,16 @@
-import { LangChainYandexGPT } from 'langchain-yandexgpt';
-import { DatabaseSync } from 'node:sqlite';
-import { ChatOpenAI } from '@langchain/openai';
-import { SECRETARY, AGENT, LLM } from '#env';
-import type { AssistantGateway } from '../../domain/repositories/assistant-gateway.ts';
+import SecretaryAI from 'secretary-ai';
 
-// todo - поменять на библиотеку из npm
-import SecretaryAI from '../../../../../secretary-ai/index.js';
+export class AssistantGateway {
+  constructor(mcp, model, database) {
+    this.ai = new SecretaryAI(mcp, 'virtual-secretary-mcp-server', model, database);
+  }
 
-const model = AGENT.MODEL.startsWith('yandex')
-  ? new LangChainYandexGPT({
-      temperature: 0,
-      apiKey: AGENT.YC_API_KEY,
-      folderID: AGENT.YC_IAM_TOKEN,
-      model: AGENT.MODEL,
-    })
-  : new ChatOpenAI({
-      configuration: {
-        baseURL: LLM.URL,
-      },
-      openAIApiKey: 'shit',
-      model: LLM.MODEL,
-    });
-
-const secretaryAI = new SecretaryAI(
-  SECRETARY.MCP,
-  'virtual-secretary-mcp-server',
-  model,
-  new DatabaseSync(AGENT.MEMORY),
-);
-
-export class SecretaryAssistantGateway implements AssistantGateway {
   async clearConversation(input: { chatId: number; tenantId: number }): Promise<void> {
-    await secretaryAI.clear({ configurable: { thread_id: input.chatId, tenant_id: input.tenantId } });
+    await this.ai.clear({ configurable: { thread_id: input.chatId, tenant_id: input.tenantId } });
+  }
+
+  vzor(request: unknown): Promise<string> {
+    return this.ai.vzor(request);
   }
 
   async processText(input: {
@@ -43,7 +22,7 @@ export class SecretaryAssistantGateway implements AssistantGateway {
     accessToken: string;
     location?: string | null;
     timezone?: string | null;
-  }): Promise<{ content: Array<{ text: string }>; artifact?: any[] }> {
+  }): Promise<{ content: Array<{ text: string }>; artifact?: unknown[] }> {
     const headers = new Headers({
       Accept: 'text/markdown',
       Authorization: `Bearer ${input.accessToken}`,
@@ -54,11 +33,11 @@ export class SecretaryAssistantGateway implements AssistantGateway {
       headers.set('Timezone', input.timezone);
     }
 
-    if (!secretaryAI.isConnected) {
-      await secretaryAI.connect(headers);
+    if (!this.ai.isConnected) {
+      await this.ai.connect(headers);
     }
 
-    return secretaryAI.chat(input.text, {
+    return this.ai.chat(input.text, {
       configurable: {
         thread_id: input.chatId,
         tenant_id: input.tenantId,
@@ -71,5 +50,3 @@ export class SecretaryAssistantGateway implements AssistantGateway {
     });
   }
 }
-
-export default secretaryAI;

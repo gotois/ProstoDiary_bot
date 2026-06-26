@@ -1,6 +1,5 @@
 /* eslint-disable */
-// import botController from 'telegram-bot-api-express';
-import botController from '../../../../telegram-bot-api-express/index.js';
+import botController from 'telegram-bot-api-express';
 import pingAction from './handlers/ping.ts';
 import dbclearAction from './handlers/dbclear.ts';
 import clearAction from './handlers/clear.ts';
@@ -38,8 +37,6 @@ import rejectCallback from './handlers/reject.ts';
 import meetingRsvpAction from './handlers/meeting-rsvp.ts';
 import { TELEGRAM } from '#env';
 import { container, userRepository } from '../app/container.ts';
-
-const { ensureUser, updateUserLocation, updateUserTimezone } = container;
 
 const { middleware, bot } = botController({
   token: TELEGRAM.TOKEN,
@@ -85,11 +82,11 @@ const { middleware, bot } = botController({
       for (const { type, data } of webAppData) {
         switch (type) {
           case 'tz': {
-            await updateUserTimezone.execute({ telegramId: message.chat.id, timezone: data });
+            await container.user.updateUserTimezone({ telegramId: message.chat.id, timezone: data });
             break;
           }
           case 'location': {
-            await updateUserLocation.execute({ telegramId: message.chat.id, ...data });
+            await container.user.updateUserLocation({ telegramId: message.chat.id, ...data });
             break;
           }
           default: {
@@ -170,7 +167,7 @@ bot.on('message', async (message, activity) => {
   message = Array.isArray(message) ? message[0] : message;
   let user = userRepository.findById(message.chat.id);
   if (!user) {
-    await ensureUser.execute({
+    await container.user.ensureUser({
       telegramId: message.chat.id,
       language: message.from.language_code,
     });

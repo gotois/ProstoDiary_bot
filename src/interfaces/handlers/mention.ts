@@ -1,9 +1,9 @@
 /**
  * @description Обработка упоминания бота в групповом чате
- * @param {unknown} activity - активность ActivityPub
- * @param {object} message - сообщение Telegram
- * @param {object} bot - экземпляр бота
+ * @param {unknown} _activity - активность ActivityPub
+ * @param {object} _message - сообщение Telegram
+ * @param {object} _bot - экземпляр бота
  */
-export default async (activity: unknown, message, bot) => {
-  console.log('Todo прямой вызов Секретаря')
+export default /*async */ (_activity: unknown, _message, _bot) => {
+  console.log('Todo прямой вызов Секретаря');
 };

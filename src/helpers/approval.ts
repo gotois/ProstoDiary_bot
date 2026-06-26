@@ -23,5 +23,8 @@ export function parseApprovalCallback(data: string): { type: ApprovalType; taskI
     throw new Error('Некорректный ответ на приглашение');
   }
 
-  return { type, taskId: getTaskIdFromReference(taskReference) };
+  return {
+    type,
+    taskId: getTaskIdFromReference(taskReference),
+  };
 }

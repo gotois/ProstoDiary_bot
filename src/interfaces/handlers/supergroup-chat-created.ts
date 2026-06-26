@@ -1,7 +1,7 @@
 import { container } from '../../app/container.ts';
 
 export default async (activity, message) => {
-  await container.registerGroup.execute({
+  await container.group.save({
     id: message.chat.id,
     title: message.chat.title ?? '',
   });

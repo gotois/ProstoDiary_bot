@@ -6,13 +6,7 @@ export class PrepareAuthorizationWelcome {
   constructor(gateway: PostAuthorizationGateway) {
     this.gateway = gateway;
   }
-  async execute(input: {
-    actorId: string;
-    accessToken: string;
-    tokenType: string;
-    timezone: string;
-    webhookUrl: string;
-  }) {
+  execute(input: { actorId: string; accessToken: string; tokenType: string; timezone: string; webhookUrl: string }) {
     return this.gateway.prepareWelcome(input);
   }
 }

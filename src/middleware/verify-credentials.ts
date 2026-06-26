@@ -4,7 +4,13 @@ import { Ed25519Signature2020 } from '@digitalbazaar/ed25519-signature-2020';
 import { Ed25519VerificationKey2020 } from '@digitalbazaar/ed25519-verification-key-2020';
 import { createDocumentLoader } from '../helpers/loader.ts';
 
-// Верификация подписанного документа (Verifiable Credential)
+/**
+ * @description Верификация подписанного документа (Verifiable Credential)
+ * @param {Request} request - request
+ * @param {Response} response - response
+ * @param {NextFunction} next - next
+ * @returns {Promise<void>} Результат проверки credential
+ */
 export default async function (request: Request, response: Response, next: NextFunction): Promise<void> {
   if (!request?.body) {
     return next(new Error('Invalid credential format'));

@@ -19,10 +19,18 @@ export class SqliteTelegramEventRepository {
       "CREATE TABLE if not exists telegram_events(chat_id INTEGER NOT NULL, message_id INTEGER NOT NULL, task_id INTEGER NOT NULL, name TEXT NOT NULL DEFAULT '', type TEXT NOT NULL DEFAULT '', PRIMARY KEY(chat_id, message_id)) STRICT",
     );
     const columns = database.prepare('PRAGMA table_info(telegram_events)').all() as Array<{ name: string }>;
-    if (!columns.some((column) => column.name === 'name')) {
+    if (
+      !columns.some((column) => {
+        return column.name === 'name';
+      })
+    ) {
       database.exec("ALTER TABLE telegram_events ADD COLUMN name TEXT NOT NULL DEFAULT ''");
     }
-    if (!columns.some((column) => column.name === 'type')) {
+    if (
+      !columns.some((column) => {
+        return column.name === 'type';
+      })
+    ) {
       database.exec("ALTER TABLE telegram_events ADD COLUMN type TEXT NOT NULL DEFAULT ''");
     }
   }

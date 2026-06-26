@@ -3,16 +3,16 @@ import { SECRETARY } from '#env';
 
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
   try {
-    const res = await fetch(SECRETARY.HOST + '/tasks/subscription', {
+    const result = await fetch(SECRETARY.HOST + '/tasks/subscription', {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${request.user?.access_token}`,
       },
     });
-    if (!res.ok) {
-      return response.status(res.status).send('Failed to load subscription calendar');
+    if (!result.ok) {
+      return response.status(result.status).send('Failed to load subscription calendar');
     }
-    const ics = await res.text();
+    const ics = await result.text();
     return response.send(ics);
   } catch (error) {
     next(error);

@@ -15,7 +15,7 @@ export default function (callback: (...arguments_: unknown[]) => Promise<void>) 
       if (message.user.refresh_token) {
         try {
           const tokens = await container.refreshUserTokens.execute({ refreshToken: message.user.refresh_token });
-          await container.saveUserTokens.execute(
+          await container.user.saveUserTokens(
             toUserTokenInput({
               telegramId: message.user.id,
               actorId: message.user.actor_id,
@@ -29,12 +29,12 @@ export default function (callback: (...arguments_: unknown[]) => Promise<void>) 
         } catch (error) {
           console.error('Ошибка обновления токена:', error);
           if (error instanceof ResponseBodyError && error.error === 'invalid_grant') {
-            await container.clearUserTokens.execute({ telegramId: message.user.id });
+            await container.user.clearUserTokens({ telegramId: message.user.id });
           }
           return;
         }
       } else {
-        console.warn('todo - это старый механизм - с работой отправки контакта - оставить его где-то в другом месте')
+        console.warn('todo - это старый механизм - с работой отправки контакта - оставить его где-то в другом месте');
         /*
         await bot.sendMessage(message.chat.id, 'Предоставьте свой номер телефона', {
           reply_markup: {

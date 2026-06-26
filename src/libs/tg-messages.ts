@@ -74,7 +74,12 @@ export function parseMode(
     }
   }
 }
-
+/**
+ * Формирует ссылку запуска Telegram Mini App
+ * @param root0 - параметры ссылки
+ * @param root0.to - целевой URL
+ * @returns Ссылка запуска Mini App
+ */
 export function linkStartApp({ to }: { to: string }) {
   const payload = Buffer.from(
     JSON.stringify({
@@ -84,7 +89,12 @@ export function linkStartApp({ to }: { to: string }) {
 
   return `${TELEGRAM.BOT_LINK}?startapp=${payload}`;
 }
-
+/**
+ * Формирует ссылку Telegram Mini App с payload
+ * @param root0 - параметры ссылки
+ * @param root0.to - целевой URL
+ * @returns Ссылка Mini App с payload
+ */
 export function linkPayload({ to }: { to: string }) {
   const payload = Buffer.from(
     JSON.stringify({

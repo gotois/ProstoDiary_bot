@@ -7,6 +7,10 @@ export default async (
   next: NextFunction,
 ): Promise<Response> => {
   try {
+    if (!request.user) {
+      throw new Error('User not found');
+    }
+
     const data = await secretaryGateway.getTask({
       taskId: request.params.taskId,
       accessToken: request.user.access_token,
@@ -14,10 +18,12 @@ export default async (
 
     const taskId = Number(request.params.taskId);
     const telegramEvent = telegramEventRepository.getTelegramEventByTaskId(taskId);
-    if (!telegramEvent) return response.json(data);
+    if (!telegramEvent) {
+      return response.json(data);
+    }
 
     return response.json({
-      ...(data as Record<string, unknown>),
+      ...data,
       chatId: telegramEvent.chatId,
       messageId: telegramEvent.messageId,
       targetName: telegramEvent.name,

@@ -7,7 +7,7 @@ export class StartAuthorization {
     this.oidc = oidc;
   }
 
-  async execute(input: { initData?: string }): Promise<{ url: string; codeVerifier: string; state: string }> {
+  execute(input: { initData?: string }): Promise<{ url: string; codeVerifier: string; state: string }> {
     return this.oidc.startAuthorization(input);
   }
 }

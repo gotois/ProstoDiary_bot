@@ -15,7 +15,10 @@ import type { OidcGateway } from '../../domain/repositories/oidc-gateway.ts';
 
 let client: Configuration | undefined;
 
-// Создаёт объект параметров авторизации PKCE
+/**
+ * Создаёт объект параметров авторизации PKCE
+ * @returns Параметры авторизации PKCE.
+ */
 async function getAuthorization() {
   const client = await getClient();
   const codeVerifier = randomPKCECodeVerifier();
@@ -36,7 +39,10 @@ async function getAuthorization() {
   };
 }
 
-// Возвращает или инициализирует OIDC-клиент
+/**
+ * Возвращает или инициализирует OIDC-клиент
+ * @returns OIDC-клиент.
+ */
 async function getClient(): Promise<Configuration> {
   if (client) {
     return client;

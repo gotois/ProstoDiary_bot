@@ -24,7 +24,7 @@ export default async (activity, message, bot) => {
       return;
     }
 
-    await container.deleteUser.execute({ telegramId: message.user.id });
+    await container.user.deleteUser({ telegramId: message.user.id });
     await bot.sendMessage(message.chat.id, 'Ваша история была удалена');
   });
 };

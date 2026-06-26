@@ -3,6 +3,13 @@ import { container, userRepository } from '../app/container.ts';
 import { toUserTokenInput } from '../infrastructure/auth/user-token-input.ts';
 import type { Request, Response, NextFunction } from 'express';
 
+/**
+ * @description Проверяет TMA авторизацию и добавляет пользователя в request.
+ * @param {Request} request - Express request
+ * @param {Response} response - Express response
+ * @param {NextFunction} next - следующий middleware
+ * @returns HTTP response или переход к следующему middleware
+ */
 export default async function (request: Request, response: Response, next: NextFunction): Promise<Response> {
   const [scheme, initData] = (request.get('Authorization') ?? '').split(' ', 2);
   if (scheme?.toUpperCase() !== 'TMA' || !initData) {

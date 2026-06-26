@@ -24,7 +24,8 @@ import transcriptionController from '../controllers/transcription/get.ts';
 import webhookController from '../controllers/webhook/post.ts';
 
 /**
- *
+ * Создаёт Express-приложение Telegram сервера
+ * @returns Express-приложение
  */
 export function createServer(): Express {
   const app = express();
@@ -72,10 +73,10 @@ export function createServer(): Express {
 }
 
 /**
- *
- * @param root0
- * @param root0.port
- * @param root0.local
+ * Запускает Telegram сервер
+ * @param root0 - параметры запуска сервера
+ * @param root0.port - порт для прослушивания
+ * @param root0.local - использовать локальный HTTPS-сервер
  */
 export function startServer({ port, local }: { port: number; local: boolean }): void {
   const app = createServer();

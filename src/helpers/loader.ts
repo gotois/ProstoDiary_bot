@@ -2,7 +2,11 @@ import { Ed25519Signature2020, suiteContext } from '@digitalbazaar/ed25519-signa
 import * as cred from 'credentials-context';
 import { JsonLdDocumentLoader } from 'jsonld-document-loader';
 
-// Создание загрузчика документов с кэшированием контекстов под конкретный ключ
+/**
+ * @description Создание загрузчика документов с кэшированием контекстов под конкретный ключ
+ * @param {Object} key - ключ
+ * @returns {Function} Загрузчик JSON-LD документов
+ */
 export function createDocumentLoader(key: Record<string, string>): () => void {
   const jdl = new JsonLdDocumentLoader();
   jdl.addStatic(suiteContext.CONTEXT_URL, suiteContext.CONTEXT);

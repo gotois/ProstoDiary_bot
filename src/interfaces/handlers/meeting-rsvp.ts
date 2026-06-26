@@ -7,9 +7,9 @@ const ANSWERS = {
 
 /**
  *
- * @param _activity
- * @param message
- * @param bot
+ * @param _activity - активность ActivityPub
+ * @param message - callback query Telegram
+ * @param bot - экземпляр Telegram bot
  */
 export default async function (_activity, message, bot): Promise<void> {
   const [, taskId, type] = message.data.split(':');

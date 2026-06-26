@@ -1,6 +1,11 @@
 import { container } from '../app/container.ts';
 
-export default function (callback: (...arguments_: unknown[]) => Promise<() => {}>) {
+/**
+ * @description Оборачивает обработчик бота общим error handler.
+ * @param callback - обработчик сообщения Telegram.
+ * @returns Обработчик с перехватом ошибок.
+ */
+export default function (callback: (...arguments_: unknown[]) => Promise<unknown>) {
   return async (activity, message, bot) => {
     try {
       await callback(activity, message, bot);

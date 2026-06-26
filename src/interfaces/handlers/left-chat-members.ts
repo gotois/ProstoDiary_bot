@@ -11,6 +11,6 @@ export default async (activity, message, bot) => {
     return;
   }
 
-  await container.removeGroup.execute({ groupId: message.chat.id });
+  await container.group.delete({ groupId: message.chat.id });
   console.log(`Бот удален из группы ${message.chat.title}`, message);
 };

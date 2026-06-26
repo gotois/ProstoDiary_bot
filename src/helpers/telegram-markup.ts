@@ -1,9 +1,18 @@
 import { linkStartApp } from '../libs/tg-messages.ts';
 
+type TelegramGroupMeeting = {
+  name?: string;
+  start_date: string;
+  end_date?: string;
+  location?: string;
+  description?: string;
+};
+
 /**
- *
- * @param date
- * @param tz
+ * Форматирует время события для Telegram
+ * @param date - дата события
+ * @param tz - timezone пользователя
+ * @returns Время события
  */
 function getFormatTime(date: string, tz: string) {
   return new Intl.DateTimeFormat('ru-RU', {
@@ -14,11 +23,12 @@ function getFormatTime(date: string, tz: string) {
 }
 
 /**
- *
- * @param data
- * @param tz
+ * Форматирует событие для сообщения в Telegram группе
+ * @param data - данные события
+ * @param tz - timezone пользователя
+ * @returns Текст сообщения
  */
-export function formatTelegramGroupMeeting(data: any, tz: string): string {
+export function formatTelegramGroupMeeting(data: TelegramGroupMeeting, tz: string): string {
   const lines = [data.name, ''];
 
   const date = new Intl.DateTimeFormat('ru-RU', {
@@ -48,12 +58,13 @@ export function formatTelegramGroupMeeting(data: any, tz: string): string {
   return lines.join('\n');
 }
 /**
- * @param options
- * @param options.chatId
- * @param options.messageId
- * @param options.taskId
- * @param options.sourceUrl
  * @description Builds the inline keyboard for a Telegram group meeting.
+ * @param options - параметры inline-клавиатуры
+ * @param options.chatId - id Telegram чата
+ * @param options.messageId - id Telegram сообщения
+ * @param options.taskId - id задачи
+ * @param options.sourceUrl - исходная ссылка события
+ * @returns Inline-клавиатура Telegram
  */
 export function getTelegramGroupMeetingReplyMarkup(options: {
   chatId: string;

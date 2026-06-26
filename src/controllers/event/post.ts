@@ -4,8 +4,9 @@ import { bot } from '../../interfaces/bot.ts';
 import { formatTelegramGroupMeeting, getTelegramGroupMeetingReplyMarkup } from '../../helpers/telegram-markup.ts';
 
 /**
- *
- * @param id
+ * Формирует URL Telegram группы по id чата
+ * @param id - id Telegram чата
+ * @returns URL Telegram группы
  */
 function getTgGroupId(id: number) {
   return `https://t.me/c/${Math.abs(id)}`;

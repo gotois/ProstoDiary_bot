@@ -6,9 +6,10 @@ const ACTIVE_GROUP_STATUSES = new Set(['creator', 'administrator', 'member', 're
 
 /**
  * @description Возвращает Telegram группы, доступные текущему пользователю TMA
- * @param request - Express request
- * @param response - Express response
- * @param next - следующий middleware
+ * @param {Request} request - Express request
+ * @param {Response} response - Express response
+ * @param {NextFunction} next - следующий middleware
+ * @returns {Promise<Response>} HTTP response
  */
 export default async function getGroupsController(
   request: Request,
@@ -16,6 +17,10 @@ export default async function getGroupsController(
   next: NextFunction,
 ): Promise<Response> {
   try {
+    if (!request.user) {
+      throw new Error('User not Found');
+    }
+
     // TODO: Если для формы будет общий endpoint target, сохранить здесь только группу,
     // а контакты tg вынести в отдельный контроллер или сервис по текущему паттерну.
     const groups = [];

@@ -7,7 +7,7 @@ export class CompleteAuthorization {
     this.oidc = oidc;
   }
 
-  async execute(input: { callbackUrl: URL; codeVerifier: string; state: string }) {
+  execute(input: { callbackUrl: URL; codeVerifier: string; state: string }) {
     return this.oidc.completeAuthorization(input);
   }
 }

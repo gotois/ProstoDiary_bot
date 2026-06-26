@@ -5,9 +5,6 @@ import { getTaskIdFromReference } from '../../helpers/approval.ts';
 import { linkPayload } from '../../libs/tg-messages.ts';
 
 export default async (request: Request, response: Response): Promise<Response> => {
-  const getUserByActorId = (actorId: string) => {
-    return userRepository.findByActorId(actorId);
-  };
   const activity = request.body?.credentialSubject;
   // TODO: валидировать ActivityPub payload и экранировать поля перед HTML/MarkdownV2.
   // Сейчас код предполагает форму `actor`, `to`, `summaryMap` и может упасть или разметить
@@ -23,7 +20,7 @@ export default async (request: Request, response: Response): Promise<Response> =
         url: activity.object,
       };
       for (const to of activity.to) {
-        const user = getUserByActorId(to);
+        const user = userRepository.findByActorId(to);
         if (!user) {
           console.warn(`User from ${to} not found!`);
           continue;
@@ -44,9 +41,9 @@ export default async (request: Request, response: Response): Promise<Response> =
       break;
     }
     case 'Accept': {
-      const actor = getUserByActorId(activity.actor);
+      const actor = userRepository.findByActorId(activity.actor);
       for (const to of activity.to) {
-        const user = getUserByActorId(to);
+        const user = userRepository.findByActorId(to);
         if (!user) {
           continue;
         }
@@ -57,9 +54,9 @@ export default async (request: Request, response: Response): Promise<Response> =
       break;
     }
     case 'Reject': {
-      const actor = getUserByActorId(activity.actor);
+      const actor = userRepository.findByActorId(activity.actor);
       for (const to of activity.to) {
-        const user = getUserByActorId(to);
+        const user = userRepository.findByActorId(to);
         if (!user) {
           continue;
         }
@@ -92,7 +89,7 @@ export default async (request: Request, response: Response): Promise<Response> =
         callback_data: 'notify_calendar--next-day',
       };
       for (const to of activity.to) {
-        const user = getUserByActorId(to);
+        const user = userRepository.findByActorId(to);
         if (!user) {
           console.warn(`User from ${to} not found!`);
           continue;
@@ -135,7 +132,7 @@ export default async (request: Request, response: Response): Promise<Response> =
         if (activity.target?.type === 'Group' && activity.target.id === to) {
           continue;
         }
-        const user = getUserByActorId(to);
+        const user = userRepository.findByActorId(to);
         if (!user) {
           console.warn(`User from ${to} not found!`);
           continue;

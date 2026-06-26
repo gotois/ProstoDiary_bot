@@ -7,7 +7,7 @@ export class ProcessDocument {
     this.documents = documents;
   }
 
-  async execute(input: { fileId: string }): Promise<{ url: string }> {
+  execute(input: { fileId: string }): Promise<{ url: string }> {
     return this.documents.process(input);
   }
 }

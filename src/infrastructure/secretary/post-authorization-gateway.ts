@@ -3,7 +3,7 @@ import type { PostAuthorizationGateway } from '../../domain/repositories/post-au
 // todo refactor
 export class SecretaryPostAuthorizationGateway implements PostAuthorizationGateway {
   constructor(host: string) {
-    this.host = host
+    this.host = host;
   }
   async prepareWelcome(input: {
     actorId: string;

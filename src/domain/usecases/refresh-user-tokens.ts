@@ -7,7 +7,7 @@ export class RefreshUserTokens {
     this.oidc = oidc;
   }
 
-  async execute(input: { refreshToken: string }) {
+  execute(input: { refreshToken: string }) {
     return this.oidc.refreshTokens(input);
   }
 }
