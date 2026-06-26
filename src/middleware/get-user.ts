@@ -4,7 +4,7 @@ import { toUserTokenInput } from '../infrastructure/auth/user-token-input.ts';
 import type { Request, Response, NextFunction } from 'express';
 
 /**
- * @description Проверяет TMA авторизацию и добавляет пользователя в request.
+ * @description Проверяет TMA авторизацию и добавляет пользователя в request
  * @param {Request} request - Express request
  * @param {Response} response - Express response
  * @param {NextFunction} next - следующий middleware
@@ -30,7 +30,7 @@ export default async function (request: Request, response: Response, next: NextF
 
     try {
       const tokens = await container.refreshUserTokens.execute({ refreshToken: user.refreshToken });
-      await container.saveUserTokens.execute(
+      await container.user.saveUserTokens(
         toUserTokenInput({
           telegramId: user.id,
           actorId: user.actorId,
@@ -45,7 +45,7 @@ export default async function (request: Request, response: Response, next: NextF
     } catch (error) {
       console.error('Ошибка обновления токена TMA:', error);
       if (error instanceof ResponseBodyError && error.error === 'invalid_grant') {
-        await container.clearUserTokens.execute({ telegramId: user.id });
+        await container.user.clearUserTokens({ telegramId: user.id });
       }
       return response.status(401).send('Unauthorized');
     }
