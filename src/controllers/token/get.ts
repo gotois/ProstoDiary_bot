@@ -26,7 +26,7 @@ export default async (request: Request, response: Response): Promise<Response> =
       state: request.session.state,
     });
 
-    await container.saveUserTokens.execute(
+    await container.user.saveUserTokens(
       toUserTokenInput({
         telegramId: authorization.telegramId,
         actorId: authorization.actorId,
@@ -37,7 +37,7 @@ export default async (request: Request, response: Response): Promise<Response> =
         },
       }),
     );
-    await container.updateUserTimezone.execute({
+    await container.user.updateUserTimezone({
       telegramId: authorization.telegramId,
       timezone: authorization.timezone,
     });
