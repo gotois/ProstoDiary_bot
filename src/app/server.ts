@@ -11,6 +11,7 @@ import getUserMiddleware from '../middleware/get-user.ts';
 import pingController from '../controllers/ping/get.ts';
 import calendarSubscriptionController from '../controllers/tasks/subscription/get.ts';
 import groupEventGetController from '../controllers/event/get.ts';
+import eventQueryController from '../controllers/event/query/get.ts';
 import groupEventPostController from '../controllers/event/post.ts';
 import groupEventUpdateController from '../controllers/event/put.ts';
 import groupEventRemoveController from '../controllers/event/delete.ts';
@@ -56,6 +57,7 @@ export function createServer(): Express {
   );
   app.use(botController);
   app.get('/', pingController);
+  app.get('/event/query', getUserMiddleware, eventQueryController);
   app.get('/event/:taskId', getUserMiddleware, groupEventGetController);
   app.post('/event', express.json(), getUserMiddleware, groupEventPostController);
   app.put('/event', express.json(), getUserMiddleware, groupEventUpdateController);

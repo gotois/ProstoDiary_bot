@@ -24,6 +24,23 @@ export class SecretaryGateway {
     return response.json();
   }
 
+  async queryEvents(input: { query: string; accessToken: string; limit?: number }): Promise<Record<string, unknown>[]> {
+    const url = new URL(`${this.host}/tasks/query`);
+    url.searchParams.set('query', input.query);
+    url.searchParams.set('limit', String(input.limit ?? 5));
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${input.accessToken}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Ошибка поиска событий');
+    }
+    return response.json();
+  }
+
   async transcribe(input: { fileId: string }): Promise<string> {
     const response = await fetch(`${this.host}/transcription/${input.fileId}`);
     if (!response.ok) {
