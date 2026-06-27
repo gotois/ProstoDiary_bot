@@ -15,7 +15,7 @@ export default async (activity, message, bot) => {
   const type = 'text/markdown';
   switch (type) {
     case 'text/markdown': {
-      await bot.sendMessage(message.chat.id, url, {
+      await bot.sendMessage(message.chat.id, query, {
         parse_mode: 'MarkdownV2',
         reply_to_message_id: message.message_id,
         protect_content: true,
@@ -23,7 +23,7 @@ export default async (activity, message, bot) => {
       break;
     }
     case 'text/plain': {
-      await bot.sendMessage(message.chat.id, url, {
+      await bot.sendMessage(message.chat.id, query, {
         reply_to_message_id: message.message_id,
         protect_content: true,
       });

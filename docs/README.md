@@ -30,18 +30,23 @@ scripts/prepare
 
 Add host for local development
 
-```
+```text
 127.0.0.1       bot.lh
 ```
 
-```
+```bash
 mkdir cert;
-openssl req -x509 -newkey rsa:2048 -keyout certs/server/bot-key.pem -out certs/server/bot-cert.pem -days 365 -nodes -subj "/CN=bot.lh" -addext "subjectAltName=DNS:bot.lh"
+openssl req -x509 -newkey rsa:2048 \
+  -keyout certs/server/bot-key.pem \
+  -out certs/server/bot-cert.pem \
+  -days 365 -nodes \
+  -subj "/CN=bot.lh" \
+  -addext "subjectAltName=DNS:bot.lh"
 ```
 
 For MacOS add certificate to trusted
 
-```
+```bash
 sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain certs/server/bot-cert.pem
 ```
 
