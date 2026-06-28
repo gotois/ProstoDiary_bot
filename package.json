@@ -101,7 +101,7 @@
   "dependencies": {
     "@digitalbazaar/ed25519-signature-2020": "5.4.0",
     "@digitalbazaar/ed25519-verification-key-2020": "4.2.0",
-    "@digitalbazaar/vc": "7.1.2",
+    "@digitalbazaar/vc": "7.3.0",
     "@photostructure/tz-lookup": "11.4.0",
     "cors": "2.8.6",
     "express": "5.2.1",
