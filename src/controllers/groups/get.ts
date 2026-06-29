@@ -5,6 +5,7 @@ import { groupRepository } from '../../app/container.ts';
 const ACTIVE_GROUP_STATUSES = new Set(['creator', 'administrator', 'member', 'restricted']);
 
 /**
+ * @todo TODO: Если для формы будет общий endpoint target, сохранить здесь только группу, а контакты tg вынести в отдельный контроллер или сервис по текущему паттерну
  * @description Возвращает Telegram группы, доступные текущему пользователю TMA
  * @param {Request} request - Express request
  * @param {Response} response - Express response
@@ -17,16 +18,13 @@ export default async function getGroupsController(
   next: NextFunction,
 ): Promise<Response> {
   try {
-    if (!request.user) {
-      throw new Error('User not Found');
+    const groups = [];
+    const { query = '' } = request.query;
+    if (!query.length) {
+      return response.json(groups);
     }
 
-    // TODO: Если для формы будет общий endpoint target, сохранить здесь только группу,
-    // а контакты tg вынести в отдельный контроллер или сервис по текущему паттерну.
-    const groups = [];
-
-    const query = typeof request.query.query === 'string' ? request.query.query : '';
-    for (const group of groupRepository.findByTitle(query)) {
+    for (const group of groupRepository.findByTitle(String(query))) {
       try {
         const member = await bot.getChatMember(group.id, request.user?.id);
         if (!ACTIVE_GROUP_STATUSES.has(member.status)) {

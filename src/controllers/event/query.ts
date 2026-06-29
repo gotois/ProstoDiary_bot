@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import { secretaryGateway } from '../../../app/container.ts';
+import { secretaryGateway } from '../../app/container.ts';
 
 /**
  * @description Ищет события текущего пользователя по названию
@@ -10,16 +10,12 @@ import { secretaryGateway } from '../../../app/container.ts';
  */
 export default async (request: Request, response: Response, next: NextFunction): Promise<Response> => {
   try {
-    if (!request.user) {
-      throw new Error('User not found');
-    }
+    const { query = '', limit = 5 } = request.query;
 
-    const query = typeof request.query.query === 'string' ? request.query.query : '';
-    const limit = typeof request.query.limit === 'string' ? Number(request.query.limit) : 5;
     const events = await secretaryGateway.queryEvents({
-      query,
-      limit,
-      accessToken: request.user.access_token,
+      query: String(query),
+      limit: Number(limit),
+      accessToken: request.user?.access_token,
     });
 
     return response.json(events);

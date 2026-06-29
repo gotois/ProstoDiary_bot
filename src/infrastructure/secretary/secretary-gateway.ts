@@ -24,15 +24,15 @@ export class SecretaryGateway {
     return response.json();
   }
 
-  async queryEvents(input: { query: string; accessToken: string; limit?: number }): Promise<Record<string, unknown>[]> {
+  async queryEvents({ query, accessToken, limit = 5 }: { query: string; accessToken: string; limit?: number }): Promise<Record<string, unknown>[]> {
     const url = new URL(`${this.host}/tasks/query`);
-    url.searchParams.set('query', input.query);
-    url.searchParams.set('limit', String(input.limit ?? 5));
+    url.searchParams.set('query', query);
+    url.searchParams.set('limit', String(limit));
     const response = await fetch(url, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        Authorization: `Bearer ${input.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
     if (!response.ok) {

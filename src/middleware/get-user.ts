@@ -19,6 +19,10 @@ export default async function (request: Request, response: Response, next: NextF
   const userParameters = JSON.parse(parameters.user ?? 'null');
   let user = typeof userParameters?.id === 'number' ? userRepository.findById(userParameters.id) : undefined;
 
+  if (!user) {
+    return response.status(404).send('User not found');
+  }
+
   if (!user?.accessToken) {
     return response.status(401).send('Unauthorized');
   }

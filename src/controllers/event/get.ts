@@ -7,13 +7,9 @@ export default async (
   next: NextFunction,
 ): Promise<Response> => {
   try {
-    if (!request.user) {
-      throw new Error('User not found');
-    }
-
     const data = await secretaryGateway.getTask({
       taskId: request.params.taskId,
-      accessToken: request.user.access_token,
+      accessToken: request.user?.access_token,
     });
 
     const taskId = Number(request.params.taskId);
