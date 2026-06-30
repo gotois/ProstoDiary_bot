@@ -20,7 +20,7 @@ export default async function getGroupsController(
   try {
     const groups = [];
     const { query = '' } = request.query;
-    if (!query.length) {
+    if (query?.length === 0) {
       return response.json(groups);
     }
 
