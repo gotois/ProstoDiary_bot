@@ -54,6 +54,9 @@ export default async (request: Request, response: Response, next: NextFunction):
     }
 
     for (const t of target) {
+      if (!t) {
+        continue;
+      }
       if (t.type === 'Group') {
         const chatMember = await bot.getChatMember(t.id, request.user?.id);
         if (!GROUP_ADMIN_STATUSES.has(chatMember.status)) {

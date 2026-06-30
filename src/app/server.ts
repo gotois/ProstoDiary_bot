@@ -3,7 +3,7 @@ import https from 'node:https';
 import express, { type Express } from 'express';
 import session from 'express-session';
 import cors from 'cors';
-import { SERVER, SECRETARY } from './config.ts';
+import { SERVER, SECRETARY } from '#env';
 import botController from '../interfaces/bot.ts';
 import vcLdJsonParser from '../middleware/vc-ld-json-parser.ts';
 import verifyCredential from '../middleware/verify-credentials.ts';
