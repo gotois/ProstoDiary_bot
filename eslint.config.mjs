@@ -5,14 +5,12 @@ import prettierConfig from 'eslint-config-prettier';
 import avaPlugin from 'eslint-plugin-ava';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
-import baseConfig from '../eslint.config.base.js';
 
-const TG_FILES = ['src/**/*.{mjs,ts}', 'tests/**/*.{mjs,ts}', 'bin/**/*.ts'];
+const FILES = ['src/**/*.ts', 'tests/**/*.ts', 'bin/**/*.ts'];
 const toArray = (cfg) => (Array.isArray(cfg) ? cfg : [cfg]);
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  ...baseConfig,
   {
     ignores: [
       'node_modules/',
@@ -27,14 +25,14 @@ export default [
   },
   ...toArray(unicornPlugin.configs['flat/recommended']).map((cfg) => ({
     ...cfg,
-    files: TG_FILES,
+    files: FILES,
   })),
   ...toArray(jsdocPlugin.configs['flat/recommended']).map((cfg) => ({
     ...cfg,
-    files: TG_FILES,
+    files: FILES,
   })),
   {
-    files: TG_FILES,
+    files: FILES,
     settings: {
       jsdoc: {
         overrideReplacesDocs: true,
@@ -44,16 +42,16 @@ export default [
     },
   },
   {
-    files: TG_FILES,
+    files: FILES,
     plugins: { prettier: prettierPlugin },
     rules: { 'prettier/prettier': 'error' },
   },
   {
-    files: TG_FILES,
+    files: FILES,
     plugins: { ava: avaPlugin },
   },
   {
-    files: TG_FILES,
+    files: FILES,
     rules: {
       // Style
       'linebreak-style': ['error', 'unix'],
@@ -190,7 +188,7 @@ export default [
     },
   },
   {
-    files: ['src/**/*.ts', 'tests/**/*.ts', 'bin/**/*.ts'],
+    files: FILES,
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -223,6 +221,6 @@ export default [
   },
   ...toArray(prettierConfig).map((cfg) => ({
     ...cfg,
-    files: TG_FILES,
+    files: FILES,
   })),
 ];
