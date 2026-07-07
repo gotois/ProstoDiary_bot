@@ -152,7 +152,7 @@ export default [
       'jsdoc/valid-types': 'error',
       // ava
       'ava/assertion-arguments': 'error',
-      'ava/max-asserts': ['error', { max: 5 }],
+      "ava/max-asserts": ["error", 5],
       'ava/no-async-fn-without-await': 'error',
       'ava/no-duplicate-modifiers': 'error',
       'ava/no-identical-title': 'error',
