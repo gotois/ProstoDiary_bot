@@ -93,7 +93,11 @@ npm run lint -- --fix --quite
 
 #### Show dependencies graph
 
+`report:dependency` uses Graphviz `dot` to render the dependency-cruiser DOT output to SVG.
+Install Graphviz first and make sure `dot` is available in `PATH`.
+
 ```bash
+# macOS
 brew install graphviz
 npm run report:dependency
 ```
