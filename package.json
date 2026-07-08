@@ -128,7 +128,7 @@
     "zip-pack-unpack": "0.0.3"
   },
   "devDependencies": {
-    "@commitlint/cli": "14.1.0",
+    "@commitlint/cli": "20.5.3",
     "@eslint/eslintrc": "3.3.5",
     "@ngrok/ngrok": "1.4.1",
     "@types/express": "5.0.3",
