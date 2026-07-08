@@ -2,7 +2,6 @@ node_modules/
 /.idea/
 /coverage/
 /reports/
-/.nyc_output/
 /keys/
 /.turbo/
 /certs/

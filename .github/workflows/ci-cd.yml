@@ -28,9 +28,6 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Report coverage
-        run: npm run report:coverage
-
   build-and-push:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
