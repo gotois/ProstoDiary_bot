@@ -48,6 +48,7 @@ export async function sendPrepareMessage(
       },
     ]),
   });
+  // await bot.pinChatMessage(message.chat.id, message.message_id);
 }
 
 /**

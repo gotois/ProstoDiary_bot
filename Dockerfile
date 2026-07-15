@@ -1,6 +1,6 @@
 FROM node:26 AS build
 
-MAINTAINER Denis Baskovsky <denis@baskovsky.ru>
+LABEL org.opencontainers.image.authors="Denis Baskovsky <denis@baskovsky.ru>"
 
 WORKDIR /app
 

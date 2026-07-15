@@ -27,7 +27,7 @@ export default function (callback: (...arguments_: unknown[]) => Promise<unknown
           return bot.sendMessage(message.chat.id, 'Произошла ошибка при обращении к серверу');
         }
         case 'Unauthorized': {
-          await container.deleteUser.execute({ telegramId: message.chat.id });
+          await container.user.deleteUser({ telegramId: message.chat.id });
           await bot.setMessageReaction(message.chat.id, message.message_id, {
             reaction: JSON.stringify([
               {
