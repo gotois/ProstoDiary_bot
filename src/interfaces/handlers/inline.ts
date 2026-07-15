@@ -48,7 +48,7 @@ export default async (activity, message, bot) => {
         };
       });
     } catch (error) {
-      console.warn('Unable to query inline events', error);
+      console.error('Unable to query inline events', error);
     }
   }
 
