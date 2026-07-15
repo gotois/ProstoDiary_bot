@@ -28,7 +28,7 @@ scripts/prepare
 
 > For HTTPS
 
-Add host for local development
+Add host `/etc/hosts` for local development
 
 ```text
 127.0.0.1       bot.lh
