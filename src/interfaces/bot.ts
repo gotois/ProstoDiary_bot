@@ -55,8 +55,8 @@ const { middleware, bot } = botController({
     /* NATIVE COMMANDS */
 
     // ['location']: checkAuth(locationAction),
-    // ['sticker']: checkAuth(stickerAction),
-    // ['animation']: checkAuth(animationAction),
+    ['sticker']: checkAuth(stickerAction),
+    ['animation']: checkAuth(animationAction),
     // ['poll']: checkAuth(pollAction),
     // ['mention']: checkAuth(mentionAction),
     // ['edited_message_text']: checkAuth(editedMessageTextAction),
@@ -74,7 +74,7 @@ const { middleware, bot } = botController({
     ['pinned_message']: () => {},
 
     /* CALLBACK */
-    ['web_app_data']: async (activity, message) => {
+    ['web_app_data']: async (_activity, message) => {
       console.log('message::', message);
       // TODO: валидировать JSON и схему каждого элемента до обработки. Сейчас некорректный
       // web_app_data бросает исключение, а произвольные `type`/`data` доходят до use case.
@@ -188,7 +188,7 @@ bot.on('message', async (message, activity) => {
         mediaType: 'application/geo+json',
       },
     ];
-    if (message.location.caption) {
+    if (message.location?.caption) {
       activity.object.push({
         type: 'Note',
         content: message.location.caption,

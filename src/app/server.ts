@@ -3,7 +3,7 @@ import https from 'node:https';
 import express, { type Express } from 'express';
 import session from 'express-session';
 import cors from 'cors';
-import { SERVER, SECRETARY, IS_DEV } from '#env';
+import { SESSION, SERVER, SECRETARY, IS_DEV } from '#env';
 import botController from '../interfaces/bot.ts';
 import vcLdJsonParser from '../middleware/vc-ld-json-parser.ts';
 import verifyCredential from '../middleware/verify-credentials.ts';
@@ -41,7 +41,7 @@ export function createServer(): Express {
 
   app.use(
     cors({
-      origin(url: string | undefined, callback: (err: Error | null, allowed?: boolean) => void) {
+      origin(url: string | undefined, callback: (error: Error | null, allowed?: boolean) => void) {
         if (!url) {
           return callback(undefined, true);
         }
@@ -55,10 +55,13 @@ export function createServer(): Express {
   );
   app.use(
     session({
-      secret: 'supersecret',
+      secret: SESSION.secret,
       resave: false,
       saveUninitialized: false,
-      cookie: { sameSite: 'none', secure: true },
+      cookie: {
+        sameSite: 'none',
+        secure: true,
+      },
     }),
   );
   app.use(botController);
@@ -81,10 +84,10 @@ export function createServer(): Express {
 }
 
 /**
- * Запускает Telegram сервер
- * @param root0 - параметры запуска сервера
- * @param root0.port - порт для прослушивания
- * @param root0.local - использовать локальный HTTPS-сервер
+ * @description Запускает Telegram сервер
+ * @param root - параметры запуска сервера
+ * @param root.port - порт для прослушивания
+ * @param root.local - использовать локальный HTTPS-сервер
  */
 export function startServer({ port, local }: { port: number; local: boolean }): void {
   const app = createServer();

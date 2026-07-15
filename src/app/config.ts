@@ -8,6 +8,10 @@ export const OIDC = {
   CLIENT_SECRET: environment.CLIENT_SECRET,
   CLIENT_REDIRECT: `${environment.HOST}/token`,
 };
+export const SESSION = {
+  // todo: вынести название секрета в конфигурацию env
+  secret: 'supersecret',
+};
 export const DATABASE = {
   USERS: path.join(import.meta.dirname, '../../database/users.sqlite'),
   GROUPS: path.join(import.meta.dirname, '../../database/groups.sqlite'),
