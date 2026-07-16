@@ -6,7 +6,7 @@ export default async (request: Request, response: Response, next: NextFunction):
     const result = await fetch(SECRETARY.HOST + '/tasks/subscription', {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${request.user?.access_token}`,
+        Authorization: `${request.user?.token_type ?? 'Bearer'} ${request.user?.access_token}`,
       },
     });
     if (!result.ok) {

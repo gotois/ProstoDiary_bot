@@ -17,6 +17,7 @@ let client: Configuration | undefined;
 
 /**
  * Создаёт объект параметров авторизации PKCE
+ * @returns Параметры OIDC-авторизации
  */
 async function getAuthorization() {
   const client = await getClient();
@@ -40,6 +41,7 @@ async function getAuthorization() {
 
 /**
  * Возвращает или инициализирует OIDC-клиент
+ * @returns Конфигурация OIDC-клиента
  */
 async function getClient(): Promise<Configuration> {
   if (client) {
@@ -55,7 +57,12 @@ async function getClient(): Promise<Configuration> {
 }
 
 export default class SecretaryOidcGateway implements OidcGateway {
-  async refreshTokens(refreshToken: string): Promise<{ accessToken: string; idToken?: string; refreshToken?: string }> {
+  async refreshTokens(refreshToken: string): Promise<{
+    accessToken: string;
+    idToken?: string;
+    refreshToken?: string;
+    tokenType: string;
+  }> {
     const tokens = await refreshTokenGrant(await getClient(), refreshToken);
     return {
       accessToken: tokens.access_token,

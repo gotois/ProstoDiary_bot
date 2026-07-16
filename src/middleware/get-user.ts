@@ -11,13 +11,19 @@ import type { Request, Response, NextFunction } from 'express';
  * @returns HTTP response или переход к следующему middleware
  */
 export default async function (request: Request, response: Response, next: NextFunction): Promise<Response> {
-  const [scheme, initData] = (request.get('Authorization') ?? '').split(' ', 2);
-  if (scheme?.toUpperCase() !== 'TMA' || !initData) {
-    return response.status(401).send('Unauthorized');
+  const sessionTelegramId = request.session.telegram_id;
+  let user = typeof sessionTelegramId === 'number' ? userRepository.findById(sessionTelegramId) : undefined;
+
+  if (!user) {
+    const [scheme, initData] = (request.get('Authorization') ?? '').split(' ', 2);
+    if (scheme?.toUpperCase() !== 'TMA' || !initData) {
+      return response.status(401).send('Unauthorized');
+    }
+    const parameters = Object.fromEntries(new URLSearchParams(initData));
+    const userParameters = JSON.parse(parameters.user ?? 'null');
+    user = typeof userParameters?.id === 'number' ? userRepository.findById(userParameters.id) : undefined;
   }
-  const parameters = Object.fromEntries(new URLSearchParams(initData));
-  const userParameters = JSON.parse(parameters.user ?? 'null');
-  let user = typeof userParameters?.id === 'number' ? userRepository.findById(userParameters.id) : undefined;
+
   if (!user) {
     return response.status(404).send('User not found');
   }
@@ -43,6 +49,9 @@ export default async function (request: Request, response: Response, next: NextF
           },
         }),
       );
+      if (request.session.telegram_id) {
+        request.session.token_type = tokens.tokenType;
+      }
       user = userRepository.findById(user.id);
     } catch (error) {
       console.error('Ошибка обновления токена TMA:', error);
@@ -65,6 +74,7 @@ export default async function (request: Request, response: Response, next: NextF
     access_token: user.accessToken,
     id_token: user.idToken,
     refresh_token: user.refreshToken,
+    token_type: request.session.token_type ?? 'Bearer',
     created_at: user.createdAt,
     expired_at: user.expiredAt,
   };
