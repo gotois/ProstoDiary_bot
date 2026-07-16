@@ -17,7 +17,6 @@ let client: Configuration | undefined;
 
 /**
  * Создаёт объект параметров авторизации PKCE
- * @returns Параметры авторизации PKCE.
  */
 async function getAuthorization() {
   const client = await getClient();
@@ -41,7 +40,6 @@ async function getAuthorization() {
 
 /**
  * Возвращает или инициализирует OIDC-клиент
- * @returns OIDC-клиент.
  */
 async function getClient(): Promise<Configuration> {
   if (client) {
@@ -57,11 +55,13 @@ async function getClient(): Promise<Configuration> {
 }
 
 export default class SecretaryOidcGateway implements OidcGateway {
-  async refreshTokens(input: {
-    refreshToken: string;
-  }): Promise<{ accessToken: string; idToken?: string; refreshToken?: string }> {
-    const tokens = await refreshTokenGrant(await getClient(), input.refreshToken);
-    return { accessToken: tokens.access_token, idToken: tokens.id_token, refreshToken: tokens.refresh_token };
+  async refreshTokens(refreshToken: string): Promise<{ accessToken: string; idToken?: string; refreshToken?: string }> {
+    const tokens = await refreshTokenGrant(await getClient(), refreshToken);
+    return {
+      accessToken: tokens.access_token,
+      idToken: tokens.id_token,
+      refreshToken: tokens.refresh_token,
+    };
   }
 
   async startAuthorization(input: {
@@ -93,7 +93,7 @@ export default class SecretaryOidcGateway implements OidcGateway {
     return {
       telegramId: Number(userInfo.tid),
       actorId: userInfo.sub,
-      timezone: userInfo.tz,
+      timezone: String(userInfo.tz || 'UTC'),
       tokens: {
         accessToken: tokens.access_token,
         idToken: tokens.id_token,

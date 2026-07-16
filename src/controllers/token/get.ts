@@ -20,13 +20,13 @@ export default async (request: Request, response: Response): Promise<Response> =
   const callbackUrl = new URL(request.url, `https://${request.headers.host}`);
 
   try {
-    const authorization = await container.completeAuthorization.execute({
+    const authorization = await container.oidc.completeAuthorization({
       callbackUrl,
       codeVerifier: request.session.code_verifier,
       state: request.session.state,
     });
 
-    await container.user.saveUserTokens(
+    container.user.saveUserTokens(
       toUserTokenInput({
         telegramId: authorization.telegramId,
         actorId: authorization.actorId,
@@ -37,7 +37,7 @@ export default async (request: Request, response: Response): Promise<Response> =
         },
       }),
     );
-    await container.user.updateUserTimezone({
+    container.user.updateUserTimezone({
       telegramId: authorization.telegramId,
       timezone: authorization.timezone,
     });
@@ -109,9 +109,6 @@ document.body.style.display = 'block';
       disable_notification: true,
       message_effect_id: '5046509860389126442', // 🎉
       protect_content: true,
-      reply_markup: {
-        keyboard: [],
-      },
     });
     await bot.deleteMessage(authorization.telegramId, waitingMessage.message_id);
 

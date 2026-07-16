@@ -3,10 +3,10 @@ import { container } from '../../app/container.ts';
 
 export default async (request: Request, response: Response): Promise<Response> => {
   try {
-    const authorization = await container.startAuthorization.execute({});
+    const authorization = await container.oidc.startAuthorization({});
     request.session.code_verifier = authorization.codeVerifier;
     request.session.state = authorization.state;
-    await request.session.save();
+    request.session.save();
 
     return response.send(`
     <html lang="ru">

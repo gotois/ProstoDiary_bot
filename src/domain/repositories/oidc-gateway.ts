@@ -11,7 +11,5 @@ export interface OidcGateway {
       tokenType: string;
     };
   }>;
-  refreshTokens(input: {
-    refreshToken: string;
-  }): Promise<{ accessToken: string; idToken?: string; refreshToken?: string }>;
+  refreshTokens(refreshToken: string): Promise<{ accessToken: string; idToken?: string; refreshToken?: string }>;
 }

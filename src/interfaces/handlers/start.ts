@@ -26,7 +26,7 @@ const getInstallAgainText = (): string => {
  * @param {object} bot - экземпляр бота
  */
 export default async (activity, message, bot) => {
-  const state = await container.getStartState.execute({
+  const state = container.getStartState.execute({
     accessToken: message.user?.access_token,
     expiredAt: message.user?.expired_at,
     timezone: message.user?.timezone,

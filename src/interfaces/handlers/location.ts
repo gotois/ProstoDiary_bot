@@ -5,15 +5,15 @@ import { sendPrepareMessage } from '../../libs/tg-messages.ts';
 export default async (activity, message, bot) => {
   await sendPrepareMessage(activity, message, bot);
   if (!(message.user.location && message.user.jwt)) {
-    const timezone = tzlookup(message.location.latitude, message.location.longitude);
-    await container.updateUserLocation.execute({
+    const tz = tzlookup(message.location.latitude, message.location.longitude);
+    container.user.updateUserLocation({
       // todo - передавать timezone
       // ...
       telegramId: message.chat.id,
       latitude: message.location.latitude,
       longitude: message.location.longitude,
     });
-    const data = `Ваша таймзона: ${timezone}.\nДля завершения регистрации требуется подтвердить свой номер телефона`;
+    const data = `Ваша таймзона: ${tz}.\nДля завершения регистрации требуется подтвердить свой номер телефона`;
     await bot.sendMessage(message.chat.id, data, {
       reply_markup: {
         remove_keyboard: true,
@@ -40,6 +40,7 @@ export default async (activity, message, bot) => {
   });
   bot.onReplyToMessage(message.chat.id, message_id, async ({ text }) => {
     message.location.caption = text;
+    // todo - вычислять type
     const type = 'text/markdown';
     try {
       await sendPrepareMessage(activity, message, bot);

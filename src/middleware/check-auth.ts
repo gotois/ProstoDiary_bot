@@ -14,8 +14,8 @@ export default function (callback: (...arguments_: unknown[]) => Promise<void>) 
       // делаем ротацию ключей для обновления
       if (message.user.refresh_token) {
         try {
-          const tokens = await container.refreshUserTokens.execute({ refreshToken: message.user.refresh_token });
-          await container.user.saveUserTokens(
+          const tokens = await container.oidc.refreshTokens(message.user.refresh_token);
+          container.user.saveUserTokens(
             toUserTokenInput({
               telegramId: message.user.id,
               actorId: message.user.actor_id,
@@ -29,7 +29,7 @@ export default function (callback: (...arguments_: unknown[]) => Promise<void>) 
         } catch (error) {
           console.error('Ошибка обновления токена:', error);
           if (error instanceof ResponseBodyError && error.error === 'invalid_grant') {
-            await container.user.clearUserTokens({ telegramId: message.user.id });
+            container.user.clearUserTokens({ telegramId: message.user.id });
           }
           return;
         }

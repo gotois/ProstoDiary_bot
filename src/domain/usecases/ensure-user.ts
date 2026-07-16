@@ -9,14 +9,14 @@ export class SecretaryUser {
   }
 
   async ensureUser(input: { telegramId: number; language?: string }): Promise<User | undefined> {
-    const existing = await this.users.findById(input.telegramId);
+    const existing = this.users.findById(input.telegramId);
     if (existing) {
       return existing;
     }
 
-    const user = await this.users.create(input.telegramId);
+    const user = this.users.create(input.telegramId);
     if (user && input.language) {
-      await this.users.updateLanguage(user.id, input.language);
+      this.users.updateLanguage(user.id, input.language);
     }
 
     return this.users.findById(input.telegramId);

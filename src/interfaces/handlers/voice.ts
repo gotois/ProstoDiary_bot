@@ -4,6 +4,7 @@ import { container } from '../../app/container.ts';
 export default async (activity, message, bot) => {
   await sendPrepareAction(bot, message.chat.id, RECORD_AUDIO);
 
+  // fixme processVoiceMessage не существует
   const secretaryData = await container.processVoiceMessage.execute({
     fileId: message.voice.file_id,
     chatId: message.chat.id,

@@ -9,12 +9,10 @@ import { SqliteGroupRepository } from '../infrastructure/database/sqlite-group-r
 import { SqliteTelegramEventRepository } from '../infrastructure/database/sqlite-telegram-event-repository.ts';
 import { SecretaryGateway } from '../infrastructure/secretary/secretary-gateway.ts';
 import SecretaryOidcGateway from '../infrastructure/oidc/client.ts';
-import { StartAuthorization } from '../domain/usecases/start-authorization.ts';
-import { CompleteAuthorization } from '../domain/usecases/complete-authorization.ts';
+import { SecretaryOIDC } from '../domain/usecases/start-authorization.ts';
 import { GetStartState } from '../domain/usecases/get-start-state.ts';
 import { AssistantGateway } from '../infrastructure/secretary/assistant-client.ts';
 
-import { RefreshUserTokens } from '../domain/usecases/refresh-user-tokens.ts';
 import { SecretaryPostAuthorizationGateway } from '../infrastructure/secretary/post-authorization-gateway.ts';
 import { PrepareAuthorizationWelcome } from '../domain/usecases/prepare-authorization-welcome.ts';
 
@@ -46,11 +44,7 @@ export const postAuthorizationGateway = new SecretaryPostAuthorizationGateway(SE
 export const container = {
   user: new SecretaryUser(userRepository),
   group: new SecretaryGroup(groupRepository),
-
-  // Auth
-  refreshUserTokens: new RefreshUserTokens(oidcGateway),
-  startAuthorization: new StartAuthorization(oidcGateway),
-  completeAuthorization: new CompleteAuthorization(oidcGateway),
+  oidc: new SecretaryOIDC(oidcGateway),
 
   // ???
   getStartState: new GetStartState(),
