@@ -86,7 +86,7 @@ export default class SecretaryOidcGateway implements OidcGateway {
       expectedState: input.state,
     });
     const userInfo = await fetchUserInfo(oidcClient, tokens.access_token, tokens.claims().sub);
-    if (!userInfo.tid || !userInfo.sub || !userInfo.tz) {
+    if (!userInfo.tid || !userInfo.sub) {
       throw new Error('Telegram не подключен к аккаунту');
     }
 

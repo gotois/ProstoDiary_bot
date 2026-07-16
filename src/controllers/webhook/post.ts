@@ -3,6 +3,7 @@ import { bot } from '../../interfaces/bot.ts';
 import { userRepository } from '../../app/container.ts';
 import { getTaskIdFromReference } from '../../helpers/approval.ts';
 import { linkPayload } from '../../libs/tg-messages.ts';
+import { SECRETARY } from '#env';
 
 export default async (request: Request, response: Response): Promise<Response> => {
   const activity = request.body?.credentialSubject;
@@ -71,11 +72,11 @@ export default async (request: Request, response: Response): Promise<Response> =
       break;
     }
     case 'Announce': {
-      // todo - нужно открывать в Mini App (web_app) с передачей ссылки object
-      const keyboardOpen = {
-        text: 'Посмотреть',
-        url: activity.object,
-      };
+      if (new URL(activity.object).origin !== new URL(SECRETARY.HOST).origin) {
+        throw new Error(`Пока поддерживается только анонс внутри сети "${SECRETARY.HOST}"`);
+      }
+
+      /*
       const keyboardLater = {
         text: 'Напомнить позже',
         callback_data: 'notify_calendar--later',
@@ -88,23 +89,31 @@ export default async (request: Request, response: Response): Promise<Response> =
         text: 'Напомнить завтра',
         callback_data: 'notify_calendar--next-day',
       };
+      */
       for (const to of activity.to) {
         const user = userRepository.findByActorId(to);
         if (!user) {
           console.warn(`User from ${to} not found!`);
           continue;
         }
+        const taskId = getTaskIdFromReference(activity.object);
+        const keyboardOpen = {
+          text: 'Посмотреть',
+          web_app: {
+            url: linkPayload({ to: `/calendar/${taskId}/view` }),
+          },
+        };
 
-        // todo - данные нужно брать из тела activity.object.summaryMap.ru
         await bot.sendMessage(user.id, activity.summaryMap.ru, {
           protect_content: true,
-          parse_mode: 'HTML',
+          parse_mode: 'Markdown',
           reply_markup: {
             /* eslint-disable prettier/prettier */
             inline_keyboard: [
               [keyboardOpen],
-              [keyboardLater, keyboardLater60],
-              [keyboardLaterTomorrow],
+              // todo починить возможность напоминания на позже
+              // [keyboardLater, keyboardLater60],
+              // [keyboardLaterTomorrow],
             ],
             /* eslint-enable */
           },
