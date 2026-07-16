@@ -5,6 +5,10 @@ import type { Request, Response, NextFunction } from 'express';
 
 /**
  * @description Проверяет TMA авторизацию и добавляет пользователя в request
+ * @param {Request} request - Express request
+ * @param {Response} response - Express response
+ * @param {NextFunction} next - следующий middleware
+ * @returns HTTP response или переход к следующему middleware
  */
 export default async function (request: Request, response: Response, next: NextFunction): Promise<Response> {
   const [scheme, initData] = (request.get('Authorization') ?? '').split(' ', 2);
@@ -14,11 +18,9 @@ export default async function (request: Request, response: Response, next: NextF
   const parameters = Object.fromEntries(new URLSearchParams(initData));
   const userParameters = JSON.parse(parameters.user ?? 'null');
   let user = typeof userParameters?.id === 'number' ? userRepository.findById(userParameters.id) : undefined;
-
   if (!user) {
     return response.status(404).send('User not found');
   }
-
   if (!user?.accessToken) {
     return response.status(401).send('Unauthorized');
   }

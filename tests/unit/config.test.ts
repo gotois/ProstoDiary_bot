@@ -1,12 +1,9 @@
 import fs from 'node:fs';
+import test, { type ExecutionContext } from 'ava';
 import validator from 'validator';
 
-/**
- * @param {import('ava').ExecutionContext} t - ava test
- */
-export default (t) => {
+test('config', (t: ExecutionContext) => {
   t.log('testing');
   const prettierrcJSON = fs.readFileSync(new URL('../../.prettierrc', import.meta.url), 'utf8');
-  t.true(validator.isJSON(prettierrcJSON));
-  t.pass();
-};
+  t.deepEqual(validator.isJSON(prettierrcJSON), true);
+});
