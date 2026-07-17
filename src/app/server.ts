@@ -20,9 +20,11 @@ import calendarGooglePostController from '#controllers/calendar-google/post';
 import tokenController from '#controllers/token/get';
 import loginController from '#controllers/login/get';
 import loginControllerPost from '#controllers/login/post';
+import { createSessionController } from '#controllers/session/post';
 import fileController from '#controllers/file/get';
 import transcriptionController from '#controllers/transcription/get';
 import webhookController from '#controllers/webhook/post';
+import { userRepository } from './container.ts';
 
 /**
  * Создаёт Express-приложение Telegram сервера
@@ -50,7 +52,13 @@ export function createServer(): Express {
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Authorization', 'Content-Type', 'Geolocation', 'Timezone'],
+      allowedHeaders: [
+        'Authorization',
+        'DPoP',
+        'Content-Type',
+        'Geolocation',
+        'Timezone',
+      ],
     }),
   );
   app.use(
@@ -76,6 +84,9 @@ export function createServer(): Express {
   app.get('/calendar/subscription', getUserMiddleware, calendarSubscriptionController);
   app.get('/login', loginController);
   app.post('/login', express.json(), loginControllerPost);
+  app.post('/session', createSessionController({
+    findUserByActorId: userRepository.findByActorId.bind(userRepository),
+  }));
   app.get('/token', tokenController);
   app.get('/file/:file_id', fileController);
   app.get('/transcription/:file_id', transcriptionController);

@@ -6,7 +6,7 @@ export default async (request: Request, response: Response): Promise<Response> =
     const authorization = await container.oidc.startAuthorization({ initData: request.body.initData });
     request.session.code_verifier = authorization.codeVerifier;
     request.session.state = authorization.state;
-    await request.session.save();
+    request.session.save();
 
     return response.json({ url: authorization.url });
   } catch (error) {

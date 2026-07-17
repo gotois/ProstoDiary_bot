@@ -68,6 +68,7 @@ export default class SecretaryOidcGateway implements OidcGateway {
       accessToken: tokens.access_token,
       idToken: tokens.id_token,
       refreshToken: tokens.refresh_token,
+      tokenType: tokens.token_type,
     };
   }
 

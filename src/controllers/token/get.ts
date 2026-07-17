@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import { promisify } from 'node:util';
 import { pdfToPng } from 'pdf-to-png-converter';
 import { container } from '../../app/container.ts';
 import { toUserTokenInput } from '../../infrastructure/auth/user-token-input.ts';
@@ -41,6 +42,11 @@ export default async (request: Request, response: Response): Promise<Response> =
       telegramId: authorization.telegramId,
       timezone: authorization.timezone,
     });
+
+    await promisify(request.session.regenerate)();
+    request.session.telegram_id = authorization.telegramId;
+    request.session.token_type = authorization.tokens.tokenType;
+    request.session.save();
 
     const welcome = await container.prepareAuthorizationWelcome.execute({
       actorId: authorization.actorId,
