@@ -41,7 +41,7 @@ export function createSessionController(dependencies: SessionControllerDependenc
         return response.status(404).send('User not found');
       }
 
-      await promisify(request.session.regenerate)();
+      await promisify(request.session.regenerate.bind(request.session))();
       request.session.telegram_id = user.id;
       request.session.token_type = 'Bearer';
       request.session.save();

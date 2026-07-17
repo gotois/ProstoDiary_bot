@@ -43,7 +43,7 @@ export default async (request: Request, response: Response): Promise<Response> =
       timezone: authorization.timezone,
     });
 
-    await promisify(request.session.regenerate)();
+    await promisify(request.session.regenerate.bind(request.session))();
     request.session.telegram_id = authorization.telegramId;
     request.session.token_type = authorization.tokens.tokenType;
     request.session.save();
