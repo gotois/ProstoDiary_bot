@@ -44,11 +44,11 @@ export function createSessionController(dependencies: SessionControllerDependenc
       await promisify(request.session.regenerate.bind(request.session))();
       request.session.telegram_id = user.id;
       request.session.token_type = 'Bearer';
-      request.session.save();
+      await promisify(request.session.save.bind(request.session))();
 
       return response.sendStatus(204);
     } catch (error) {
-      console.error('Ssession bootstrap failed:', error);
+      console.error('Session bootstrap failed:', error);
       return response.status(401).send('Unauthorized');
     }
   };

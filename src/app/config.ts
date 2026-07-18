@@ -9,8 +9,12 @@ export const OIDC = {
   CLIENT_REDIRECT: `${environment.HOST}/token`,
 };
 export const SESSION = {
-  // todo: вынести название секрета в конфигурацию env
-  secret: 'supersecret',
+  get secret(): string {
+    if (!environment.SESSION_SECRET) {
+      throw new Error('SESSION_SECRET is required');
+    }
+    return environment.SESSION_SECRET;
+  },
 };
 export const DATABASE = {
   USERS: path.join(import.meta.dirname, '../../database/users.sqlite'),

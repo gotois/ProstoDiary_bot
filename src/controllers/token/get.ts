@@ -46,7 +46,7 @@ export default async (request: Request, response: Response): Promise<Response> =
     await promisify(request.session.regenerate.bind(request.session))();
     request.session.telegram_id = authorization.telegramId;
     request.session.token_type = authorization.tokens.tokenType;
-    request.session.save();
+    await promisify(request.session.save.bind(request.session))();
 
     const welcome = await container.prepareAuthorizationWelcome.execute({
       actorId: authorization.actorId,
@@ -147,6 +147,7 @@ document.body.style.display = 'block';
   `.trim(),
     );
   } catch (error) {
-    response.send(error.stack);
+    console.error('OAuth callback failed:', error);
+    return response.status(400).send('Authorization failed');
   }
 };

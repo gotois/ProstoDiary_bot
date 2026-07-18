@@ -60,6 +60,7 @@ export default async function (request: Request, response: Response, next: NextF
       }
       return response.status(401).send('Unauthorized');
     }
+    return next(error);
   }
 
   if (!user?.accessToken) {

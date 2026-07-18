@@ -32,13 +32,13 @@ import { userRepository } from './container.ts';
  */
 export function createServer(): Express {
   const app = express();
-  const allowedHosts = new Set([
-    new URL(SERVER.HOST).hostname,
-    new URL(SERVER.APP_URL).hostname,
-    new URL(SECRETARY.HOST).hostname,
+  const allowedOrigins = new Set([
+    new URL(SERVER.HOST).origin,
+    new URL(SERVER.APP_URL).origin,
+    new URL(SECRETARY.HOST).origin,
   ]);
   if (IS_DEV) {
-    allowedHosts.add('localhost');
+    allowedOrigins.add('https://localhost:8080');
   }
 
   app.use(
@@ -48,7 +48,7 @@ export function createServer(): Express {
           return callback(undefined, true);
         }
         const parsedUrl = URL.parse(url);
-        callback(undefined, Boolean(parsedUrl && allowedHosts.has(parsedUrl.hostname)));
+        callback(undefined, Boolean(parsedUrl && allowedOrigins.has(parsedUrl.origin)));
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
