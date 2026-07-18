@@ -8,7 +8,7 @@ export class SecretaryUser {
     this.users = users;
   }
 
-  async ensureUser(input: { telegramId: number; language?: string }): Promise<User | undefined> {
+  ensureUser(input: { telegramId: number; language?: string }): User | undefined {
     const existing = this.users.findById(input.telegramId);
     if (existing) {
       return existing;

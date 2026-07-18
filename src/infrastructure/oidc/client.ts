@@ -30,7 +30,6 @@ async function getAuthorization() {
     codeVerifier,
     parameters: {
       scope: 'openid profile offline_access',
-      prompt: 'consent',
       code_challenge: codeChallenge,
       code_challenge_method: 'S256',
       state,

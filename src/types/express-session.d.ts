@@ -1,9 +1,13 @@
 import 'express-session';
+import type { Session as SolidSession } from '@inrupt/solid-client-authn-node';
 
 declare module 'express-session' {
   interface SessionData {
     code_verifier?: string;
     state?: string;
+    is_tma?: boolean;
+    authorization_id?: string;
+    oauth_pending?: boolean;
     telegram_id?: number;
     token_type?: string;
   }
@@ -12,6 +16,7 @@ declare module 'express-session' {
 declare global {
   namespace Express {
     interface Request {
+      solidSession?: SolidSession;
       user?: {
         id: number;
         actor_id: string | null;
@@ -24,6 +29,7 @@ declare global {
         token_type: string;
         created_at: number;
         expired_at: number | null;
+        auth_source: 'bff' | 'tma';
       };
     }
   }

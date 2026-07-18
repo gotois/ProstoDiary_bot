@@ -1,7 +1,37 @@
-import { ResponseBodyError } from 'openid-client';
+import { timingSafeEqual } from 'node:crypto';
 import { container, userRepository } from '../app/container.ts';
-import { toUserTokenInput } from '../infrastructure/auth/user-token-input.ts';
+import {
+  SolidAuthorizationRequiredError,
+  type ActiveSolidAuthorization,
+} from '../infrastructure/solid/solid-session-manager.ts';
+import { generateTelegramHash } from '../libs/tg-crypto.ts';
+import { SERVER } from '#env';
 import type { Request, Response, NextFunction } from 'express';
+
+/**
+ * Проверяет подпись Telegram initData и извлекает пользователя.
+ * @param initData - Строка инициализации Telegram Mini App
+ * @returns Telegram user id при валидной подписи
+ */
+export function getTmaUserId(initData: string): number | undefined {
+  const parameters = Object.fromEntries(new URLSearchParams(initData));
+  const hash = parameters.hash;
+  if (!hash || !/^[\da-f]{64}$/i.test(hash)) {
+    return;
+  }
+
+  const expectedHash = generateTelegramHash(parameters);
+  if (!timingSafeEqual(Buffer.from(hash, 'hex'), Buffer.from(expectedHash, 'hex'))) {
+    return;
+  }
+
+  try {
+    const user = JSON.parse(parameters.user ?? 'null');
+    return typeof user?.id === 'number' ? user.id : undefined;
+  } catch {
+    return;
+  }
+}
 
 /**
  * @description Проверяет TMA авторизацию и добавляет пользователя в request
@@ -10,74 +40,77 @@ import type { Request, Response, NextFunction } from 'express';
  * @param {NextFunction} next - следующий middleware
  * @returns HTTP response или переход к следующему middleware
  */
-export default async function (request: Request, response: Response, next: NextFunction): Promise<Response> {
+export default async function (request: Request, response: Response, next: NextFunction): Promise<Response | void> {
   const sessionTelegramId = request.session.telegram_id;
-  let user = typeof sessionTelegramId === 'number' ? userRepository.findById(sessionTelegramId) : undefined;
+  const sessionAuthorizationId = request.session.authorization_id;
+  const [scheme, initData] = (request.get('Authorization') ?? '').split(' ', 2);
+  const isTmaRequest = scheme?.toUpperCase() === 'TMA';
+  const authSource: 'bff' | 'tma' = isTmaRequest ? 'tma' : 'bff';
+  let active: ActiveSolidAuthorization | undefined;
+  let telegramId: number | undefined;
 
-  if (!user) {
-    const [scheme, initData] = (request.get('Authorization') ?? '').split(' ', 2);
-    if (scheme?.toUpperCase() !== 'TMA' || !initData) {
+  if (isTmaRequest) {
+    if (!initData) {
       return response.status(401).send('Unauthorized');
     }
-    const parameters = Object.fromEntries(new URLSearchParams(initData));
-    const userParameters = JSON.parse(parameters.user ?? 'null');
-    user = typeof userParameters?.id === 'number' ? userRepository.findById(userParameters.id) : undefined;
+    telegramId = getTmaUserId(initData);
+    if (!telegramId) {
+      return response.status(401).send('Invalid TMA data');
+    }
+    try {
+      active = await container.solidSessions.getByTelegramId(telegramId);
+    } catch (error) {
+      if (!(error instanceof SolidAuthorizationRequiredError)) {
+        return next(error);
+      }
+    }
+  } else {
+    telegramId = typeof sessionTelegramId === 'number' ? sessionTelegramId : undefined;
+    if (typeof sessionAuthorizationId === 'string') {
+      try {
+        active = await container.solidSessions.getById(sessionAuthorizationId);
+      } catch (error) {
+        if (!(error instanceof SolidAuthorizationRequiredError)) {
+          return next(error);
+        }
+      }
+    }
   }
 
-  if (!user) {
+  if (!active) {
+    if (authSource === 'bff') {
+      return response.status(401).json({
+        error: 'authentication_required',
+        loginUrl: `${SERVER.HOST}/login`,
+      });
+    }
     return response.status(404).send('User not found');
   }
-  if (!user?.accessToken) {
-    return response.status(401).send('Unauthorized');
-  }
 
-  if (user.expiredAt && user.expiredAt <= Date.now() / 1000 + 60) {
-    if (!user.refreshToken || !user.actorId || !user.idToken) {
-      return response.status(401).send('Unauthorized');
-    }
-
-    try {
-      const tokens = await container.oidc.refreshTokens(user.refreshToken);
-      container.user.saveUserTokens(
-        toUserTokenInput({
-          telegramId: user.id,
-          actorId: user.actorId,
-          tokens: {
-            access_token: tokens.accessToken,
-            id_token: tokens.idToken ?? user.idToken,
-            refresh_token: tokens.refreshToken ?? user.refreshToken,
-          },
-        }),
-      );
-      if (request.session.telegram_id) {
-        request.session.token_type = tokens.tokenType;
-      }
-      user = userRepository.findById(user.id);
-    } catch (error) {
-      console.error('Ошибка обновления токена TMA:', error);
-      if (error instanceof ResponseBodyError && error.error === 'invalid_grant') {
-        container.user.clearUserTokens({ telegramId: user.id });
-      }
-      return response.status(401).send('Unauthorized');
-    }
-    return next(error);
+  const authorization = active.authorization;
+  telegramId ??= authorization.telegramId;
+  const user = telegramId === undefined ? undefined : userRepository.findById(telegramId);
+  if (authSource === 'bff' || request.session.authorization_id !== authorization.id) {
+    request.session.authorization_id = authorization.id;
+    request.session.telegram_id = telegramId;
+    request.session.token_type = authorization.tokenType;
   }
-
-  if (!user?.accessToken) {
-    return response.status(401).send('Unauthorized');
-  }
+  request.solidSession = active.session;
   request.user = {
-    id: user.id,
-    actor_id: user.actorId,
-    location: user.location,
-    language: user.language,
-    timezone: user.timezone,
-    access_token: user.accessToken,
-    id_token: user.idToken,
-    refresh_token: user.refreshToken,
-    token_type: request.session.token_type ?? 'Bearer',
-    created_at: user.createdAt,
-    expired_at: user.expiredAt,
+    // TODO Remarks: External Solid identities need an actor-first principal before legacy Telegram endpoints can use them.
+    // Until that identity contract exists, zero remains a compatibility sentinel and must not be treated as a Telegram id.
+    id: telegramId ?? 0,
+    actor_id: authorization.webId,
+    location: user?.location ?? null,
+    language: user?.language ?? 'en',
+    timezone: user?.timezone ?? null,
+    access_token: authorization.accessToken,
+    id_token: authorization.idToken ?? null,
+    refresh_token: user?.refreshToken ?? null,
+    token_type: authorization.tokenType,
+    created_at: user?.createdAt ?? Math.floor(Date.now() / 1000),
+    expired_at: authorization.expiresAt ?? null,
+    auth_source: authSource,
   };
 
   next();

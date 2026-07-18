@@ -14,7 +14,7 @@ export type ChatAction = typeof RECORD_AUDIO | typeof TYPING | typeof UPLOAD_DOC
  * @param {ChatAction} type - тип действия
  */
 export async function sendPrepareAction(
-  bot: { sendChatAction: (chatId: number, type: ChatAction) => Promise<void> },
+  bot: { sendChatAction: (chatId: number, type: ChatAction) => Promise<unknown> },
   chatId: number,
   type: ChatAction,
 ): Promise<void> {

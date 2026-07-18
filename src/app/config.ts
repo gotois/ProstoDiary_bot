@@ -18,6 +18,7 @@ export const SESSION = {
 };
 export const DATABASE = {
   USERS: path.join(import.meta.dirname, '../../database/users.sqlite'),
+  SESSIONS: path.join(import.meta.dirname, '../../database/sessions.sqlite'),
   GROUPS: path.join(import.meta.dirname, '../../database/groups.sqlite'),
   EVENTS: path.join(import.meta.dirname, '../../database/events.sqlite'),
   AGENT: IS_DEV ? ':memory:' : path.resolve('./database/agent.sqlite'),

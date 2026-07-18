@@ -1,7 +1,6 @@
-import { ResponseBodyError } from 'openid-client';
 import errorHandler from './error-handler.ts';
 import { container } from '../app/container.ts';
-import { toUserTokenInput } from '../infrastructure/auth/user-token-input.ts';
+import { AuthorizationRequiredError } from '../infrastructure/auth/user-authorization.ts';
 
 /**
  * Middleware проверки авторизации пользователя с автообновлением токена
@@ -10,30 +9,17 @@ import { toUserTokenInput } from '../infrastructure/auth/user-token-input.ts';
  */
 export default function (callback: (...arguments_: unknown[]) => Promise<void>) {
   return async (activity, message, bot) => {
-    if (message.user?.expired_at && message.user.expired_at <= Date.now() / 1000 + 60) {
-      // делаем ротацию ключей для обновления
-      if (message.user.refresh_token) {
-        try {
-          const tokens = await container.oidc.refreshTokens(message.user.refresh_token);
-          container.user.saveUserTokens(
-            toUserTokenInput({
-              telegramId: message.user.id,
-              actorId: message.user.actor_id,
-              tokens: {
-                access_token: tokens.accessToken,
-                id_token: tokens.idToken ?? message.user.id_token,
-                refresh_token: tokens.refreshToken ?? message.user.refresh_token,
-              },
-            }),
-          );
-        } catch (error) {
+    if (message.user?.id) {
+      try {
+        const authorization = await container.authorization.ensureById(message.user.id);
+        message.user.access_token = authorization.user.accessToken;
+        message.user.id_token = authorization.user.idToken;
+        message.user.refresh_token = authorization.user.refreshToken;
+        message.user.expired_at = authorization.user.expiredAt;
+      } catch (error) {
+        if (!(error instanceof AuthorizationRequiredError)) {
           console.error('Ошибка обновления токена:', error);
-          if (error instanceof ResponseBodyError && error.error === 'invalid_grant') {
-            container.user.clearUserTokens({ telegramId: message.user.id });
-          }
-          return;
         }
-      } else {
         console.warn('todo - это старый механизм - с работой отправки контакта - оставить его где-то в другом месте');
         /*
         await bot.sendMessage(message.chat.id, 'Предоставьте свой номер телефона', {

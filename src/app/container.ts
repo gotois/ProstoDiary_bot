@@ -8,13 +8,16 @@ import { SqliteUserRepository } from '../infrastructure/database/sqlite-user-rep
 import { SqliteGroupRepository } from '../infrastructure/database/sqlite-group-repository.ts';
 import { SqliteTelegramEventRepository } from '../infrastructure/database/sqlite-telegram-event-repository.ts';
 import { SecretaryGateway } from '../infrastructure/secretary/secretary-gateway.ts';
-import SecretaryOidcGateway from '../infrastructure/oidc/client.ts';
-import { SecretaryOIDC } from '../domain/usecases/start-authorization.ts';
 import { GetStartState } from '../domain/usecases/get-start-state.ts';
 import { AssistantGateway } from '../infrastructure/secretary/assistant-client.ts';
 
 import { SecretaryPostAuthorizationGateway } from '../infrastructure/secretary/post-authorization-gateway.ts';
 import { PrepareAuthorizationWelcome } from '../domain/usecases/prepare-authorization-welcome.ts';
+import { UserAuthorization } from '../infrastructure/auth/user-authorization.ts';
+import { SolidGateway } from '../infrastructure/solid/solid-gateway.ts';
+import { SqliteSessionStore } from '../infrastructure/database/sqlite-session-store.ts';
+import { SqliteSolidAuthRepository } from '../infrastructure/database/sqlite-solid-auth-repository.ts';
+import { SolidSessionManager } from '../infrastructure/solid/solid-session-manager.ts';
 
 const model = AGENT.MODEL.startsWith('yandex')
   ? new LangChainYandexGPT({
@@ -34,9 +37,14 @@ const model = AGENT.MODEL.startsWith('yandex')
 export const userRepository = new SqliteUserRepository(new DatabaseSync(DATABASE.USERS));
 export const groupRepository = new SqliteGroupRepository(new DatabaseSync(DATABASE.GROUPS));
 export const telegramEventRepository = new SqliteTelegramEventRepository(new DatabaseSync(DATABASE.EVENTS));
+const sessionDatabase = new DatabaseSync(DATABASE.SESSIONS);
+export const sessionStore = new SqliteSessionStore(sessionDatabase);
+export const solidAuthRepository = new SqliteSolidAuthRepository(sessionDatabase);
+export const solidSessions = new SolidSessionManager(solidAuthRepository, userRepository);
 
 export const secretaryGateway = new SecretaryGateway(SECRETARY.HOST);
-export const oidcGateway = new SecretaryOidcGateway();
+export const userAuthorization = new UserAuthorization(userRepository, solidSessions);
+export const solidGateway = new SolidGateway();
 export const assistantGateway = new AssistantGateway(SECRETARY.MCP, model, new DatabaseSync(AGENT.MEMORY));
 
 export const postAuthorizationGateway = new SecretaryPostAuthorizationGateway(SECRETARY.HOST);
@@ -44,7 +52,9 @@ export const postAuthorizationGateway = new SecretaryPostAuthorizationGateway(SE
 export const container = {
   user: new SecretaryUser(userRepository),
   group: new SecretaryGroup(groupRepository),
-  oidc: new SecretaryOIDC(oidcGateway),
+  authorization: userAuthorization,
+  solidSessions,
+  solid: solidGateway,
 
   // ???
   getStartState: new GetStartState(),

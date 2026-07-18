@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import https from 'node:https';
-import express, { type Express } from 'express';
+import express, { type Express, type RequestHandler } from 'express';
 import session from 'express-session';
 import cors from 'cors';
-import { SESSION, SERVER, SECRETARY, IS_DEV } from '#env';
+import { SESSION, SERVER, IS_DEV } from '#env';
 import botController from '../interfaces/bot.ts';
 import vcLdJsonParser from '../middleware/vc-ld-json-parser.ts';
 import verifyCredential from '../middleware/verify-credentials.ts';
@@ -20,11 +20,23 @@ import calendarGooglePostController from '#controllers/calendar-google/post';
 import tokenController from '#controllers/token/get';
 import loginController from '#controllers/login/get';
 import loginControllerPost from '#controllers/login/post';
-import { createSessionController } from '#controllers/session/post';
+import sessionGetController from '#controllers/session/get';
+import sessionDeleteController from '#controllers/session/delete';
+import {
+  deletePodContracts,
+  getPodContract,
+  getPodContracts,
+  getPodProfile,
+  initializePod,
+  updatePodCalendar,
+  updatePodProfile,
+} from '#controllers/pod/index';
 import fileController from '#controllers/file/get';
 import transcriptionController from '#controllers/transcription/get';
 import webhookController from '#controllers/webhook/post';
-import { userRepository } from './container.ts';
+import { sessionStore } from './container.ts';
+
+const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 /**
  * Создаёт Express-приложение Telegram сервера
@@ -32,11 +44,8 @@ import { userRepository } from './container.ts';
  */
 export function createServer(): Express {
   const app = express();
-  const allowedOrigins = new Set([
-    new URL(SERVER.HOST).origin,
-    new URL(SERVER.APP_URL).origin,
-    new URL(SECRETARY.HOST).origin,
-  ]);
+  app.set('trust proxy', true);
+  const allowedOrigins = new Set([new URL(SERVER.APP_URL).origin]);
   if (IS_DEV) {
     allowedOrigins.add('https://localhost:8080');
   }
@@ -52,27 +61,25 @@ export function createServer(): Express {
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: [
-        'Authorization',
-        'DPoP',
-        'Content-Type',
-        'Geolocation',
-        'Timezone',
-      ],
+      allowedHeaders: ['Authorization', 'DPoP', 'Content-Type', 'Geolocation', 'Timezone'],
     }),
   );
   app.use(
     session({
+      store: sessionStore,
       secret: SESSION.secret,
       resave: false,
       saveUninitialized: false,
+      rolling: true,
       cookie: {
-        sameSite: 'none',
+        httpOnly: true,
+        maxAge: SESSION_TTL_MS,
+        sameSite: 'lax',
         secure: true,
       },
     }),
   );
-  app.use(botController);
+  app.use(botController as unknown as RequestHandler);
   app.get('/', pingController);
   app.get('/event/query', getUserMiddleware, eventQueryController);
   app.get('/event/:taskId', getUserMiddleware, groupEventGetController);
@@ -83,11 +90,17 @@ export function createServer(): Express {
   app.post('/calendar/google', express.json(), getUserMiddleware, calendarGooglePostController);
   app.get('/calendar/subscription', getUserMiddleware, calendarSubscriptionController);
   app.get('/login', loginController);
-  app.post('/login', express.json(), loginControllerPost);
-  app.post('/session', createSessionController({
-    findUserByActorId: userRepository.findByActorId.bind(userRepository),
-  }));
+  app.post('/login', express.json(), express.urlencoded({ extended: false }), loginControllerPost);
+  app.get('/session', sessionGetController);
+  app.delete('/session', sessionDeleteController);
   app.get('/token', tokenController);
+  app.post('/pod', getUserMiddleware, initializePod);
+  app.get('/pod/profile', getUserMiddleware, getPodProfile);
+  app.put('/pod/profile', express.json(), getUserMiddleware, updatePodProfile);
+  app.get('/pod/contracts', getUserMiddleware, getPodContracts);
+  app.get('/pod/contracts/:name', getUserMiddleware, getPodContract);
+  app.delete('/pod/contracts', getUserMiddleware, deletePodContracts);
+  app.put('/pod/calendar', express.json(), getUserMiddleware, updatePodCalendar);
   app.get('/file/:file_id', fileController);
   app.get('/transcription/:file_id', transcriptionController);
   app.post('/webhook', vcLdJsonParser, verifyCredential, webhookController);
